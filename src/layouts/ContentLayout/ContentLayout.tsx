@@ -4,12 +4,13 @@ import { DataPropsForm } from '../../types/AuthTypes'
 
 interface IContentLayoutProps {
   pageTitle: string
-  setModalState: (value: boolean) => void
-  buttonTitle: string
+  setModalState?: (value: boolean) => void
+  buttonTitle?: string
   dataSource: DataPropsForm[] | undefined
   columns: DataPropsForm[]
   fetching: boolean
   extraButton?: ReactNode
+  disabledAddButton?: boolean
 }
 
 const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
@@ -21,6 +22,7 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
   fetching,
   children,
   extraButton,
+  disabledAddButton = false,
 }) => {
   return (
     <>
@@ -31,9 +33,11 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
             <div>
               <input type='text' />
             </div>
-            <button onClick={() => setModalState(true)} className='ml-3'>
-              {buttonTitle}
-            </button>
+            {!disabledAddButton && (
+              <button onClick={() => setModalState && setModalState(true)} className='ml-3'>
+                {buttonTitle}
+              </button>
+            )}
             {extraButton}
           </div>
         </div>

@@ -11,6 +11,7 @@ import UpdateUserPassword from '../pages/Auth/UpdateUserPassword'
 import InventoryGroup from '../pages/Groups/InventoryGroups'
 import Inventory from '../pages/Inventories/Inventories'
 import Shops from '../pages/Shops/Shops'
+import UserActivities from './../pages/UserActivities/UserActivities'
 
 export const Router: FC = () => {
   return (
@@ -29,6 +30,7 @@ export const Router: FC = () => {
                 <Route path='/inventory-groups' element={<InventoryGroup />} />
                 <Route path='/inventories' element={<Inventory />} />
                 <Route path='/shops' element={<Shops />} />
+                <Route path='/user-activities' element={<UserActivities />} />
               </Routes>
             </AuthRoutes>
           }

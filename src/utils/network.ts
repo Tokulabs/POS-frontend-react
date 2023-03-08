@@ -9,5 +9,6 @@ export const groupURL = baseURL + 'app/group'
 export const inventoryURL = baseURL + 'app/inventory'
 export const inventoryCSVURL = baseURL + 'app/inventory-csv'
 export const shopURL = baseURL + 'app/shop'
+export const activitiesURL = baseURL + 'user/activities'
 
 export const cloudinaryURL = 'https://api.cloudinary.com/v1_1/de4vbdzth/upload'

@@ -1,4 +1,4 @@
-import { File, Grid, Icon, Package, ShoppingCart, Trello, Users } from 'react-feather'
+import { File, Grid, Icon, Package, ShoppingCart, Trello, Users, Activity } from 'react-feather'
 
 interface ISideBarData {
   icon: Icon
@@ -36,5 +36,10 @@ export const SideBarData: ISideBarData[] = [
     icon: Trello,
     title: 'Tiendas',
     path: '/shops',
+  },
+  {
+    icon: Activity,
+    title: 'Actividad de Usuarios',
+    path: '/user-activities',
   },
 ]

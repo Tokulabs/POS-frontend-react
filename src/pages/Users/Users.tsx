@@ -33,13 +33,13 @@ const Users: FC = () => {
   const getUsers = async () => {
     try {
       setFetching(true)
-      const response = await axiosRequest<IUserProps[]>({
+      const response = await axiosRequest<{ results: IUserProps[] }>({
         url: usersURL,
         hasAuth: true,
         showError: false,
       })
       if (response) {
-        const data = response.data.map((item) => ({
+        const data = response.data.results.map((item) => ({
           ...item,
           key: item.id,
           is_active: item.is_active.toString(),
