@@ -3,7 +3,7 @@ import { useAuth } from '../../hooks/useAuth'
 import MainLayout from '../../layouts/MainLayout/MainLayout'
 import { logout } from '../../pages/Auth/helpers'
 import { IAuthProps } from '../../types/AuthTypes'
-import Loading from './../../pages/Loading/Loading'
+import Loading from '../Loading/Loading'
 
 export const AuthRoutes: FC<PropsWithChildren> = ({ children }) => {
   const [loading, setLoading] = useState(true)

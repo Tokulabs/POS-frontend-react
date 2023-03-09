@@ -3,14 +3,8 @@ import { axiosRequest } from '../../api/api'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
 import { DataPropsForm } from '../../types/AuthTypes'
 import { activitiesURL } from '../../utils/network'
-
-interface IActivitiesProps {
-  id: number
-  created_at: string
-  fullname: string
-  email: DataPropsForm
-  action: string
-}
+import { columns } from './../Groups/data/columnData'
+import { IActivitiesProps } from './types/UserActivities'
 
 const UserActivities: FC = () => {
   const [fetching, setFetching] = useState(false)
@@ -38,34 +32,6 @@ const UserActivities: FC = () => {
       setFetching(false)
     }
   }
-
-  const columns = [
-    {
-      title: 'Usuario',
-      dataIndex: 'fullname',
-      key: 'fullname',
-    },
-    {
-      title: 'Correo',
-      dataIndex: 'email',
-      key: 'email',
-    },
-    {
-      title: 'Accion realizada',
-      dataIndex: 'action',
-      key: 'action',
-    },
-    {
-      title: 'Fecha',
-      dataIndex: 'created_at',
-      key: 'created_at',
-    },
-    {
-      title: '',
-      dataIndex: 'actions',
-      key: 'actions',
-    },
-  ]
 
   return (
     <>

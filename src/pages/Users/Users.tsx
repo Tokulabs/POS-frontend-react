@@ -4,17 +4,8 @@ import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
 import { DataPropsForm } from '../../types/AuthTypes'
 import { usersURL } from '../../utils/network'
 import AddUserForm from './components/AddUserForm'
-
-interface IUserProps {
-  created_at: string
-  email: string
-  fullname: string
-  is_active: string
-  last_login: string
-  role: string
-  id: number
-  key?: number
-}
+import { columns } from './../Groups/data/columnData'
+import { IUserProps } from './types/UserTypes'
 
 const Users: FC = () => {
   const [modalState, setModalState] = useState(false)
@@ -52,44 +43,6 @@ const Users: FC = () => {
       setFetching(false)
     }
   }
-
-  const columns = [
-    {
-      title: 'ID',
-      dataIndex: 'key',
-      key: 'key',
-    },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
-    },
-    {
-      title: 'Nombre',
-      dataIndex: 'fullname',
-      key: 'fullname',
-    },
-    {
-      title: 'Activo',
-      dataIndex: 'is_active',
-      key: 'is_active',
-    },
-    {
-      title: 'Última conexión',
-      dataIndex: 'last_login',
-      key: 'last_login',
-    },
-    {
-      title: 'Rol',
-      dataIndex: 'role',
-      key: 'role',
-    },
-    {
-      title: 'Fecha de creación',
-      dataIndex: 'created_at',
-      key: 'created_at',
-    },
-  ]
 
   return (
     <>

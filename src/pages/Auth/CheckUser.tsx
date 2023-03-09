@@ -7,10 +7,7 @@ import { DataPropsForm, IAuthProps } from '../../types/AuthTypes'
 import { ActionTypes } from '../../types/StoreTypes'
 import { loginURL } from '../../utils/network'
 import { store } from './../../store/index'
-
-interface ICheckUserProps {
-  user_id: number
-}
+import { ICheckUserProps } from './types/AuthTypes'
 
 const CheckUser: FC = () => {
   const navigate = useNavigate()

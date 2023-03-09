@@ -4,17 +4,8 @@ import { DataPropsForm } from '../../types/AuthTypes'
 import AddGroupForm from './components/AddGroupForm'
 import { useGetGroups } from './../../hooks/useGetGroups'
 import { getGroups } from '../../hooks/helper/functions'
-
-export interface IGroupsProps {
-  id: number
-  name: string
-  belongs_to: {
-    name: string
-    id: number
-  } | null
-  created_at: string
-  total_items: number
-}
+import { columns } from './data/columnData'
+import { IGroupsProps } from './types/GroupTypes'
 
 const Users: FC = () => {
   const [modalState, setModalState] = useState(false)
@@ -27,39 +18,6 @@ const Users: FC = () => {
     setModalState(false)
     getGroups(setGroups, setFetching)
   }
-
-  const columns = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-    },
-    {
-      title: 'Nombre',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: 'Categoria Padre',
-      dataIndex: 'belongsTo',
-      key: 'belongsTo',
-    },
-    {
-      title: 'Fecha de creación',
-      dataIndex: 'created_at',
-      key: 'created_at',
-    },
-    {
-      title: 'Items Totales',
-      dataIndex: 'total_items',
-      key: 'total_items',
-    },
-    {
-      title: '',
-      dataIndex: 'action',
-      key: 'action',
-    },
-  ]
 
   return (
     <>

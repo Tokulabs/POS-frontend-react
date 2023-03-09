@@ -4,12 +4,7 @@ import { DataPropsForm } from '../../../types/AuthTypes'
 import { groupURL } from '../../../utils/network'
 import { useForm } from 'antd/es/form/Form'
 import { axiosRequest } from '../../../api/api'
-import { IModalFormProps } from '../../../types/ModalTypes'
-import { IGroupsProps } from '../InventoryGroups'
-
-interface IAddGroupFormProps extends IModalFormProps {
-  groups: IGroupsProps[]
-}
+import { IAddGroupFormProps } from '../types/GroupTypes'
 
 const AddGroupForm: FC<IAddGroupFormProps> = ({
   isVisible = false,

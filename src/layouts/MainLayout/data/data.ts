@@ -1,44 +1,59 @@
-import { File, Grid, Icon, Package, ShoppingCart, Trello, Users, Activity } from 'react-feather'
+import {
+  IconFileInvoice,
+  IconLayoutDashboard,
+  IconPackages,
+  IconReceipt,
+  IconBoxMultiple,
+  IconUsers,
+  IconBuildingStore,
+  IconActivity,
+  TablerIconsProps,
+} from '@tabler/icons-react'
 
 interface ISideBarData {
-  icon: Icon
+  icon: (props: TablerIconsProps) => JSX.Element
   title: string
   path: string
 }
 
 export const SideBarData: ISideBarData[] = [
   {
-    icon: Grid,
+    icon: IconLayoutDashboard,
     title: 'Panel principal',
     path: '/',
   },
   {
-    icon: Package,
+    icon: IconPackages,
     title: 'Inventarios',
     path: '/inventories',
   },
   {
-    icon: ShoppingCart,
+    icon: IconFileInvoice,
+    title: 'Facturas',
+    path: '/invoices',
+  },
+  {
+    icon: IconReceipt,
     title: 'Venta',
     path: '/purchase',
   },
   {
-    icon: File,
+    icon: IconBoxMultiple,
     title: 'Categorias',
     path: '/inventory-groups',
   },
   {
-    icon: Users,
+    icon: IconUsers,
     title: 'Usuarios',
     path: '/users',
   },
   {
-    icon: Trello,
+    icon: IconBuildingStore,
     title: 'Tiendas',
     path: '/shops',
   },
   {
-    icon: Activity,
+    icon: IconActivity,
     title: 'Actividad de Usuarios',
     path: '/user-activities',
   },

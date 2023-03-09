@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, useContext } from 'react'
 import UserAvatar from '../../assets/icons/user-avatar.svg'
-import { LogOut } from 'react-feather'
+import { IconLogout } from '@tabler/icons-react'
 import { logout } from '../../pages/Auth/helpers'
 import { SideBarData } from './data/data'
 import { Link, useLocation } from 'react-router-dom'
@@ -31,7 +31,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
             className='flex items-center gap-1 border-solid border-[1px] border-white py-2 px-4 rounded-lg bg-[#ffffff20] cursor-pointer'
           >
             <p className='text-white m-0 text-sm'>Cerrar Sesión</p>
-            <LogOut size={15} color='#FFF' />
+            <IconLogout size={15} color='#FFF' />
           </button>
         </div>
       </nav>

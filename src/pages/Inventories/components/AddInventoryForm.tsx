@@ -4,14 +4,9 @@ import { DataPropsForm } from '../../../types/AuthTypes'
 import { cloudinaryURL } from '../../../utils/network'
 import { useForm } from 'antd/es/form/Form'
 import { axiosRequest } from '../../../api/api'
-import { IModalFormProps } from '../../../types/ModalTypes'
-import { IGroupsProps } from '../../Groups/InventoryGroups'
-import { Image, Plus } from 'react-feather'
+import { IconPhoto, IconPlus } from '@tabler/icons-react'
 import { inventoryURL } from './../../../utils/network'
-
-interface IAddInventoryFormProps extends IModalFormProps {
-  groups: IGroupsProps[]
-}
+import { IAddInventoryFormProps } from '../types/InventoryTypes'
 
 const AddInventoryForm: FC<IAddInventoryFormProps> = ({
   isVisible = false,
@@ -105,9 +100,9 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
                 />
               ) : (
                 <div className='flex flex-col justify-center items-center'>
-                  <Image />
+                  <IconPhoto />
                   <span className='flex justify-center items-center'>
-                    <Plus size={15} />
+                    <IconPlus size={15} />
                     Foto
                   </span>
                 </div>
