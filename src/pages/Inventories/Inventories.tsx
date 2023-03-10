@@ -7,7 +7,7 @@ import { Button } from 'antd'
 import AddInventoryFormCSV from './components/AddInventoryFormCSV'
 import { useGetInventories } from '../../hooks/useGetInventories'
 import { getInventories } from '../../hooks/helper/functions'
-import { columns } from './../Groups/data/columnData'
+import { columns } from './data/columnsData'
 import { IInventoryProps, ModalStateEnum } from './types/InventoryTypes'
 import { IGroupsProps } from '../Groups/types/GroupTypes'
 

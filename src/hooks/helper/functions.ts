@@ -17,6 +17,7 @@ export const getGroups = async (
     if (response) {
       const data = response.data.results.map((item) => ({
         ...item,
+        key: item.id,
         belongsTo: item.belongs_to ? item.belongs_to.name : 'No aplica',
       }))
       setGroup(data)
@@ -42,6 +43,7 @@ export const getInventories = async (
     if (response) {
       const data = response.data.results.map((item) => ({
         ...item,
+        key: item.id,
         groupInfo: item.group?.name,
         photoInfo: item.photo,
       }))

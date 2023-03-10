@@ -3,7 +3,7 @@ import { axiosRequest } from '../../api/api'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
 import { DataPropsForm } from '../../types/AuthTypes'
 import { activitiesURL } from '../../utils/network'
-import { columns } from './../Groups/data/columnData'
+import { columns } from './data/columnsData'
 import { IActivitiesProps } from './types/UserActivities'
 
 const UserActivities: FC = () => {
@@ -23,7 +23,10 @@ const UserActivities: FC = () => {
         showError: false,
       })
       if (response) {
-        const data = response.data.results
+        const data = response.data.results.map((item) => ({
+          ...item,
+          key: item.id,
+        }))
         setUserActivities(data)
       }
     } catch (e) {

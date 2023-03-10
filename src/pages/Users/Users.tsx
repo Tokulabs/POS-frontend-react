@@ -4,7 +4,7 @@ import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
 import { DataPropsForm } from '../../types/AuthTypes'
 import { usersURL } from '../../utils/network'
 import AddUserForm from './components/AddUserForm'
-import { columns } from './../Groups/data/columnData'
+import { columns } from './data/columsData'
 import { IUserProps } from './types/UserTypes'
 
 const Users: FC = () => {

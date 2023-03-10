@@ -4,7 +4,7 @@ import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
 import { DataPropsForm } from '../../types/AuthTypes'
 import { shopURL } from '../../utils/network'
 import AddUserForm from './components/AddShopForm'
-import { columns } from './../Groups/data/columnData'
+import { columns } from './data/columnsData'
 import { IShopProps } from './types/ShopTypes'
 
 const Shops: FC = () => {
@@ -32,6 +32,7 @@ const Shops: FC = () => {
       if (response) {
         const data = response.data.results.map((item) => ({
           ...item,
+          key: item.id,
           created_by_email: String(item.created_by.email),
         }))
         setShops(data)

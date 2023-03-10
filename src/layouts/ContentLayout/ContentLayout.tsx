@@ -1,6 +1,7 @@
 import { FC, PropsWithChildren, ReactNode } from 'react'
 import { Table } from 'antd'
 import { DataPropsForm } from '../../types/AuthTypes'
+import Search from 'antd/es/input/Search'
 
 interface IContentLayoutProps {
   pageTitle: string
@@ -31,7 +32,11 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
           <h1 className='m-0 p-0 text-base font-semibold'>{pageTitle}</h1>
           <div className='flex items-center'>
             <div>
-              <input type='text' />
+              <Search
+                placeholder='input search text'
+                onSearch={() => console.log('buscar')}
+                enterButton
+              />
             </div>
             {!disabledAddButton && (
               <button onClick={() => setModalState && setModalState(true)} className='ml-3'>
@@ -41,7 +46,7 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
             {extraButton}
           </div>
         </div>
-        <Table dataSource={dataSource} columns={columns} loading={fetching} size='middle' />
+        <Table dataSource={dataSource} columns={columns} loading={fetching} size='small' />
       </div>
       {children}
     </>

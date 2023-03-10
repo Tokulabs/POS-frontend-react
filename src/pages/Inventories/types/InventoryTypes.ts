@@ -13,7 +13,7 @@ export interface IInventoryProps {
     id: number
   } | null
   created_at: string
-  remainig: number
+  remaining: number
   price: number
   photo: string
 }

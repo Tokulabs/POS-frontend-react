@@ -4,5 +4,6 @@ export interface IPurchaseProps {
   qty: number
   price: number
   total: number
-  action: React.ReactElement
+  action?: React.ReactElement
+  key?: number
 }
