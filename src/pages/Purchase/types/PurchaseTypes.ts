@@ -1,3 +1,6 @@
+import { IModalFormProps } from '../../../types/ModalTypes'
+import { IShopProps } from './../../Shops/types/ShopTypes'
+
 export interface IPurchaseProps {
   id: number
   item: string
@@ -6,4 +9,8 @@ export interface IPurchaseProps {
   total: number
   action?: React.ReactElement
   key?: number
+}
+
+export interface ISelectShopPurchase extends IModalFormProps {
+  shops: IShopProps[]
 }

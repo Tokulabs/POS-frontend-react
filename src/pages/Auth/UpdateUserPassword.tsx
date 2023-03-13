@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom'
 import { axiosRequest } from '../../api/api'
 import Authcomponent from '../../components/Auth/AuthComponent'
 import { useAuth } from '../../hooks/useAuth'
-import { DataPropsForm, IAuthProps } from '../../types/AuthTypes'
+import { IAuthProps } from '../../types/AuthTypes'
 import { ActionTypes } from '../../types/StoreTypes'
 import { updatePasswordURL } from '../../utils/network'
 import { store } from './../../store/index'
 import { notification } from 'antd'
+import { DataPropsForm } from '../../types/GlobalTypes'
 
 const UpdateUserPassword: FC = () => {
   const navigate = useNavigate()

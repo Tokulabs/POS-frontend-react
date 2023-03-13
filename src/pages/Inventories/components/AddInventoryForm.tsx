@@ -1,6 +1,6 @@
 import { Form, Modal, Input, Select, Button, notification } from 'antd'
 import { ChangeEvent, FC, useRef, useState } from 'react'
-import { DataPropsForm } from '../../../types/AuthTypes'
+import { DataPropsForm } from '../../../types/GlobalTypes'
 import { cloudinaryURL } from '../../../utils/network'
 import { useForm } from 'antd/es/form/Form'
 import { axiosRequest } from '../../../api/api'

@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { IGroupsProps } from '../pages/Groups/InventoryGroups'
+import { IGroupsProps } from '../pages/Groups/types/GroupTypes'
 import { getGroups } from './helper/functions'
 
 export const useGetGroups = async (

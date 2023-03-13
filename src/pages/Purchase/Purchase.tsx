@@ -2,12 +2,17 @@ import { ChangeEvent, FC, useState } from 'react'
 import { Button, Input, notification, Table } from 'antd'
 import { useGetInventories } from '../../hooks/useGetInventories'
 import { formatinventoryPhoto } from '../Inventories/Inventories'
-import { DataPropsForm } from '../../types/AuthTypes'
+import { DataPropsForm, IPurchaseAddRemoveProps } from '../../types/GlobalTypes'
 import { IPurchaseProps } from './types/PurchaseTypes'
 import { inventoryColumns, purchaseColumns } from './data/columnsData'
 import { IInventoryProps } from '../Inventories/types/InventoryTypes'
 import Search from 'antd/es/input/Search'
-import { IPurchaseAddRemoveProps } from '../../types/GlobalTypes'
+import { IShopProps } from '../Shops/types/ShopTypes'
+import { useGetShops } from './../../hooks/useGetShops'
+import SelectShopPurchaseForm from './components/SelectShopPurchase'
+import { axiosRequest } from '../../api/api'
+import { invoiceURL } from './../../utils/network'
+import { formatDateTime } from '../../layouts/helpers/helpers'
 
 const formatInventoryAction = (
   inventories: DataPropsForm[],
@@ -42,6 +47,7 @@ const formatPurchaseData = (
   return purchaseData.map((item) => ({
     ...item,
     key: item.id,
+    total: item.price * item.qty,
     action: (
       <div>
         <Input
@@ -65,7 +71,11 @@ const Purchase: FC = () => {
   const [purchaseData, setPurchaseData] = useState<IPurchaseProps[]>([])
   const [purchaseItemQty, setPurchaseItemQty] = useState<IPurchaseAddRemoveProps>({})
   const [purchaseItemDataQty, setPurchaseItemDataQty] = useState<IPurchaseAddRemoveProps>({})
+  const [shops, setShops] = useState<IShopProps[]>([])
+  const [selectShopVisible, setSelectShopVisible] = useState(false)
+  const [loading, setLoading] = useState(false)
 
+  useGetShops(setShops, () => null)
   useGetInventories(setInventories, setFetching)
 
   const addItemPurchase = (inventoryData: IInventoryProps) => {
@@ -136,6 +146,51 @@ const Purchase: FC = () => {
     })
   }
 
+  const cancelPurchaseData = () => {
+    setPurchaseData([])
+    setPurchaseItemDataQty({})
+  }
+
+  const getSelectedShop = async (data: number | undefined) => {
+    setSelectShopVisible(false)
+    const dataToSend = {
+      shop_id: data as number,
+      invoice_item_data: purchaseData.map((item) => ({ item_id: item.id, quantity: item.qty })),
+    }
+
+    try {
+      setLoading(true)
+      const response = await axiosRequest({
+        method: 'post',
+        url: invoiceURL,
+        hasAuth: true,
+        payload: dataToSend,
+      })
+      if (response) {
+        notification.success({
+          message: 'Exito',
+          description: 'Factura creada!',
+        })
+      }
+    } catch (e) {
+      console.log(e)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const saveAndPrint = () => {
+    if (purchaseData.length < 1) {
+      notification.error({
+        message: 'No tienes productos en la venta en curso',
+      })
+      return
+    }
+    setSelectShopVisible(true)
+  }
+
+  const getTotal = () => purchaseData.reduce((sum, item) => (sum += item.price * item.qty), 0)
+
   return (
     <div className='grid grid-cols-8 gap-6'>
       <div
@@ -165,20 +220,47 @@ const Purchase: FC = () => {
           size='small'
         />
       </div>
-      <div className='bg-white rounded h-fit p-4 gap-8 col-span-3'>
-        <div>
-          <Table
-            dataSource={formatPurchaseData(
-              purchaseData,
-              removeItemFromPurchase,
-              changeInventoryRemoveQty,
-            )}
-            columns={purchaseColumns}
-            loading={fetching}
-            size='small'
-          />
+      <div className='col-span-3 flex flex-col gap-3'>
+        <div className='bg-white rounded h-fit p-4'>
+          <div>
+            <Table
+              dataSource={formatPurchaseData(
+                purchaseData,
+                removeItemFromPurchase,
+                changeInventoryRemoveQty,
+              )}
+              columns={purchaseColumns}
+              loading={fetching}
+              size='small'
+              pagination={false}
+            />
+          </div>
+          <div className='flex justify-between items-center mt-3'>
+            <div className='flex flex-col'>
+              <div className='text-sm text-gray-2'>Fecha</div>
+              <div className=''>{formatDateTime()}</div>
+            </div>
+            <div className='flex flex-col text-right'>
+              <div className='text-sm text-gray-2'>Total</div>
+              <div className=''>{'$ ' + getTotal() + ' COP'}</div>
+            </div>
+          </div>
+        </div>
+        <div className='flex gap-2'>
+          <Button type='primary' onClick={saveAndPrint} loading={loading}>
+            Guardar & imprimir
+          </Button>
+          <Button type='primary' danger onClick={cancelPurchaseData}>
+            Cancelar
+          </Button>
         </div>
       </div>
+      <SelectShopPurchaseForm
+        isVisible={selectShopVisible}
+        onSuccessCallback={getSelectedShop}
+        onCancelCallback={() => setSelectShopVisible(false)}
+        shops={shops}
+      />
     </div>
   )
 }

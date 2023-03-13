@@ -1,7 +1,8 @@
 import { FC, useEffect, useState } from 'react'
 import { axiosRequest } from '../../api/api'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
-import { DataPropsForm } from '../../types/AuthTypes'
+import { formatDateTime } from '../../layouts/helpers/helpers'
+import { DataPropsForm } from '../../types/GlobalTypes'
 import { activitiesURL } from '../../utils/network'
 import { columns } from './data/columnsData'
 import { IActivitiesProps } from './types/UserActivities'
@@ -25,6 +26,7 @@ const UserActivities: FC = () => {
       if (response) {
         const data = response.data.results.map((item) => ({
           ...item,
+          created_at: formatDateTime(item.created_at),
           key: item.id,
         }))
         setUserActivities(data)

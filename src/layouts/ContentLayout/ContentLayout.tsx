@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, ReactNode } from 'react'
 import { Table } from 'antd'
-import { DataPropsForm } from '../../types/AuthTypes'
+import { DataPropsForm } from '../../types/GlobalTypes'
 import Search from 'antd/es/input/Search'
 
 interface IContentLayoutProps {

@@ -1,7 +1,7 @@
 import { FC, useState } from 'react'
 import { useGetGroups } from '../../hooks/useGetGroups'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
-import { DataPropsForm } from '../../types/AuthTypes'
+import { DataPropsForm } from '../../types/GlobalTypes'
 import AddInventoryForm from './components/AddInventoryForm'
 import { Button } from 'antd'
 import AddInventoryFormCSV from './components/AddInventoryFormCSV'

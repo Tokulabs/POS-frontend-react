@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { Form, Input, Button } from 'antd'
 import { Link } from 'react-router-dom'
-import { DataPropsForm } from '../../types/AuthTypes'
+import { DataPropsForm } from '../../types/GlobalTypes'
 
 interface IAuthComponentProps {
   titleText?: string

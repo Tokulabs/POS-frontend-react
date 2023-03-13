@@ -1,5 +1,5 @@
 export interface IModalFormProps {
   isVisible?: boolean
-  onSuccessCallback: () => void
+  onSuccessCallback: (data?: number) => void
   onCancelCallback: () => void
 }

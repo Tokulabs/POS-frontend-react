@@ -1,4 +1,4 @@
-import { DataPropsForm } from '../../../types/AuthTypes'
+import { DataPropsForm } from '../../../types/GlobalTypes'
 
 export interface IShopProps {
   id: number

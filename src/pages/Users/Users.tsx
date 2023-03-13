@@ -1,7 +1,8 @@
 import { FC, useEffect, useState } from 'react'
 import { axiosRequest } from '../../api/api'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
-import { DataPropsForm } from '../../types/AuthTypes'
+import { formatDateTime } from '../../layouts/helpers/helpers'
+import { DataPropsForm } from '../../types/GlobalTypes'
 import { usersURL } from '../../utils/network'
 import AddUserForm from './components/AddUserForm'
 import { columns } from './data/columsData'
@@ -33,6 +34,7 @@ const Users: FC = () => {
         const data = response.data.results.map((item) => ({
           ...item,
           key: item.id,
+          created_at: formatDateTime(item.created_at),
           is_active: item.is_active.toString(),
         }))
         setUser(data)

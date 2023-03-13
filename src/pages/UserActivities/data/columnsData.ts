@@ -15,7 +15,7 @@ export const columns = [
     key: 'action',
   },
   {
-    title: 'Fecha',
+    title: 'Fecha de creación',
     dataIndex: 'created_at',
     key: 'created_at',
   },

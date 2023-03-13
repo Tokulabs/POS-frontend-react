@@ -1,6 +1,6 @@
 import { FC, useState } from 'react'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
-import { DataPropsForm } from '../../types/AuthTypes'
+import { DataPropsForm } from '../../types/GlobalTypes'
 import AddGroupForm from './components/AddGroupForm'
 import { useGetGroups } from './../../hooks/useGetGroups'
 import { getGroups } from '../../hooks/helper/functions'

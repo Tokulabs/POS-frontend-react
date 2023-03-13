@@ -10,6 +10,7 @@ module.exports = {
         },
         gray: {
           1: '#b2bec3',
+          2: '#757575',
         },
         background: {
           main: '#E5E5E5',

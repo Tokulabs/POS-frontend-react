@@ -1,6 +1,7 @@
 import { notification } from 'antd'
 import axios, { AxiosResponse } from 'axios'
-import { DataPropsForm, IAuthToken, ICustomAxiosError } from '../types/AuthTypes'
+import { IAuthToken, ICustomAxiosError } from '../types/AuthTypes'
+import { DataPropsForm } from '../types/GlobalTypes'
 import { tokenName } from '../utils/constants'
 
 interface IAxiosRequestProps {

@@ -1,8 +1,8 @@
-import { FC, useEffect, useState } from 'react'
-import { axiosRequest } from '../../api/api'
+import { FC, useState } from 'react'
+import { getShops } from '../../hooks/helper/functions'
+import { useGetShops } from '../../hooks/useGetShops'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
-import { DataPropsForm } from '../../types/AuthTypes'
-import { shopURL } from '../../utils/network'
+import { DataPropsForm } from '../../types/GlobalTypes'
 import AddUserForm from './components/AddShopForm'
 import { columns } from './data/columnsData'
 import { IShopProps } from './types/ShopTypes'
@@ -12,37 +12,12 @@ const Shops: FC = () => {
   const [fetching, setFetching] = useState(false)
   const [shops, setShops] = useState<IShopProps[]>()
 
-  useEffect(() => {
-    getShops()
-  }, [])
-
   const onCreateUSer = () => {
     setModalState(false)
-    getShops()
+    getShops(setShops, setFetching)
   }
 
-  const getShops = async () => {
-    try {
-      setFetching(true)
-      const response = await axiosRequest<{ results: IShopProps[] }>({
-        url: shopURL,
-        hasAuth: true,
-        showError: false,
-      })
-      if (response) {
-        const data = response.data.results.map((item) => ({
-          ...item,
-          key: item.id,
-          created_by_email: String(item.created_by.email),
-        }))
-        setShops(data)
-      }
-    } catch (e) {
-      console.log(e)
-    } finally {
-      setFetching(false)
-    }
-  }
+  useGetShops(setShops, setFetching)
 
   return (
     <>
