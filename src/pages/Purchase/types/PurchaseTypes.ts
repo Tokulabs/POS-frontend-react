@@ -2,6 +2,7 @@ import { IModalFormProps } from '../../../types/ModalTypes'
 import { IShopProps } from './../../Shops/types/ShopTypes'
 
 export interface IPurchaseProps {
+  code: string
   id: number
   item: string
   qty: number

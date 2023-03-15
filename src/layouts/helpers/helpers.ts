@@ -1,5 +1,5 @@
-export const formatDateTime = (dateString?: string | undefined) => {
-  if (!dateString) return getDateFormated()
+export const formatDateTime = (dateString?: string | undefined, haveHour?: boolean) => {
+  if (!dateString) return getDateFormated(haveHour)
   const date = new Date(dateString)
   date.setHours(date.getHours())
 
@@ -18,13 +18,21 @@ export const formatDateTime = (dateString?: string | undefined) => {
   return formattedDate
 }
 
-const getDateFormated = () => {
+const getDateFormated = (haveHour?: boolean) => {
   const date = new Date()
   const dia = date.getDate()
   const mes = date.getMonth() + 1
   const anio = date.getFullYear()
+  const hour = date.getHours()
+  const minute = date.getMinutes()
+
   const fechaFormateada = `${dia.toString().padStart(2, '0')}/${mes
     .toString()
     .padStart(2, '0')}/${anio.toString()}`
+  if (haveHour) {
+    const hourFormatted = hour.toString().padStart(2, '0')
+    const minuteFormatted = minute.toString().padStart(2, '0')
+    return `${fechaFormateada} ${hourFormatted}:${minuteFormatted}`
+  }
   return fechaFormateada
 }

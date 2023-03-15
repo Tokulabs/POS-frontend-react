@@ -26,8 +26,8 @@ const UserActivities: FC = () => {
       if (response) {
         const data = response.data.results.map((item) => ({
           ...item,
-          created_at: formatDateTime(item.created_at),
           key: item.id,
+          created_at: formatDateTime(item.created_at),
         }))
         setUserActivities(data)
       }

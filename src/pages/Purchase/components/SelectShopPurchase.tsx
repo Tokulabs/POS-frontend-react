@@ -11,7 +11,10 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
   shops,
 }) => {
   const [form] = useForm()
-  const [loading, setLoading] = useState(false)
+  const [loading] = useState(false)
+  const initialValues = {
+    shop_id: '',
+  }
 
   const onSubmit = async (values: DataPropsForm) => {
     form.resetFields()
@@ -28,10 +31,13 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
       footer={false}
       maskClosable={false}
     >
-      <Form layout='vertical' onFinish={onSubmit} form={form}>
-        <Form.Item label='Tienda' name='shop_id'>
+      <Form layout='vertical' onFinish={onSubmit} form={form} initialValues={initialValues}>
+        <Form.Item
+          label='Tienda'
+          name='shop_id'
+          rules={[{ required: true, message: 'Campo requerido' }]}
+        >
           <Select
-            defaultValue=''
             placeholder='Seleccionar tienda'
             options={[
               {

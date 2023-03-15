@@ -1,9 +1,10 @@
 import { FC } from 'react'
+import SummaryData from './components/SummaryData'
 
 const Home: FC = () => {
   return (
     <div>
-      <h1>Home</h1>
+      <SummaryData />
     </div>
   )
 }

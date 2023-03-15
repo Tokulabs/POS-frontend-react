@@ -35,6 +35,7 @@ const Users: FC = () => {
           ...item,
           key: item.id,
           created_at: formatDateTime(item.created_at),
+          last_login: item.last_login ? formatDateTime(item.last_login) : 'N/A',
           is_active: item.is_active.toString(),
         }))
         setUser(data)
