@@ -12,5 +12,6 @@ export const shopURL = baseURL + 'app/shop'
 export const activitiesURL = baseURL + 'user/activities'
 export const invoiceURL = baseURL + 'app/invoice'
 export const summaryURL = baseURL + 'app/summary'
+export const topSellURL = baseURL + 'app/top-selling'
 
 export const cloudinaryURL = 'https://api.cloudinary.com/v1_1/de4vbdzth/upload'

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { axiosRequest } from '../../../api/api'
 import { summaryURL } from '../../../utils/network'
-import { dataSummary, ISummaryDataProps } from '../data/dataSummary'
+import { dataSummary } from '../data/dataSummary'
+import { ISummaryDataProps } from '../types/DashboardTypes'
 import SummaryDataItem from './SummaryDataItem'
 
 const SummaryData = () => {
@@ -14,7 +15,6 @@ const SummaryData = () => {
       const response = await axiosRequest({
         url: summaryURL,
         hasAuth: true,
-        showError: false,
       })
       if (response) {
         const result = response.data as { [key: string]: number }
@@ -38,7 +38,7 @@ const SummaryData = () => {
     getSummaryData()
   }, [])
   return (
-    <div className='grid grid-cols-4 gap-3'>
+    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3'>
       {Object.values(summaryData).map((item, index) => (
         <SummaryDataItem key={index} props={item} loading={loading} />
       ))}

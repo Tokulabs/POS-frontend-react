@@ -16,6 +16,7 @@ export interface IInventoryProps {
   remaining: number
   price: number
   photo: string
+  sum_of_item?: number
 }
 
 export enum ModalStateEnum {
