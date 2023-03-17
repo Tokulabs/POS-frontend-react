@@ -17,3 +17,13 @@ export interface ITopSellingProps {
   icon: (props: TablerIconsProps) => JSX.Element
   color?: string
 }
+export interface ISaleByShopProps {
+  amount_total: number
+  name: string
+  color?: string
+}
+
+export interface IPurchaseSummaryProps {
+  count: number
+  price: number
+}
