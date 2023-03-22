@@ -19,6 +19,13 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
   const [imageUrl, setImageurl] = useState<string | null>('')
   const fileSelect = useRef<HTMLInputElement>(null)
 
+  const initialValues = {
+    name: '',
+    total: '',
+    price: 0,
+    group_id: '',
+  }
+
   const onSubmit = async (values: DataPropsForm) => {
     try {
       setLoading(true)
@@ -76,7 +83,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
     <Modal
       title='Nuevos items'
       open={isVisible}
-      onOk={onSuccessCallback}
+      onOk={() => onSuccessCallback}
       onCancel={() => {
         onCancelCallback()
         form.resetFields()
@@ -84,7 +91,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
       footer={false}
       maskClosable={false}
     >
-      <Form layout='vertical' onFinish={onSubmit} form={form}>
+      <Form layout='vertical' onFinish={onSubmit} form={form} initialValues={initialValues}>
         <Form.Item name=''>
           <div className='w-full flex justify-center text-white'>
             <div
@@ -137,9 +144,12 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
         >
           <Input placeholder='Precio uniario' type='number' min={1} />
         </Form.Item>
-        <Form.Item label='Categoria' name='group_id'>
+        <Form.Item
+          label='Categoria'
+          name='group_id'
+          rules={[{ required: true, message: 'La categoria es requerida' }]}
+        >
           <Select
-            defaultValue=''
             placeholder='Selecciona una categoria'
             options={[
               {

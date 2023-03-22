@@ -1,5 +1,10 @@
-export const formatDateTime = (dateString?: string | undefined, haveHour?: boolean) => {
-  if (!dateString) return getDateFormated(haveHour)
+export const formatDateTime = (
+  dateString?: string | undefined,
+  haveHour?: boolean,
+  isLongFormat?: boolean,
+) => {
+  if (!dateString) return getDateFormated(undefined, haveHour)
+  if (!isLongFormat && haveHour) return getDateFormated(dateString, haveHour)
   const date = new Date(dateString)
   date.setHours(date.getHours())
 
@@ -18,8 +23,8 @@ export const formatDateTime = (dateString?: string | undefined, haveHour?: boole
   return formattedDate
 }
 
-const getDateFormated = (haveHour?: boolean) => {
-  const date = new Date()
+const getDateFormated = (dateString: string | undefined, haveHour?: boolean) => {
+  const date = dateString ? new Date(dateString) : new Date()
   const dia = date.getDate()
   const mes = date.getMonth() + 1
   const anio = date.getFullYear()

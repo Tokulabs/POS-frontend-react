@@ -1,6 +1,6 @@
 import { FC, useState } from 'react'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
-import { DataPropsForm } from '../../types/GlobalTypes'
+import { DataPropsForm, IPaginationProps } from '../../types/GlobalTypes'
 import AddGroupForm from './components/AddGroupForm'
 import { useGetGroups } from './../../hooks/useGetGroups'
 import { getGroups } from '../../hooks/helper/functions'
@@ -10,13 +10,26 @@ import { IGroupsProps } from './types/GroupTypes'
 const Users: FC = () => {
   const [modalState, setModalState] = useState(false)
   const [fetching, setFetching] = useState(false)
-  const [groups, setGroups] = useState<IGroupsProps[]>([])
+  const [groups, setGroups] = useState<IPaginationProps<IGroupsProps>>(
+    {} as IPaginationProps<IGroupsProps>,
+  )
+  const [groupsForSelect, setGroupsForSelect] = useState<IPaginationProps<IGroupsProps>>(
+    {} as IPaginationProps<IGroupsProps>,
+  )
+  const [currentPage, setcurrentPage] = useState(1)
 
-  useGetGroups(setGroups, setFetching)
+  useGetGroups(setGroups, setFetching, 1)
+  useGetGroups(setGroupsForSelect, setFetching, undefined, [groups.count])
 
   const onCreateGroup = () => {
     setModalState(false)
-    getGroups(setGroups, setFetching)
+    getGroups(setGroups, setFetching, 1)
+    setcurrentPage(1)
+  }
+
+  const onChangePagination = (page: number) => {
+    getGroups(setGroups, setFetching, page)
+    setcurrentPage(page)
   }
 
   return (
@@ -25,15 +38,18 @@ const Users: FC = () => {
         pageTitle='Categorias'
         buttonTitle='+ Categoria'
         setModalState={setModalState}
-        dataSource={groups as unknown as DataPropsForm[]}
+        dataSource={groups?.results as unknown as DataPropsForm[]}
         columns={columns}
         fetching={fetching}
+        totalItems={groups?.count || 0}
+        currentPage={currentPage}
+        onChangePage={(page) => onChangePagination(page)}
       >
         <AddGroupForm
           onSuccessCallback={onCreateGroup}
           isVisible={modalState}
           onCancelCallback={() => setModalState(false)}
-          groups={groups}
+          groups={groupsForSelect?.results || []}
         />
       </ContentLayout>
     </>

@@ -2,17 +2,22 @@ import { axiosRequest } from '../../api/api'
 import { formatDateTime } from '../../layouts/helpers/helpers'
 import { IGroupsProps } from '../../pages/Groups/types/GroupTypes'
 import { IInventoryProps } from '../../pages/Inventories/types/InventoryTypes'
-import { groupURL, inventoryURL, shopURL } from '../../utils/network'
+import { IInvoiceProps } from '../../pages/Invoices/types/InvoicesTypes'
+import { IPaginationProps } from '../../types/GlobalTypes'
+import { groupURL, inventoryURL, invoiceURL, shopURL } from '../../utils/network'
 import { IShopProps } from './../../pages/Shops/types/ShopTypes'
 
 export const getGroups = async (
-  setGroup: (data: IGroupsProps[]) => void,
+  setGroup: (data: IPaginationProps<IGroupsProps>) => void,
   setFetching: (val: boolean) => void,
+  page?: number,
 ) => {
   try {
     setFetching(true)
-    const response = await axiosRequest<{ results: IGroupsProps[] }>({
-      url: groupURL,
+    const finalURL = new URL(groupURL)
+    if (page) finalURL.searchParams.append('page', String(page))
+    const response = await axiosRequest<IPaginationProps<IGroupsProps>>({
+      url: finalURL,
       hasAuth: true,
       showError: false,
     })
@@ -23,7 +28,7 @@ export const getGroups = async (
         created_at: formatDateTime(item.created_at),
         belongsTo: item.belongs_to ? item.belongs_to.name : 'No aplica',
       }))
-      setGroup(data)
+      setGroup({ ...response.data, results: data })
     }
   } catch (e) {
     console.log(e)
@@ -33,13 +38,16 @@ export const getGroups = async (
 }
 
 export const getInventories = async (
-  setInventories: (data: IInventoryProps[]) => void,
+  setInventories: (data: IPaginationProps<IInventoryProps>) => void,
   setFetching: (val: boolean) => void,
+  page = 1,
 ) => {
   try {
     setFetching(true)
-    const response = await axiosRequest<{ results: IInventoryProps[] }>({
-      url: inventoryURL,
+    const finalURL = new URL(inventoryURL)
+    finalURL.searchParams.append('page', String(page))
+    const response = await axiosRequest<IPaginationProps<IInventoryProps>>({
+      url: finalURL,
       hasAuth: true,
       showError: false,
     })
@@ -51,7 +59,7 @@ export const getInventories = async (
         groupInfo: item.group?.name,
         photoInfo: item.photo,
       }))
-      setInventories(data)
+      setInventories({ ...response.data, results: data })
     }
   } catch (e) {
     console.log(e)
@@ -61,13 +69,16 @@ export const getInventories = async (
 }
 
 export const getShops = async (
-  setShops: (data: IShopProps[]) => void,
+  setShops: (data: IPaginationProps<IShopProps>) => void,
   setFetching: (val: boolean) => void,
+  page = 1,
 ) => {
   try {
     setFetching(true)
-    const response = await axiosRequest<{ results: IShopProps[] }>({
-      url: shopURL,
+    const finalURL = new URL(shopURL)
+    finalURL.searchParams.append('page', String(page))
+    const response = await axiosRequest<IPaginationProps<IShopProps>>({
+      url: finalURL,
       hasAuth: true,
       showError: false,
     })
@@ -78,7 +89,44 @@ export const getShops = async (
         created_at: formatDateTime(item.created_at),
         created_by_email: String(item.created_by.email),
       }))
-      setShops(data)
+      setShops({ ...response.data, results: data })
+    }
+  } catch (e) {
+    console.log(e)
+  } finally {
+    setFetching(false)
+  }
+}
+
+export const getInvoices = async (
+  setInvoices: (data: IPaginationProps<IInvoiceProps>) => void,
+  setFetching: (val: boolean) => void,
+  page = 1,
+) => {
+  try {
+    setFetching(true)
+    const finalURL = new URL(invoiceURL)
+    finalURL.searchParams.append('page', String(page))
+    const response = await axiosRequest<IPaginationProps<IInvoiceProps>>({
+      url: finalURL,
+      hasAuth: true,
+      showError: false,
+    })
+    if (response) {
+      const dataFormatted: IInvoiceProps[] = response.data.results.map((item: any) => ({
+        ...item,
+        key: item.id,
+        created_by_email: item.created_by.email,
+        shop_name: item.shop.name,
+        invoices_items: item.invoice_items.map((itemInvoice: any) => ({
+          id: itemInvoice.id,
+          price: itemInvoice.amount,
+          qty: itemInvoice.quantity,
+          item: itemInvoice.item_name,
+          total: itemInvoice.amount * itemInvoice.quantity,
+        })),
+      }))
+      setInvoices({ ...response.data, results: dataFormatted })
     }
   } catch (e) {
     console.log(e)

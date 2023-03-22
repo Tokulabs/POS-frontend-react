@@ -41,7 +41,7 @@ const AddShopsForm: FC<IModalFormProps> = ({
     <Modal
       title='Crear usuario'
       open={isVisible}
-      onOk={onSuccessCallback}
+      onOk={() => onSuccessCallback}
       onCancel={() => {
         onCancelCallback()
         form.resetFields()

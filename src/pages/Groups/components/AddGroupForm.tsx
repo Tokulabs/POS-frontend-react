@@ -14,9 +14,13 @@ const AddGroupForm: FC<IAddGroupFormProps> = ({
 }) => {
   const [form] = useForm()
   const [loading, setLoading] = useState(false)
+  const initialValues = {
+    name: '',
+  }
 
   const onSubmit = async (values: DataPropsForm) => {
     try {
+      console.log(values)
       setLoading(true)
       const response = await axiosRequest({
         method: 'post',
@@ -42,7 +46,7 @@ const AddGroupForm: FC<IAddGroupFormProps> = ({
     <Modal
       title='Crear Categoria'
       open={isVisible}
-      onOk={onSuccessCallback}
+      onOk={() => onSuccessCallback}
       onCancel={() => {
         onCancelCallback()
         form.resetFields()
@@ -50,7 +54,7 @@ const AddGroupForm: FC<IAddGroupFormProps> = ({
       footer={false}
       maskClosable={false}
     >
-      <Form layout='vertical' onFinish={onSubmit} form={form}>
+      <Form layout='vertical' onFinish={onSubmit} form={form} initialValues={initialValues}>
         <Form.Item
           label='Nueva categoria'
           name='name'
@@ -60,13 +64,8 @@ const AddGroupForm: FC<IAddGroupFormProps> = ({
         </Form.Item>
         <Form.Item label='Categoria Padre' name='belongs_to_id'>
           <Select
-            defaultValue=''
             placeholder='Selecciona una categoria'
             options={[
-              {
-                value: '',
-                label: 'Selecciona una categoria',
-              },
               ...groups.map((item) => ({
                 value: item.id,
                 label: item.name,

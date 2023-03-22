@@ -12,3 +12,10 @@ export interface DataPropsForm {
     | null
     | DataPropsForm[]
 }
+
+export interface IPaginationProps<T> {
+  count: number
+  next: string | null
+  previous: string | null
+  results: T[]
+}

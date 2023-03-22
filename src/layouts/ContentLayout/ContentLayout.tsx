@@ -10,8 +10,11 @@ interface IContentLayoutProps {
   dataSource: DataPropsForm[] | undefined
   columns: DataPropsForm[]
   fetching: boolean
-  extraButton?: ReactNode
+  totalItems: number
   disabledAddButton?: boolean
+  currentPage: number
+  extraButton?: ReactNode
+  onChangePage?: (page: number) => void
 }
 
 const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
@@ -24,6 +27,9 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
   children,
   extraButton,
   disabledAddButton = false,
+  totalItems,
+  currentPage,
+  onChangePage = () => null,
 }) => {
   return (
     <>
@@ -46,7 +52,19 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
             {extraButton}
           </div>
         </div>
-        <Table dataSource={dataSource} columns={columns} loading={fetching} size='small' />
+        <Table
+          dataSource={dataSource}
+          columns={columns}
+          loading={fetching}
+          size='small'
+          pagination={{
+            current: currentPage,
+            total: totalItems,
+            size: 'small',
+            onChange: (page) => onChangePage(page),
+            showSizeChanger: false,
+          }}
+        />
       </div>
       {children}
     </>

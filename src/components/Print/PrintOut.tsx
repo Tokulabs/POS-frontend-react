@@ -3,10 +3,11 @@ import { formatDateTime } from '../../layouts/helpers/helpers'
 import { IPurchaseProps } from '../../pages/Purchase/types/PurchaseTypes'
 import { getTotal } from './../../pages/Purchase/helpers/PurchaseHelpers'
 
-const PrintOut: FC<{ data: IPurchaseProps[]; user: string; shopName: string }> = ({
+const PrintOut: FC<{ data: IPurchaseProps[]; user: string; shopName: string; date?: string }> = ({
   data,
   user,
   shopName,
+  date,
 }) => {
   const { iva, subTotalBase, total } = getTotal(data)
 
@@ -28,7 +29,9 @@ const PrintOut: FC<{ data: IPurchaseProps[]; user: string; shopName: string }> =
         </p>
         <section className='flex justify-between items-center w-full'>
           <p className='m-0 text-xs text-start'>D. E ./P. O. S {shopName}-[numero C]</p>
-          <p className='m-0 text-xs text-start'>Fec. {formatDateTime(undefined, true)}</p>
+          <p className='m-0 text-xs text-start'>
+            Fec. {date ? formatDateTime(date, true, false) : formatDateTime(undefined, true)}
+          </p>
         </section>
       </section>
       <article>

@@ -6,7 +6,7 @@ import { tokenName } from '../utils/constants'
 
 interface IAxiosRequestProps {
   method?: 'get' | 'post' | 'patch' | 'delete'
-  url: string
+  url: string | URL
   payload?: DataPropsForm | FormData
   hasAuth?: boolean
   showError?: boolean
@@ -32,11 +32,11 @@ export const axiosRequest = async <T>({
   showError = true,
 }: IAxiosRequestProps): Promise<AxiosResponse<T> | null> => {
   const headers = hasAuth ? getAuthToken() : {}
-
+  const urlStr = url instanceof URL ? url.toString() : url
   try {
     const response: AxiosResponse<T> = await axios({
       method,
-      url,
+      url: urlStr,
       data: payload,
       headers: { ...headers },
     })
