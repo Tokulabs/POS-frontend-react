@@ -6,8 +6,10 @@ import { getShops } from './helper/functions'
 export const useGetShops = async (
   setshops: (data: IPaginationProps<IShopProps>) => void,
   setFetching: (val: boolean) => void,
+  page?: number,
+  dependencies?: Array<string | boolean | number>,
 ) => {
   useEffect(() => {
-    getShops(setshops, setFetching)
-  }, [])
+    getShops(setshops, setFetching, page)
+  }, dependencies || [])
 }

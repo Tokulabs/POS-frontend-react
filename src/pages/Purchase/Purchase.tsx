@@ -2,7 +2,7 @@ import { ChangeEvent, FC, useState, useRef, useContext } from 'react'
 import { Button, Input, notification, Table } from 'antd'
 import { useGetInventories } from '../../hooks/useGetInventories'
 import { formatinventoryPhoto } from '../Inventories/Inventories'
-import { DataPropsForm, IPurchaseAddRemoveProps } from '../../types/GlobalTypes'
+import { DataPropsForm, IPaginationProps, IPurchaseAddRemoveProps } from '../../types/GlobalTypes'
 import { IPurchaseProps } from './types/PurchaseTypes'
 import { inventoryColumns, purchaseColumns } from './data/columnsData'
 import { IInventoryProps } from '../Inventories/types/InventoryTypes'
@@ -17,6 +17,8 @@ import { useReactToPrint } from 'react-to-print'
 import { getTotal } from './helpers/PurchaseHelpers'
 import Clock from '../../components/Clock/Clock'
 import { store } from '../../store'
+import { getInventories } from '../../hooks/helper/functions'
+import { formatNumberToColombianPesos } from '../../utils/helpers'
 
 const formatInventoryAction = (
   inventories: DataPropsForm[],
@@ -71,19 +73,20 @@ const formatPurchaseData = (
 
 const Purchase: FC = () => {
   const [fetching, setFetching] = useState(false)
-  const [inventories, setInventories] = useState<IInventoryProps[]>([])
+  const [inventories, setInventories] = useState<IPaginationProps<IInventoryProps>>()
   const [purchaseData, setPurchaseData] = useState<IPurchaseProps[]>([])
   const [purchaseItemQty, setPurchaseItemQty] = useState<IPurchaseAddRemoveProps>({})
   const [purchaseItemDataQty, setPurchaseItemDataQty] = useState<IPurchaseAddRemoveProps>({})
-  const [shops, setShops] = useState<IShopProps[]>([])
+  const [shops, setShops] = useState<IPaginationProps<IShopProps>>()
   const [selectShopVisible, setSelectShopVisible] = useState(false)
   const [loading, setLoading] = useState(false)
   const [showPrintOut, setShowPrintOut] = useState(false)
   const [purchaseDone, setPurchaseDone] = useState(false)
   const [shopId, setShopId] = useState(0)
+  const [currentPage, setcurrentPage] = useState(1)
 
   const printOutRef = useRef<HTMLDivElement>(null)
-  const getShopName = shops.find((shop) => shop.id === shopId)?.name || ''
+  const getShopName = shops?.results.find((shop) => shop.id === shopId)?.name || ''
 
   const { state } = useContext(store)
   useGetShops(setShops, () => null)
@@ -195,6 +198,7 @@ const Purchase: FC = () => {
       clearPurchaseData()
       setPurchaseDone(!purchaseDone)
       setShopId(0)
+      setcurrentPage(1)
     }
   }
 
@@ -214,6 +218,11 @@ const Purchase: FC = () => {
       console.log('impresion exitosa')
     },
   })
+
+  const onChangePagination = (page: number) => {
+    getInventories(setInventories, setFetching, page)
+    setcurrentPage(page)
+  }
 
   return (
     <div className='grid grid-cols-8 gap-6'>
@@ -235,13 +244,20 @@ const Purchase: FC = () => {
         </div>
         <Table
           dataSource={formatInventoryAction(
-            formatinventoryPhoto(inventories),
+            formatinventoryPhoto(inventories?.results || []),
             addItemPurchase,
             changeInventoryAddQty,
           )}
           columns={inventoryColumns}
           loading={fetching}
           size='small'
+          pagination={{
+            current: currentPage,
+            total: inventories?.count || 0,
+            size: 'small',
+            onChange: (page) => onChangePagination(page),
+            showSizeChanger: false,
+          }}
         />
       </div>
       <div className='col-span-3'>
@@ -255,7 +271,6 @@ const Purchase: FC = () => {
                   changeInventoryRemoveQty,
                 )}
                 columns={purchaseColumns}
-                loading={fetching}
                 size='small'
                 pagination={false}
               />
@@ -267,7 +282,9 @@ const Purchase: FC = () => {
               </div>
               <div className='flex flex-col text-right'>
                 <div className='text-sm text-gray-2'>Total</div>
-                <div className=''>{'$ ' + getTotal(purchaseData).total + ' COP'}</div>
+                <div className=''>
+                  {formatNumberToColombianPesos(getTotal(purchaseData).total) + ' COP'}
+                </div>
               </div>
             </div>
           </div>
@@ -285,7 +302,7 @@ const Purchase: FC = () => {
         isVisible={selectShopVisible}
         onSuccessCallback={submitInvoice}
         onCancelCallback={() => setSelectShopVisible(false)}
-        shops={shops}
+        shops={shops?.results || []}
       />
       <div ref={printOutRef}>
         {showPrintOut ? (

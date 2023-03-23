@@ -71,12 +71,12 @@ export const getInventories = async (
 export const getShops = async (
   setShops: (data: IPaginationProps<IShopProps>) => void,
   setFetching: (val: boolean) => void,
-  page = 1,
+  page?: number,
 ) => {
   try {
     setFetching(true)
     const finalURL = new URL(shopURL)
-    finalURL.searchParams.append('page', String(page))
+    if (page) finalURL.searchParams.append('page', String(page))
     const response = await axiosRequest<IPaginationProps<IShopProps>>({
       url: finalURL,
       hasAuth: true,

@@ -10,10 +10,12 @@ import { getInventories } from '../../hooks/helper/functions'
 import { columns } from './data/columnsData'
 import { IInventoryProps, ModalStateEnum } from './types/InventoryTypes'
 import { IGroupsProps } from '../Groups/types/GroupTypes'
+import { formatNumberToColombianPesos } from '../../utils/helpers'
 
 export const formatinventoryPhoto = (inventories: IInventoryProps[]) => {
   return inventories.map((item) => ({
     ...item,
+    price: formatNumberToColombianPesos(item.price),
     photoInfo: (
       <img
         className='w-16 h-16 object-contain overflow-hidden hover:scale-150 transition-all transform-gpu'

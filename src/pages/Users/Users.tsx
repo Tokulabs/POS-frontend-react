@@ -14,6 +14,8 @@ const Users: FC = () => {
   const [users, setUser] = useState<IPaginationProps<IUserProps>>()
   const [currentPage, setcurrentPage] = useState(1)
 
+  const mainPage = 1
+
   useEffect(() => {
     getUsers()
   }, [])
@@ -21,10 +23,10 @@ const Users: FC = () => {
   const onCreateUSer = () => {
     setModalState(false)
     getUsers()
-    setcurrentPage(1)
+    setcurrentPage(mainPage)
   }
 
-  const getUsers = async (page = 1) => {
+  const getUsers = async (page = mainPage) => {
     try {
       setFetching(true)
       const finalURL = new URL(usersURL)

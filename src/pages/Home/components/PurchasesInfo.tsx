@@ -1,6 +1,7 @@
 import { Spin } from 'antd'
 import { useEffect, useState } from 'react'
 import { axiosRequest } from '../../../api/api'
+import { formatNumberToColombianPesos } from '../../../utils/helpers'
 import { purchaseSummaryURL } from '../../../utils/network'
 import { IPurchaseSummaryProps } from '../types/DashboardTypes'
 
@@ -40,7 +41,9 @@ const PurchasesInfo = () => {
       ) : (
         <section className='flex flex-col gap-5'>
           <div className='flex flex-col'>
-            <p className='m-0 font-bold text-2xl'>COP {dataPurchaseSummary.price}</p>
+            <p className='m-0 font-bold text-2xl'>
+              {formatNumberToColombianPesos(dataPurchaseSummary.price)} COP
+            </p>
             <span className='text-gray-2 text-sm'>(Valor)</span>
           </div>
           <div>

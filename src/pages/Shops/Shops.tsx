@@ -13,12 +13,14 @@ const Shops: FC = () => {
   const [shops, setShops] = useState<IPaginationProps<IShopProps>>()
   const [currentPage, setcurrentPage] = useState(1)
 
-  useGetShops(setShops, setFetching)
+  const mainPage = 1
+
+  useGetShops(setShops, setFetching, mainPage)
 
   const onCreateUSer = () => {
     setModalState(false)
-    getShops(setShops, setFetching)
-    setcurrentPage(1)
+    getShops(setShops, setFetching, mainPage)
+    setcurrentPage(mainPage)
   }
 
   const onChangePagination = (page: number) => {

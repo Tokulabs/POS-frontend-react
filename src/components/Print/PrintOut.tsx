@@ -2,6 +2,8 @@ import { FC } from 'react'
 import { formatDateTime } from '../../layouts/helpers/helpers'
 import { IPurchaseProps } from '../../pages/Purchase/types/PurchaseTypes'
 import { getTotal } from './../../pages/Purchase/helpers/PurchaseHelpers'
+import LogoSignos from './../../assets/logos/signos_logo.png'
+import { formatNumberToColombianPesos } from '../../utils/helpers'
 
 const PrintOut: FC<{ data: IPurchaseProps[]; user: string; shopName: string; date?: string }> = ({
   data,
@@ -13,7 +15,7 @@ const PrintOut: FC<{ data: IPurchaseProps[]; user: string; shopName: string; dat
 
   return (
     <article className='bg-white flex flex-col w-80 justify-center items-center text-center p-4 gap-2'>
-      <div>[Logo Signos]</div>
+      <img src={LogoSignos} alt='Logo signos' className='w-full h-20 object-cover' />
       <h4>Signos Studio SAS</h4>
       <h5>NIT. 832004603-8</h5>
       <h5>COMPLEJO TURISTICO CATEDRAL DE SAL</h5>
@@ -48,7 +50,7 @@ const PrintOut: FC<{ data: IPurchaseProps[]; user: string; shopName: string; dat
                 <p className='m-0 text-left text-xs truncate'>{item.code}</p>
                 <p className='m-0 text-left text-xs uppercase'>{item.item}</p>
                 <p className='m-0 text-right text-xs'>{item.qty}</p>
-                <p className='m-0 text-right text-xs'>{item.total}</p>
+                <p className='m-0 text-right text-xs'>{formatNumberToColombianPesos(item.total)}</p>
               </div>
             )
           })}
@@ -61,10 +63,10 @@ const PrintOut: FC<{ data: IPurchaseProps[]; user: string; shopName: string; dat
             <p className='m-0 text-right text-sm'>Total</p>
           </section>
           <section className='text-xs text-right'>
-            <p className='m-0 text-right text-sm'>{subTotalBase}</p>
-            <p className='m-0 text-right text-sm'>{iva}</p>
+            <p className='m-0 text-right text-sm'>{formatNumberToColombianPesos(subTotalBase)}</p>
+            <p className='m-0 text-right text-sm'>{formatNumberToColombianPesos(iva)}</p>
             <p className='m-0 text-right text-sm'>0</p>
-            <p className='m-0 text-right text-sm'>{total}</p>
+            <p className='m-0 text-right text-sm'>{formatNumberToColombianPesos(total)}</p>
           </section>
         </section>
         <section className='grid grid-cols-4 w-full p-1'>

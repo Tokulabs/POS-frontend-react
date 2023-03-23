@@ -18,13 +18,15 @@ const Users: FC = () => {
   )
   const [currentPage, setcurrentPage] = useState(1)
 
-  useGetGroups(setGroups, setFetching, 1)
+  const mainPage = 1
+
+  useGetGroups(setGroups, setFetching, mainPage)
   useGetGroups(setGroupsForSelect, setFetching, undefined, [groups.count])
 
   const onCreateGroup = () => {
     setModalState(false)
-    getGroups(setGroups, setFetching, 1)
-    setcurrentPage(1)
+    getGroups(setGroups, setFetching, mainPage)
+    setcurrentPage(mainPage)
   }
 
   const onChangePagination = (page: number) => {
