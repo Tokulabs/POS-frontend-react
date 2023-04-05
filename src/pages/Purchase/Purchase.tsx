@@ -45,6 +45,13 @@ const formatInventoryAction = (
   }))
 }
 
+const formatDataToCop = (data: DataPropsForm[] | IPurchaseProps[]) => {
+  return data.map((item) => ({
+    ...item,
+    price: formatNumberToColombianPesos(item.price as number),
+  }))
+}
+
 const formatPurchaseData = (
   purchaseData: IPurchaseProps[],
   onRemoveItem: (inventoryId: number) => void,
@@ -53,7 +60,7 @@ const formatPurchaseData = (
   return purchaseData.map((item) => ({
     ...item,
     key: item.id,
-    total: item.price * item.qty,
+    total: formatNumberToColombianPesos(item.price * item.qty),
     action: (
       <div>
         <Input
@@ -243,10 +250,12 @@ const Purchase: FC = () => {
           </div>
         </div>
         <Table
-          dataSource={formatInventoryAction(
-            formatinventoryPhoto(inventories?.results || []),
-            addItemPurchase,
-            changeInventoryAddQty,
+          dataSource={formatDataToCop(
+            formatInventoryAction(
+              formatinventoryPhoto(inventories?.results || []),
+              addItemPurchase,
+              changeInventoryAddQty,
+            ),
           )}
           columns={inventoryColumns}
           loading={fetching}
@@ -265,10 +274,12 @@ const Purchase: FC = () => {
           <div className='bg-white rounded h-fit p-4'>
             <div>
               <Table
-                dataSource={formatPurchaseData(
-                  purchaseData,
-                  removeItemFromPurchase,
-                  changeInventoryRemoveQty,
+                dataSource={formatDataToCop(
+                  formatPurchaseData(
+                    purchaseData,
+                    removeItemFromPurchase,
+                    changeInventoryRemoveQty,
+                  ),
                 )}
                 columns={purchaseColumns}
                 size='small'
@@ -283,7 +294,7 @@ const Purchase: FC = () => {
               <div className='flex flex-col text-right'>
                 <div className='text-sm text-gray-2'>Total</div>
                 <div className=''>
-                  {formatNumberToColombianPesos(getTotal(purchaseData).total) + ' COP'}
+                  {formatNumberToColombianPesos(getTotal(purchaseData).total | 0) + ' COP'}
                 </div>
               </div>
             </div>

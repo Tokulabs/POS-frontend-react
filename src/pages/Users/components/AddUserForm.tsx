@@ -5,6 +5,7 @@ import { createUserURL } from './../../../utils/network'
 import { useForm } from 'antd/es/form/Form'
 import { axiosRequest } from '../../../api/api'
 import { IModalFormProps } from '../../../types/ModalTypes'
+import { UserRolesEnum } from '../types/UserTypes'
 
 const AddUserForm: FC<IModalFormProps> = ({
   isVisible = false,
@@ -41,7 +42,7 @@ const AddUserForm: FC<IModalFormProps> = ({
     <Modal
       title='Crear usuario'
       open={isVisible}
-      onOk={onSuccessCallback}
+      onOk={() => onSuccessCallback}
       onCancel={() => {
         onCancelCallback()
         form.resetFields()
@@ -71,9 +72,10 @@ const AddUserForm: FC<IModalFormProps> = ({
           <Select
             placeholder='Rol de usuario'
             options={[
-              { value: 'admin', label: 'Administrador' },
-              { value: 'creator', label: 'Creador' },
-              { value: 'sale', label: 'Ventas' },
+              { value: 'posAdmin', label: UserRolesEnum.posAdmin },
+              { value: 'shopAdmin', label: UserRolesEnum.shopAdmin },
+              { value: 'sales', label: UserRolesEnum.sales },
+              { value: 'supportSales', label: UserRolesEnum.supportSales },
             ]}
           />
         </Form.Item>

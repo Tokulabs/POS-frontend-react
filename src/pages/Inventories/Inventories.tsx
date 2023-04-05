@@ -15,13 +15,20 @@ import { formatNumberToColombianPesos } from '../../utils/helpers'
 export const formatinventoryPhoto = (inventories: IInventoryProps[]) => {
   return inventories.map((item) => ({
     ...item,
-    price: formatNumberToColombianPesos(item.price),
+    price: item.price,
     photoInfo: (
       <img
         className='w-16 h-16 object-contain overflow-hidden hover:scale-150 transition-all transform-gpu'
         src={item.photo}
       />
     ),
+  }))
+}
+
+const inventoriesDataFormated = (inventories: IInventoryProps[]) => {
+  return inventories.map((item) => ({
+    ...item,
+    price: formatNumberToColombianPesos(item.price),
   }))
 }
 
@@ -55,7 +62,7 @@ const Inventories: FC = () => {
         pageTitle='Administrador de Inventario'
         buttonTitle='+ Item'
         setModalState={() => setModalState(ModalStateEnum.addItem)}
-        dataSource={inventories?.results && formatinventoryPhoto(inventories.results)}
+        dataSource={inventoriesDataFormated(formatinventoryPhoto(inventories?.results || []))}
         columns={columns}
         fetching={fetching}
         totalItems={inventories?.count || 0}

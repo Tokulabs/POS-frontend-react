@@ -6,7 +6,7 @@ import { DataPropsForm, IPaginationProps } from '../../types/GlobalTypes'
 import { usersURL } from '../../utils/network'
 import AddUserForm from './components/AddUserForm'
 import { columns } from './data/columsData'
-import { IUserProps } from './types/UserTypes'
+import { IUserProps, UserRolesEnum } from './types/UserTypes'
 
 const Users: FC = () => {
   const [modalState, setModalState] = useState(false)
@@ -43,6 +43,7 @@ const Users: FC = () => {
           created_at: formatDateTime(item.created_at),
           last_login: item.last_login ? formatDateTime(item.last_login) : 'N/A',
           is_active: item.is_active.toString(),
+          role: UserRolesEnum[item.role as keyof typeof UserRolesEnum] || 'Rol desconocido',
         }))
         setUser({ ...response.data, results: data })
       }
