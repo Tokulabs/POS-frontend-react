@@ -52,7 +52,7 @@ const AddInventoryFormCSV: FC<IModalFormProps> = ({
     <Modal
       title='Agregar Productos (.csv)'
       open={isVisible}
-      onOk={onSuccessCallback}
+      onOk={() => onSuccessCallback}
       onCancel={() => {
         onCancelCallback()
         form.resetFields()
