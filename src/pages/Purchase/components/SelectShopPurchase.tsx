@@ -1,4 +1,4 @@
-import { Form, Modal, Select, Button } from 'antd'
+import { Form, Modal, Select, Button, Input } from 'antd'
 import { FC, useState } from 'react'
 import { DataPropsForm } from '../../../types/GlobalTypes'
 import { useForm } from 'antd/es/form/Form'
@@ -18,7 +18,7 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
 
   const onSubmit = async (values: DataPropsForm) => {
     form.resetFields()
-    onSuccessCallback(values.shop_id as number)
+    onSuccessCallback(values)
   }
   return (
     <Modal
@@ -50,6 +50,12 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
               })),
             ]}
           />
+        </Form.Item>
+        <Form.Item label='Nombre del cliente' name='customer_name'>
+          <Input placeholder='Nombre del cliente' type='text' />
+        </Form.Item>
+        <Form.Item label='Identificación del cliente' name='customer_id'>
+          <Input placeholder='Identificación del cliente' type='text' />
         </Form.Item>
         <Form.Item>
           <Button htmlType='submit' type='primary' block loading={loading}>

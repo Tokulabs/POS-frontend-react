@@ -1,16 +1,17 @@
 import { FC } from 'react'
 import { formatDateTime } from '../../layouts/helpers/helpers'
-import { IPurchaseProps } from '../../pages/Purchase/types/PurchaseTypes'
+import { ICustomerDataProps, IPurchaseProps } from '../../pages/Purchase/types/PurchaseTypes'
 import { getTotal } from './../../pages/Purchase/helpers/PurchaseHelpers'
 import LogoSignos from './../../assets/logos/signos_logo.png'
 import { formatNumberToColombianPesos } from '../../utils/helpers'
 
-const PrintOut: FC<{ data: IPurchaseProps[]; user: string; shopName: string; date?: string }> = ({
-  data,
-  user,
-  shopName,
-  date,
-}) => {
+const PrintOut: FC<{
+  data: IPurchaseProps[]
+  user: string
+  shopName: string
+  date?: string
+  customerData: ICustomerDataProps
+}> = ({ data, user, shopName, date, customerData }) => {
   const { iva, subTotalBase, total } = getTotal(data)
 
   return (
@@ -27,7 +28,7 @@ const PrintOut: FC<{ data: IPurchaseProps[]; user: string; shopName: string; dat
         </p>
         <p className='m-0 text-[0.75rem] mb-2'>habilita del [xxxxxxx] al [xxxxxx]</p>
         <p className='m-0 text-xs self-start'>
-          Nombre: [Nombre del cLiente] Nit: [Nit del cliente]
+          Nombre: {customerData.customerName} Nit: {customerData.customerId}
         </p>
         <section className='flex justify-between items-center w-full'>
           <p className='m-0 text-xs text-start'>D. E ./P. O. S {shopName}-[numero C]</p>
