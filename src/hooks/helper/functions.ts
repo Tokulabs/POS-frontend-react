@@ -118,6 +118,8 @@ export const getInvoices = async (
         key: item.id,
         created_by_email: item.created_by.email,
         shop_name: item.shop.name,
+        customer_id: item.customer_id,
+        customer_name: item.customer_name,
         invoices_items: item.invoice_items.map((itemInvoice: any) => ({
           id: itemInvoice.id,
           price: itemInvoice.amount,
