@@ -4,7 +4,7 @@ import PrintOut from '../../components/Print/PrintOut'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
 import { store } from '../../store'
 import { DataPropsForm, IPaginationProps } from '../../types/GlobalTypes'
-import { IPurchaseProps } from '../Purchase/types/PurchaseTypes'
+import { ICustomerDataProps, IPurchaseProps } from '../Purchase/types/PurchaseTypes'
 import { useGetInvoices } from './../../hooks/useGetInvoices'
 import { columns } from './data/columnsData'
 import { IInvoiceProps } from './types/InvoicesTypes'
@@ -20,6 +20,7 @@ const Invoices: FC = () => {
   const [shopName, setShopName] = useState<string>('')
   const [date, setDate] = useState<string>('')
   const [currentPage, setcurrentPage] = useState(1)
+  const [customerData, setCustomerData] = useState<ICustomerDataProps>({} as ICustomerDataProps)
 
   const { state } = useContext(store)
 
@@ -32,7 +33,14 @@ const Invoices: FC = () => {
       ...item,
       created_at: formatDateTime(item.created_at as string),
       action: (
-        <Button onClick={() => printData(item.invoices_items, item.shop_name, item.created_at)}>
+        <Button
+          onClick={() =>
+            printData(item.invoices_items, item.shop_name, item.created_at, {
+              customerName: item.customer_name,
+              customerId: item.customer_id,
+            })
+          }
+        >
           Imprimir
         </Button>
       ),
@@ -46,9 +54,15 @@ const Invoices: FC = () => {
     },
   })
 
-  const printData = (data: IPurchaseProps[], shopName: string, date: string) => {
+  const printData = (
+    data: IPurchaseProps[],
+    shopName: string,
+    date: string,
+    customerData: ICustomerDataProps,
+  ) => {
     setDate(date)
     setShopName(shopName)
+    setCustomerData(customerData)
     setPurchaseData(data)
     setShowPrintOut(true)
   }
@@ -84,6 +98,7 @@ const Invoices: FC = () => {
             user={state.user?.fullname || ''}
             shopName={shopName}
             date={date}
+            customerData={customerData}
           />
         ) : null}
       </div>
