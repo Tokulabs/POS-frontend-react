@@ -3,7 +3,7 @@ import { Button, Input, notification, Table } from 'antd'
 import { useGetInventories } from '../../hooks/useGetInventories'
 import { formatinventoryPhoto } from '../Inventories/Inventories'
 import { DataPropsForm, IPaginationProps, IPurchaseAddRemoveProps } from '../../types/GlobalTypes'
-import { IPurchaseProps } from './types/PurchaseTypes'
+import { ICustomerDataProps, IPurchaseProps } from './types/PurchaseTypes'
 import { inventoryColumns, purchaseColumns } from './data/columnsData'
 import { IInventoryProps } from '../Inventories/types/InventoryTypes'
 import Search from 'antd/es/input/Search'
@@ -91,6 +91,7 @@ const Purchase: FC = () => {
   const [purchaseDone, setPurchaseDone] = useState(false)
   const [shopId, setShopId] = useState(0)
   const [currentPage, setcurrentPage] = useState(1)
+  const [customerData, setCustomerData] = useState<ICustomerDataProps>({} as ICustomerDataProps)
 
   const printOutRef = useRef<HTMLDivElement>(null)
   const getShopName = shops?.results.find((shop) => shop.id === shopId)?.name || ''
@@ -173,13 +174,22 @@ const Purchase: FC = () => {
     setPurchaseItemDataQty({})
   }
 
-  const submitInvoice = async (data?: number) => {
-    setShopId(data as number)
+  const submitInvoice = async (data?: number | DataPropsForm) => {
+    if (typeof data === 'number') return
+    const customerData: ICustomerDataProps = {
+      customerName: data?.customer_name ? data?.customer_name.toString() : 'Cliente Generico',
+      customerId: data?.customer_id ? data?.customer_id.toString() : '2222222222',
+    }
+    setCustomerData(customerData)
+    setShopId(data?.shop_id as number)
     setShowPrintOut(true)
     setSelectShopVisible(false)
+
     const dataToSend = {
-      shop_id: data as number,
+      shop_id: data?.shop_id as number,
       invoice_item_data: purchaseData.map((item) => ({ item_id: item.id, quantity: item.qty })),
+      customer_name: customerData.customerName,
+      customer_id: customerData.customerId,
     }
 
     try {
@@ -317,7 +327,12 @@ const Purchase: FC = () => {
       />
       <div ref={printOutRef}>
         {showPrintOut ? (
-          <PrintOut data={purchaseData} user={state.user?.fullname || ''} shopName={getShopName} />
+          <PrintOut
+            data={purchaseData}
+            user={state.user?.fullname || ''}
+            shopName={getShopName}
+            customerData={customerData}
+          />
         ) : null}
       </div>
     </div>

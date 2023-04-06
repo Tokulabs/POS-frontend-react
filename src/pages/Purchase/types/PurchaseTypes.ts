@@ -8,10 +8,17 @@ export interface IPurchaseProps {
   qty: number
   price: number
   total: number
+  customerName?: string
+  customerId?: string
   action?: React.ReactElement
   key?: number
 }
 
 export interface ISelectShopPurchase extends IModalFormProps {
   shops: IShopProps[]
+}
+
+export interface ICustomerDataProps {
+  customerName: string
+  customerId: string
 }
