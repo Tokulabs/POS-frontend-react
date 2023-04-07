@@ -11,10 +11,14 @@ export interface IInventoryProps {
   group: {
     name: string
     id: number
+    belongs_to: {
+      name: string
+    }
   } | null
   created_at: string
   remaining: number
   price: number
+  usd_price: number
   photo: string
   sum_of_item?: number
 }

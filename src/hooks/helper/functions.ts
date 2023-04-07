@@ -55,8 +55,9 @@ export const getInventories = async (
       const data = response.data.results.map((item) => ({
         ...item,
         key: item.id,
-        created_at: formatDateTime(item.created_at),
-        groupInfo: item.group?.name,
+        groupInfo: `${item.group?.belongs_to?.name ? `${item.group?.belongs_to?.name} /` : ''} ${
+          item.group?.name
+        }`,
         photoInfo: item.photo,
       }))
       setInventories({ ...response.data, results: data })

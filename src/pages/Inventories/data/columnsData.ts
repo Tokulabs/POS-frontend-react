@@ -25,14 +25,14 @@ export const columns = [
     key: 'price',
   },
   {
+    title: 'Precio USD',
+    dataIndex: 'usd_price',
+    key: 'usd_price',
+  },
+  {
     title: 'Unidades restantes',
     dataIndex: 'remaining',
     key: 'remaining',
-  },
-  {
-    title: 'Añadido el',
-    dataIndex: 'created_at',
-    key: 'created_at',
   },
   {
     title: '',
