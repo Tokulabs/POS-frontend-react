@@ -7,6 +7,7 @@ export interface IPurchaseProps {
   item: string
   qty: number
   price: number
+  usd_price: number
   total: number
   customerName?: string
   customerId?: string

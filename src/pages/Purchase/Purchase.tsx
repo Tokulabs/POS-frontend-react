@@ -18,7 +18,7 @@ import { getTotal } from './helpers/PurchaseHelpers'
 import Clock from '../../components/Clock/Clock'
 import { store } from '../../store'
 import { getInventories } from '../../hooks/helper/functions'
-import { formatNumberToColombianPesos } from '../../utils/helpers'
+import { formatNumberToColombianPesos, formatToUsd } from '../../utils/helpers'
 
 const formatInventoryAction = (
   inventories: DataPropsForm[],
@@ -49,6 +49,7 @@ const formatDataToCop = (data: DataPropsForm[] | IPurchaseProps[]) => {
   return data.map((item) => ({
     ...item,
     price: formatNumberToColombianPesos(item.price as number),
+    usd_price: formatToUsd(item.usd_price as number),
   }))
 }
 
@@ -131,6 +132,7 @@ const Purchase: FC = () => {
         key: inventoryData.id,
         qty: qty,
         price: inventoryData.price,
+        usd_price: inventoryData.usd_price,
         total: qty * inventoryData.price,
       }
 

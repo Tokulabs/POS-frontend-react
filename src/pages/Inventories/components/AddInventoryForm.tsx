@@ -23,7 +23,9 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
     name: '',
     total: '',
     price: 0,
+    usd_price: 0,
     group_id: '',
+    code: '',
   }
 
   const onSubmit = async (values: DataPropsForm) => {
@@ -124,6 +126,13 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
           </div>
         </Form.Item>
         <Form.Item
+          label='Código'
+          name='code'
+          rules={[{ required: true, message: 'El Código es un campo obligatorio' }]}
+        >
+          <Input placeholder='Código del producto' type='text' />
+        </Form.Item>
+        <Form.Item
           label='Nombre'
           name='name'
           rules={[{ required: true, message: 'El Nombre es un campo obligatorio' }]}
@@ -138,11 +147,18 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
           <Input placeholder='Cantidad' type='number' min={1} />
         </Form.Item>
         <Form.Item
-          label='Precio unitario (COP)'
+          label='Precio (COP)'
           name='price'
           rules={[{ required: true, message: 'El precio unitario es un campo obligatorio' }]}
         >
-          <Input placeholder='Precio uniario' type='number' min={1} />
+          <Input placeholder='Precio COP' type='number' min={1} />
+        </Form.Item>
+        <Form.Item
+          label='Precio (USD)'
+          name='usd_price'
+          rules={[{ required: true, message: 'El precio en USD es un campo obligatorio' }]}
+        >
+          <Input placeholder='Precio USD' type='number' min={1} />
         </Form.Item>
         <Form.Item
           label='Categoria'
