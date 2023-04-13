@@ -7,7 +7,7 @@ import { DataPropsForm, IPaginationProps } from '../../types/GlobalTypes'
 import { ICustomerDataProps, IPurchaseProps } from '../Purchase/types/PurchaseTypes'
 import { useGetInvoices } from './../../hooks/useGetInvoices'
 import { columns } from './data/columnsData'
-import { IInvoiceProps } from './types/InvoicesTypes'
+import { IInvoiceProps, IPaymentMethodsProps } from './types/InvoicesTypes'
 import { useReactToPrint } from 'react-to-print'
 import { formatDateTime } from '../../layouts/helpers/helpers'
 import { getInvoices } from '../../hooks/helper/functions'
@@ -21,6 +21,7 @@ const Invoices: FC = () => {
   const [date, setDate] = useState<string>('')
   const [currentPage, setcurrentPage] = useState(1)
   const [customerData, setCustomerData] = useState<ICustomerDataProps>({} as ICustomerDataProps)
+  const [paymentMethods, setPaymentMethods] = useState<IPaymentMethodsProps[]>([])
 
   const { state } = useContext(store)
 
@@ -35,10 +36,16 @@ const Invoices: FC = () => {
       action: (
         <Button
           onClick={() =>
-            printData(item.invoices_items, item.shop_name, item.created_at, {
-              customerName: item.customer_name,
-              customerId: item.customer_id,
-            })
+            printData(
+              item.invoices_items,
+              item.shop_name,
+              item.created_at,
+              {
+                customerName: item.customer_name,
+                customerId: item.customer_id,
+              },
+              item.payment_methods,
+            )
           }
         >
           Imprimir
@@ -59,10 +66,12 @@ const Invoices: FC = () => {
     shopName: string,
     date: string,
     customerData: ICustomerDataProps,
+    paymentMethods: IPaymentMethodsProps[],
   ) => {
     setDate(date)
     setShopName(shopName)
     setCustomerData(customerData)
+    setPaymentMethods(paymentMethods)
     setPurchaseData(data)
     setShowPrintOut(true)
   }
@@ -99,6 +108,7 @@ const Invoices: FC = () => {
             shopName={shopName}
             date={date}
             customerData={customerData}
+            paymentMethods={paymentMethods}
           />
         ) : null}
       </div>

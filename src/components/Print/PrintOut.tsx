@@ -1,9 +1,14 @@
 import { FC } from 'react'
 import { formatDateTime } from '../../layouts/helpers/helpers'
-import { ICustomerDataProps, IPurchaseProps } from '../../pages/Purchase/types/PurchaseTypes'
+import {
+  ICustomerDataProps,
+  IPurchaseProps,
+  PaymentMethodsEnum,
+} from '../../pages/Purchase/types/PurchaseTypes'
 import { getTotal } from './../../pages/Purchase/helpers/PurchaseHelpers'
 import LogoSignos from './../../assets/logos/signos_logo.png'
 import { formatNumberToColombianPesos } from '../../utils/helpers'
+import { IPaymentMethodsProps } from '../../pages/Invoices/types/InvoicesTypes'
 
 const PrintOut: FC<{
   data: IPurchaseProps[]
@@ -11,7 +16,8 @@ const PrintOut: FC<{
   shopName: string
   date?: string
   customerData: ICustomerDataProps
-}> = ({ data, user, shopName, date, customerData }) => {
+  paymentMethods: IPaymentMethodsProps[]
+}> = ({ data, user, shopName, date, customerData, paymentMethods }) => {
   const { iva, subTotalBase, total } = getTotal(data)
 
   return (
@@ -77,12 +83,18 @@ const PrintOut: FC<{
           <p className='m-0 text-right text-xs font-bold'>camb</p>
         </section>
         <section className='p-1'>
-          <div className='grid grid-cols-4 w-full gap-2'>
-            <p className='m-0 text-left text-xs'>Transf. Nequi M12342</p>
-            <p className='m-0 text-right text-xs'>70000</p>
-            <p className='m-0 text-right text-xs'>700000</p>
-            <p className='m-0 text-right text-xs'>0</p>
-          </div>
+          {paymentMethods.map((item, index) => {
+            return (
+              <div key={index} className='grid grid-cols-4 w-full gap-2'>
+                <p className='m-0 text-left text-xs'>{PaymentMethodsEnum[item.name]}</p>
+                <p className='m-0 text-right text-xs'>
+                  {formatNumberToColombianPesos(item.amount)}
+                </p>
+                <p className='m-0 text-right text-xs'>0</p>
+                <p className='m-0 text-right text-xs'>0</p>
+              </div>
+            )
+          })}
         </section>
       </article>
       <h5 className='self-start'>Venderdor: {user}</h5>

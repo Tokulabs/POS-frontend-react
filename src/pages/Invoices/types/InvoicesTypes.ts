@@ -1,4 +1,10 @@
-import { IPurchaseProps } from '../../Purchase/types/PurchaseTypes'
+import { IPurchaseProps, PaymentMethodsEnum } from '../../Purchase/types/PurchaseTypes'
+
+export interface IPaymentMethodsProps {
+  name: keyof typeof PaymentMethodsEnum
+  amount: number
+  transaction_code: string | null
+}
 
 export interface IInvoiceProps {
   id: number
@@ -8,5 +14,6 @@ export interface IInvoiceProps {
   shop_name: string
   customer_id: string
   customer_name: string
+  payment_methods: IPaymentMethodsProps[]
   key?: number
 }
