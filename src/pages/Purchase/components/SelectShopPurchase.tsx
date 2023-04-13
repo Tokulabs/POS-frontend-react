@@ -1,9 +1,10 @@
 import { Form, Modal, Select, Button, Input } from 'antd'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { DataPropsForm } from '../../../types/GlobalTypes'
 import { useForm } from 'antd/es/form/Form'
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import { ISelectShopPurchase, PaymentMethodsEnum } from '../types/PurchaseTypes'
+import { formatNumberToColombianPesos } from '../../../utils/helpers'
 
 const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
   isVisible = false,
@@ -14,17 +15,45 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
 }) => {
   const [form] = useForm()
   const [loading] = useState(false)
+  const [paymentMethods] = useState([
+    { value: 'cash', label: PaymentMethodsEnum.cash },
+    { value: 'creditCard', label: PaymentMethodsEnum.creditCard },
+    { value: 'debitCard', label: PaymentMethodsEnum.debitCard },
+    { value: 'nequi', label: PaymentMethodsEnum.nequi },
+    { value: 'bankTransfer', label: PaymentMethodsEnum.bankTransfer },
+  ])
+  const [amountValues, setAmountValues] = useState<number[]>([])
+  const [sumTotalPaymentMethods, setSumTotalPaymentMethods] = useState(0)
+
   const initialValues = {
     shop_id: '',
     customer_name: '',
     customer_id: '',
-    payment_methods: [{ name: 'cash', amount: total, transaction_code: '' }],
+    payment_methods: [{ name: 'cash', amount: '', transaction_code: '' }],
   }
 
   const onSubmit = async (values: DataPropsForm) => {
-    form.resetFields()
     onSuccessCallback(values)
+    form.resetFields()
   }
+
+  const handleAmountChange = (value: string, index: number) => {
+    setAmountValues((prevValues: number[]) => {
+      const newValues: number[] = [...prevValues]
+      newValues[index] = Number(value)
+      return newValues
+    })
+  }
+
+  useEffect(() => {
+    form.validateFields(['payment_methods'])
+  }, [form.getFieldValue('payment_methods')])
+
+  useEffect(() => {
+    const suma = amountValues.reduce((total, numero) => total + numero, 0)
+    setSumTotalPaymentMethods(suma)
+  }, [amountValues])
+
   return (
     <Modal
       title='Selecciona Tienda'
@@ -62,49 +91,71 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
         <Form.Item label='Identificación del cliente' name='customer_id'>
           <Input placeholder='Identificación del cliente' type='text' />
         </Form.Item>
-        <h3>Metodos de pago</h3>
+        <nav className='flex w-full justify-between items-center mb-3'>
+          <h3>Metodos de pago</h3>
+          <div className='flex flex-col items-end'>
+            <p className='m-0'>{`Total a pagar:  ${formatNumberToColombianPesos(total)} `} </p>
+            <p className='m-0'>{`Saldo:  ${formatNumberToColombianPesos(
+              total - sumTotalPaymentMethods,
+            )}`}</p>
+          </div>
+        </nav>
         <Form.List name='payment_methods'>
           {(fields, { add, remove }) => (
             <section className='flex flex-col gap-5'>
-              {fields.map(({ key, name, ...restField }) => (
-                <section key={key} className='flex w-full justify-center items-center gap-3'>
+              {fields.map((field, index) => (
+                <section key={field.key} className='flex w-full justify-center items-center gap-3'>
                   <Form.Item
                     style={{ width: '100%', margin: 0 }}
-                    {...restField}
-                    name={[name, 'name']}
+                    name={[index, 'name']}
                     rules={[{ required: true, message: 'El Método es un campo obligatorio' }]}
                   >
-                    <Select
-                      placeholder='Método de Pago'
-                      options={[
-                        { value: 'cash', label: PaymentMethodsEnum.cash },
-                        { value: 'creditCard', label: PaymentMethodsEnum.creditCard },
-                        { value: 'debitCard', label: PaymentMethodsEnum.debitCard },
-                        { value: 'nequi', label: PaymentMethodsEnum.nequi },
-                        { value: 'bankTransfer', label: PaymentMethodsEnum.bankTransfer },
-                      ]}
+                    <Select placeholder='Método de Pago' options={paymentMethods} />
+                  </Form.Item>
+                  <Form.Item
+                    style={{ width: '100%', margin: 0 }}
+                    name={[index, 'amount']}
+                    rules={[{ required: true, message: 'Cantidad requerida' }]}
+                  >
+                    <Input
+                      placeholder='Cantidad'
+                      type='number'
+                      onChange={(e) => handleAmountChange(e.target.value, index)}
                     />
                   </Form.Item>
                   <Form.Item
                     style={{ width: '100%', margin: 0 }}
-                    {...restField}
-                    name={[name, 'amount']}
-                    rules={[{ required: true, message: 'Cantidad requerida' }]}
-                  >
-                    <Input placeholder='Cantidad' type='number' />
-                  </Form.Item>
-                  <Form.Item
-                    style={{ width: '100%', margin: 0 }}
-                    {...restField}
-                    name={[name, 'transaction_code']}
+                    name={[index, 'transaction_code']}
+                    rules={[
+                      ({ getFieldValue }) => ({
+                        required: getFieldValue(['payment_methods', field.name, 'name']) !== 'cash',
+                        message: 'Código requerido',
+                      }),
+                    ]}
                   >
                     <Input placeholder='Número de confirmación' type='text' />
                   </Form.Item>
-                  <MinusCircleOutlined onClick={() => remove(name)} />
+                  <MinusCircleOutlined
+                    onClick={() => {
+                      remove(index)
+                      setAmountValues((prevValues: number[]) => {
+                        const newValues: number[] = [...prevValues]
+                        newValues.splice(index, 1)
+                        return newValues
+                      })
+                    }}
+                  />
                 </section>
               ))}
               <Form.Item>
-                <Button type='dashed' onClick={() => add()} block icon={<PlusOutlined />}>
+                <Button
+                  type='dashed'
+                  onClick={() => {
+                    add()
+                  }}
+                  block
+                  icon={<PlusOutlined />}
+                >
                   Agregar método de pago
                 </Button>
               </Form.Item>

@@ -32,3 +32,8 @@ export enum PaymentMethodsEnum {
   nequi = 'Nequi',
   bankTransfer = 'Transferencia Bancaria',
 }
+
+export interface IPaymentMethodsIndexProps {
+  id: number
+  name: string
+}

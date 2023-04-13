@@ -122,11 +122,12 @@ export const getInvoices = async (
         customer_id: item.customer_id,
         customer_name: item.customer_name,
         invoices_items: item.invoice_items.map((itemInvoice: any) => ({
+          code: itemInvoice.item_code,
           id: itemInvoice.id,
-          price: itemInvoice.amount,
+          price: itemInvoice.item.price,
           qty: itemInvoice.quantity,
           item: itemInvoice.item_name,
-          total: itemInvoice.amount * itemInvoice.quantity,
+          total: itemInvoice.amount,
         })),
         paymentMethods: item.payment_methods,
       }))
