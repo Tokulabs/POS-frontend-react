@@ -19,6 +19,7 @@ import Clock from '../../components/Clock/Clock'
 import { store } from '../../store'
 import { getInventories } from '../../hooks/helper/functions'
 import { formatNumberToColombianPesos, formatToUsd } from '../../utils/helpers'
+import { IPaymentMethodsProps } from '../Invoices/types/InvoicesTypes'
 
 const formatInventoryAction = (
   inventories: DataPropsForm[],
@@ -93,6 +94,7 @@ const Purchase: FC = () => {
   const [shopId, setShopId] = useState(0)
   const [currentPage, setcurrentPage] = useState(1)
   const [customerData, setCustomerData] = useState<ICustomerDataProps>({} as ICustomerDataProps)
+  const [paymentMethods, setPaymentMethods] = useState<IPaymentMethodsProps[]>([])
 
   const printOutRef = useRef<HTMLDivElement>(null)
   const getShopName = shops?.results.find((shop) => shop.id === shopId)?.name || ''
@@ -182,7 +184,19 @@ const Purchase: FC = () => {
       customerName: data?.customer_name ? data?.customer_name.toString() : 'Cliente Generico',
       customerId: data?.customer_id ? data?.customer_id.toString() : '2222222222',
     }
+    const paymentMethods: IPaymentMethodsProps[] = data?.payment_methods as IPaymentMethodsProps[]
+
+    const paymentMethodsFormated: IPaymentMethodsProps[] = paymentMethods.map(
+      (item: IPaymentMethodsProps) =>
+        ({
+          name: item.name,
+          amount: item.amount,
+          transaction_code: item.transaction_code ? item.transaction_code : null,
+        } || []),
+    )
+
     setCustomerData(customerData)
+    setPaymentMethods(paymentMethodsFormated)
     setShopId(data?.shop_id as number)
     setShowPrintOut(true)
     setSelectShopVisible(false)
@@ -192,6 +206,7 @@ const Purchase: FC = () => {
       invoice_item_data: purchaseData.map((item) => ({ item_id: item.id, quantity: item.qty })),
       customer_name: customerData.customerName,
       customer_id: customerData.customerId,
+      payment_methods: paymentMethodsFormated,
     }
 
     try {
@@ -326,10 +341,12 @@ const Purchase: FC = () => {
         onSuccessCallback={submitInvoice}
         onCancelCallback={() => setSelectShopVisible(false)}
         shops={shops?.results || []}
+        total={getTotal(purchaseData).total}
       />
       <div ref={printOutRef}>
         {showPrintOut ? (
           <PrintOut
+            paymentMethods={paymentMethods}
             data={purchaseData}
             user={state.user?.fullname || ''}
             shopName={getShopName}

@@ -17,9 +17,18 @@ export interface IPurchaseProps {
 
 export interface ISelectShopPurchase extends IModalFormProps {
   shops: IShopProps[]
+  total: number
 }
 
 export interface ICustomerDataProps {
   customerName: string
   customerId: string
+}
+
+export enum PaymentMethodsEnum {
+  cash = 'Efectivo',
+  debitCard = 'Tarjeta Débito',
+  creditCard = 'Tarjeta Crédito',
+  nequi = 'Nequi',
+  bankTransfer = 'Transferencia Bancaria',
 }

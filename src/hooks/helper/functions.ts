@@ -128,6 +128,7 @@ export const getInvoices = async (
           item: itemInvoice.item_name,
           total: itemInvoice.amount * itemInvoice.quantity,
         })),
+        paymentMethods: item.payment_methods,
       }))
       setInvoices({ ...response.data, results: dataFormatted })
     }
