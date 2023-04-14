@@ -9,6 +9,7 @@ export interface IPurchaseProps {
   price: number
   usd_price: number
   total: number
+  totalUSD: number
   customerName?: string
   customerId?: string
   action?: React.ReactElement

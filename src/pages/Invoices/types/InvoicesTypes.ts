@@ -2,7 +2,9 @@ import { IPurchaseProps, PaymentMethodsEnum } from '../../Purchase/types/Purchas
 
 export interface IPaymentMethodsProps {
   name: keyof typeof PaymentMethodsEnum
-  amount: number
+  back_amount: number
+  paid_amount: number
+  received_amount: number
   transaction_code: string | null
 }
 

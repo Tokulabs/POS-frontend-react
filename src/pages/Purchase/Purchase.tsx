@@ -136,6 +136,7 @@ const Purchase: FC = () => {
         price: inventoryData.price,
         usd_price: inventoryData.usd_price,
         total: qty * inventoryData.price,
+        totalUSD: qty * inventoryData.usd_price,
       }
 
       setPurchaseData([...purchaseData, newPurchaseData])
@@ -190,7 +191,9 @@ const Purchase: FC = () => {
       (item: IPaymentMethodsProps) =>
         ({
           name: item.name,
-          amount: item.amount,
+          paid_amount: item.paid_amount,
+          received_amount: item.received_amount,
+          back_amount: item.back_amount,
           transaction_code: item.transaction_code ? item.transaction_code : null,
         } || []),
     )
@@ -207,6 +210,7 @@ const Purchase: FC = () => {
       customer_name: customerData.customerName,
       customer_id: customerData.customerId,
       payment_methods: paymentMethodsFormated,
+      is_dollar: data?.is_dollar as boolean,
     }
 
     try {
@@ -324,6 +328,10 @@ const Purchase: FC = () => {
                   {formatNumberToColombianPesos(getTotal(purchaseData).total | 0) + ' COP'}
                 </div>
               </div>
+              <div className='flex flex-col text-right'>
+                <div className='text-sm text-gray-2'>Total USD</div>
+                <div className=''>{formatToUsd(getTotal(purchaseData).totalUSD | 0) + ' USD'}</div>
+              </div>
             </div>
           </div>
           <div className='flex gap-2'>
@@ -336,13 +344,15 @@ const Purchase: FC = () => {
           </div>
         </div>
       </div>
-      <SelectShopPurchaseForm
-        isVisible={selectShopVisible}
-        onSuccessCallback={submitInvoice}
-        onCancelCallback={() => setSelectShopVisible(false)}
-        shops={shops?.results || []}
-        total={getTotal(purchaseData).total}
-      />
+      {selectShopVisible && (
+        <SelectShopPurchaseForm
+          isVisible={selectShopVisible}
+          onSuccessCallback={submitInvoice}
+          onCancelCallback={() => setSelectShopVisible(false)}
+          shops={shops?.results || []}
+          total={getTotal(purchaseData).total}
+        />
+      )}
       <div ref={printOutRef}>
         {showPrintOut ? (
           <PrintOut
