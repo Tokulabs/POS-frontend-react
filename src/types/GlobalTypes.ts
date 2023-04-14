@@ -11,9 +11,9 @@ export interface DataPropsForm {
     | number
     | DataPropsForm
     | React.ReactElement
-    | null
     | DataPropsForm[]
     | IPaymentMethodsProps[]
+    | null
 }
 
 export interface IPaginationProps<T> {

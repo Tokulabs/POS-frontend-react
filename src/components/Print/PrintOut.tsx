@@ -88,10 +88,14 @@ const PrintOut: FC<{
               <div key={index} className='grid grid-cols-4 w-full gap-2'>
                 <p className='m-0 text-left text-xs'>{PaymentMethodsEnum[item.name]}</p>
                 <p className='m-0 text-right text-xs'>
-                  {formatNumberToColombianPesos(item.amount)}
+                  {formatNumberToColombianPesos(item.paid_amount)}
                 </p>
-                <p className='m-0 text-right text-xs'>0</p>
-                <p className='m-0 text-right text-xs'>0</p>
+                <p className='m-0 text-right text-xs'>
+                  {formatNumberToColombianPesos(item.received_amount)}
+                </p>
+                <p className='m-0 text-right text-xs'>
+                  {formatNumberToColombianPesos(item.back_amount)}
+                </p>
               </div>
             )
           })}
