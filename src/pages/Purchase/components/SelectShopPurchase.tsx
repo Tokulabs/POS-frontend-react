@@ -33,7 +33,13 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
     customer_name: '',
     customer_id: '',
     payment_methods: [
-      { name: 'cash', paid_amount: '', transaction_code: '', received_amount: '', back_amount: '' },
+      {
+        name: 'cash',
+        paid_amount: total,
+        transaction_code: '',
+        received_amount: '',
+        back_amount: '',
+      },
     ],
     is_dollar: false,
   }
@@ -79,6 +85,10 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
     setAmountchange((prevValues: number[]) => prevValues.filter((_, i) => i !== index))
     setBackAmountValues((prevValues: number[]) => prevValues.filter((_, i) => i !== index))
   }
+
+  useEffect(() => {
+    handleAmountChange(total.toString(), 0, setPaidAmountValues)
+  }, [])
 
   useEffect(() => {
     if (!isVisible) form.validateFields(['payment_methods'])
@@ -195,16 +205,28 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
                     <Input
                       placeholder='Valor a pagar'
                       type='text'
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        if (
+                          form.getFieldValue(['payment_methods', field.name, 'name']) !== 'cash'
+                        ) {
+                          console.log('entro')
+                          handleAmountChange(e.target.value, index, setReceivedAmountValues)
+                          handleAmountChange(e.target.value, index, setPaidAmountValues)
+                        }
                         handleAmountChange(e.target.value, index, setPaidAmountValues)
-                      }
+                      }}
                     />
                   </Form.Item>
                   <Form.Item
                     label='Valor recibido'
                     style={{ width: '100%', margin: 0 }}
                     name={[index, 'received_amount']}
-                    rules={[{ required: true, message: 'Cantidad requerida' }]}
+                    rules={[
+                      ({ getFieldValue }) => ({
+                        required: getFieldValue(['payment_methods', field.name, 'name']) === 'cash',
+                        message: 'cantidad requerido',
+                      }),
+                    ]}
                   >
                     <Input
                       placeholder='Valor recibido'
@@ -232,22 +254,24 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
                   />
                 </section>
               ))}
-              <Form.Item>
-                <Button
-                  type='dashed'
-                  onClick={() => {
-                    add()
-                  }}
-                  block
-                  icon={<PlusOutlined />}
-                >
-                  Agregar método de pago
-                </Button>
-              </Form.Item>
+              {total - sumTotalPaymentMethods > 0 && (
+                <Form.Item>
+                  <Button
+                    type='dashed'
+                    onClick={() => {
+                      add()
+                    }}
+                    block
+                    icon={<PlusOutlined />}
+                  >
+                    Agregar método de pago
+                  </Button>
+                </Form.Item>
+              )}
             </section>
           )}
         </Form.List>
-        <Form.Item>
+        <Form.Item className='mt-4'>
           <Button htmlType='submit' type='primary' block loading={loading}>
             Submit
           </Button>
