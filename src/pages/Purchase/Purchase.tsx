@@ -193,8 +193,8 @@ const Purchase: FC = () => {
     const customerData: ICustomerDataProps = {
       customerName: data?.customer_name ? data?.customer_name.toString() : 'Cliente Generico',
       customerId: data?.customer_id ? data?.customer_id.toString() : '2222222222',
-      customerEmail: data?.customer_email ? data?.customer_email.toString() : '',
-      customerPhone: data?.customer_phone ? data?.customer_phone.toString() : '',
+      customerEmail: data?.customer_email ? data?.customer_email.toString() : null,
+      customerPhone: data?.customer_phone ? data?.customer_phone.toString() : null,
     }
     const paymentMethods: IPaymentMethodsProps[] = data?.payment_methods as IPaymentMethodsProps[]
 

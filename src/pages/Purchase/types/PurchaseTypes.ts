@@ -25,8 +25,8 @@ export interface ISelectShopPurchase extends IModalFormProps {
 export interface ICustomerDataProps {
   customerName: string
   customerId: string
-  customerEmail: string
-  customerPhone: string
+  customerEmail: string | null
+  customerPhone: string | null
 }
 
 export enum PaymentMethodsEnum {

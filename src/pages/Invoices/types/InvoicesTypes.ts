@@ -16,8 +16,8 @@ export interface IInvoiceProps {
   shop_name: string
   customer_id: string
   customer_name: string
-  customer_email: string
-  customer_phone: string
+  customer_email: string | null
+  customer_phone: string | null
   payment_methods: IPaymentMethodsProps[]
   is_dollar: boolean
   key?: number
