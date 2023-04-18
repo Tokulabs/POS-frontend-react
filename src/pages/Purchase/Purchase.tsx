@@ -1,25 +1,34 @@
 import { ChangeEvent, FC, useState, useRef, useContext } from 'react'
+// Antd
 import { Button, Input, notification, Table } from 'antd'
+import Search from 'antd/es/input/Search'
+// Hooks
 import { useGetInventories } from '../../hooks/useGetInventories'
+import { useGetShops } from './../../hooks/useGetShops'
 import { formatinventoryPhoto } from '../Inventories/Inventories'
+// Types
 import { DataPropsForm, IPaginationProps, IPurchaseAddRemoveProps } from '../../types/GlobalTypes'
 import { ICustomerDataProps, IPurchaseProps } from './types/PurchaseTypes'
-import { inventoryColumns, purchaseColumns } from './data/columnsData'
 import { IInventoryProps } from '../Inventories/types/InventoryTypes'
-import Search from 'antd/es/input/Search'
 import { IShopProps } from '../Shops/types/ShopTypes'
-import { useGetShops } from './../../hooks/useGetShops'
-import SelectShopPurchaseForm from './components/SelectShopPurchase'
+import { IPaymentMethodsProps } from '../Invoices/types/InvoicesTypes'
+// Data
+import { inventoryColumns, purchaseColumns } from './data/columnsData'
+// Modals
+import AddDataPurchaseForm from './components/AddDataPurchase'
+// Api
 import { axiosRequest } from '../../api/api'
 import { invoiceURL } from './../../utils/network'
+// Components
 import PrintOut from '../../components/Print/PrintOut'
 import { useReactToPrint } from 'react-to-print'
-import { getTotal } from './helpers/PurchaseHelpers'
 import Clock from '../../components/Clock/Clock'
-import { store } from '../../store'
+// Helpers
+import { getTotal } from './helpers/PurchaseHelpers'
 import { getInventories } from '../../hooks/helper/functions'
 import { formatNumberToColombianPesos, formatToUsd } from '../../utils/helpers'
-import { IPaymentMethodsProps } from '../Invoices/types/InvoicesTypes'
+// store
+import { store } from '../../store'
 
 const formatInventoryAction = (
   inventories: DataPropsForm[],
@@ -184,6 +193,8 @@ const Purchase: FC = () => {
     const customerData: ICustomerDataProps = {
       customerName: data?.customer_name ? data?.customer_name.toString() : 'Cliente Generico',
       customerId: data?.customer_id ? data?.customer_id.toString() : '2222222222',
+      customerEmail: data?.customer_email ? data?.customer_email.toString() : '',
+      customerPhone: data?.customer_phone ? data?.customer_phone.toString() : '',
     }
     const paymentMethods: IPaymentMethodsProps[] = data?.payment_methods as IPaymentMethodsProps[]
 
@@ -209,6 +220,8 @@ const Purchase: FC = () => {
       invoice_item_data: purchaseData.map((item) => ({ item_id: item.id, quantity: item.qty })),
       customer_name: customerData.customerName,
       customer_id: customerData.customerId,
+      customer_email: customerData.customerEmail,
+      customer_phone: customerData.customerPhone,
       payment_methods: paymentMethodsFormated,
       is_dollar: data?.is_dollar as boolean,
     }
@@ -345,7 +358,7 @@ const Purchase: FC = () => {
         </div>
       </div>
       {selectShopVisible && (
-        <SelectShopPurchaseForm
+        <AddDataPurchaseForm
           isVisible={selectShopVisible}
           onSuccessCallback={submitInvoice}
           onCancelCallback={() => setSelectShopVisible(false)}

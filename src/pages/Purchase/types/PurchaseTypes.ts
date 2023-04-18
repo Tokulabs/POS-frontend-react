@@ -10,6 +10,7 @@ export interface IPurchaseProps {
   usd_price: number
   total: number
   totalUSD: number
+  paid_by?: string
   customerName?: string
   customerId?: string
   action?: React.ReactElement
@@ -24,6 +25,8 @@ export interface ISelectShopPurchase extends IModalFormProps {
 export interface ICustomerDataProps {
   customerName: string
   customerId: string
+  customerEmail: string
+  customerPhone: string
 }
 
 export enum PaymentMethodsEnum {

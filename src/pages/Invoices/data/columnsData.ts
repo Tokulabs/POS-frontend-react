@@ -1,13 +1,13 @@
 export const columns = [
   {
-    title: 'ID',
-    dataIndex: 'id',
-    key: 'id',
+    title: '# factura',
+    dataIndex: 'code',
+    key: 'code',
   },
   {
     title: 'Creado Por',
-    dataIndex: 'created_by_email',
-    key: 'created_by_email',
+    dataIndex: 'created_by_name',
+    key: 'created_by_name',
   },
   {
     title: 'Tienda',
@@ -15,9 +15,24 @@ export const columns = [
     key: 'shop_name',
   },
   {
-    title: 'Fecha de creación',
+    title: 'Fecha',
     dataIndex: 'created_at',
     key: 'created_at',
+  },
+  {
+    title: 'total',
+    dataIndex: 'total',
+    key: 'total',
+  },
+  {
+    title: 'Pago en dolares',
+    dataIndex: 'is_dollar',
+    key: 'is_dollar',
+  },
+  {
+    title: 'Metodos de pago',
+    dataIndex: 'paid_by',
+    key: 'paid_by',
   },
   {
     title: '',

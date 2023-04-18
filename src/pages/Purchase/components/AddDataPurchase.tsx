@@ -32,6 +32,8 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
     shop_id: '',
     customer_name: '',
     customer_id: '',
+    customer_email: '',
+    customer_phone: '',
     payment_methods: [
       {
         name: 'cash',
@@ -55,11 +57,15 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
     if (typeof values == null) return
     // return all values of form and add back_amount to payment_methods
     const paymentMethods: IPaymentMethodsProps[] = values.payment_methods as IPaymentMethodsProps[]
-
     paymentMethods.forEach((item, index) => {
-      item.back_amount = backAmountValues[index]
+      item.back_amount = backAmountValues[index] || 0
+      if (!item.received_amount) item.received_amount = item.paid_amount
+      if (item.name === 'cash') {
+        item.transaction_code = ''
+      } else {
+        item.received_amount = 0
+      }
     })
-
     values.payment_methods = paymentMethods
 
     onSuccessCallback(values)
@@ -137,18 +143,45 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
             ]}
           />
         </Form.Item>
+        <h3>Información del cliente</h3>
         <div className='flex gap-4 w-full'>
-          <Form.Item style={{ width: '100%' }} label='Nombre del cliente' name='customer_name'>
-            <Input placeholder='Nombre del cliente' type='text' />
+          <Form.Item
+            style={{ width: '100%' }}
+            label='Nombre'
+            name='customer_name'
+            rules={[{ required: total >= 200000, message: 'Campo requerido' }]}
+          >
+            <Input placeholder='Nombre' type='text' />
           </Form.Item>
           <Form.Item
             style={{ width: '100%' }}
-            label='Identificación del cliente'
+            label='Número de identificación'
             name='customer_id'
+            rules={[{ required: total >= 200000, message: 'Campo requerido' }]}
           >
-            <Input placeholder='Identificación del cliente' type='text' />
+            <Input placeholder='Identificación' type='text' />
           </Form.Item>
         </div>
+        {total >= 200000 && (
+          <div className='flex gap-4 w-full'>
+            <Form.Item
+              style={{ width: '100%' }}
+              label='Correo electrónico'
+              name='customer_email'
+              rules={[{ required: true, message: 'Campo requerido' }]}
+            >
+              <Input placeholder='Email' type='text' />
+            </Form.Item>
+            <Form.Item
+              style={{ width: '100%' }}
+              label='Telefono'
+              name='customer_phone'
+              rules={[{ required: true, message: 'Campo requerido' }]}
+            >
+              <Input placeholder='Número de telefono' type='text' />
+            </Form.Item>
+          </div>
+        )}
         <div className='flex gap-3 items-center'>
           <Form.Item style={{ margin: 0 }} name='is_dollar' valuePropName='checked'>
             <Switch />
@@ -157,8 +190,7 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
         </div>
         <nav className='flex w-full justify-between items-center mb-3'>
           <h3>Metodos de pago</h3>
-          <div className='flex flex-col items-end'>
-            <p className='m-0'>{`Total a pagar:  ${formatNumberToColombianPesos(total)} `} </p>
+          <div className='flex gap-4 items-end'>
             <p
               className={`m-0 ${
                 total - sumTotalPaymentMethods > 0
@@ -167,7 +199,16 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
                   ? 'text-red-500'
                   : ''
               }`}
-            >{`Saldo:  ${formatNumberToColombianPesos(total - sumTotalPaymentMethods)}`}</p>
+            >
+              Saldo:{' '}
+              <span className='text-xl font-bold'>
+                {formatNumberToColombianPesos(total - sumTotalPaymentMethods)}
+              </span>
+            </p>
+            <p className='m-0'>
+              Total a pagar:{' '}
+              <span className='text-xl font-bold'>{formatNumberToColombianPesos(total)}</span>
+            </p>
           </div>
         </nav>
         <Form.List name='payment_methods'>
@@ -181,20 +222,11 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
                     name={[index, 'name']}
                     rules={[{ required: true, message: 'El Método es un campo obligatorio' }]}
                   >
-                    <Select placeholder='Método de Pago' options={paymentMethods} />
-                  </Form.Item>
-                  <Form.Item
-                    label='Código'
-                    style={{ width: '100%', margin: 0 }}
-                    name={[index, 'transaction_code']}
-                    rules={[
-                      ({ getFieldValue }) => ({
-                        required: getFieldValue(['payment_methods', field.name, 'name']) !== 'cash',
-                        message: 'Código requerido',
-                      }),
-                    ]}
-                  >
-                    <Input placeholder='Número de confirmación' type='text' />
+                    <Select
+                      placeholder='Método de Pago'
+                      options={paymentMethods}
+                      onChange={() => form.validateFields()}
+                    />
                   </Form.Item>
                   <Form.Item
                     label='Valor a pagar'
@@ -206,35 +238,63 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
                       placeholder='Valor a pagar'
                       type='text'
                       onChange={(e) => {
-                        if (
-                          form.getFieldValue(['payment_methods', field.name, 'name']) !== 'cash'
-                        ) {
-                          console.log('entro')
-                          handleAmountChange(e.target.value, index, setReceivedAmountValues)
-                          handleAmountChange(e.target.value, index, setPaidAmountValues)
-                        }
                         handleAmountChange(e.target.value, index, setPaidAmountValues)
                       }}
                     />
                   </Form.Item>
                   <Form.Item
-                    label='Valor recibido'
-                    style={{ width: '100%', margin: 0 }}
-                    name={[index, 'received_amount']}
-                    rules={[
-                      ({ getFieldValue }) => ({
-                        required: getFieldValue(['payment_methods', field.name, 'name']) === 'cash',
-                        message: 'cantidad requerido',
-                      }),
-                    ]}
+                    shouldUpdate={(prevValues, currentValues) =>
+                      prevValues.payment_methods !== currentValues.payment_methods
+                    }
+                    noStyle
                   >
-                    <Input
-                      placeholder='Valor recibido'
-                      type='number'
-                      onChange={(e) =>
-                        handleAmountChange(e.target.value, index, setReceivedAmountValues)
-                      }
-                    />
+                    {({ getFieldValue }) =>
+                      getFieldValue(['payment_methods', field.name, 'name']) !== 'cash' ? (
+                        <Form.Item
+                          label='# Transacción'
+                          style={{ width: '100%', margin: 0 }}
+                          name={[index, 'transaction_code']}
+                          rules={[{ required: true, message: 'Campo requerido' }]}
+                        >
+                          <Input
+                            placeholder='Número de confirmación'
+                            type='text'
+                            // make disaable dynamic taking into account the payment method selected be diferente to cash and the value of the field
+                            disabled={
+                              form.getFieldValue(['payment_methods', field.name, 'name']) === 'cash'
+                            }
+                          />
+                        </Form.Item>
+                      ) : null
+                    }
+                  </Form.Item>
+                  <Form.Item
+                    shouldUpdate={(prevValues, currentValues) =>
+                      prevValues.payment_methods !== currentValues.payment_methods
+                    }
+                    noStyle
+                  >
+                    {({ getFieldValue }) =>
+                      getFieldValue(['payment_methods', field.name, 'name']) === 'cash' ? (
+                        <Form.Item
+                          label='Valor recibido'
+                          style={{ width: '100%', margin: 0 }}
+                          name={[index, 'received_amount']}
+                          rules={[{ required: true, message: 'Cantidad requerida' }]}
+                        >
+                          <Input
+                            placeholder='Valor recibido'
+                            type='number'
+                            onChange={(e) =>
+                              handleAmountChange(e.target.value, index, setReceivedAmountValues)
+                            }
+                            disabled={
+                              form.getFieldValue(['payment_methods', field.name, 'name']) !== 'cash'
+                            }
+                          />
+                        </Form.Item>
+                      ) : null
+                    }
                   </Form.Item>
                   <div className='flex flex-col gap-3 mx-3'>
                     <p className='m-0'>Cambio</p>

@@ -117,11 +117,13 @@ export const getInvoices = async (
       const dataFormatted: IInvoiceProps[] = response.data.results.map((item: any) => ({
         ...item,
         key: item.id,
-        created_by_email: item.created_by.email,
+        created_by_name: item.created_by.fullname,
         shop_name: item.shop.name,
         customer_id: item.customer_id,
         customer_name: item.customer_name,
-        invoices_items: item.invoice_items.map((itemInvoice: any) => ({
+        customer_email: item.customer_email,
+        customer_phone: item.customer_phone,
+        invoice_items: item.invoice_items.map((itemInvoice: any) => ({
           code: itemInvoice.item_code,
           id: itemInvoice.id,
           price: itemInvoice.item.price,
@@ -129,7 +131,8 @@ export const getInvoices = async (
           item: itemInvoice.item_name,
           total: itemInvoice.amount,
         })),
-        paymentMethods: item.payment_methods,
+        payment_methods: item.payment_methods,
+        is_dollar: item.is_dollar,
       }))
       setInvoices({ ...response.data, results: dataFormatted })
     }
