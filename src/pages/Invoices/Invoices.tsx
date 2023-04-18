@@ -4,13 +4,18 @@ import PrintOut from '../../components/Print/PrintOut'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
 import { store } from '../../store'
 import { DataPropsForm, IPaginationProps } from '../../types/GlobalTypes'
-import { ICustomerDataProps, IPurchaseProps } from '../Purchase/types/PurchaseTypes'
+import {
+  ICustomerDataProps,
+  IPurchaseProps,
+  PaymentMethodsEnum,
+} from '../Purchase/types/PurchaseTypes'
 import { useGetInvoices } from './../../hooks/useGetInvoices'
 import { columns } from './data/columnsData'
 import { IInvoiceProps, IPaymentMethodsProps } from './types/InvoicesTypes'
 import { useReactToPrint } from 'react-to-print'
 import { formatDateTime } from '../../layouts/helpers/helpers'
 import { getInvoices } from '../../hooks/helper/functions'
+import { formatNumberToColombianPesos } from '../../utils/helpers'
 
 const Invoices: FC = () => {
   const [fetching, setFetching] = useState(false)
@@ -33,16 +38,25 @@ const Invoices: FC = () => {
     return invoices?.results.map((item) => ({
       ...item,
       created_at: formatDateTime(item.created_at as string),
+      total: formatNumberToColombianPesos(
+        item.invoice_items
+          .map((itemInvoice: IPurchaseProps) => itemInvoice.total)
+          .reduce((a, b) => a + b, 0),
+      ),
+      is_dollar: item.is_dollar ? 'Si' : 'No',
+      paid_by: item.payment_methods.map((item) => PaymentMethodsEnum[item.name]).join(', '),
       action: (
         <Button
           onClick={() =>
             printData(
-              item.invoices_items,
+              item.invoice_items,
               item.shop_name,
               item.created_at,
               {
                 customerName: item.customer_name,
                 customerId: item.customer_id,
+                customerEmail: item.customer_email,
+                customerPhone: item.customer_phone,
               },
               item.payment_methods,
             )
