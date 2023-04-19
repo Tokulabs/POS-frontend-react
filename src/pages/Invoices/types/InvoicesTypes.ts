@@ -14,6 +14,7 @@ export interface IInvoiceProps {
   created_by_email: string
   invoice_items: IPurchaseProps[]
   shop_name: string
+  sale_name: string
   customer_id: string
   customer_name: string
   customer_email: string | null

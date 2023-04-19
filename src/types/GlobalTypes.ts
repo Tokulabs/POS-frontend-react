@@ -16,6 +16,10 @@ export interface DataPropsForm {
     | null
 }
 
+export interface IQueryParams {
+  [key: string]: string | number | boolean
+}
+
 export interface IPaginationProps<T> {
   count: number
   next: string | null

@@ -1,4 +1,5 @@
 import { IModalFormProps } from '../../../types/ModalTypes'
+import { IUserProps } from '../../Users/types/UserTypes'
 import { IShopProps } from './../../Shops/types/ShopTypes'
 
 export interface IPurchaseProps {
@@ -20,6 +21,7 @@ export interface IPurchaseProps {
 export interface ISelectShopPurchase extends IModalFormProps {
   shops: IShopProps[]
   total: number
+  salesUsers: IUserProps[]
 }
 
 export interface ICustomerDataProps {

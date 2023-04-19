@@ -13,6 +13,7 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
   onCancelCallback,
   shops,
   total,
+  salesUsers,
 }) => {
   const [form] = useForm()
   const [loading] = useState(false)
@@ -30,6 +31,7 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
 
   const initialValues = {
     shop_id: '',
+    sale_id: '',
     customer_name: '',
     customer_id: '',
     customer_email: '',
@@ -124,25 +126,43 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
       maskClosable={false}
     >
       <Form layout='vertical' onFinish={onSubmit} form={form} initialValues={initialValues}>
-        <Form.Item
-          label='Tienda'
-          name='shop_id'
-          rules={[{ required: true, message: 'Campo requerido' }]}
-        >
-          <Select
-            placeholder='Seleccionar tienda'
-            options={[
-              {
-                value: '',
-                label: 'Seleccionar tienda',
-              },
-              ...shops.map((item) => ({
-                value: item.id,
-                label: item.name,
-              })),
-            ]}
-          />
-        </Form.Item>
+        <div className='flex w-full gap-2'>
+          <Form.Item
+            style={{ width: '100%' }}
+            label='Tienda'
+            name='shop_id'
+            rules={[{ required: true, message: 'Campo requerido' }]}
+          >
+            <Select
+              placeholder='Seleccionar tienda'
+              options={[
+                {
+                  value: '',
+                  label: 'Seleccionar tienda',
+                },
+                ...shops.map((item) => ({
+                  value: item.id,
+                  label: item.name,
+                })),
+              ]}
+            />
+          </Form.Item>
+          <Form.Item label='Vendedor' name='sale_by_id' style={{ width: '100%' }}>
+            <Select
+              placeholder='Seleccionar Vendedor'
+              options={[
+                {
+                  value: '',
+                  label: 'Seleccionar vendedor',
+                },
+                ...salesUsers.map((item) => ({
+                  value: item.id,
+                  label: item.fullname,
+                })),
+              ]}
+            />
+          </Form.Item>
+        </div>
         <h3>Información del cliente</h3>
         <div className='flex gap-4 w-full'>
           <Form.Item
