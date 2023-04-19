@@ -1,8 +1,7 @@
 import { Button } from 'antd'
-import { FC, useContext, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import PrintOut from '../../components/Print/PrintOut'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
-import { store } from '../../store'
 import { DataPropsForm, IPaginationProps } from '../../types/GlobalTypes'
 import {
   ICustomerDataProps,
@@ -23,12 +22,11 @@ const Invoices: FC = () => {
   const [showPrintOut, setShowPrintOut] = useState(false)
   const [purchaseData, setPurchaseData] = useState<IPurchaseProps[]>([])
   const [shopName, setShopName] = useState<string>('')
+  const [saleName, setSaleName] = useState<string>('')
   const [date, setDate] = useState<string>('')
   const [currentPage, setcurrentPage] = useState(1)
   const [customerData, setCustomerData] = useState<ICustomerDataProps>({} as ICustomerDataProps)
   const [paymentMethods, setPaymentMethods] = useState<IPaymentMethodsProps[]>([])
-
-  const { state } = useContext(store)
 
   const printOutRef = useRef<HTMLDivElement>(null)
 
@@ -51,6 +49,7 @@ const Invoices: FC = () => {
             printData(
               item.invoice_items,
               item.shop_name,
+              item.sale_name,
               item.created_at,
               {
                 customerName: item.customer_name,
@@ -78,12 +77,14 @@ const Invoices: FC = () => {
   const printData = (
     data: IPurchaseProps[],
     shopName: string,
+    saleName: string,
     date: string,
     customerData: ICustomerDataProps,
     paymentMethods: IPaymentMethodsProps[],
   ) => {
     setDate(date)
     setShopName(shopName)
+    setSaleName(saleName)
     setCustomerData(customerData)
     setPaymentMethods(paymentMethods)
     setPurchaseData(data)
@@ -118,8 +119,8 @@ const Invoices: FC = () => {
         {showPrintOut ? (
           <PrintOut
             data={purchaseData}
-            user={state.user?.fullname || ''}
             shopName={shopName}
+            saleName={saleName}
             date={date}
             customerData={customerData}
             paymentMethods={paymentMethods}

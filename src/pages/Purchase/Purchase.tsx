@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useState, useRef, useContext } from 'react'
+import { ChangeEvent, FC, useState, useRef } from 'react'
 // Antd
 import { Button, Input, notification, Table } from 'antd'
 import Search from 'antd/es/input/Search'
@@ -12,6 +12,7 @@ import { ICustomerDataProps, IPurchaseProps } from './types/PurchaseTypes'
 import { IInventoryProps } from '../Inventories/types/InventoryTypes'
 import { IShopProps } from '../Shops/types/ShopTypes'
 import { IPaymentMethodsProps } from '../Invoices/types/InvoicesTypes'
+import { IUserProps } from '../Users/types/UserTypes'
 // Data
 import { inventoryColumns, purchaseColumns } from './data/columnsData'
 // Modals
@@ -27,8 +28,7 @@ import Clock from '../../components/Clock/Clock'
 import { getTotal } from './helpers/PurchaseHelpers'
 import { getInventories } from '../../hooks/helper/functions'
 import { formatNumberToColombianPesos, formatToUsd } from '../../utils/helpers'
-// store
-import { store } from '../../store'
+import { useGetUsers } from '../../hooks/useGetUsers'
 
 const formatInventoryAction = (
   inventories: DataPropsForm[],
@@ -104,13 +104,17 @@ const Purchase: FC = () => {
   const [currentPage, setcurrentPage] = useState(1)
   const [customerData, setCustomerData] = useState<ICustomerDataProps>({} as ICustomerDataProps)
   const [paymentMethods, setPaymentMethods] = useState<IPaymentMethodsProps[]>([])
+  const [supportSales, setSupporSales] = useState<IPaginationProps<IUserProps>>()
+  const [saleId, setSaleId] = useState(0)
 
   const printOutRef = useRef<HTMLDivElement>(null)
   const getShopName = shops?.results.find((shop) => shop.id === shopId)?.name || ''
+  const getSalesName =
+    supportSales?.results.find((user) => user.id === saleId)?.fullname || 'SIGNOS'
 
-  const { state } = useContext(store)
   useGetShops(setShops, () => null)
   useGetInventories(setInventories, setFetching, [purchaseDone])
+  useGetUsers(setSupporSales, () => null, { role: 'supportSales' })
 
   const addItemPurchase = (inventoryData: IInventoryProps) => {
     const qty = purchaseItemQty[inventoryData.id] || 1
@@ -212,11 +216,13 @@ const Purchase: FC = () => {
     setCustomerData(customerData)
     setPaymentMethods(paymentMethodsFormated)
     setShopId(data?.shop_id as number)
+    setSaleId(data?.sale_by_id as number)
     setShowPrintOut(true)
     setSelectShopVisible(false)
 
     const dataToSend = {
       shop_id: data?.shop_id as number,
+      sale_by_id: data?.sale_by_id as number,
       invoice_item_data: purchaseData.map((item) => ({ item_id: item.id, quantity: item.qty })),
       customer_name: customerData.customerName,
       customer_id: customerData.customerId,
@@ -360,6 +366,7 @@ const Purchase: FC = () => {
       {selectShopVisible && (
         <AddDataPurchaseForm
           isVisible={selectShopVisible}
+          salesUsers={supportSales?.results || []}
           onSuccessCallback={submitInvoice}
           onCancelCallback={() => setSelectShopVisible(false)}
           shops={shops?.results || []}
@@ -371,9 +378,9 @@ const Purchase: FC = () => {
           <PrintOut
             paymentMethods={paymentMethods}
             data={purchaseData}
-            user={state.user?.fullname || ''}
             shopName={getShopName}
             customerData={customerData}
+            saleName={getSalesName}
           />
         ) : null}
       </div>

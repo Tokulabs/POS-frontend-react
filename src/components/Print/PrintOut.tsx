@@ -12,12 +12,12 @@ import { IPaymentMethodsProps } from '../../pages/Invoices/types/InvoicesTypes'
 
 const PrintOut: FC<{
   data: IPurchaseProps[]
-  user: string
   shopName: string
   date?: string
   customerData: ICustomerDataProps
   paymentMethods: IPaymentMethodsProps[]
-}> = ({ data, user, shopName, date, customerData, paymentMethods }) => {
+  saleName: string
+}> = ({ data, shopName, date, customerData, paymentMethods, saleName }) => {
   const { iva, subTotalBase, total } = getTotal(data)
 
   return (
@@ -34,7 +34,7 @@ const PrintOut: FC<{
         </p>
         <p className='m-0 text-[0.75rem] mb-2'>habilita del [xxxxxxx] al [xxxxxx]</p>
         <p className='m-0 text-xs self-start'>
-          Nombre: {customerData.customerName} Nit: {customerData.customerId}
+          Nombre: {customerData.customerName} ID: {customerData.customerId}
         </p>
         <section className='flex justify-between items-center w-full'>
           <p className='m-0 text-xs text-start'>D. E ./P. O. S {shopName}-[numero C]</p>
@@ -101,7 +101,7 @@ const PrintOut: FC<{
           })}
         </section>
       </article>
-      <h5 className='self-start'>Venderdor: {user}</h5>
+      <h5 className='self-start'>Venderdor: {saleName}</h5>
       <h4 className='font-bold uppercase'>GRACIAS POR SU COMPRA !!!!</h4>
     </article>
   )
