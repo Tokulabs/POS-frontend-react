@@ -3,9 +3,8 @@ import { formatDateTime } from '../../layouts/helpers/helpers'
 import { IGroupsProps } from '../../pages/Groups/types/GroupTypes'
 import { IInventoryProps } from '../../pages/Inventories/types/InventoryTypes'
 import { IInvoiceProps } from '../../pages/Invoices/types/InvoicesTypes'
-import { IUserProps, UserRolesEnum } from '../../pages/Users/types/UserTypes'
-import { IPaginationProps, IQueryParams } from '../../types/GlobalTypes'
-import { groupURL, inventoryURL, invoiceURL, shopURL, usersURL } from '../../utils/network'
+import { IPaginationProps } from '../../types/GlobalTypes'
+import { groupURL, inventoryURL, invoiceURL, shopURL } from '../../utils/network'
 import { IShopProps } from './../../pages/Shops/types/ShopTypes'
 
 export const getGroups = async (
@@ -100,43 +99,6 @@ export const getShops = async (
   }
 }
 
-export const getUsers = async (
-  setUsers: (data: IPaginationProps<IUserProps>) => void,
-  setFetching: (val: boolean) => void,
-  queryParams?: IQueryParams,
-) => {
-  try {
-    setFetching(true)
-    const finalURL = new URL(usersURL)
-    const searchParams = new URLSearchParams()
-    if (queryParams) {
-      Object.entries(queryParams).forEach(([key, value]) => {
-        searchParams.set(key, value.toString())
-      })
-    }
-    finalURL.search = searchParams.toString()
-    const response = await axiosRequest<IPaginationProps<IUserProps>>({
-      url: finalURL,
-      hasAuth: true,
-      showError: false,
-    })
-    if (response) {
-      const data = response.data.results.map((item) => ({
-        ...item,
-        key: item.id,
-        created_at: formatDateTime(item.created_at),
-        last_login: item.last_login ? formatDateTime(item.last_login) : 'N/A',
-        is_active: item.is_active.toString(),
-        role: UserRolesEnum[item.role as keyof typeof UserRolesEnum] || 'Rol desconocido',
-      }))
-      setUsers({ ...response.data, results: data })
-    }
-  } catch (e) {
-    console.log(e)
-  } finally {
-    setFetching(false)
-  }
-}
 export const getInvoices = async (
   setInvoices: (data: IPaginationProps<IInvoiceProps>) => void,
   setFetching: (val: boolean) => void,

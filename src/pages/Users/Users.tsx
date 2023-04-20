@@ -1,30 +1,14 @@
 import { FC, useState } from 'react'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
-import { DataPropsForm, IPaginationProps } from '../../types/GlobalTypes'
+import { DataPropsForm } from '../../types/GlobalTypes'
 import AddUserForm from './components/AddUserForm'
 import { columns } from './data/columsData'
-import { IUserProps } from './types/UserTypes'
-import { useGetUsers } from '../../hooks/useGetUsers'
-import { getUsers } from '../../hooks/helper/functions'
+import { useUsers } from '../../hooks/useUsers'
 
 const Users: FC = () => {
+  const [currentPage, setCurrentPage] = useState(1)
   const [modalState, setModalState] = useState(false)
-  const [fetching, setFetching] = useState(false)
-  const [users, setUser] = useState<IPaginationProps<IUserProps>>()
-  const [currentPage, setcurrentPage] = useState(1)
-
-  useGetUsers(setUser, setFetching)
-
-  const onCreateUSer = () => {
-    setModalState(false)
-    getUsers(setUser, setFetching)
-    setcurrentPage(1)
-  }
-
-  const onChangePagination = (page: number) => {
-    getUsers(setUser, setFetching, { page: page })
-    setcurrentPage(page)
-  }
+  const { isLoading, usersData } = useUsers('paginatedUsers', { page: currentPage })
 
   return (
     <>
@@ -32,15 +16,15 @@ const Users: FC = () => {
         pageTitle='Usuarios'
         buttonTitle='Agregar Usuario'
         setModalState={setModalState}
-        dataSource={users?.results as unknown as DataPropsForm[]}
+        dataSource={usersData?.results as unknown as DataPropsForm[]}
         columns={columns}
-        totalItems={users?.count || 0}
-        fetching={fetching}
+        totalItems={usersData?.count ?? 0}
+        fetching={isLoading}
         currentPage={currentPage}
-        onChangePage={(page) => onChangePagination(page)}
+        onChangePage={(page) => setCurrentPage(page)}
       >
         <AddUserForm
-          onSuccessCallback={onCreateUSer}
+          onSuccessCallback={() => setModalState(false)}
           isVisible={modalState}
           onCancelCallback={() => setModalState(false)}
         />

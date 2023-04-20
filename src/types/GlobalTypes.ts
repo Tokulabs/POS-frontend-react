@@ -22,6 +22,7 @@ export interface IQueryParams {
 
 export interface IPaginationProps<T> {
   count: number
+  page: number
   next: string | null
   previous: string | null
   results: T[]
