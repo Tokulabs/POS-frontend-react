@@ -1,11 +1,11 @@
 import { Form, Modal, Input, Select, Button, notification } from 'antd'
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { DataPropsForm } from '../../../types/GlobalTypes'
-import { createUserURL } from './../../../utils/network'
 import { useForm } from 'antd/es/form/Form'
-import { axiosRequest } from '../../../api/api'
 import { IModalFormProps } from '../../../types/ModalTypes'
 import { UserRolesEnum } from '../types/UserTypes'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { postUsersNew } from '../helpers/services'
 
 const AddUserForm: FC<IModalFormProps> = ({
   isVisible = false,
@@ -13,31 +13,48 @@ const AddUserForm: FC<IModalFormProps> = ({
   onCancelCallback,
 }) => {
   const [form] = useForm()
-  const [loading, setLoading] = useState(false)
+  const queryClient = useQueryClient()
+  const { mutate, isLoading } = useMutation({
+    mutationFn: postUsersNew,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['paginatedUsers'])
+      onSuccessCallback()
+      notification.success({
+        message: 'Exito',
+        description: 'Usuario creado!',
+      })
+      form.resetFields()
+    },
+  })
 
   const onSubmit = async (values: DataPropsForm) => {
-    try {
-      setLoading(true)
-      const response = await axiosRequest({
-        method: 'post',
-        url: createUserURL,
-        hasAuth: true,
-        payload: values,
-      })
-      if (response) {
-        onSuccessCallback()
-        notification.success({
-          message: 'Exito',
-          description: 'Usuario creado!',
-        })
-        form.resetFields()
-      }
-    } catch (e) {
-      console.log(e)
-    } finally {
-      setLoading(false)
-    }
+    if (isLoading) return
+    mutate(values)
   }
+
+  // const onSubmit = async (values: DataPropsForm) => {
+  //   try {
+  //     setLoading(true)
+  //     const response = await axiosRequest({
+  //       method: 'post',
+  //       url: createUserURL,
+  //       hasAuth: true,
+  //       payload: values,
+  //     })
+  //     if (response) {
+  //       onSuccessCallback()
+  //       notification.success({
+  //         message: 'Exito',
+  //         description: 'Usuario creado!',
+  //       })
+  //       form.resetFields()
+  //     }
+  //   } catch (e) {
+  //     console.log(e)
+  //   } finally {
+  //     setLoading(false)
+  //   }
+  // }
   return (
     <Modal
       title='Crear usuario'
@@ -80,7 +97,7 @@ const AddUserForm: FC<IModalFormProps> = ({
           />
         </Form.Item>
         <Form.Item>
-          <Button htmlType='submit' type='primary' block loading={loading}>
+          <Button htmlType='submit' type='primary' block loading={isLoading}>
             Submit
           </Button>
         </Form.Item>

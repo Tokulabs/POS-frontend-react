@@ -6,6 +6,7 @@ import Search from 'antd/es/input/Search'
 import { useGetInventories } from '../../hooks/useGetInventories'
 import { useGetShops } from './../../hooks/useGetShops'
 import { formatinventoryPhoto } from '../Inventories/Inventories'
+import { useUsers } from '../../hooks/useUsers'
 // Types
 import { DataPropsForm, IPaginationProps, IPurchaseAddRemoveProps } from '../../types/GlobalTypes'
 import { ICustomerDataProps, IPurchaseProps } from './types/PurchaseTypes'
@@ -28,7 +29,6 @@ import Clock from '../../components/Clock/Clock'
 import { getTotal } from './helpers/PurchaseHelpers'
 import { getInventories } from '../../hooks/helper/functions'
 import { formatNumberToColombianPesos, formatToUsd } from '../../utils/helpers'
-import { useGetUsers } from '../../hooks/useGetUsers'
 
 const formatInventoryAction = (
   inventories: DataPropsForm[],
@@ -104,17 +104,16 @@ const Purchase: FC = () => {
   const [currentPage, setcurrentPage] = useState(1)
   const [customerData, setCustomerData] = useState<ICustomerDataProps>({} as ICustomerDataProps)
   const [paymentMethods, setPaymentMethods] = useState<IPaymentMethodsProps[]>([])
-  const [supportSales, setSupporSales] = useState<IPaginationProps<IUserProps>>()
   const [saleId, setSaleId] = useState(0)
+
+  useGetShops(setShops, () => null)
+  useGetInventories(setInventories, setFetching, [purchaseDone])
+  const { usersData: supportSales } = useUsers('supportSalesUsers', { role: 'supportSales' })
 
   const printOutRef = useRef<HTMLDivElement>(null)
   const getShopName = shops?.results.find((shop) => shop.id === shopId)?.name || ''
   const getSalesName =
-    supportSales?.results.find((user) => user.id === saleId)?.fullname || 'SIGNOS'
-
-  useGetShops(setShops, () => null)
-  useGetInventories(setInventories, setFetching, [purchaseDone])
-  useGetUsers(setSupporSales, () => null, { role: 'supportSales' })
+    supportSales?.results.find((user: IUserProps) => user.id === saleId)?.fullname || 'SIGNOS'
 
   const addItemPurchase = (inventoryData: IInventoryProps) => {
     const qty = purchaseItemQty[inventoryData.id] || 1
