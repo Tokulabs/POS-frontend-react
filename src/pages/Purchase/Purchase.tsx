@@ -3,15 +3,14 @@ import { ChangeEvent, FC, useState, useRef } from 'react'
 import { Button, Input, notification, Table } from 'antd'
 import Search from 'antd/es/input/Search'
 // Hooks
-import { useGetInventories } from '../../hooks/useGetInventories'
-import { useGetShops } from './../../hooks/useGetShops'
 import { formatinventoryPhoto } from '../Inventories/Inventories'
 import { useUsers } from '../../hooks/useUsers'
+import { useShops } from '../../hooks/useShops'
+import { useInventories } from '../../hooks/useInventories'
 // Types
-import { DataPropsForm, IPaginationProps, IPurchaseAddRemoveProps } from '../../types/GlobalTypes'
+import { DataPropsForm, IPurchaseAddRemoveProps } from '../../types/GlobalTypes'
 import { ICustomerDataProps, IPurchaseProps } from './types/PurchaseTypes'
 import { IInventoryProps } from '../Inventories/types/InventoryTypes'
-import { IShopProps } from '../Shops/types/ShopTypes'
 import { IPaymentMethodsProps } from '../Invoices/types/InvoicesTypes'
 import { IUserProps } from '../Users/types/UserTypes'
 // Data
@@ -27,7 +26,6 @@ import { useReactToPrint } from 'react-to-print'
 import Clock from '../../components/Clock/Clock'
 // Helpers
 import { getTotal } from './helpers/PurchaseHelpers'
-import { getInventories } from '../../hooks/helper/functions'
 import { formatNumberToColombianPesos, formatToUsd } from '../../utils/helpers'
 
 const formatInventoryAction = (
@@ -90,12 +88,9 @@ const formatPurchaseData = (
 }
 
 const Purchase: FC = () => {
-  const [fetching, setFetching] = useState(false)
-  const [inventories, setInventories] = useState<IPaginationProps<IInventoryProps>>()
   const [purchaseData, setPurchaseData] = useState<IPurchaseProps[]>([])
   const [purchaseItemQty, setPurchaseItemQty] = useState<IPurchaseAddRemoveProps>({})
   const [purchaseItemDataQty, setPurchaseItemDataQty] = useState<IPurchaseAddRemoveProps>({})
-  const [shops, setShops] = useState<IPaginationProps<IShopProps>>()
   const [selectShopVisible, setSelectShopVisible] = useState(false)
   const [loading, setLoading] = useState(false)
   const [showPrintOut, setShowPrintOut] = useState(false)
@@ -106,12 +101,17 @@ const Purchase: FC = () => {
   const [paymentMethods, setPaymentMethods] = useState<IPaymentMethodsProps[]>([])
   const [saleId, setSaleId] = useState(0)
 
-  useGetShops(setShops, () => null)
-  useGetInventories(setInventories, setFetching, [purchaseDone])
+  const { isLoading: isLoadingInventories, inventoriesData } = useInventories(
+    'paginatedInventories',
+    {
+      page: currentPage,
+    },
+  )
+  const { shopsData: allShopsData } = useShops('allShops', {})
   const { usersData: supportSales } = useUsers('supportSalesUsers', { role: 'supportSales' })
 
   const printOutRef = useRef<HTMLDivElement>(null)
-  const getShopName = shops?.results.find((shop) => shop.id === shopId)?.name || ''
+  const getShopName = allShopsData?.results.find((shop) => shop.id === shopId)?.name || ''
   const getSalesName =
     supportSales?.results.find((user: IUserProps) => user.id === saleId)?.fullname || 'SIGNOS'
 
@@ -275,11 +275,6 @@ const Purchase: FC = () => {
     },
   })
 
-  const onChangePagination = (page: number) => {
-    getInventories(setInventories, setFetching, page)
-    setcurrentPage(page)
-  }
-
   return (
     <div className='grid grid-cols-8 gap-6'>
       <div
@@ -301,19 +296,19 @@ const Purchase: FC = () => {
         <Table
           dataSource={formatDataToCop(
             formatInventoryAction(
-              formatinventoryPhoto(inventories?.results || []),
+              formatinventoryPhoto(inventoriesData?.results ?? []),
               addItemPurchase,
               changeInventoryAddQty,
             ),
           )}
           columns={inventoryColumns}
-          loading={fetching}
+          loading={isLoadingInventories}
           size='small'
           pagination={{
             current: currentPage,
-            total: inventories?.count || 0,
+            total: inventoriesData?.count ?? 0,
             size: 'small',
-            onChange: (page) => onChangePagination(page),
+            onChange: (page) => setcurrentPage(page),
             showSizeChanger: false,
           }}
         />
@@ -365,10 +360,10 @@ const Purchase: FC = () => {
       {selectShopVisible && (
         <AddDataPurchaseForm
           isVisible={selectShopVisible}
-          salesUsers={supportSales?.results || []}
+          salesUsers={supportSales?.results ?? []}
           onSuccessCallback={submitInvoice}
           onCancelCallback={() => setSelectShopVisible(false)}
-          shops={shops?.results || []}
+          shops={allShopsData?.results ?? []}
           total={getTotal(purchaseData).total}
         />
       )}

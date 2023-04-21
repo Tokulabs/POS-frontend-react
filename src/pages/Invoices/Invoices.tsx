@@ -2,23 +2,20 @@ import { Button } from 'antd'
 import { FC, useEffect, useRef, useState } from 'react'
 import PrintOut from '../../components/Print/PrintOut'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
-import { DataPropsForm, IPaginationProps } from '../../types/GlobalTypes'
+import { DataPropsForm } from '../../types/GlobalTypes'
 import {
   ICustomerDataProps,
   IPurchaseProps,
   PaymentMethodsEnum,
 } from '../Purchase/types/PurchaseTypes'
-import { useGetInvoices } from './../../hooks/useGetInvoices'
 import { columns } from './data/columnsData'
-import { IInvoiceProps, IPaymentMethodsProps } from './types/InvoicesTypes'
+import { IPaymentMethodsProps } from './types/InvoicesTypes'
 import { useReactToPrint } from 'react-to-print'
 import { formatDateTime } from '../../layouts/helpers/helpers'
-import { getInvoices } from '../../hooks/helper/functions'
 import { formatNumberToColombianPesos } from '../../utils/helpers'
+import { useInvoices } from '../../hooks/useInvoices'
 
 const Invoices: FC = () => {
-  const [fetching, setFetching] = useState(false)
-  const [invoices, setInvoices] = useState<IPaginationProps<IInvoiceProps>>()
   const [showPrintOut, setShowPrintOut] = useState(false)
   const [purchaseData, setPurchaseData] = useState<IPurchaseProps[]>([])
   const [shopName, setShopName] = useState<string>('')
@@ -28,12 +25,12 @@ const Invoices: FC = () => {
   const [customerData, setCustomerData] = useState<ICustomerDataProps>({} as ICustomerDataProps)
   const [paymentMethods, setPaymentMethods] = useState<IPaymentMethodsProps[]>([])
 
+  const { isLoading, invoicesData } = useInvoices('paginatedInvoices', { page: currentPage })
+
   const printOutRef = useRef<HTMLDivElement>(null)
 
-  useGetInvoices(setInvoices, setFetching)
-
   const pushActionToList = () => {
-    return invoices?.results.map((item) => ({
+    return invoicesData?.results.map((item) => ({
       ...item,
       created_at: formatDateTime(item.created_at as string),
       total: formatNumberToColombianPesos(
@@ -91,11 +88,6 @@ const Invoices: FC = () => {
     setShowPrintOut(true)
   }
 
-  const onChangePagination = (page: number) => {
-    getInvoices(setInvoices, setFetching, page)
-    setcurrentPage(page)
-  }
-
   useEffect(() => {
     if (showPrintOut) {
       handlePrint()
@@ -109,11 +101,11 @@ const Invoices: FC = () => {
         pageTitle='Facturas'
         dataSource={pushActionToList() as unknown as DataPropsForm[]}
         columns={columns}
-        fetching={fetching}
+        fetching={isLoading}
         disabledAddButton={true}
-        totalItems={invoices?.count || 0}
+        totalItems={invoicesData?.count || 0}
         currentPage={currentPage}
-        onChangePage={(page) => onChangePagination(page)}
+        onChangePage={(page) => setcurrentPage(page)}
       />
       <div ref={printOutRef}>
         {showPrintOut ? (

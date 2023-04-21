@@ -4,19 +4,23 @@ import { DataPropsForm } from '../../../types/GlobalTypes'
 import { groupURL } from '../../../utils/network'
 import { useForm } from 'antd/es/form/Form'
 import { axiosRequest } from '../../../api/api'
-import { IAddGroupFormProps } from '../types/GroupTypes'
+import { useGroups } from '../../../hooks/useGroups'
+import { IModalFormProps } from '../../../types/ModalTypes'
+import { IGroupsProps } from '../types/GroupTypes'
 
-const AddGroupForm: FC<IAddGroupFormProps> = ({
+const AddGroupForm: FC<IModalFormProps> = ({
   isVisible = false,
   onSuccessCallback,
   onCancelCallback,
-  groups,
 }) => {
   const [form] = useForm()
   const [loading, setLoading] = useState(false)
   const initialValues = {
     name: '',
   }
+  const { groupsData } = useGroups('allGroups', {})
+
+  const allGroupsData = groupsData?.results ?? []
 
   const onSubmit = async (values: DataPropsForm) => {
     try {
@@ -66,7 +70,7 @@ const AddGroupForm: FC<IAddGroupFormProps> = ({
           <Select
             placeholder='Selecciona una categoria'
             options={[
-              ...groups.map((item) => ({
+              ...allGroupsData.map((item: IGroupsProps) => ({
                 value: item.id,
                 label: item.name,
               })),

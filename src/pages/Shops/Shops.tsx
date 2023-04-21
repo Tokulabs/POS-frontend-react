@@ -1,32 +1,14 @@
 import { FC, useState } from 'react'
-import { getShops } from '../../hooks/helper/functions'
-import { useGetShops } from '../../hooks/useGetShops'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
-import { DataPropsForm, IPaginationProps } from '../../types/GlobalTypes'
+import { DataPropsForm } from '../../types/GlobalTypes'
 import AddUserForm from './components/AddShopForm'
 import { columns } from './data/columnsData'
-import { IShopProps } from './types/ShopTypes'
+import { useShops } from '../../hooks/useShops'
 
 const Shops: FC = () => {
-  const [modalState, setModalState] = useState(false)
-  const [fetching, setFetching] = useState(false)
-  const [shops, setShops] = useState<IPaginationProps<IShopProps>>()
   const [currentPage, setcurrentPage] = useState(1)
-
-  const mainPage = 1
-
-  useGetShops(setShops, setFetching, mainPage)
-
-  const onCreateUSer = () => {
-    setModalState(false)
-    getShops(setShops, setFetching, mainPage)
-    setcurrentPage(mainPage)
-  }
-
-  const onChangePagination = (page: number) => {
-    getShops(setShops, setFetching, page)
-    setcurrentPage(page)
-  }
+  const [modalState, setModalState] = useState(false)
+  const { isLoading, shopsData } = useShops('paginatedShops', { page: currentPage })
 
   return (
     <>
@@ -34,15 +16,15 @@ const Shops: FC = () => {
         pageTitle='Tiendas'
         buttonTitle='Agregar Tienda'
         setModalState={setModalState}
-        dataSource={shops?.results as unknown as DataPropsForm[]}
-        totalItems={shops?.count || 0}
+        dataSource={shopsData?.results as unknown as DataPropsForm[]}
+        totalItems={shopsData?.count || 0}
         columns={columns}
-        fetching={fetching}
+        fetching={isLoading}
         currentPage={currentPage}
-        onChangePage={(page) => onChangePagination(page)}
+        onChangePage={(page) => setcurrentPage(page)}
       >
         <AddUserForm
-          onSuccessCallback={onCreateUSer}
+          onSuccessCallback={() => setModalState(false)}
           isVisible={modalState}
           onCancelCallback={() => setModalState(false)}
         />
