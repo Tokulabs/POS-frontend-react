@@ -1,5 +1,5 @@
 import { axiosRequest } from '../../../api/api'
-import { IQueryParams, IPaginationProps } from '../../../types/GlobalTypes'
+import { IQueryParams, IPaginationProps, DataPropsForm } from '../../../types/GlobalTypes'
 import { invoiceURL } from '../../../utils/network'
 import { IInvoiceProps } from '../types/InvoicesTypes'
 
@@ -42,6 +42,19 @@ export const getInvoicesNew = async (queryParams: IQueryParams) => {
       }))
       return { ...response.data, results: dataFormatted }
     }
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+export const postInvoicesNew = async (values: DataPropsForm) => {
+  try {
+    await axiosRequest({
+      method: 'post',
+      url: invoiceURL,
+      hasAuth: true,
+      payload: values,
+    })
   } catch (e) {
     console.log(e)
   }

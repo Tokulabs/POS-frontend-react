@@ -1,15 +1,15 @@
-import { Button } from 'antd'
+import { Button, notification } from 'antd'
 import { FC, useEffect, useRef, useState } from 'react'
 import PrintOut from '../../components/Print/PrintOut'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
-import { DataPropsForm } from '../../types/GlobalTypes'
+import { DataPropsForm, IPrintData } from '../../types/GlobalTypes'
 import {
   ICustomerDataProps,
   IPurchaseProps,
   PaymentMethodsEnum,
 } from '../Purchase/types/PurchaseTypes'
 import { columns } from './data/columnsData'
-import { IPaymentMethodsProps } from './types/InvoicesTypes'
+import { IInvoiceProps } from './types/InvoicesTypes'
 import { useReactToPrint } from 'react-to-print'
 import { formatDateTime } from '../../layouts/helpers/helpers'
 import { formatNumberToColombianPesos } from '../../utils/helpers'
@@ -17,13 +17,8 @@ import { useInvoices } from '../../hooks/useInvoices'
 
 const Invoices: FC = () => {
   const [showPrintOut, setShowPrintOut] = useState(false)
-  const [purchaseData, setPurchaseData] = useState<IPurchaseProps[]>([])
-  const [shopName, setShopName] = useState<string>('')
-  const [saleName, setSaleName] = useState<string>('')
-  const [date, setDate] = useState<string>('')
   const [currentPage, setcurrentPage] = useState(1)
-  const [customerData, setCustomerData] = useState<ICustomerDataProps>({} as ICustomerDataProps)
-  const [paymentMethods, setPaymentMethods] = useState<IPaymentMethodsProps[]>([])
+  const [printData, setPrintData] = useState<IPrintData>({} as IPrintData)
 
   const { isLoading, invoicesData } = useInvoices('paginatedInvoices', { page: currentPage })
 
@@ -40,51 +35,41 @@ const Invoices: FC = () => {
       ),
       is_dollar: item.is_dollar ? 'Si' : 'No',
       paid_by: item.payment_methods.map((item) => PaymentMethodsEnum[item.name]).join(', '),
-      action: (
-        <Button
-          onClick={() =>
-            printData(
-              item.invoice_items,
-              item.shop_name,
-              item.sale_name,
-              item.created_at,
-              {
-                customerName: item.customer_name,
-                customerId: item.customer_id,
-                customerEmail: item.customer_email,
-                customerPhone: item.customer_phone,
-              },
-              item.payment_methods,
-            )
-          }
-        >
-          Imprimir
-        </Button>
-      ),
+      action: <Button onClick={() => formatDataToPrint(item)}>Imprimir</Button>,
     }))
   }
 
   const handlePrint = useReactToPrint({
     content: () => printOutRef.current,
-    onAfterPrint() {
-      console.log('impresion exitosa')
+    onAfterPrint: () => {
+      notification.success({
+        message: 'Impresión exitosa',
+        description: 'La factura se ha impreso correctamente',
+      })
+    },
+    onPrintError: () => {
+      notification.error({
+        message: 'Error al imprimir',
+        description: 'Ha ocurrido un error al imprimir la factura',
+      })
     },
   })
 
-  const printData = (
-    data: IPurchaseProps[],
-    shopName: string,
-    saleName: string,
-    date: string,
-    customerData: ICustomerDataProps,
-    paymentMethods: IPaymentMethodsProps[],
-  ) => {
-    setDate(date)
-    setShopName(shopName)
-    setSaleName(saleName)
-    setCustomerData(customerData)
-    setPaymentMethods(paymentMethods)
-    setPurchaseData(data)
+  const formatDataToPrint = (data: IInvoiceProps) => {
+    const customerData: ICustomerDataProps = {
+      customerName: data.customer_name,
+      customerId: data.customer_id,
+      customerEmail: data.customer_email,
+      customerPhone: data.customer_phone,
+    }
+    setPrintData({
+      data: data.invoice_items,
+      shopName: data.shop_name,
+      saleName: data.sale_name,
+      date: data.created_at,
+      customerData,
+      paymentMethods: data.payment_methods,
+    })
     setShowPrintOut(true)
   }
 
@@ -107,18 +92,7 @@ const Invoices: FC = () => {
         currentPage={currentPage}
         onChangePage={(page) => setcurrentPage(page)}
       />
-      <div ref={printOutRef}>
-        {showPrintOut ? (
-          <PrintOut
-            data={purchaseData}
-            shopName={shopName}
-            saleName={saleName}
-            date={date}
-            customerData={customerData}
-            paymentMethods={paymentMethods}
-          />
-        ) : null}
-      </div>
+      <div ref={printOutRef}>{showPrintOut ? <PrintOut printData={printData} /> : null}</div>
     </>
   )
 }

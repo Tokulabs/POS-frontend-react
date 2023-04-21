@@ -1,4 +1,5 @@
 import { IPaymentMethodsProps } from '../pages/Invoices/types/InvoicesTypes'
+import { IPurchaseProps, ICustomerDataProps } from '../pages/Purchase/types/PurchaseTypes'
 
 export interface IPurchaseAddRemoveProps {
   [key: number]: number
@@ -26,4 +27,13 @@ export interface IPaginationProps<T> {
   next: string | null
   previous: string | null
   results: T[]
+}
+
+export interface IPrintData {
+  data: IPurchaseProps[]
+  shopName: string
+  date?: string
+  customerData: ICustomerDataProps
+  paymentMethods: IPaymentMethodsProps[]
+  saleName: string
 }
