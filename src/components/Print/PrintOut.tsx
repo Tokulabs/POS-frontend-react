@@ -1,23 +1,15 @@
 import { FC } from 'react'
 import { formatDateTime } from '../../layouts/helpers/helpers'
-import {
-  ICustomerDataProps,
-  IPurchaseProps,
-  PaymentMethodsEnum,
-} from '../../pages/Purchase/types/PurchaseTypes'
+import { PaymentMethodsEnum } from '../../pages/Purchase/types/PurchaseTypes'
 import { getTotal } from './../../pages/Purchase/helpers/PurchaseHelpers'
 import LogoSignos from './../../assets/logos/signos_logo.png'
 import { formatNumberToColombianPesos } from '../../utils/helpers'
-import { IPaymentMethodsProps } from '../../pages/Invoices/types/InvoicesTypes'
+import { IPrintData } from '../../types/GlobalTypes'
 
 const PrintOut: FC<{
-  data: IPurchaseProps[]
-  shopName: string
-  date?: string
-  customerData: ICustomerDataProps
-  paymentMethods: IPaymentMethodsProps[]
-  saleName: string
-}> = ({ data, shopName, date, customerData, paymentMethods, saleName }) => {
+  printData: IPrintData
+}> = ({ printData }) => {
+  const { customerData, data, paymentMethods, saleName, shopName, date } = printData
   const { iva, subTotalBase, total } = getTotal(data)
 
   return (

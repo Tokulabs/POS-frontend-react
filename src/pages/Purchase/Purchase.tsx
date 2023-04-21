@@ -1,34 +1,31 @@
-import { ChangeEvent, FC, useState, useRef } from 'react'
+import { ChangeEvent, FC, useState, useRef, useEffect } from 'react'
 // Antd
 import { Button, Input, notification, Table } from 'antd'
 import Search from 'antd/es/input/Search'
 // Hooks
-import { useGetInventories } from '../../hooks/useGetInventories'
-import { useGetShops } from './../../hooks/useGetShops'
 import { formatinventoryPhoto } from '../Inventories/Inventories'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useUsers } from '../../hooks/useUsers'
+import { useShops } from '../../hooks/useShops'
+import { useInventories } from '../../hooks/useInventories'
 // Types
-import { DataPropsForm, IPaginationProps, IPurchaseAddRemoveProps } from '../../types/GlobalTypes'
+import { DataPropsForm, IPrintData, IPurchaseAddRemoveProps } from '../../types/GlobalTypes'
 import { ICustomerDataProps, IPurchaseProps } from './types/PurchaseTypes'
 import { IInventoryProps } from '../Inventories/types/InventoryTypes'
-import { IShopProps } from '../Shops/types/ShopTypes'
 import { IPaymentMethodsProps } from '../Invoices/types/InvoicesTypes'
 import { IUserProps } from '../Users/types/UserTypes'
 // Data
 import { inventoryColumns, purchaseColumns } from './data/columnsData'
 // Modals
 import AddDataPurchaseForm from './components/AddDataPurchase'
-// Api
-import { axiosRequest } from '../../api/api'
-import { invoiceURL } from './../../utils/network'
 // Components
 import PrintOut from '../../components/Print/PrintOut'
 import { useReactToPrint } from 'react-to-print'
 import Clock from '../../components/Clock/Clock'
 // Helpers
 import { getTotal } from './helpers/PurchaseHelpers'
-import { getInventories } from '../../hooks/helper/functions'
 import { formatNumberToColombianPesos, formatToUsd } from '../../utils/helpers'
+import { postInvoicesNew } from '../Invoices/helpers/services'
 
 const formatInventoryAction = (
   inventories: DataPropsForm[],
@@ -90,30 +87,25 @@ const formatPurchaseData = (
 }
 
 const Purchase: FC = () => {
-  const [fetching, setFetching] = useState(false)
-  const [inventories, setInventories] = useState<IPaginationProps<IInventoryProps>>()
   const [purchaseData, setPurchaseData] = useState<IPurchaseProps[]>([])
   const [purchaseItemQty, setPurchaseItemQty] = useState<IPurchaseAddRemoveProps>({})
   const [purchaseItemDataQty, setPurchaseItemDataQty] = useState<IPurchaseAddRemoveProps>({})
-  const [shops, setShops] = useState<IPaginationProps<IShopProps>>()
-  const [selectShopVisible, setSelectShopVisible] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [modalState, setModalstate] = useState(false)
   const [showPrintOut, setShowPrintOut] = useState(false)
-  const [purchaseDone, setPurchaseDone] = useState(false)
-  const [shopId, setShopId] = useState(0)
   const [currentPage, setcurrentPage] = useState(1)
-  const [customerData, setCustomerData] = useState<ICustomerDataProps>({} as ICustomerDataProps)
-  const [paymentMethods, setPaymentMethods] = useState<IPaymentMethodsProps[]>([])
-  const [saleId, setSaleId] = useState(0)
+  const [printData, setPrintData] = useState<IPrintData>({} as IPrintData)
 
-  useGetShops(setShops, () => null)
-  useGetInventories(setInventories, setFetching, [purchaseDone])
+  const queryClient = useQueryClient()
+  const { isLoading: isLoadingInventories, inventoriesData } = useInventories(
+    'paginatedInventories',
+    {
+      page: currentPage,
+    },
+  )
+  const { shopsData: allShopsData } = useShops('allShops', {})
   const { usersData: supportSales } = useUsers('supportSalesUsers', { role: 'supportSales' })
 
   const printOutRef = useRef<HTMLDivElement>(null)
-  const getShopName = shops?.results.find((shop) => shop.id === shopId)?.name || ''
-  const getSalesName =
-    supportSales?.results.find((user: IUserProps) => user.id === saleId)?.fullname || 'SIGNOS'
 
   const addItemPurchase = (inventoryData: IInventoryProps) => {
     const qty = purchaseItemQty[inventoryData.id] || 1
@@ -191,6 +183,19 @@ const Purchase: FC = () => {
     setPurchaseItemDataQty({})
   }
 
+  const { mutate, isLoading } = useMutation({
+    mutationFn: postInvoicesNew,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['paginatedInventories'])
+      notification.success({
+        message: 'Exito',
+        description: 'Tienda creada!',
+      })
+      clearPurchaseData()
+      setcurrentPage(1)
+    },
+  })
+
   const submitInvoice = async (data?: number | DataPropsForm) => {
     if (typeof data === 'number') return
     const customerData: ICustomerDataProps = {
@@ -209,15 +214,22 @@ const Purchase: FC = () => {
           received_amount: item.received_amount,
           back_amount: item.back_amount,
           transaction_code: item.transaction_code ? item.transaction_code : null,
-        } || []),
+        } ?? []),
     )
 
-    setCustomerData(customerData)
-    setPaymentMethods(paymentMethodsFormated)
-    setShopId(data?.shop_id as number)
-    setSaleId(data?.sale_by_id as number)
-    setShowPrintOut(true)
-    setSelectShopVisible(false)
+    const getShopName =
+      allShopsData?.results.find((shop) => shop.id === (data?.shop_id as number))?.name || ''
+    const getSalesName =
+      supportSales?.results.find((user: IUserProps) => user.id === (data?.sale_by_id as number))
+        ?.fullname || 'SIGNOS'
+
+    setPrintData({
+      shopName: getShopName,
+      saleName: getSalesName,
+      customerData,
+      paymentMethods: paymentMethodsFormated,
+      data: purchaseData,
+    })
 
     const dataToSend = {
       shop_id: data?.shop_id as number,
@@ -231,54 +243,43 @@ const Purchase: FC = () => {
       is_dollar: data?.is_dollar as boolean,
     }
 
-    try {
-      setLoading(true)
-      const response = await axiosRequest({
-        method: 'post',
-        url: invoiceURL,
-        hasAuth: true,
-        payload: dataToSend,
-      })
-      if (response) {
-        notification.success({
-          message: 'Exito',
-          description: 'Factura creada!',
-        })
-      }
-      handlePrint()
-    } catch (e) {
-      console.log(e)
-    } finally {
-      setLoading(false)
-      setShowPrintOut(false)
-      clearPurchaseData()
-      setPurchaseDone(!purchaseDone)
-      setShopId(0)
-      setcurrentPage(1)
-    }
+    mutate(dataToSend)
+    setModalstate(false)
+    setShowPrintOut(true)
   }
 
-  const getShopId = () => {
+  const createPurchase = () => {
     if (purchaseData.length < 1) {
       notification.error({
         message: 'No tienes productos en la venta en curso',
       })
       return
     }
-    setSelectShopVisible(true)
+    setModalstate(true)
   }
 
   const handlePrint = useReactToPrint({
     content: () => printOutRef.current,
-    onAfterPrint() {
-      console.log('impresion exitosa')
+    onAfterPrint: () => {
+      notification.success({
+        message: 'Impresión exitosa',
+        description: 'La factura se ha impreso correctamente',
+      })
+    },
+    onPrintError: () => {
+      notification.error({
+        message: 'Error al imprimir',
+        description: 'Ha ocurrido un error al imprimir la factura',
+      })
     },
   })
 
-  const onChangePagination = (page: number) => {
-    getInventories(setInventories, setFetching, page)
-    setcurrentPage(page)
-  }
+  useEffect(() => {
+    if (showPrintOut) {
+      handlePrint()
+      setShowPrintOut(false)
+    }
+  }, [showPrintOut])
 
   return (
     <div className='grid grid-cols-8 gap-6'>
@@ -301,19 +302,19 @@ const Purchase: FC = () => {
         <Table
           dataSource={formatDataToCop(
             formatInventoryAction(
-              formatinventoryPhoto(inventories?.results || []),
+              formatinventoryPhoto(inventoriesData?.results ?? []),
               addItemPurchase,
               changeInventoryAddQty,
             ),
           )}
           columns={inventoryColumns}
-          loading={fetching}
+          loading={isLoadingInventories}
           size='small'
           pagination={{
             current: currentPage,
-            total: inventories?.count || 0,
+            total: inventoriesData?.count ?? 0,
             size: 'small',
-            onChange: (page) => onChangePagination(page),
+            onChange: (page) => setcurrentPage(page),
             showSizeChanger: false,
           }}
         />
@@ -353,7 +354,7 @@ const Purchase: FC = () => {
             </div>
           </div>
           <div className='flex gap-2'>
-            <Button type='primary' onClick={getShopId} loading={loading}>
+            <Button type='primary' onClick={createPurchase} loading={isLoading}>
               Guardar & imprimir
             </Button>
             <Button type='primary' danger onClick={clearPurchaseData}>
@@ -362,27 +363,17 @@ const Purchase: FC = () => {
           </div>
         </div>
       </div>
-      {selectShopVisible && (
+      {modalState && (
         <AddDataPurchaseForm
-          isVisible={selectShopVisible}
-          salesUsers={supportSales?.results || []}
+          isVisible={modalState}
+          salesUsers={supportSales?.results ?? []}
           onSuccessCallback={submitInvoice}
-          onCancelCallback={() => setSelectShopVisible(false)}
-          shops={shops?.results || []}
+          onCancelCallback={() => setModalstate(false)}
+          shops={allShopsData?.results ?? []}
           total={getTotal(purchaseData).total}
         />
       )}
-      <div ref={printOutRef}>
-        {showPrintOut ? (
-          <PrintOut
-            paymentMethods={paymentMethods}
-            data={purchaseData}
-            shopName={getShopName}
-            customerData={customerData}
-            saleName={getSalesName}
-          />
-        ) : null}
-      </div>
+      <div ref={printOutRef}>{showPrintOut ? <PrintOut printData={printData} /> : null}</div>
     </div>
   )
 }

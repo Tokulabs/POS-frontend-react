@@ -14,6 +14,7 @@ const AddUserForm: FC<IModalFormProps> = ({
 }) => {
   const [form] = useForm()
   const queryClient = useQueryClient()
+
   const { mutate, isLoading } = useMutation({
     mutationFn: postUsersNew,
     onSuccess: () => {
@@ -32,29 +33,6 @@ const AddUserForm: FC<IModalFormProps> = ({
     mutate(values)
   }
 
-  // const onSubmit = async (values: DataPropsForm) => {
-  //   try {
-  //     setLoading(true)
-  //     const response = await axiosRequest({
-  //       method: 'post',
-  //       url: createUserURL,
-  //       hasAuth: true,
-  //       payload: values,
-  //     })
-  //     if (response) {
-  //       onSuccessCallback()
-  //       notification.success({
-  //         message: 'Exito',
-  //         description: 'Usuario creado!',
-  //       })
-  //       form.resetFields()
-  //     }
-  //   } catch (e) {
-  //     console.log(e)
-  //   } finally {
-  //     setLoading(false)
-  //   }
-  // }
   return (
     <Modal
       title='Crear usuario'

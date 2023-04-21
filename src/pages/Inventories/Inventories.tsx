@@ -1,16 +1,13 @@
 import { FC, useState } from 'react'
-import { useGetGroups } from '../../hooks/useGetGroups'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
-import { IPaginationProps } from '../../types/GlobalTypes'
 import AddInventoryForm from './components/AddInventoryForm'
 import { Button } from 'antd'
 import AddInventoryFormCSV from './components/AddInventoryFormCSV'
-import { useGetInventories } from '../../hooks/useGetInventories'
-import { getInventories } from '../../hooks/helper/functions'
 import { columns } from './data/columnsData'
 import { IInventoryProps, ModalStateEnum } from './types/InventoryTypes'
-import { IGroupsProps } from '../Groups/types/GroupTypes'
 import { formatNumberToColombianPesos, formatToUsd } from '../../utils/helpers'
+import { useGroups } from '../../hooks/useGroups'
+import { useInventories } from '../../hooks/useInventories'
 
 export const formatinventoryPhoto = (inventories: IInventoryProps[]) => {
   return inventories.map((item) => ({
@@ -35,27 +32,12 @@ const inventoriesDataFormated = (inventories: IInventoryProps[]) => {
 
 const Inventories: FC = () => {
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
-  const [fetching, setFetching] = useState(false)
-  const [groups, setGroups] = useState<IPaginationProps<IGroupsProps>>(
-    {} as IPaginationProps<IGroupsProps>,
-  )
-  const [inventories, setInventories] = useState<IPaginationProps<IInventoryProps>>()
   const [currentPage, setcurrentPage] = useState(1)
 
-  useGetGroups(setGroups, () => null)
-
-  useGetInventories(setInventories, setFetching)
-
-  const onCreateInventory = () => {
-    setModalState(ModalStateEnum.off)
-    getInventories(setInventories, setFetching)
-    setcurrentPage(1)
-  }
-
-  const onChangePagination = (page: number) => {
-    getInventories(setInventories, setFetching, page)
-    setcurrentPage(page)
-  }
+  const { isLoading, inventoriesData } = useInventories('paginatedInventories', {
+    page: currentPage,
+  })
+  const { groupsData } = useGroups('allGroups', {})
 
   return (
     <>
@@ -63,10 +45,10 @@ const Inventories: FC = () => {
         pageTitle='Administrador de Inventario'
         buttonTitle='+ Item'
         setModalState={() => setModalState(ModalStateEnum.addItem)}
-        dataSource={inventoriesDataFormated(formatinventoryPhoto(inventories?.results || []))}
+        dataSource={inventoriesDataFormated(formatinventoryPhoto(inventoriesData?.results || []))}
         columns={columns}
-        fetching={fetching}
-        totalItems={inventories?.count || 0}
+        fetching={isLoading}
+        totalItems={inventoriesData?.count || 0}
         currentPage={currentPage}
         extraButton={
           <Button
@@ -77,16 +59,16 @@ const Inventories: FC = () => {
             + items .csv
           </Button>
         }
-        onChangePage={(page) => onChangePagination(page)}
+        onChangePage={(page) => setcurrentPage(page)}
       >
         <AddInventoryForm
-          onSuccessCallback={onCreateInventory}
+          onSuccessCallback={() => setModalState(ModalStateEnum.off)}
           isVisible={modalState === ModalStateEnum.addItem}
           onCancelCallback={() => setModalState(ModalStateEnum.off)}
-          groups={groups.results || []}
+          groups={groupsData?.results ?? []}
         />
         <AddInventoryFormCSV
-          onSuccessCallback={onCreateInventory}
+          onSuccessCallback={() => setModalState(ModalStateEnum.off)}
           isVisible={modalState === ModalStateEnum.addItemsCSV}
           onCancelCallback={() => setModalState(ModalStateEnum.off)}
         />
