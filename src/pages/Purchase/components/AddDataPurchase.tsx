@@ -6,6 +6,7 @@ import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import { ISelectShopPurchase, PaymentMethodsEnum } from '../types/PurchaseTypes'
 import { formatNumberToColombianPesos } from '../../../utils/helpers'
 import { IPaymentMethodsProps } from '../../Invoices/types/InvoicesTypes'
+import { useDianResolutions } from '../../../hooks/useDianResolution'
 
 const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
   isVisible = false,
@@ -28,6 +29,8 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
   const [receivedAmountValues, setReceivedAmountValues] = useState<number[]>([])
   const [backAmountValues, setBackAmountValues] = useState<number[]>([])
   const [sumTotalPaymentMethods, setSumTotalPaymentMethods] = useState(0)
+
+  const { dianResolutionData } = useDianResolutions('allDianResolutions', {})
 
   const initialValues = {
     shop_id: '',
@@ -117,6 +120,7 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
       forceRender={true}
       width={1000}
       title='Selecciona Tienda'
+      style={{ position: 'relative' }}
       open={isVisible}
       onCancel={() => {
         onCancelCallback()
@@ -125,6 +129,12 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
       footer={false}
       maskClosable={false}
     >
+      <div className='absolute right-12 top-3'>
+        <span className='text-base'>Factura: </span>
+        <span className=' text-lg text-blue-500 font-bold'>
+          GUA-{dianResolutionData?.data[0].current_number}
+        </span>
+      </div>
       <Form layout='vertical' onFinish={onSubmit} form={form} initialValues={initialValues}>
         <div className='flex w-full gap-2'>
           <Form.Item

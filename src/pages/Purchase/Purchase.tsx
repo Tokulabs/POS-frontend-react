@@ -14,6 +14,7 @@ import { ICustomerDataProps, IPurchaseProps } from './types/PurchaseTypes'
 import { IInventoryProps } from '../Inventories/types/InventoryTypes'
 import { IPaymentMethodsProps } from '../Invoices/types/InvoicesTypes'
 import { IUserProps } from '../Users/types/UserTypes'
+import { IDianResolutionProps } from '../Dian/types/DianResolutionTypes'
 // Data
 import { inventoryColumns, purchaseColumns } from './data/columnsData'
 // Modals
@@ -26,6 +27,7 @@ import Clock from '../../components/Clock/Clock'
 import { getTotal } from './helpers/PurchaseHelpers'
 import { formatNumberToColombianPesos, formatToUsd } from '../../utils/helpers'
 import { postInvoicesNew } from '../Invoices/helpers/services'
+import { useDianResolutions } from '../../hooks/useDianResolution'
 
 const formatInventoryAction = (
   inventories: DataPropsForm[],
@@ -104,6 +106,7 @@ const Purchase: FC = () => {
   )
   const { shopsData: allShopsData } = useShops('allShops', {})
   const { usersData: supportSales } = useUsers('supportSalesUsers', { role: 'supportSales' })
+  const { dianResolutionData } = useDianResolutions('allDianResolutions', {})
 
   const printOutRef = useRef<HTMLDivElement>(null)
 
@@ -217,18 +220,19 @@ const Purchase: FC = () => {
         } ?? []),
     )
 
-    const getShopName =
-      allShopsData?.results.find((shop) => shop.id === (data?.shop_id as number))?.name || ''
+    const dianInformation: IDianResolutionProps =
+      dianResolutionData?.data[0] ?? ({} as IDianResolutionProps)
+
     const getSalesName =
       supportSales?.results.find((user: IUserProps) => user.id === (data?.sale_by_id as number))
         ?.fullname || 'SIGNOS'
 
     setPrintData({
-      shopName: getShopName,
       saleName: getSalesName,
       customerData,
       paymentMethods: paymentMethodsFormated,
       data: purchaseData,
+      dianInformation,
     })
 
     const dataToSend = {
@@ -241,6 +245,7 @@ const Purchase: FC = () => {
       customer_phone: customerData.customerPhone,
       payment_methods: paymentMethodsFormated,
       is_dollar: data?.is_dollar as boolean,
+      invoice_number: dianInformation?.current_number as number,
     }
 
     mutate(dataToSend)

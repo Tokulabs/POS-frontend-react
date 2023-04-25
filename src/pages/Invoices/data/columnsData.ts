@@ -1,8 +1,8 @@
 export const columns = [
   {
-    title: '# factura',
-    dataIndex: 'code',
-    key: 'code',
+    title: '# Factura',
+    dataIndex: 'invoice_number',
+    key: 'invoice_number',
   },
   {
     title: 'Creado Por',
@@ -20,7 +20,7 @@ export const columns = [
     key: 'created_at',
   },
   {
-    title: 'total',
+    title: 'Total',
     dataIndex: 'total',
     key: 'total',
   },

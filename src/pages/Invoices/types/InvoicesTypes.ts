@@ -21,5 +21,6 @@ export interface IInvoiceProps {
   customer_phone: string | null
   payment_methods: IPaymentMethodsProps[]
   is_dollar: boolean
+  invoice_number: string
   key?: number
 }

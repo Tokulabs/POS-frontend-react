@@ -9,7 +9,7 @@ import { IPrintData } from '../../types/GlobalTypes'
 const PrintOut: FC<{
   printData: IPrintData
 }> = ({ printData }) => {
-  const { customerData, data, paymentMethods, saleName, shopName, date } = printData
+  const { customerData, data, paymentMethods, saleName, date, dianInformation } = printData
   const { iva, subTotalBase, total } = getTotal(data)
 
   return (
@@ -21,15 +21,18 @@ const PrintOut: FC<{
       <section className='flex flex-col justify-center items-center gap-1'>
         <p className='m-0 text-sm'>Tel. (091) 851 0935/0654</p>
         <p className='m-0 text-xs'>
-          Documento oficial Nro, [Numero del documento] del [Fecha de inicio]. Vigente hasta [Fecha
-          Final]
+          {`Documento oficial Nro, ${dianInformation.document_number}\n del ${dianInformation.from_date} Vigente hasta ${dianInformation.to_date}`}
         </p>
-        <p className='m-0 text-[0.75rem] mb-2'>habilita del [xxxxxxx] al [xxxxxx]</p>
+        <p className='m-0 text-[0.75rem] mb-2'>
+          habilita del {dianInformation.from_number} al {dianInformation.to_number}
+        </p>
         <p className='m-0 text-xs self-start'>
           Nombre: {customerData.customerName} ID: {customerData.customerId}
         </p>
         <section className='flex justify-between items-center w-full'>
-          <p className='m-0 text-xs text-start'>D. E ./P. O. S {shopName}-[numero C]</p>
+          <p className='m-0 text-xs text-start'>
+            D. E ./P. O. S GUA-{dianInformation.current_number}
+          </p>
           <p className='m-0 text-xs text-start'>
             Fec. {date ? formatDateTime(date, true, false) : formatDateTime(undefined, true)}
           </p>
