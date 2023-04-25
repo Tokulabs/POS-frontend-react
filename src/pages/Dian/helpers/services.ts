@@ -1,5 +1,5 @@
 import { axiosRequest } from '../../../api/api'
-import { IQueryParams } from '../../../types/GlobalTypes'
+import { DataPropsForm, IQueryParams } from '../../../types/GlobalTypes'
 import { dianResolutionURL } from '../../../utils/network'
 import { IDianResolutionProps } from '../types/DianResolutionTypes'
 
@@ -17,6 +17,23 @@ export const getDianResolutions = async (queryParams: IQueryParams) => {
       url: finalURL,
       hasAuth: true,
       showError: false,
+    })
+    if (response) {
+      return response
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+export const postDianResolution = async (data: DataPropsForm) => {
+  try {
+    const response = await axiosRequest({
+      url: dianResolutionURL,
+      method: 'post',
+      hasAuth: true,
+      showError: true,
+      payload: data,
     })
     if (response) {
       return response
