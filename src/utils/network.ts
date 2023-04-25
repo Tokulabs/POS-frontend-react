@@ -15,5 +15,6 @@ export const summaryURL = baseURL + 'app/summary'
 export const topSellURL = baseURL + 'app/top-selling'
 export const salesByShopURL = baseURL + 'app/sales-by-shop'
 export const purchaseSummaryURL = baseURL + 'app/purchase-summary'
+export const dianResolutionURL = baseURL + 'app/dian-resolution'
 
 export const cloudinaryURL = 'https://api.cloudinary.com/v1_1/de4vbdzth/upload'

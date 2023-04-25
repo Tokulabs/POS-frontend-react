@@ -15,6 +15,7 @@ import UserActivities from './../pages/UserActivities/UserActivities'
 import Purchase from '../pages/Purchase/Purchase'
 import Invoices from './../pages/Invoices/Invoices'
 import Notfound from '../pages/NotFound/404Notfound'
+import Dian from '../pages/Dian/Dian'
 
 export const Router: FC = () => {
   return (
@@ -36,6 +37,7 @@ export const Router: FC = () => {
                 <Route path='/user-activities' element={<UserActivities />} />
                 <Route path='/purchase' element={<Purchase />} />
                 <Route path='/invoices' element={<Invoices />} />
+                <Route path='/dian-resolution' element={<Dian />} />
                 <Route path='*' element={<Notfound />} />
               </Routes>
             </AuthRoutes>

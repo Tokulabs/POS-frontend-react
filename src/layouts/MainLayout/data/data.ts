@@ -8,6 +8,7 @@ import {
   IconBuildingStore,
   IconActivity,
   TablerIconsProps,
+  IconKey,
 } from '@tabler/icons-react'
 
 interface ISideBarData {
@@ -56,5 +57,10 @@ export const SideBarData: ISideBarData[] = [
     icon: IconActivity,
     title: 'Actividad de Usuarios',
     path: '/user-activities',
+  },
+  {
+    icon: IconKey,
+    title: 'Resoluciones DIAN',
+    path: '/dian-resolution',
   },
 ]

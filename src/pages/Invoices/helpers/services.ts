@@ -37,6 +37,7 @@ export const getInvoicesNew = async (queryParams: IQueryParams) => {
           item: itemInvoice.item_name,
           total: itemInvoice.amount,
         })),
+        invoice_number: item.invoice_number,
         payment_methods: item.payment_methods,
         is_dollar: item.is_dollar,
       }))

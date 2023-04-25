@@ -1,3 +1,4 @@
+import { IDianResolutionProps } from '../pages/Dian/types/DianResolutionTypes'
 import { IPaymentMethodsProps } from '../pages/Invoices/types/InvoicesTypes'
 import { IPurchaseProps, ICustomerDataProps } from '../pages/Purchase/types/PurchaseTypes'
 
@@ -31,9 +32,9 @@ export interface IPaginationProps<T> {
 
 export interface IPrintData {
   data: IPurchaseProps[]
-  shopName: string
   date?: string
   customerData: ICustomerDataProps
   paymentMethods: IPaymentMethodsProps[]
   saleName: string
+  dianInformation: IDianResolutionProps
 }

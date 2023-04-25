@@ -14,6 +14,8 @@ import { useReactToPrint } from 'react-to-print'
 import { formatDateTime } from '../../layouts/helpers/helpers'
 import { formatNumberToColombianPesos } from '../../utils/helpers'
 import { useInvoices } from '../../hooks/useInvoices'
+import { useDianResolutions } from '../../hooks/useDianResolution'
+import { IDianResolutionProps } from '../Dian/types/DianResolutionTypes'
 
 const Invoices: FC = () => {
   const [showPrintOut, setShowPrintOut] = useState(false)
@@ -21,6 +23,7 @@ const Invoices: FC = () => {
   const [printData, setPrintData] = useState<IPrintData>({} as IPrintData)
 
   const { isLoading, invoicesData } = useInvoices('paginatedInvoices', { page: currentPage })
+  const { dianResolutionData } = useDianResolutions('allDianResolutions', {})
 
   const printOutRef = useRef<HTMLDivElement>(null)
 
@@ -62,13 +65,19 @@ const Invoices: FC = () => {
       customerEmail: data.customer_email,
       customerPhone: data.customer_phone,
     }
+
+    const dianInformation: IDianResolutionProps = {
+      ...(dianResolutionData?.data[0] as IDianResolutionProps),
+      current_number: Number(data.invoice_number),
+    }
+
     setPrintData({
       data: data.invoice_items,
-      shopName: data.shop_name,
       saleName: data.sale_name,
       date: data.created_at,
       customerData,
       paymentMethods: data.payment_methods,
+      dianInformation,
     })
     setShowPrintOut(true)
   }
