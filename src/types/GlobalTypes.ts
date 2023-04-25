@@ -1,3 +1,4 @@
+import { Moment } from 'moment'
 import { IDianResolutionProps } from '../pages/Dian/types/DianResolutionTypes'
 import { IPaymentMethodsProps } from '../pages/Invoices/types/InvoicesTypes'
 import { IPurchaseProps, ICustomerDataProps } from '../pages/Purchase/types/PurchaseTypes'
@@ -16,6 +17,7 @@ export interface DataPropsForm {
     | DataPropsForm[]
     | IPaymentMethodsProps[]
     | null
+    | Moment[]
 }
 
 export interface IQueryParams {
