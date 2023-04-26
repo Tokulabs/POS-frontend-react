@@ -17,7 +17,6 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
   salesUsers,
 }) => {
   const [form] = useForm()
-  const [loading] = useState(false)
   const [paymentMethods] = useState([
     { value: 'cash', label: PaymentMethodsEnum.cash },
     { value: 'creditCard', label: PaymentMethodsEnum.creditCard },
@@ -30,7 +29,7 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
   const [backAmountValues, setBackAmountValues] = useState<number[]>([])
   const [sumTotalPaymentMethods, setSumTotalPaymentMethods] = useState(0)
 
-  const { dianResolutionData } = useDianResolutions('allDianResolutions', {})
+  const { dianResolutionData, isLoading } = useDianResolutions('allDianResolutions', {})
 
   const initialValues = {
     shop_id: '',
@@ -371,7 +370,13 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
               )}
             </Form.List>
             <Form.Item className='mt-4'>
-              <Button htmlType='submit' type='primary' block loading={loading}>
+              <Button
+                htmlType='submit'
+                type='primary'
+                block
+                loading={isLoading}
+                disabled={isLoading}
+              >
                 Submit
               </Button>
             </Form.Item>

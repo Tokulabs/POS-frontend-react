@@ -46,7 +46,6 @@ const AddDianResolutionForm: FC<IModalFormProps> = ({
     })
 
     const newValues = { ...values, from_date: newDates[0], to_date: newDates[1] }
-    console.log(newValues)
     mutate(newValues)
   }
 
