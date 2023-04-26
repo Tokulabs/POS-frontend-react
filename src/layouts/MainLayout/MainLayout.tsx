@@ -6,6 +6,7 @@ import { SideBarData } from './data/data'
 import { Link, useLocation } from 'react-router-dom'
 import { store } from '../../store'
 import { formatDateTime } from '../helpers/helpers'
+import { UserRolesEnum } from '../../pages/Users/types/UserTypes'
 
 const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const { state } = useContext(store)
@@ -41,6 +42,14 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
             {SideBarData.map((item, index) => {
               const Icon = item.icon
               const active = location.pathname === item.path
+              if (item.allowedRoles) {
+                const hasAllowedRole = item.allowedRoles.includes(
+                  UserRolesEnum[state.user?.role as keyof typeof UserRolesEnum],
+                )
+                if (!hasAllowedRole) {
+                  return null
+                }
+              }
               return (
                 <li key={index}>
                   <Link
