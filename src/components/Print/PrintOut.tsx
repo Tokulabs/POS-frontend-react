@@ -5,18 +5,13 @@ import { getTotal } from './../../pages/Purchase/helpers/PurchaseHelpers'
 import LogoSignos from './../../assets/logos/signos_logo.png'
 import { formatNumberToColombianPesos } from '../../utils/helpers'
 import { IPrintData } from '../../types/GlobalTypes'
-import { useDianResolutions } from '../../hooks/useDianResolution'
 
 const PrintOut: FC<{
   printData: IPrintData
 }> = ({ printData }) => {
-  const { customerData, data, paymentMethods, saleName, date, dianDocumentNumber, invoiceNumber } =
+  const { customerData, data, paymentMethods, saleName, date, dianResolution, invoiceNumber } =
     printData
   const { iva, subTotalBase, total } = getTotal(data)
-  const { dianResolutionData } = useDianResolutions('allDianResolutions', {})
-  const getDianResolution = dianResolutionData?.data.filter(
-    (item) => item.document_number === dianDocumentNumber,
-  )[0]
 
   return (
     <article className='bg-white flex flex-col w-80 justify-center items-center text-center p-4 gap-2'>
@@ -27,10 +22,10 @@ const PrintOut: FC<{
       <section className='flex flex-col justify-center items-center gap-1'>
         <p className='m-0 text-sm'>Tel. (091) 851 0935/0654</p>
         <p className='m-0 text-xs'>
-          {`Documento oficial Nro, ${getDianResolution?.document_number}\n del ${getDianResolution?.from_date} Vigente hasta ${getDianResolution?.to_date}`}
+          {`Documento oficial Nro, ${dianResolution.document_number}\n del ${dianResolution.from_date} Vigente hasta ${dianResolution.to_date}`}
         </p>
         <p className='m-0 text-[0.75rem] mb-2'>
-          habilita del {getDianResolution?.from_number} al {getDianResolution?.to_number}
+          habilita del {dianResolution.from_number} al {dianResolution.to_number}
         </p>
         <p className='m-0 text-xs self-start'>
           Nombre: {customerData.customerName} ID: {customerData.customerId}
