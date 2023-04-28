@@ -49,7 +49,7 @@ export const axiosRequest = async <T>({
       message: errorObject ? errorObject.message : 'Error',
       description: errorObjectDescription ? errorObjectDescription : err.response?.data.error,
     })
-    console.log(err.response?.data.error)
+    throw Error(err.response?.data.error)
   }
   return null
 }

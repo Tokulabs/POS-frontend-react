@@ -36,7 +36,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
       onSuccessCallback()
       notification.success({
         message: 'Exito',
-        description: 'Tienda creada!',
+        description: 'Item creado!',
       })
       form.resetFields()
     },
