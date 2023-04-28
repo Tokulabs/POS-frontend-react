@@ -106,7 +106,10 @@ const Purchase: FC = () => {
   )
   const { shopsData: allShopsData } = useShops('allShops', {})
   const { usersData: supportSales } = useUsers('supportSalesUsers', { role: 'supportSales' })
-  const { dianResolutionData } = useDianResolutions('allDianResolutions', {})
+  const { dianResolutionData, isLoading: isLoadingResolution } = useDianResolutions(
+    'allDianResolutions',
+    {},
+  )
 
   const printOutRef = useRef<HTMLDivElement>(null)
 
@@ -232,7 +235,7 @@ const Purchase: FC = () => {
       customerData,
       paymentMethods: paymentMethodsFormated,
       data: purchaseData,
-      dianDocumentNumber: dianInformation?.document_number,
+      dianResolution: dianInformation,
       invoiceNumber: dianInformation?.current_number,
     })
 
@@ -380,7 +383,9 @@ const Purchase: FC = () => {
           total={getTotal(purchaseData).total}
         />
       )}
-      <div ref={printOutRef}>{showPrintOut ? <PrintOut printData={printData} /> : null}</div>
+      <div ref={printOutRef}>
+        {showPrintOut && !isLoadingResolution ? <PrintOut printData={printData} /> : null}
+      </div>
     </div>
   )
 }

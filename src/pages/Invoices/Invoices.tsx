@@ -18,6 +18,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { patchOverrideInvoice } from './helpers/services'
 import { store } from '../../store'
 import { UserRolesEnum } from '../Users/types/UserTypes'
+import { useDianResolutions } from '../../hooks/useDianResolution'
+import { IDianResolutionProps } from '../Dian/types/DianResolutionTypes'
 
 const Invoices: FC = () => {
   const [showPrintOut, setShowPrintOut] = useState(false)
@@ -26,6 +28,10 @@ const Invoices: FC = () => {
   const queryClient = useQueryClient()
   const { state } = useContext(store)
   const { isLoading, invoicesData } = useInvoices('paginatedInvoices', { page: currentPage })
+  const { dianResolutionData, isLoading: isLoadingResolution } = useDianResolutions(
+    'allDianResolutions',
+    {},
+  )
 
   const printOutRef = useRef<HTMLDivElement>(null)
 
@@ -53,7 +59,9 @@ const Invoices: FC = () => {
       is_override: item.is_override ? 'Si' : 'No',
       action: (
         <div className='flex'>
-          <Button onClick={() => formatDataToPrint(item)}>Imprimir</Button>
+          <Button onClick={() => formatDataToPrint(item)} disabled={isLoadingResolution}>
+            {isLoadingResolution ? 'Cargando' : 'Imprimir'}
+          </Button>
           {isLoadingOverride
             ? 'Cargando...'
             : [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin].includes(
@@ -91,16 +99,20 @@ const Invoices: FC = () => {
       customerEmail: data.customer_email,
       customerPhone: data.customer_phone,
     }
+    const getDianResolution = dianResolutionData?.data.filter(
+      (item) => item.document_number === data.dian_document_number,
+    )[0]
 
-    setPrintData({
+    const printData: IPrintData = {
       data: data.invoice_items,
       saleName: data.sale_name,
       date: data.created_at,
       customerData,
       paymentMethods: data.payment_methods,
-      dianDocumentNumber: data.dian_document_number,
+      dianResolution: getDianResolution ?? ({} as IDianResolutionProps),
       invoiceNumber: data.invoice_number,
-    })
+    }
+    setPrintData(printData)
     setShowPrintOut(true)
   }
 
@@ -123,7 +135,9 @@ const Invoices: FC = () => {
         currentPage={currentPage}
         onChangePage={(page) => setcurrentPage(page)}
       />
-      <div ref={printOutRef}>{showPrintOut ? <PrintOut printData={printData} /> : null}</div>
+      <div ref={printOutRef}>
+        {showPrintOut && !isLoadingResolution ? <PrintOut printData={printData} /> : null}
+      </div>
     </>
   )
 }
