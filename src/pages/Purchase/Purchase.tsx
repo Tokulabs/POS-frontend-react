@@ -237,6 +237,7 @@ const Purchase: FC = () => {
       data: purchaseData,
       dianResolution: dianInformation,
       invoiceNumber: dianInformation?.current_number,
+      isOverride: false,
     })
 
     const dataToSend = {
