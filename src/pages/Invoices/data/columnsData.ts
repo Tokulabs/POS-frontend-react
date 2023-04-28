@@ -30,6 +30,11 @@ export const columns = [
     key: 'is_dollar',
   },
   {
+    title: 'Anulada',
+    dataIndex: 'is_override',
+    key: 'is_override',
+  },
+  {
     title: 'Metodos de pago',
     dataIndex: 'paid_by',
     key: 'paid_by',

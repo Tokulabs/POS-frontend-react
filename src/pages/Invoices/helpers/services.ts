@@ -1,6 +1,6 @@
 import { axiosRequest } from '../../../api/api'
 import { IQueryParams, IPaginationProps, DataPropsForm } from '../../../types/GlobalTypes'
-import { invoiceURL } from '../../../utils/network'
+import { invoiceURL, overrideInvoiceURL } from '../../../utils/network'
 import { IInvoiceProps } from '../types/InvoicesTypes'
 
 export const getInvoicesNew = async (queryParams: IQueryParams) => {
@@ -40,6 +40,8 @@ export const getInvoicesNew = async (queryParams: IQueryParams) => {
         invoice_number: item.invoice_number,
         payment_methods: item.payment_methods,
         is_dollar: item.is_dollar,
+        is_override: item.is_override,
+        dian_document_number: item.dian_document_number,
       }))
       return { ...response.data, results: dataFormatted }
     }
@@ -59,4 +61,12 @@ export const postInvoicesNew = async (values: DataPropsForm) => {
   } catch (e) {
     console.log(e)
   }
+}
+
+export const patchOverrideInvoice = async (invoiceNumber: number) => {
+  return await axiosRequest({
+    method: 'patch',
+    url: `${overrideInvoiceURL}/${invoiceNumber}/`,
+    hasAuth: true,
+  })
 }

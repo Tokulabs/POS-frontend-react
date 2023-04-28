@@ -35,13 +35,24 @@ export const SideBarData: ISideBarData[] = [
     icon: IconPackages,
     title: 'Inventarios',
     path: '/inventories',
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
+    allowedRoles: [
+      UserRolesEnum.admin,
+      UserRolesEnum.posAdmin,
+      UserRolesEnum.shopAdmin,
+      UserRolesEnum.sales,
+    ],
   },
   {
     icon: IconFileInvoice,
     title: 'Facturas',
     path: '/invoices',
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
+    allowedRoles: [
+      UserRolesEnum.admin,
+      UserRolesEnum.posAdmin,
+      UserRolesEnum.shopAdmin,
+      UserRolesEnum.sales,
+      UserRolesEnum.supportSales,
+    ],
   },
   {
     icon: IconReceipt,
@@ -59,7 +70,7 @@ export const SideBarData: ISideBarData[] = [
     icon: IconBoxMultiple,
     title: 'Categorias',
     path: '/inventory-groups',
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
+    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
   },
   {
     icon: IconUsers,

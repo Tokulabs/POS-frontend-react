@@ -38,5 +38,6 @@ export interface IPrintData {
   customerData: ICustomerDataProps
   paymentMethods: IPaymentMethodsProps[]
   saleName: string
-  dianInformation: IDianResolutionProps
+  dianDocumentNumber: string
+  invoiceNumber: number
 }

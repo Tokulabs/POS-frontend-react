@@ -16,6 +16,7 @@ import Notfound from '../pages/NotFound/404Notfound'
 import Dian from '../pages/Dian/Dian'
 import { store } from '../store'
 import { UserRolesEnum } from '../pages/Users/types/UserTypes'
+import { SideBarData } from '../layouts/MainLayout/data/data'
 
 interface IRouteGuardian {
   element: FC
@@ -49,13 +50,9 @@ export const Router: FC = () => {
                   element={
                     <RouteGuardian
                       element={() => <Home />}
-                      allowedRoles={[
-                        UserRolesEnum.admin,
-                        UserRolesEnum.posAdmin,
-                        UserRolesEnum.sales,
-                        UserRolesEnum.shopAdmin,
-                        UserRolesEnum.supportSales,
-                      ]}
+                      allowedRoles={
+                        SideBarData.filter((item) => item.path === '/')[0].allowedRoles ?? []
+                      }
                     />
                   }
                 />
@@ -64,7 +61,9 @@ export const Router: FC = () => {
                   element={
                     <RouteGuardian
                       element={() => <Users />}
-                      allowedRoles={[UserRolesEnum.admin, UserRolesEnum.posAdmin]}
+                      allowedRoles={
+                        SideBarData.filter((item) => item.path === '/users')[0].allowedRoles ?? []
+                      }
                     />
                   }
                 />
@@ -73,11 +72,10 @@ export const Router: FC = () => {
                   element={
                     <RouteGuardian
                       element={() => <InventoryGroup />}
-                      allowedRoles={[
-                        UserRolesEnum.admin,
-                        UserRolesEnum.posAdmin,
-                        UserRolesEnum.shopAdmin,
-                      ]}
+                      allowedRoles={
+                        SideBarData.filter((item) => item.path === '/inventory-groups')[0]
+                          .allowedRoles ?? []
+                      }
                     />
                   }
                 />
@@ -86,11 +84,10 @@ export const Router: FC = () => {
                   element={
                     <RouteGuardian
                       element={() => <Inventory />}
-                      allowedRoles={[
-                        UserRolesEnum.admin,
-                        UserRolesEnum.posAdmin,
-                        UserRolesEnum.shopAdmin,
-                      ]}
+                      allowedRoles={
+                        SideBarData.filter((item) => item.path === '/inventories')[0]
+                          .allowedRoles ?? []
+                      }
                     />
                   }
                 />
@@ -99,7 +96,9 @@ export const Router: FC = () => {
                   element={
                     <RouteGuardian
                       element={() => <Shops />}
-                      allowedRoles={[UserRolesEnum.admin, UserRolesEnum.posAdmin]}
+                      allowedRoles={
+                        SideBarData.filter((item) => item.path === '/shops')[0].allowedRoles ?? []
+                      }
                     />
                   }
                 />
@@ -108,7 +107,10 @@ export const Router: FC = () => {
                   element={
                     <RouteGuardian
                       element={() => <UserActivities />}
-                      allowedRoles={[UserRolesEnum.admin, UserRolesEnum.posAdmin]}
+                      allowedRoles={
+                        SideBarData.filter((item) => item.path === '/user-activities')[0]
+                          .allowedRoles ?? []
+                      }
                     />
                   }
                 />
@@ -117,13 +119,10 @@ export const Router: FC = () => {
                   element={
                     <RouteGuardian
                       element={() => <Purchase />}
-                      allowedRoles={[
-                        UserRolesEnum.admin,
-                        UserRolesEnum.posAdmin,
-                        UserRolesEnum.sales,
-                        UserRolesEnum.shopAdmin,
-                        UserRolesEnum.supportSales,
-                      ]}
+                      allowedRoles={
+                        SideBarData.filter((item) => item.path === '/purchase')[0].allowedRoles ??
+                        []
+                      }
                     />
                   }
                 />
@@ -132,11 +131,10 @@ export const Router: FC = () => {
                   element={
                     <RouteGuardian
                       element={() => <Invoices />}
-                      allowedRoles={[
-                        UserRolesEnum.admin,
-                        UserRolesEnum.posAdmin,
-                        UserRolesEnum.shopAdmin,
-                      ]}
+                      allowedRoles={
+                        SideBarData.filter((item) => item.path === '/invoices')[0].allowedRoles ??
+                        []
+                      }
                     />
                   }
                 />
@@ -145,7 +143,10 @@ export const Router: FC = () => {
                   element={
                     <RouteGuardian
                       element={() => <Dian />}
-                      allowedRoles={[UserRolesEnum.admin, UserRolesEnum.posAdmin]}
+                      allowedRoles={
+                        SideBarData.filter((item) => item.path === '/dian-resolution')[0]
+                          .allowedRoles ?? []
+                      }
                     />
                   }
                 />

@@ -1,5 +1,5 @@
 import { Button, notification } from 'antd'
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useContext, useEffect, useRef, useState } from 'react'
 import PrintOut from '../../components/Print/PrintOut'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
 import { DataPropsForm, IPrintData } from '../../types/GlobalTypes'
@@ -14,19 +14,31 @@ import { useReactToPrint } from 'react-to-print'
 import { formatDateTime } from '../../layouts/helpers/helpers'
 import { formatNumberToColombianPesos } from '../../utils/helpers'
 import { useInvoices } from '../../hooks/useInvoices'
-import { useDianResolutions } from '../../hooks/useDianResolution'
-import { IDianResolutionProps } from '../Dian/types/DianResolutionTypes'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { patchOverrideInvoice } from './helpers/services'
+import { store } from '../../store'
+import { UserRolesEnum } from '../Users/types/UserTypes'
 
 const Invoices: FC = () => {
   const [showPrintOut, setShowPrintOut] = useState(false)
   const [currentPage, setcurrentPage] = useState(1)
   const [printData, setPrintData] = useState<IPrintData>({} as IPrintData)
-
+  const queryClient = useQueryClient()
+  const { state } = useContext(store)
   const { isLoading, invoicesData } = useInvoices('paginatedInvoices', { page: currentPage })
-  const { dianResolutionData } = useDianResolutions('allDianResolutions', {})
 
   const printOutRef = useRef<HTMLDivElement>(null)
 
+  const { mutate, isLoading: isLoadingOverride } = useMutation({
+    mutationFn: patchOverrideInvoice,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['paginatedInvoices', { page: 1 }])
+      notification.info({
+        message: 'Exito',
+        description: 'Factura anulada!',
+      })
+    },
+  })
   const pushActionToList = () => {
     return invoicesData?.results.map((item) => ({
       ...item,
@@ -38,7 +50,17 @@ const Invoices: FC = () => {
       ),
       is_dollar: item.is_dollar ? 'Si' : 'No',
       paid_by: item.payment_methods.map((item) => PaymentMethodsEnum[item.name]).join(', '),
-      action: <Button onClick={() => formatDataToPrint(item)}>Imprimir</Button>,
+      is_override: item.is_override ? 'Si' : 'No',
+      action: (
+        <div className='flex'>
+          <Button onClick={() => formatDataToPrint(item)}>Imprimir</Button>
+          {isLoadingOverride
+            ? 'Cargando...'
+            : [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin].includes(
+                UserRolesEnum[state.user?.role as keyof typeof UserRolesEnum],
+              ) && <Button onClick={() => overrideInvoice(item.invoice_number)}>Anular</Button>}
+        </div>
+      ),
     }))
   }
 
@@ -58,6 +80,10 @@ const Invoices: FC = () => {
     },
   })
 
+  const overrideInvoice = async (invoiceNumber: number) => {
+    mutate(invoiceNumber)
+  }
+
   const formatDataToPrint = (data: IInvoiceProps) => {
     const customerData: ICustomerDataProps = {
       customerName: data.customer_name,
@@ -66,18 +92,14 @@ const Invoices: FC = () => {
       customerPhone: data.customer_phone,
     }
 
-    const dianInformation: IDianResolutionProps = {
-      ...(dianResolutionData?.data[0] as IDianResolutionProps),
-      current_number: Number(data.invoice_number),
-    }
-
     setPrintData({
       data: data.invoice_items,
       saleName: data.sale_name,
       date: data.created_at,
       customerData,
       paymentMethods: data.payment_methods,
-      dianInformation,
+      dianDocumentNumber: data.dian_document_number,
+      invoiceNumber: data.invoice_number,
     })
     setShowPrintOut(true)
   }

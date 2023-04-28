@@ -192,7 +192,7 @@ const Purchase: FC = () => {
       queryClient.invalidateQueries(['paginatedInventories'])
       notification.success({
         message: 'Exito',
-        description: 'Tienda creada!',
+        description: 'Factura Creada!',
       })
       clearPurchaseData()
       setcurrentPage(1)
@@ -232,7 +232,8 @@ const Purchase: FC = () => {
       customerData,
       paymentMethods: paymentMethodsFormated,
       data: purchaseData,
-      dianInformation,
+      dianDocumentNumber: dianInformation?.document_number,
+      invoiceNumber: dianInformation?.current_number,
     })
 
     const dataToSend = {
@@ -246,6 +247,7 @@ const Purchase: FC = () => {
       payment_methods: paymentMethodsFormated,
       is_dollar: data?.is_dollar as boolean,
       invoice_number: dianInformation?.current_number as number,
+      dian_document_number: dianInformation?.document_number,
     }
 
     mutate(dataToSend)
