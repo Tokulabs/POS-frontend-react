@@ -40,4 +40,5 @@ export interface IPrintData {
   saleName: string
   dianResolution: IDianResolutionProps
   invoiceNumber: number
+  isOverride: boolean
 }

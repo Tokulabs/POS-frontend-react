@@ -111,6 +111,7 @@ const Invoices: FC = () => {
       paymentMethods: data.payment_methods,
       dianResolution: getDianResolution ?? ({} as IDianResolutionProps),
       invoiceNumber: data.invoice_number,
+      isOverride: data.is_override,
     }
     setPrintData(printData)
     setShowPrintOut(true)
