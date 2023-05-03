@@ -5,7 +5,7 @@ import { getTotal } from './../../pages/Purchase/helpers/PurchaseHelpers'
 import LogoSignos from './../../assets/logos/signos_logo.png'
 import { formatNumberToColombianPesos } from '../../utils/helpers'
 import { IPrintData } from '../../types/GlobalTypes'
-import OverrideImage from '../../../public/images.png'
+import OverrideImage from '../../assets/logos/images.png'
 
 const PrintOut: FC<{
   printData: IPrintData
