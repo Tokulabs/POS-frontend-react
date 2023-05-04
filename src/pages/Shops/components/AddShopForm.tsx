@@ -34,7 +34,7 @@ const AddShopsForm: FC<IModalFormProps> = ({
 
   return (
     <Modal
-      title='Crear usuario'
+      title='Crear punto de venta'
       open={isVisible}
       onOk={() => onSuccessCallback}
       onCancel={() => {
@@ -45,11 +45,11 @@ const AddShopsForm: FC<IModalFormProps> = ({
     >
       <Form layout='vertical' onFinish={onSubmit} form={form}>
         <Form.Item
-          label='Nueva de la tienda'
+          label='Nombre del punto de venta'
           name='name'
-          rules={[{ required: true, message: 'El nombre de la tienda es requerido' }]}
+          rules={[{ required: true, message: 'El nombre es requerido' }]}
         >
-          <Input placeholder='Nombre de la nueva tienda' type='name' />
+          <Input placeholder='Punto sur' type='name' />
         </Form.Item>
         <Form.Item>
           <Button htmlType='submit' type='primary' block loading={isLoading}>
@@ -61,4 +61,4 @@ const AddShopsForm: FC<IModalFormProps> = ({
   )
 }
 
-export default AddShopsForm
+export { AddShopsForm }
