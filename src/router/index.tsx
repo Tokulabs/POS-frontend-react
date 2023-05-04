@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { FC, useContext } from 'react'
+import { FC } from 'react'
 import Login from '../pages/Auth/Login'
 import CheckUser from '../pages/Auth/CheckUser'
 import Home from './../pages/Home/Home'
@@ -14,9 +14,8 @@ import Purchase from '../pages/Purchase/Purchase'
 import Invoices from './../pages/Invoices/Invoices'
 import Notfound from '../pages/NotFound/404Notfound'
 import Dian from '../pages/Dian/Dian'
-import { store } from '../store'
-import { UserRolesEnum } from '../pages/Users/types/UserTypes'
 import { SideBarData } from '../layouts/MainLayout/data/data'
+import { useRolePermissions } from '../hooks/useRolespermissions'
 
 interface IRouteGuardian {
   element: FC
@@ -24,11 +23,8 @@ interface IRouteGuardian {
 }
 
 const RouteGuardian: FC<IRouteGuardian> = ({ element, allowedRoles }) => {
-  const { state } = useContext(store)
-  const hasPermission = allowedRoles.includes(
-    UserRolesEnum[state.user?.role as keyof typeof UserRolesEnum],
-  )
   const Element: FC = element
+  const { hasPermission } = useRolePermissions(allowedRoles)
 
   return hasPermission ? <Element /> : <Notfound />
 }

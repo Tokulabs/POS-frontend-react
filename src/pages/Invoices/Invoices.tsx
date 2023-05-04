@@ -1,5 +1,5 @@
 import { Button, notification } from 'antd'
-import { FC, useContext, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import PrintOut from '../../components/Print/PrintOut'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
 import { DataPropsForm, IPrintData } from '../../types/GlobalTypes'
@@ -16,22 +16,27 @@ import { formatNumberToColombianPesos } from '../../utils/helpers'
 import { useInvoices } from '../../hooks/useInvoices'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { patchOverrideInvoice } from './helpers/services'
-import { store } from '../../store'
 import { UserRolesEnum } from '../Users/types/UserTypes'
 import { useDianResolutions } from '../../hooks/useDianResolution'
 import { IDianResolutionProps } from '../Dian/types/DianResolutionTypes'
+import { useRolePermissions } from '../../hooks/useRolespermissions'
 
 const Invoices: FC = () => {
   const [showPrintOut, setShowPrintOut] = useState(false)
   const [currentPage, setcurrentPage] = useState(1)
   const [printData, setPrintData] = useState<IPrintData>({} as IPrintData)
   const queryClient = useQueryClient()
-  const { state } = useContext(store)
   const { isLoading, invoicesData } = useInvoices('paginatedInvoices', { page: currentPage })
   const { dianResolutionData, isLoading: isLoadingResolution } = useDianResolutions(
     'allDianResolutions',
     {},
   )
+  const allowedRolesOverride = [
+    UserRolesEnum.admin,
+    UserRolesEnum.posAdmin,
+    UserRolesEnum.shopAdmin,
+  ]
+  const { hasPermission } = useRolePermissions(allowedRolesOverride)
 
   const printOutRef = useRef<HTMLDivElement>(null)
 
@@ -64,9 +69,9 @@ const Invoices: FC = () => {
           </Button>
           {isLoadingOverride
             ? 'Cargando...'
-            : [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin].includes(
-                UserRolesEnum[state.user?.role as keyof typeof UserRolesEnum],
-              ) && <Button onClick={() => overrideInvoice(item.invoice_number)}>Anular</Button>}
+            : hasPermission && (
+                <Button onClick={() => overrideInvoice(item.invoice_number)}>Anular</Button>
+              )}
         </div>
       ),
     }))

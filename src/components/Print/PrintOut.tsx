@@ -23,7 +23,7 @@ const PrintOut: FC<{
   const { iva, subTotalBase, total } = getTotal(data)
 
   return (
-    <article className='bg-transparent flex flex-col w-80 justify-center items-center text-center p-4 gap-2 relative'>
+    <article className='bg-transparent flex flex-col w-[19rem] justify-center items-center text-center p-3 gap-1 relative'>
       {isOverride && (
         <img
           className='absolute top-24 left-0 -z-10 opacity-40 w-72 h-96'

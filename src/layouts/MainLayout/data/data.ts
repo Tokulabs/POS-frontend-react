@@ -80,7 +80,7 @@ export const SideBarData: ISideBarData[] = [
   },
   {
     icon: IconBuildingStore,
-    title: 'Tiendas',
+    title: 'Puntos de Venta',
     path: '/shops',
     allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
   },

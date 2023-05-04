@@ -1,9 +1,9 @@
 import { FC, useState } from 'react'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
 import { DataPropsForm } from '../../types/GlobalTypes'
-import AddUserForm from './components/AddShopForm'
 import { columns } from './data/columnsData'
 import { useShops } from '../../hooks/useShops'
+import { AddShopsForm } from './components/AddShopForm'
 
 const Shops: FC = () => {
   const [currentPage, setcurrentPage] = useState(1)
@@ -13,8 +13,8 @@ const Shops: FC = () => {
   return (
     <>
       <ContentLayout
-        pageTitle='Tiendas'
-        buttonTitle='Agregar Tienda'
+        pageTitle='Puntos de venta'
+        buttonTitle='Agregar Punto de venta'
         setModalState={setModalState}
         dataSource={shopsData?.results as unknown as DataPropsForm[]}
         totalItems={shopsData?.count || 0}
@@ -23,7 +23,7 @@ const Shops: FC = () => {
         currentPage={currentPage}
         onChangePage={(page) => setcurrentPage(page)}
       >
-        <AddUserForm
+        <AddShopsForm
           onSuccessCallback={() => setModalState(false)}
           isVisible={modalState}
           onCancelCallback={() => setModalState(false)}
