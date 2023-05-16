@@ -32,7 +32,7 @@ export const getInvoicesNew = async (queryParams: IQueryParams) => {
         invoice_items: item.invoice_items.map((itemInvoice: any) => ({
           code: itemInvoice.item_code,
           id: itemInvoice.id,
-          price: itemInvoice.item.price,
+          selling_price: itemInvoice.item.selling_price,
           qty: itemInvoice.quantity,
           item: itemInvoice.item_name,
           total: itemInvoice.amount,
