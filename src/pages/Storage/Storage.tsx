@@ -4,10 +4,10 @@ import AddInventoryForm from './components/AddInventoryForm'
 import { Button } from 'antd'
 import AddInventoryFormCSV from './components/AddInventoryFormCSV'
 import { columns } from './data/columnsData'
-import { IInventoryProps, ModalStateEnum } from './types/InventoryTypes'
-import { formatNumberToColombianPesos, formatToUsd } from '../../utils/helpers'
+import { formatNumberToColombianPesos } from '../../utils/helpers'
 import { useGroups } from '../../hooks/useGroups'
 import { useInventories } from '../../hooks/useInventories'
+import { IInventoryProps, ModalStateEnum } from '../Inventories/types/InventoryTypes'
 
 export const formatinventoryPhoto = (inventories: IInventoryProps[]) => {
   return inventories.map((item) => ({
@@ -23,15 +23,15 @@ export const formatinventoryPhoto = (inventories: IInventoryProps[]) => {
   }))
 }
 
-const inventoriesDataFormated = (inventories: IInventoryProps[]) => {
+const storageDataFormated = (inventories: IInventoryProps[]) => {
   return inventories.map((item) => ({
     ...item,
     selling_price: formatNumberToColombianPesos(item.selling_price ?? 0),
-    usd_price: formatToUsd(item.usd_price),
+    buying_price: formatNumberToColombianPesos(item.buying_price ?? 0),
   }))
 }
 
-const Inventories: FC = () => {
+const Storage: FC = () => {
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
   const [currentPage, setcurrentPage] = useState(1)
 
@@ -46,20 +46,11 @@ const Inventories: FC = () => {
         pageTitle='Administrador de Inventario'
         buttonTitle='+ Item'
         setModalState={() => setModalState(ModalStateEnum.addItem)}
-        dataSource={inventoriesDataFormated(formatinventoryPhoto(inventoriesData?.results || []))}
+        dataSource={storageDataFormated(formatinventoryPhoto(inventoriesData?.results || []))}
         columns={columns}
         fetching={isLoading}
         totalItems={inventoriesData?.count || 0}
         currentPage={currentPage}
-        extraButton={
-          <Button
-            onClick={() => setModalState(ModalStateEnum.addItemsCSV)}
-            style={{ background: '#269962', borderColor: '#269962' }}
-            type='primary'
-          >
-            + items .csv
-          </Button>
-        }
         onChangePage={(page) => setcurrentPage(page)}
       >
         <AddInventoryForm
@@ -78,4 +69,4 @@ const Inventories: FC = () => {
   )
 }
 
-export default Inventories
+export default Storage

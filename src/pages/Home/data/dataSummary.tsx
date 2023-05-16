@@ -8,7 +8,7 @@ import { ISummaryDataProps } from '../types/DashboardTypes'
 
 export const dataSummary: ISummaryDataProps = {
   total_inventory: {
-    title: 'Productos',
+    title: 'Productos creados',
     value: 0,
     icon: IconBuildingWarehouse,
     color: '#4f579e',

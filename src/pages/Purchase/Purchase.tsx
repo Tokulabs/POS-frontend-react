@@ -42,7 +42,7 @@ const formatInventoryAction = (
         <Input
           type='number'
           min={1}
-          max={item.remaining as number}
+          max={item.remaining_in_shops as number}
           defaultValue={1}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             onChangeQty(parseInt(e.target.value), item.id as number)
@@ -57,7 +57,7 @@ const formatInventoryAction = (
 const formatDataToCop = (data: DataPropsForm[] | IPurchaseProps[]) => {
   return data.map((item) => ({
     ...item,
-    price: formatNumberToColombianPesos(item.price as number),
+    selling_price: formatNumberToColombianPesos(item.selling_price as number),
     usd_price: formatToUsd(item.usd_price as number),
   }))
 }
@@ -70,7 +70,7 @@ const formatPurchaseData = (
   return purchaseData.map((item) => ({
     ...item,
     key: item.id,
-    total: formatNumberToColombianPesos(item.price * item.qty),
+    total: formatNumberToColombianPesos(item.selling_price * item.qty),
     action: (
       <div>
         <Input
@@ -119,20 +119,20 @@ const Purchase: FC = () => {
 
     if (itemIndex >= 0) {
       const updatedQty = purchaseData[itemIndex].qty + qty
-      if (updatedQty > inventoryData.remaining) {
+      if (updatedQty > inventoryData.remaining_in_shops) {
         notification.error({ message: 'Productos insuficientes' })
         return
       }
 
       const updatedPurchaseData = purchaseData.map((item) =>
         item.id === inventoryData.id
-          ? { ...item, qty: updatedQty, total: updatedQty * inventoryData.price }
+          ? { ...item, qty: updatedQty, total: updatedQty * inventoryData.selling_price }
           : item,
       )
 
       setPurchaseData(updatedPurchaseData)
     } else {
-      if (qty > inventoryData.remaining) {
+      if (qty > inventoryData.remaining_in_shops) {
         notification.error({ message: 'Productos insuficientes' })
         return
       }
@@ -143,9 +143,9 @@ const Purchase: FC = () => {
         item: inventoryData.name,
         key: inventoryData.id,
         qty: qty,
-        price: inventoryData.price,
+        selling_price: inventoryData.selling_price,
         usd_price: inventoryData.usd_price,
-        total: qty * inventoryData.price,
+        total: qty * inventoryData.selling_price,
         totalUSD: qty * inventoryData.usd_price,
       }
 
@@ -160,7 +160,7 @@ const Purchase: FC = () => {
       .map((item) => {
         if (item.id === inventoryId) {
           const updatedQty = item.qty - qty
-          const updatedTotal = updatedQty * item.price
+          const updatedTotal = updatedQty * item.selling_price
           return updatedQty <= 0 ? null : { ...item, qty: updatedQty, total: updatedTotal }
         }
         return item
@@ -260,6 +260,7 @@ const Purchase: FC = () => {
   }
 
   const createPurchase = () => {
+    console.log(purchaseData)
     if (purchaseData.length < 1) {
       notification.error({
         message: 'No tienes productos en la venta en curso',

@@ -20,19 +20,19 @@ export const columns = [
     key: 'groupInfo',
   },
   {
-    title: 'Precio',
+    title: 'Precio de venta',
     dataIndex: 'selling_price',
     key: 'selling_price',
   },
   {
-    title: 'Precio USD',
-    dataIndex: 'usd_price',
-    key: 'usd_price',
+    title: 'Precio de compra',
+    dataIndex: 'buying_price',
+    key: 'buying_price',
   },
   {
-    title: 'Unidades restantes',
-    dataIndex: 'remaining_in_shops',
-    key: 'remaining_in_shops',
+    title: 'Unidades Bodega',
+    dataIndex: 'remaining_in_storage',
+    key: 'remaining_in_storage',
   },
   {
     title: '',

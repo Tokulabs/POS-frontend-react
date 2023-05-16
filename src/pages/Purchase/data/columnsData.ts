@@ -15,9 +15,9 @@ export const inventoryColumns = [
     key: 'name',
   },
   {
-    title: 'Precio',
-    dataIndex: 'price',
-    key: 'price',
+    title: 'Precio de venta',
+    dataIndex: 'selling_price',
+    key: 'selling_price',
   },
   {
     title: 'Precio USD',
@@ -26,8 +26,8 @@ export const inventoryColumns = [
   },
   {
     title: 'Unidades restantes',
-    dataIndex: 'remaining',
-    key: 'remaining',
+    dataIndex: 'remaining_in_shops',
+    key: 'remaining_in_shops',
   },
   {
     title: '',

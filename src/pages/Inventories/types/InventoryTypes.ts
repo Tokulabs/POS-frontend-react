@@ -16,8 +16,10 @@ export interface IInventoryProps {
     }
   } | null
   created_at: string
-  remaining: number
-  price: number
+  remaining_in_shops: number
+  remaining_in_storage: number
+  buying_price: number
+  selling_price: number
   usd_price: number
   photo: string
   sum_of_item?: number
