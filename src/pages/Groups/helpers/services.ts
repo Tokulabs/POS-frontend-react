@@ -1,6 +1,6 @@
 import { axiosRequest } from '../../../api/api'
 import { formatDateTime } from '../../../layouts/helpers/helpers'
-import { IQueryParams, IPaginationProps } from '../../../types/GlobalTypes'
+import { IQueryParams, IPaginationProps, DataPropsForm } from '../../../types/GlobalTypes'
 import { groupURL } from '../../../utils/network'
 import { IGroupsProps } from '../types/GroupTypes'
 
@@ -28,6 +28,19 @@ export const getGroupsNew = async (queryParams: IQueryParams) => {
       }))
       return { ...response.data, results: data }
     }
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+export const postGroupsNew = async (values: DataPropsForm) => {
+  try {
+    await axiosRequest({
+      method: 'post',
+      url: groupURL,
+      hasAuth: true,
+      payload: values,
+    })
   } catch (e) {
     console.log(e)
   }

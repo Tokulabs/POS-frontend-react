@@ -42,12 +42,12 @@ const PurchasesInfo = () => {
         <section className='flex flex-col gap-5'>
           <div className='flex flex-col'>
             <p className='m-0 font-bold text-2xl'>
-              {formatNumberToColombianPesos(dataPurchaseSummary.price)} COP
+              {formatNumberToColombianPesos(dataPurchaseSummary.price ?? 0)} COP
             </p>
             <span className='text-gray-2 text-sm'>(Valor)</span>
           </div>
           <div>
-            <p className='m-0 font-bold text-2xl'>{dataPurchaseSummary.count}</p>
+            <p className='m-0 font-bold text-2xl'>{dataPurchaseSummary.count ?? 0}</p>
             <span className='text-gray-2 text-sm'>(Cantidad de productos)</span>
           </div>
         </section>

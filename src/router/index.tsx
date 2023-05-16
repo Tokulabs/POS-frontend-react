@@ -14,6 +14,7 @@ import Purchase from '../pages/Purchase/Purchase'
 import Invoices from './../pages/Invoices/Invoices'
 import Notfound from '../pages/NotFound/404Notfound'
 import Dian from '../pages/Dian/Dian'
+import Storage from '../pages/Storage/Storage'
 import { SideBarData } from '../layouts/MainLayout/data/data'
 import { useRolePermissions } from '../hooks/useRolespermissions'
 
@@ -142,6 +143,17 @@ export const Router: FC = () => {
                       allowedRoles={
                         SideBarData.filter((item) => item.path === '/dian-resolution')[0]
                           .allowedRoles ?? []
+                      }
+                    />
+                  }
+                />
+                <Route
+                  path='/storage'
+                  element={
+                    <RouteGuardian
+                      element={() => <Storage />}
+                      allowedRoles={
+                        SideBarData.filter((item) => item.path === '/storage')[0].allowedRoles ?? []
                       }
                     />
                   }

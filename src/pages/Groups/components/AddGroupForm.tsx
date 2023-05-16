@@ -1,12 +1,12 @@
 import { Form, Modal, Input, Select, Button, notification } from 'antd'
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { DataPropsForm } from '../../../types/GlobalTypes'
-import { groupURL } from '../../../utils/network'
 import { useForm } from 'antd/es/form/Form'
-import { axiosRequest } from '../../../api/api'
 import { useGroups } from '../../../hooks/useGroups'
 import { IModalFormProps } from '../../../types/ModalTypes'
 import { IGroupsProps } from '../types/GroupTypes'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { postGroupsNew } from '../helpers/services'
 
 const AddGroupForm: FC<IModalFormProps> = ({
   isVisible = false,
@@ -14,7 +14,6 @@ const AddGroupForm: FC<IModalFormProps> = ({
   onCancelCallback,
 }) => {
   const [form] = useForm()
-  const [loading, setLoading] = useState(false)
   const initialValues = {
     name: '',
   }
@@ -22,30 +21,26 @@ const AddGroupForm: FC<IModalFormProps> = ({
 
   const allGroupsData = groupsData?.results ?? []
 
-  const onSubmit = async (values: DataPropsForm) => {
-    try {
-      console.log(values)
-      setLoading(true)
-      const response = await axiosRequest({
-        method: 'post',
-        url: groupURL,
-        hasAuth: true,
-        payload: values,
+  const queryClient = useQueryClient()
+
+  const { mutate, isLoading } = useMutation({
+    mutationFn: postGroupsNew,
+    onSuccess: () => {
+      queryClient.invalidateQueries(['paginatedGroups'])
+      onSuccessCallback()
+      notification.success({
+        message: 'Exito',
+        description: 'Grupo creado!',
       })
-      if (response) {
-        onSuccessCallback()
-        notification.success({
-          message: 'Exito',
-          description: 'Categoria creada!',
-        })
-        form.resetFields()
-      }
-    } catch (e) {
-      console.log(e)
-    } finally {
-      setLoading(false)
-    }
+      form.resetFields()
+    },
+  })
+
+  const onSubmit = async (values: DataPropsForm) => {
+    if (isLoading) return
+    mutate(values)
   }
+
   return (
     <Modal
       title='Crear Categoria'
@@ -78,7 +73,7 @@ const AddGroupForm: FC<IModalFormProps> = ({
           />
         </Form.Item>
         <Form.Item>
-          <Button htmlType='submit' type='primary' block loading={loading}>
+          <Button htmlType='submit' type='primary' block loading={isLoading}>
             Submit
           </Button>
         </Form.Item>

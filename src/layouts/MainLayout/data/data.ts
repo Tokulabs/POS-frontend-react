@@ -9,6 +9,7 @@ import {
   IconActivity,
   TablerIconsProps,
   IconKey,
+  IconDatabase,
 } from '@tabler/icons-react'
 import { UserRolesEnum } from '../../../pages/Users/types/UserTypes'
 interface ISideBarData {
@@ -33,7 +34,7 @@ export const SideBarData: ISideBarData[] = [
   },
   {
     icon: IconPackages,
-    title: 'Inventarios',
+    title: 'Inventarios Tiendas',
     path: '/inventories',
     allowedRoles: [
       UserRolesEnum.admin,
@@ -94,6 +95,12 @@ export const SideBarData: ISideBarData[] = [
     icon: IconKey,
     title: 'Resoluciones DIAN',
     path: '/dian-resolution',
+    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
+  },
+  {
+    icon: IconDatabase,
+    title: 'Bodega',
+    path: '/storage',
     allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
   },
 ]
