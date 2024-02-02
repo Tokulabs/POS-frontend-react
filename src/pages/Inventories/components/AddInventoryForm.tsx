@@ -138,15 +138,22 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
           <Input placeholder='Nombre del producto' type='text' />
         </Form.Item>
         <Form.Item
-          label='Cantidad'
-          name='total'
+          label='Cantidad Tienda'
+          name='total_in_shops'
           rules={[{ required: true, message: 'La cantidad es un campo obligatorio' }]}
         >
-          <Input placeholder='Cantidad' type='number' min={1} />
+          <Input placeholder='Cantidad Tienda' type='number' min={1} />
+        </Form.Item>
+        <Form.Item
+          label='Cantidad Bodega'
+          name='total_in_storage'
+          rules={[{ required: true, message: 'La cantidad es un campo obligatorio' }]}
+        >
+          <Input placeholder='Cantidad Bodega' type='number' min={1} />
         </Form.Item>
         <Form.Item
           label='Precio (COP)'
-          name='price'
+          name='buying_price'
           rules={[{ required: true, message: 'El precio unitario es un campo obligatorio' }]}
         >
           <Input placeholder='Precio COP' type='number' min={1} />

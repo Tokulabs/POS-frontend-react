@@ -21,7 +21,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
   const initialValues = {
     name: '',
     total: '',
-    price: 0,
+    buying_price: 0,
     usd_price: 0,
     group_id: '',
     code: '',
@@ -146,7 +146,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
         </Form.Item>
         <Form.Item
           label='Precio (COP)'
-          name='price'
+          name='buying_price'
           rules={[{ required: true, message: 'El precio unitario es un campo obligatorio' }]}
         >
           <Input placeholder='Precio COP' type='number' min={1} />
