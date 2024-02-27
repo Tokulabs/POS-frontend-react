@@ -22,7 +22,6 @@ const UserActivities: FC = () => {
         dataSource={userActivities?.results as unknown as DataPropsForm[]}
         columns={columns}
         fetching={isLoading}
-        disabledAddButton={true}
         currentPage={currentPage}
         totalItems={userActivities?.count || 0}
         onChangePage={(page) => setcurrentPage(page)}

@@ -11,7 +11,6 @@ interface IContentLayoutProps {
   columns: DataPropsForm[]
   fetching: boolean
   totalItems: number
-  disabledAddButton?: boolean
   currentPage: number
   extraButton?: ReactNode
   onChangePage?: (page: number) => void
@@ -26,7 +25,6 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
   fetching,
   children,
   extraButton,
-  disabledAddButton = false,
   totalItems,
   currentPage,
   onChangePage = () => null,
@@ -44,7 +42,7 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
                 enterButton
               />
             </div>
-            {!disabledAddButton && (
+            {buttonTitle && (
               <button onClick={() => setModalState && setModalState(true)} className='ml-3'>
                 {buttonTitle}
               </button>

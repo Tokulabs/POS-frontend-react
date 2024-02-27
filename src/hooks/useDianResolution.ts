@@ -7,7 +7,7 @@ export const useDianResolutions = (queryKey: string, queryParamas?: IQueryParams
     [queryKey, queryParamas],
     async () => getDianResolutions(queryParamas ?? {}),
     {
-      refetchOnWindowFocus: true,
+      refetchOnWindowFocus: false,
     },
   )
   return {

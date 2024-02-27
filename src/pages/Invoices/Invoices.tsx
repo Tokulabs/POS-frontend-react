@@ -136,7 +136,6 @@ const Invoices: FC = () => {
         dataSource={pushActionToList() as unknown as DataPropsForm[]}
         columns={columns}
         fetching={isLoading}
-        disabledAddButton={true}
         totalItems={invoicesData?.count || 0}
         currentPage={currentPage}
         onChangePage={(page) => setcurrentPage(page)}
