@@ -119,7 +119,7 @@ const Purchase: FC = () => {
 
     if (itemIndex >= 0) {
       const updatedQty = purchaseData[itemIndex].qty + qty
-      if (updatedQty > inventoryData.remaining_in_shops) {
+      if (updatedQty > inventoryData.total_in_shops) {
         notification.error({ message: 'Productos insuficientes' })
         return
       }
@@ -132,7 +132,7 @@ const Purchase: FC = () => {
 
       setPurchaseData(updatedPurchaseData)
     } else {
-      if (qty > inventoryData.remaining_in_shops) {
+      if (qty > inventoryData.total_in_shops) {
         notification.error({ message: 'Productos insuficientes' })
         return
       }

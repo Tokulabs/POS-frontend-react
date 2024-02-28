@@ -29,8 +29,8 @@ export const getInventoriesNew = async (queryParams: IQueryParams) => {
       }))
       return { ...response.data, results: data }
     }
-  } catch (e) {
-    console.log(e)
+  } catch (e: unknown) {
+    throw new Error(e as string)
   }
 }
 
@@ -42,8 +42,33 @@ export const postInventoriesNew = async (values: DataPropsForm) => {
       hasAuth: true,
       payload: values,
     })
-  } catch (e) {
-    console.log(e)
+  } catch (e: unknown) {
+    throw new Error(e as string)
+  }
+}
+
+export const putInventoriesEdit = async (data: { values: DataPropsForm; id: number }) => {
+  try {
+    await axiosRequest({
+      method: 'put',
+      url: `${inventoryURL}/${data.id}/`,
+      hasAuth: true,
+      payload: data.values,
+    })
+  } catch (e: unknown) {
+    throw new Error(e as string)
+  }
+}
+
+export const deleteInventories = async (id: number) => {
+  try {
+    await axiosRequest({
+      method: 'delete',
+      url: `${inventoryURL}/${id}/`,
+      hasAuth: true,
+    })
+  } catch (e: unknown) {
+    throw new Error(e as string)
   }
 }
 
@@ -54,7 +79,7 @@ export const postImageToCloudinary = async (file: FormData) => {
       url: cloudinaryURL,
       payload: file,
     })
-  } catch (e) {
-    console.log(e)
+  } catch (e: unknown) {
+    throw new Error(e as string)
   }
 }
