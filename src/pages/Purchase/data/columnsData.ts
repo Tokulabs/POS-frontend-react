@@ -49,8 +49,8 @@ export const purchaseColumns = [
   },
   {
     title: 'Precio',
-    dataIndex: 'price',
-    key: 'price',
+    dataIndex: 'selling_price',
+    key: 'selling_price',
   },
   {
     title: 'Total',

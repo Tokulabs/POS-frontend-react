@@ -147,7 +147,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
           </Form.Item>
           <Form.Item
             style={{ width: '100%' }}
-            label='Nombre'
+            label='Nombre Producto'
             name='name'
             rules={[{ required: true, message: 'El Nombre es un campo obligatorio' }]}
           >
@@ -157,12 +157,22 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
         <div className='flex gap-2 w-full'>
           <Form.Item
             style={{ width: '100%' }}
-            label='Cantidad'
+            label='Cantidad En bodéga'
             name='total_in_storage'
             rules={[{ required: true, message: 'La cantidad es un campo obligatorio' }]}
           >
             <Input placeholder='Cantidad' type='number' min={1} />
           </Form.Item>
+          <Form.Item
+            style={{ width: '100%' }}
+            label='Cantidad En Tiendas'
+            name='total_in_shops'
+            rules={[{ required: true, message: 'La cantidad es un campo obligatorio' }]}
+          >
+            <Input placeholder='Cantidad' type='number' min={1} />
+          </Form.Item>
+        </div>
+        <div className='flex gap-2 w-full'>
           <Form.Item
             style={{ width: '100%' }}
             label='Precio de compra (COP)'
@@ -171,8 +181,6 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
           >
             <Input placeholder='Precio USD' type='number' min={1} />
           </Form.Item>
-        </div>
-        <div className='flex gap-2 w-full'>
           <Form.Item
             style={{ width: '100%' }}
             label='Precio de venta (COP)'
@@ -181,6 +189,8 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
           >
             <Input placeholder='Precio COP' type='number' min={1} />
           </Form.Item>
+        </div>
+        <div className='flex gap-2 w-full'>
           <Form.Item
             style={{ width: '100%' }}
             label='Precio (USD)'
@@ -189,27 +199,27 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
           >
             <Input placeholder='Precio USD' type='number' min={1} />
           </Form.Item>
+          <Form.Item
+            style={{ width: '100%' }}
+            label='Categoria'
+            name='group_id'
+            rules={[{ required: true, message: 'La categoria es requerida' }]}
+          >
+            <Select
+              placeholder='Selecciona una categoria'
+              options={[
+                {
+                  value: '',
+                  label: 'Selecciona una categoria',
+                },
+                ...groups.map((item) => ({
+                  value: item.id,
+                  label: item.name,
+                })),
+              ]}
+            />
+          </Form.Item>
         </div>
-
-        <Form.Item
-          label='Categoria'
-          name='group_id'
-          rules={[{ required: true, message: 'La categoria es requerida' }]}
-        >
-          <Select
-            placeholder='Selecciona una categoria'
-            options={[
-              {
-                value: '',
-                label: 'Selecciona una categoria',
-              },
-              ...groups.map((item) => ({
-                value: item.id,
-                label: item.name,
-              })),
-            ]}
-          />
-        </Form.Item>
         <Form.Item>
           <Button htmlType='submit' type='primary' block loading={isLoading}>
             Submit

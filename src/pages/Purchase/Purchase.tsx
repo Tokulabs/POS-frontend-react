@@ -356,12 +356,12 @@ const Purchase: FC = () => {
               <div className='flex flex-col text-right'>
                 <div className='text-sm text-gray-2'>Total</div>
                 <div className=''>
-                  {formatNumberToColombianPesos(getTotal(purchaseData).total | 0) + ' COP'}
+                  {formatNumberToColombianPesos(getTotal(purchaseData).total | 0)}
                 </div>
               </div>
               <div className='flex flex-col text-right'>
                 <div className='text-sm text-gray-2'>Total USD</div>
-                <div className=''>{formatToUsd(getTotal(purchaseData).totalUSD | 0) + ' USD'}</div>
+                <div className=''>{formatToUsd(getTotal(purchaseData).totalUSD | 0)}</div>
               </div>
             </div>
           </div>
@@ -383,6 +383,7 @@ const Purchase: FC = () => {
           onCancelCallback={() => setModalstate(false)}
           shops={allShopsData?.results ?? []}
           total={getTotal(purchaseData).total}
+          totalUSD={getTotal(purchaseData).totalUSD}
         />
       )}
       <div ref={printOutRef}>

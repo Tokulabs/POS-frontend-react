@@ -4,16 +4,17 @@ import { DataPropsForm } from '../../../types/GlobalTypes'
 import { useForm } from 'antd/es/form/Form'
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import { ISelectShopPurchase, PaymentMethodsEnum } from '../types/PurchaseTypes'
-import { formatNumberToColombianPesos } from '../../../utils/helpers'
-import { IPaymentMethodsProps } from '../../Invoices/types/InvoicesTypes'
+import { formatNumberToColombianPesos, formatToUsd } from '../../../utils/helpers'
+import { IPaymentMethodsProps, IInvoiceProps } from '../../Invoices/types/InvoicesTypes'
 import { useDianResolutions } from '../../../hooks/useDianResolution'
 
-const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
+const PurchaseForm: FC<ISelectShopPurchase> = ({
   isVisible = false,
   onSuccessCallback,
   onCancelCallback,
   shops,
   total,
+  totalUSD,
   salesUsers,
 }) => {
   const [form] = useForm()
@@ -28,10 +29,12 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
   const [receivedAmountValues, setReceivedAmountValues] = useState<number[]>([])
   const [backAmountValues, setBackAmountValues] = useState<number[]>([])
   const [sumTotalPaymentMethods, setSumTotalPaymentMethods] = useState(0)
+  const [isDolar, setIsDolar] = useState(false)
+  const [totalValue, setTotalValue] = useState(total)
 
   const { dianResolutionData, isLoading } = useDianResolutions('allDianResolutions', {})
 
-  const initialValues = {
+  const initialValues: Partial<IInvoiceProps & { shop_id: string; sale_id: string }> = {
     shop_id: '',
     sale_id: '',
     customer_name: '',
@@ -43,15 +46,15 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
         name: 'cash',
         paid_amount: total,
         transaction_code: '',
-        received_amount: '',
-        back_amount: '',
+        received_amount: 0,
+        back_amount: 0,
       },
     ],
-    is_dollar: false,
+    is_dolar: false,
   }
 
   const onSubmit = async (values: DataPropsForm) => {
-    if (total - sumTotalPaymentMethods > 0) {
+    if (totalValue - sumTotalPaymentMethods > 0) {
       notification.error({
         message: 'Error',
         description: 'Todavia tienes un Saldo pendiente por pagar',
@@ -64,11 +67,8 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
     paymentMethods.forEach((item, index) => {
       item.back_amount = backAmountValues[index] || 0
       if (!item.received_amount) item.received_amount = item.paid_amount
-      if (item.name === 'cash') {
-        item.transaction_code = ''
-      } else {
-        item.received_amount = 0
-      }
+      if (item.name === 'cash') item.transaction_code = ''
+      else item.received_amount = 0
     })
     values.payment_methods = paymentMethods
 
@@ -81,6 +81,7 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
     index: number,
     setAmountchange: (data: (prevValues: number[]) => number[]) => void,
   ) => {
+    console.log('value', value, 'index', index)
     setAmountchange((prevValues: number[]) => {
       const newValues = [...prevValues]
       newValues[index] = Number(value)
@@ -97,7 +98,7 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
   }
 
   useEffect(() => {
-    handleAmountChange(total.toString(), 0, setPaidAmountValues)
+    handleAmountChange(totalValue.toString(), 0, setPaidAmountValues)
   }, [])
 
   useEffect(() => {
@@ -111,8 +112,35 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
 
   useEffect(() => {
     const change = receivedAmountValues.map((item, index) => item - paidAmountValues[index])
+    console.log('change', change)
     setBackAmountValues(change)
   }, [paidAmountValues, receivedAmountValues])
+
+  useEffect(() => {
+    setPaidAmountValues([totalValue])
+    setReceivedAmountValues([0])
+    form.setFieldsValue({
+      payment_methods: [
+        {
+          name: 'cash',
+          paid_amount: totalValue,
+          transaction_code: '',
+          received_amount: 0,
+          back_amount: 0,
+        },
+      ],
+    })
+  }, [totalValue])
+
+  useEffect(() => {
+    setTotalValue(isDolar ? totalUSD : total)
+  }, [isDolar])
+
+  const isUpperThan200k = Boolean(totalValue >= 200000)
+
+  const changeDolarValue = (value: boolean) => {
+    setIsDolar(value)
+  }
 
   return (
     <Modal
@@ -183,9 +211,9 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
             <div className='flex gap-4 w-full'>
               <Form.Item
                 style={{ width: '100%' }}
-                label='Nombre'
+                label='Nombre y Apellido'
                 name='customer_name'
-                rules={[{ required: total >= 200000, message: 'Campo requerido' }]}
+                rules={[{ required: isUpperThan200k, message: 'Campo requerido' }]}
               >
                 <Input placeholder='Nombre' type='text' />
               </Form.Item>
@@ -193,12 +221,12 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
                 style={{ width: '100%' }}
                 label='Número de identificación'
                 name='customer_id'
-                rules={[{ required: total >= 200000, message: 'Campo requerido' }]}
+                rules={[{ required: isUpperThan200k, message: 'Campo requerido' }]}
               >
                 <Input placeholder='Identificación' type='text' />
               </Form.Item>
             </div>
-            {total >= 200000 && (
+            {isUpperThan200k && (
               <div className='flex gap-4 w-full'>
                 <Form.Item
                   style={{ width: '100%' }}
@@ -219,8 +247,8 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
               </div>
             )}
             <div className='flex gap-3 items-center'>
-              <Form.Item style={{ margin: 0 }} name='is_dollar' valuePropName='checked'>
-                <Switch />
+              <Form.Item style={{ margin: 0 }} name='is_dolar' valuePropName='checked'>
+                <Switch checked={isDolar} onChange={(value) => changeDolarValue(value)} />
               </Form.Item>
               <p className='m-0'>¿Pago en dolares (USD)?</p>
             </div>
@@ -229,21 +257,25 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
               <div className='flex gap-4 items-end'>
                 <p
                   className={`m-0 ${
-                    total - sumTotalPaymentMethods > 0
+                    totalValue - sumTotalPaymentMethods > 0
                       ? 'text-green-700'
-                      : total - sumTotalPaymentMethods < 0
+                      : totalValue - sumTotalPaymentMethods < 0
                       ? 'text-red-500'
                       : ''
                   }`}
                 >
                   Saldo:{' '}
                   <span className='text-xl font-bold'>
-                    {formatNumberToColombianPesos(total - sumTotalPaymentMethods)}
+                    {isDolar
+                      ? formatToUsd(totalValue - sumTotalPaymentMethods)
+                      : formatNumberToColombianPesos(totalValue - sumTotalPaymentMethods)}
                   </span>
                 </p>
                 <p className='m-0'>
                   Total a pagar:{' '}
-                  <span className='text-xl font-bold'>{formatNumberToColombianPesos(total)}</span>
+                  <span className='text-xl font-bold'>
+                    {isDolar ? formatToUsd(totalValue) : formatNumberToColombianPesos(totalValue)}
+                  </span>
                 </p>
               </div>
             </nav>
@@ -273,9 +305,9 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
                         <Input
                           placeholder='Valor a pagar'
                           type='text'
-                          onChange={(e) => {
+                          onChange={(e) =>
                             handleAmountChange(e.target.value, index, setPaidAmountValues)
-                          }}
+                          }
                         />
                       </Form.Item>
                       <Form.Item
@@ -322,9 +354,9 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
                               <Input
                                 placeholder='Valor recibido'
                                 type='number'
-                                onChange={(e) =>
+                                onChange={(e) => {
                                   handleAmountChange(e.target.value, index, setReceivedAmountValues)
-                                }
+                                }}
                                 disabled={
                                   form.getFieldValue(['payment_methods', field.name, 'name']) !==
                                   'cash'
@@ -337,8 +369,14 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
                       <div className='flex flex-col gap-3 mx-3'>
                         <p className='m-0'>Cambio</p>
                         <p className='m-0 text-red-500'>
-                          {backAmountValues[index]
-                            ? String(formatNumberToColombianPesos(backAmountValues[index]))
+                          {backAmountValues[index] > 0
+                            ? String(
+                                isDolar
+                                  ? formatToUsd(backAmountValues[index])
+                                  : formatNumberToColombianPesos(backAmountValues[index]),
+                              )
+                            : isDolar
+                            ? formatToUsd(0)
                             : formatNumberToColombianPesos(0)}
                         </p>
                       </div>
@@ -352,7 +390,7 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
                       />
                     </section>
                   ))}
-                  {total - sumTotalPaymentMethods > 0 && (
+                  {totalValue - sumTotalPaymentMethods > 0 && !isDolar && (
                     <Form.Item>
                       <Button
                         type='dashed'
@@ -387,4 +425,4 @@ const SelectShopPurchaseForm: FC<ISelectShopPurchase> = ({
   )
 }
 
-export default SelectShopPurchaseForm
+export default PurchaseForm

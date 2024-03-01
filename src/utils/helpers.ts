@@ -5,7 +5,7 @@ export const formatNumberToColombianPesos = (num: number): string => {
     minimumFractionDigits: 0,
   })
 
-  return formatter.format(num)
+  return `${formatter.format(num)} COP`
 }
 
 export const formatToUsd = (num: number): string => {
@@ -15,5 +15,5 @@ export const formatToUsd = (num: number): string => {
     minimumFractionDigits: 0,
   })
 
-  return formatter.format(num)
+  return `${formatter.format(num)} USD`
 }

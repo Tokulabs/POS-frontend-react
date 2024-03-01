@@ -21,6 +21,7 @@ export interface IPurchaseProps {
 export interface ISelectShopPurchase extends IModalFormProps {
   shops: IShopProps[]
   total: number
+  totalUSD: number
   salesUsers: IUserProps[]
 }
 
