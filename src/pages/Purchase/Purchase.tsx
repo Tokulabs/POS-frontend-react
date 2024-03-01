@@ -249,7 +249,7 @@ const Purchase: FC = () => {
       customer_email: customerData.customerEmail,
       customer_phone: customerData.customerPhone,
       payment_methods: paymentMethodsFormated,
-      is_dollar: data?.is_dollar as boolean,
+      is_dolar: data?.is_dolar as boolean,
       invoice_number: dianInformation?.current_number as number,
       dian_document_number: dianInformation?.document_number,
     }

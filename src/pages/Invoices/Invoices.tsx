@@ -59,7 +59,7 @@ const Invoices: FC = () => {
           .map((itemInvoice: IPurchaseProps) => itemInvoice.total)
           .reduce((a, b) => a + b, 0),
       ),
-      is_dollar: item.is_dollar ? 'Si' : 'No',
+      is_dolar: item.is_dolar ? 'Si' : 'No',
       paid_by: item.payment_methods.map((item) => PaymentMethodsEnum[item.name]).join(', '),
       is_override: item.is_override ? 'Si' : 'No',
       action: (
