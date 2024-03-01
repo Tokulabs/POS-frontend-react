@@ -4,7 +4,11 @@ import { DataPropsForm } from '../../../types/GlobalTypes'
 import { useForm } from 'antd/es/form/Form'
 import { IconPhoto, IconPlus } from '@tabler/icons-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { postImageToCloudinary, postInventoriesNew } from '../../Inventories/helpers/services'
+import {
+  postImageToCloudinary,
+  postInventoriesNew,
+  putInventoriesEdit,
+} from '../../Inventories/helpers/services'
 import { IAddInventoryFormProps } from '../../Inventories/types/InventoryTypes'
 
 const AddInventoryForm: FC<IAddInventoryFormProps> = ({
@@ -12,33 +16,43 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
   onSuccessCallback,
   onCancelCallback,
   groups,
+  initialData,
 }) => {
   const [form] = useForm()
-  const [imageUrl, setImageurl] = useState<string | null>('')
+  const [imageUrl, setImageurl] = useState<string | null>(initialData.photo ?? '')
   const [isLoadingImage, setLoadingImage] = useState(false)
   const fileSelect = useRef<HTMLInputElement>(null)
 
   const initialValues = {
-    name: '',
-    total: '',
-    price: 0,
-    usd_price: 0,
-    group_id: '',
-    code: '',
+    ...initialData,
+    group_id: initialData.group?.id ?? '',
   }
 
+  const isEdit = !!initialData.id
+
   const queryClient = useQueryClient()
+
+  const successRegistry = (message: string, description: string) => {
+    queryClient.invalidateQueries(['paginatedInventories'])
+    onSuccessCallback()
+    notification.success({
+      message: message,
+      description: description,
+    })
+    form.resetFields()
+  }
 
   const { mutate, isLoading } = useMutation({
     mutationFn: postInventoriesNew,
     onSuccess: () => {
-      queryClient.invalidateQueries(['paginatedInventories'])
-      onSuccessCallback()
-      notification.success({
-        message: 'Exito',
-        description: 'Item creado!',
-      })
-      form.resetFields()
+      successRegistry('Exito', 'Item creado!')
+    },
+  })
+
+  const { mutate: mutateEdit, isLoading: isLoadingEdit } = useMutation({
+    mutationFn: putInventoriesEdit,
+    onSuccess: () => {
+      successRegistry('Exito', 'Item actualizado!')
     },
   })
 
@@ -46,8 +60,8 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
     if (imageUrl) {
       values = { ...values, photo: imageUrl }
     }
-    if (isLoading) return
-    mutate(values)
+    if (isLoading || isLoadingEdit) return
+    isEdit ? mutateEdit({ values, id: initialData.id }) : mutate(values, {})
     setImageurl(null)
   }
 
@@ -122,61 +136,90 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
             </div>
           </Form.Item>
         )}
-
-        <Form.Item
-          label='Código'
-          name='code'
-          rules={[{ required: true, message: 'El Código es un campo obligatorio' }]}
-        >
-          <Input placeholder='Código del producto' type='text' />
-        </Form.Item>
-        <Form.Item
-          label='Nombre'
-          name='name'
-          rules={[{ required: true, message: 'El Nombre es un campo obligatorio' }]}
-        >
-          <Input placeholder='Nombre del producto' type='text' />
-        </Form.Item>
-        <Form.Item
-          label='Cantidad'
-          name='total'
-          rules={[{ required: true, message: 'La cantidad es un campo obligatorio' }]}
-        >
-          <Input placeholder='Cantidad' type='number' min={1} />
-        </Form.Item>
-        <Form.Item
-          label='Precio (COP)'
-          name='price'
-          rules={[{ required: true, message: 'El precio unitario es un campo obligatorio' }]}
-        >
-          <Input placeholder='Precio COP' type='number' min={1} />
-        </Form.Item>
-        <Form.Item
-          label='Precio (USD)'
-          name='usd_price'
-          rules={[{ required: true, message: 'El precio en USD es un campo obligatorio' }]}
-        >
-          <Input placeholder='Precio USD' type='number' min={1} />
-        </Form.Item>
-        <Form.Item
-          label='Categoria'
-          name='group_id'
-          rules={[{ required: true, message: 'La categoria es requerida' }]}
-        >
-          <Select
-            placeholder='Selecciona una categoria'
-            options={[
-              {
-                value: '',
-                label: 'Selecciona una categoria',
-              },
-              ...groups.map((item) => ({
-                value: item.id,
-                label: item.name,
-              })),
-            ]}
-          />
-        </Form.Item>
+        <div className='flex w-full gap-2'>
+          <Form.Item
+            style={{ width: '100%' }}
+            label='Código'
+            name='code'
+            rules={[{ required: true, message: 'El Código es un campo obligatorio' }]}
+          >
+            <Input placeholder='Código del producto' type='text' />
+          </Form.Item>
+          <Form.Item
+            style={{ width: '100%' }}
+            label='Nombre Producto'
+            name='name'
+            rules={[{ required: true, message: 'El Nombre es un campo obligatorio' }]}
+          >
+            <Input placeholder='Nombre del producto' type='text' />
+          </Form.Item>
+        </div>
+        <div className='flex gap-2 w-full'>
+          <Form.Item
+            style={{ width: '100%' }}
+            label='Cantidad En bodéga'
+            name='total_in_storage'
+            rules={[{ required: true, message: 'La cantidad es un campo obligatorio' }]}
+          >
+            <Input placeholder='Cantidad' type='number' min={1} />
+          </Form.Item>
+          <Form.Item
+            style={{ width: '100%' }}
+            label='Cantidad En Tiendas'
+            name='total_in_shops'
+            rules={[{ required: true, message: 'La cantidad es un campo obligatorio' }]}
+          >
+            <Input placeholder='Cantidad' type='number' min={1} />
+          </Form.Item>
+        </div>
+        <div className='flex gap-2 w-full'>
+          <Form.Item
+            style={{ width: '100%' }}
+            label='Precio de compra (COP)'
+            name='buying_price'
+            rules={[{ required: true, message: 'El precio de compra es un campo obligatorio' }]}
+          >
+            <Input placeholder='Precio USD' type='number' min={1} />
+          </Form.Item>
+          <Form.Item
+            style={{ width: '100%' }}
+            label='Precio de venta (COP)'
+            name='selling_price'
+            rules={[{ required: true, message: 'El precio unitario es un campo obligatorio' }]}
+          >
+            <Input placeholder='Precio COP' type='number' min={1} />
+          </Form.Item>
+        </div>
+        <div className='flex gap-2 w-full'>
+          <Form.Item
+            style={{ width: '100%' }}
+            label='Precio (USD)'
+            name='usd_price'
+            rules={[{ required: true, message: 'El precio en USD es un campo obligatorio' }]}
+          >
+            <Input placeholder='Precio USD' type='number' min={1} />
+          </Form.Item>
+          <Form.Item
+            style={{ width: '100%' }}
+            label='Categoria'
+            name='group_id'
+            rules={[{ required: true, message: 'La categoria es requerida' }]}
+          >
+            <Select
+              placeholder='Selecciona una categoria'
+              options={[
+                {
+                  value: '',
+                  label: 'Selecciona una categoria',
+                },
+                ...groups.map((item) => ({
+                  value: item.id,
+                  label: item.name,
+                })),
+              ]}
+            />
+          </Form.Item>
+        </div>
         <Form.Item>
           <Button htmlType='submit' type='primary' block loading={isLoading}>
             Submit

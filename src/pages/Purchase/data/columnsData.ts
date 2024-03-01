@@ -26,8 +26,8 @@ export const inventoryColumns = [
   },
   {
     title: 'Unidades restantes',
-    dataIndex: 'remaining_in_shops',
-    key: 'remaining_in_shops',
+    dataIndex: 'total_in_shops',
+    key: 'total_in_shops',
   },
   {
     title: '',
@@ -49,8 +49,8 @@ export const purchaseColumns = [
   },
   {
     title: 'Precio',
-    dataIndex: 'price',
-    key: 'price',
+    dataIndex: 'selling_price',
+    key: 'selling_price',
   },
   {
     title: 'Total',

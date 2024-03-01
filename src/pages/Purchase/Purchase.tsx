@@ -119,7 +119,7 @@ const Purchase: FC = () => {
 
     if (itemIndex >= 0) {
       const updatedQty = purchaseData[itemIndex].qty + qty
-      if (updatedQty > inventoryData.remaining_in_shops) {
+      if (updatedQty > inventoryData.total_in_shops) {
         notification.error({ message: 'Productos insuficientes' })
         return
       }
@@ -132,7 +132,7 @@ const Purchase: FC = () => {
 
       setPurchaseData(updatedPurchaseData)
     } else {
-      if (qty > inventoryData.remaining_in_shops) {
+      if (qty > inventoryData.total_in_shops) {
         notification.error({ message: 'Productos insuficientes' })
         return
       }
@@ -249,7 +249,7 @@ const Purchase: FC = () => {
       customer_email: customerData.customerEmail,
       customer_phone: customerData.customerPhone,
       payment_methods: paymentMethodsFormated,
-      is_dollar: data?.is_dollar as boolean,
+      is_dolar: data?.is_dolar as boolean,
       invoice_number: dianInformation?.current_number as number,
       dian_document_number: dianInformation?.document_number,
     }
@@ -356,12 +356,12 @@ const Purchase: FC = () => {
               <div className='flex flex-col text-right'>
                 <div className='text-sm text-gray-2'>Total</div>
                 <div className=''>
-                  {formatNumberToColombianPesos(getTotal(purchaseData).total | 0) + ' COP'}
+                  {formatNumberToColombianPesos(getTotal(purchaseData).total | 0)}
                 </div>
               </div>
               <div className='flex flex-col text-right'>
                 <div className='text-sm text-gray-2'>Total USD</div>
-                <div className=''>{formatToUsd(getTotal(purchaseData).totalUSD | 0) + ' USD'}</div>
+                <div className=''>{formatToUsd(getTotal(purchaseData).totalUSD | 0)}</div>
               </div>
             </div>
           </div>
@@ -383,6 +383,7 @@ const Purchase: FC = () => {
           onCancelCallback={() => setModalstate(false)}
           shops={allShopsData?.results ?? []}
           total={getTotal(purchaseData).total}
+          totalUSD={getTotal(purchaseData).totalUSD}
         />
       )}
       <div ref={printOutRef}>

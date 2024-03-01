@@ -16,8 +16,8 @@ export interface IInventoryProps {
     }
   } | null
   created_at: string
-  remaining_in_shops: number
-  remaining_in_storage: number
+  total_in_shops: number
+  total_in_storage: number
   buying_price: number
   selling_price: number
   usd_price: number
@@ -32,5 +32,6 @@ export enum ModalStateEnum {
 }
 
 export interface IAddInventoryFormProps extends IModalFormProps {
+  initialData: IInventoryProps
   groups: IGroupsProps[]
 }

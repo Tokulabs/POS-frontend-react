@@ -5,7 +5,7 @@ import { DataPropsForm } from '../types/GlobalTypes'
 import { tokenName } from '../utils/constants'
 
 interface IAxiosRequestProps {
-  method?: 'get' | 'post' | 'patch' | 'delete'
+  method?: 'get' | 'post' | 'patch' | 'delete' | 'put'
   url: string | URL
   payload?: DataPropsForm | FormData
   hasAuth?: boolean
@@ -47,7 +47,11 @@ export const axiosRequest = async <T>({
     const errorObjectDescription = errorObject?.description
     notification.error({
       message: errorObject ? errorObject.message : 'Error',
-      description: errorObjectDescription ? errorObjectDescription : err.response?.data.error,
+      description: errorObjectDescription
+        ? errorObjectDescription
+        : err.response?.data.error
+        ? err.response?.data.error
+        : err.response?.data.code,
     })
     throw Error(err.response?.data.error)
   }

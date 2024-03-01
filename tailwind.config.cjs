@@ -15,6 +15,9 @@ module.exports = {
         background: {
           main: '#E5E5E5',
         },
+        red: {
+          1: '#FF0000',
+        },
       },
     },
   },

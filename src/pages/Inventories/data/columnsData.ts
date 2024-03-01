@@ -30,9 +30,9 @@ export const columns = [
     key: 'usd_price',
   },
   {
-    title: 'Unidades restantes',
-    dataIndex: 'remaining_in_shops',
-    key: 'remaining_in_shops',
+    title: 'Total en tiendas',
+    dataIndex: 'total_in_shops',
+    key: 'total_in_shops',
   },
   {
     title: '',

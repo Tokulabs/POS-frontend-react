@@ -3,7 +3,8 @@ import { AxiosError } from 'axios'
 export interface ICustomAxiosError extends Omit<AxiosError, 'response'> {
   response?: {
     data: {
-      error: string
+      error?: string
+      code?: string
     }
   }
 }

@@ -39,7 +39,7 @@ export const getInvoicesNew = async (queryParams: IQueryParams) => {
         })),
         invoice_number: item.invoice_number,
         payment_methods: item.payment_methods,
-        is_dollar: item.is_dollar,
+        is_dolar: item.is_dolar,
         is_override: item.is_override,
         dian_document_number: item.dian_document_number,
       }))

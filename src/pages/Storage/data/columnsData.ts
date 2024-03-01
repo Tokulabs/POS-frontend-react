@@ -31,8 +31,8 @@ export const columns = [
   },
   {
     title: 'Unidades Bodega',
-    dataIndex: 'remaining_in_storage',
-    key: 'remaining_in_storage',
+    dataIndex: 'total_in_storage',
+    key: 'total_in_storage',
   },
   {
     title: '',
