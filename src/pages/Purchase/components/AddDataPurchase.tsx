@@ -12,7 +12,6 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
   isVisible = false,
   onSuccessCallback,
   onCancelCallback,
-  shops,
   total,
   totalUSD,
   salesUsers,
@@ -34,8 +33,9 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
 
   const { dianResolutionData, isLoading } = useDianResolutions('allDianResolutions', {})
 
-  const initialValues: Partial<IInvoiceProps & { shop_id: string; sale_id: string }> = {
-    shop_id: '',
+  const showCurrency = true
+
+  const initialValues: Partial<IInvoiceProps & { sale_id: string }> = {
     sale_id: '',
     customer_name: '',
     customer_id: '',
@@ -50,7 +50,7 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
         back_amount: 0,
       },
     ],
-    is_dolar: false,
+    is_dollar: false,
   }
 
   const onSubmit = async (values: DataPropsForm) => {
@@ -71,6 +71,7 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
       else item.received_amount = 0
     })
     values.payment_methods = paymentMethods
+    console.log('values', values)
 
     onSuccessCallback(values)
     form.resetFields()
@@ -171,26 +172,6 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
           </div>
           <Form layout='vertical' onFinish={onSubmit} form={form} initialValues={initialValues}>
             <div className='flex w-full gap-2'>
-              <Form.Item
-                style={{ width: '100%' }}
-                label='Tienda'
-                name='shop_id'
-                rules={[{ required: true, message: 'Campo requerido' }]}
-              >
-                <Select
-                  placeholder='Seleccionar tienda'
-                  options={[
-                    {
-                      value: '',
-                      label: 'Seleccionar tienda',
-                    },
-                    ...shops.map((item) => ({
-                      value: item.id,
-                      label: item.name,
-                    })),
-                  ]}
-                />
-              </Form.Item>
               <Form.Item label='Vendedor' name='sale_by_id' style={{ width: '100%' }}>
                 <Select
                   placeholder='Seleccionar Vendedor'
@@ -247,7 +228,7 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
               </div>
             )}
             <div className='flex gap-3 items-center'>
-              <Form.Item style={{ margin: 0 }} name='is_dolar' valuePropName='checked'>
+              <Form.Item style={{ margin: 0 }} name='is_dollar' valuePropName='checked'>
                 <Switch checked={isDolar} onChange={(value) => changeDolarValue(value)} />
               </Form.Item>
               <p className='m-0'>¿Pago en dolares (USD)?</p>
@@ -268,13 +249,18 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
                   <span className='text-xl font-bold'>
                     {isDolar
                       ? formatToUsd(totalValue - sumTotalPaymentMethods)
-                      : formatNumberToColombianPesos(totalValue - sumTotalPaymentMethods)}
+                      : formatNumberToColombianPesos(
+                          totalValue - sumTotalPaymentMethods,
+                          showCurrency,
+                        )}
                   </span>
                 </p>
                 <p className='m-0'>
                   Total a pagar:{' '}
                   <span className='text-xl font-bold'>
-                    {isDolar ? formatToUsd(totalValue) : formatNumberToColombianPesos(totalValue)}
+                    {isDolar
+                      ? formatToUsd(totalValue)
+                      : formatNumberToColombianPesos(totalValue, showCurrency)}
                   </span>
                 </p>
               </div>

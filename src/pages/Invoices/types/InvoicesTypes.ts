@@ -13,14 +13,13 @@ export interface IInvoiceProps {
   created_at: string
   created_by_email: string
   invoice_items: IPurchaseProps[]
-  shop_name: string
   sale_name: string
   customer_id: string
   customer_name: string
   customer_email: string | null
   customer_phone: string | null
   payment_methods: IPaymentMethodsProps[]
-  is_dolar: boolean
+  is_dollar: boolean
   invoice_number: number
   dian_document_number: string
   is_override: boolean

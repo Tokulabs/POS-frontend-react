@@ -17,6 +17,7 @@ import Dian from '../pages/Dian/Dian'
 import Storage from '../pages/Storage/Storage'
 import { SideBarData } from '../layouts/MainLayout/data/data'
 import { useRolePermissions } from '../hooks/useRolespermissions'
+import PaymentTerminals from '../pages/PaymentTerminals/PaymentTerminals'
 
 interface IRouteGuardian {
   element: FC
@@ -154,6 +155,18 @@ export const Router: FC = () => {
                       element={() => <Storage />}
                       allowedRoles={
                         SideBarData.filter((item) => item.path === '/storage')[0].allowedRoles ?? []
+                      }
+                    />
+                  }
+                />
+                <Route
+                  path='/payment-terminals'
+                  element={
+                    <RouteGuardian
+                      element={() => <PaymentTerminals />}
+                      allowedRoles={
+                        SideBarData.filter((item) => item.path === '/payment-terminals')[0]
+                          .allowedRoles ?? []
                       }
                     />
                   }

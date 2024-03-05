@@ -221,7 +221,12 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
           </Form.Item>
         </div>
         <Form.Item>
-          <Button htmlType='submit' type='primary' block loading={isLoading}>
+          <Button
+            htmlType='submit'
+            type='primary'
+            block
+            loading={isEdit ? isLoading : isLoadingEdit}
+          >
             Submit
           </Button>
         </Form.Item>

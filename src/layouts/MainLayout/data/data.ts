@@ -10,6 +10,7 @@ import {
   TablerIconsProps,
   IconKey,
   IconDatabase,
+  IconDeviceLandlinePhone,
 } from '@tabler/icons-react'
 import { UserRolesEnum } from '../../../pages/Users/types/UserTypes'
 interface ISideBarData {
@@ -101,6 +102,12 @@ export const SideBarData: ISideBarData[] = [
     icon: IconDatabase,
     title: 'Bodega',
     path: '/storage',
+    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
+  },
+  {
+    icon: IconDeviceLandlinePhone,
+    title: 'Datafonos',
+    path: '/payment-terminals',
     allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
   },
 ]

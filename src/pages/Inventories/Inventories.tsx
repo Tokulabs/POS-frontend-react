@@ -20,10 +20,11 @@ export const formatinventoryPhoto = (inventories: IInventoryProps[]) => {
 }
 
 const inventoriesDataFormated = (inventories: IInventoryProps[]) => {
+  const showCurrency = true
   return inventories.map((item) => ({
     ...item,
-    selling_price: formatNumberToColombianPesos(item.selling_price ?? 0),
-    usd_price: formatToUsd(item.usd_price),
+    selling_price: formatNumberToColombianPesos(item.selling_price ?? 0, showCurrency),
+    usd_price: formatToUsd(item.usd_price, showCurrency),
   }))
 }
 

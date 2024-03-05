@@ -25,12 +25,6 @@ export interface IInventoryProps {
   sum_of_item?: number
 }
 
-export enum ModalStateEnum {
-  addItem,
-  addItemsCSV,
-  off,
-}
-
 export interface IAddInventoryFormProps extends IModalFormProps {
   initialData: IInventoryProps
   groups: IGroupsProps[]

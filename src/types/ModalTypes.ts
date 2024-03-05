@@ -6,3 +6,9 @@ export interface IModalFormProps {
   onCancelCallback: () => void
   currentPage?: number
 }
+
+export enum ModalStateEnum {
+  addItem,
+  addItemsCSV,
+  off,
+}
