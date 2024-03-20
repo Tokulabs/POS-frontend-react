@@ -1,4 +1,4 @@
-import { Modal, Input, Switch, Button, notification, Form } from 'antd'
+import { Modal, Input, Button, notification, Form } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { FC } from 'react'
 import { DataPropsForm } from '../../../types/GlobalTypes'
