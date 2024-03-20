@@ -7,14 +7,17 @@ import {
   IconUsers,
   IconBuildingStore,
   IconActivity,
-  TablerIconsProps,
   IconKey,
   IconDatabase,
   IconDeviceLandlinePhone,
+  IconUsersGroup,
+  IconProps,
+  Icon,
 } from '@tabler/icons-react'
 import { UserRolesEnum } from '../../../pages/Users/types/UserTypes'
+import { ForwardRefExoticComponent, RefAttributes } from 'react'
 interface ISideBarData {
-  icon: (props: TablerIconsProps) => JSX.Element
+  icon: ForwardRefExoticComponent<Omit<IconProps, 'ref'> & RefAttributes<Icon>>
   title: string
   path: string
   allowedRoles?: string[]
@@ -108,6 +111,12 @@ export const SideBarData: ISideBarData[] = [
     icon: IconDeviceLandlinePhone,
     title: 'Datafonos',
     path: '/payment-terminals',
+    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
+  },
+  {
+    icon: IconUsersGroup,
+    title: 'Proveedores',
+    path: '/providers',
     allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
   },
 ]

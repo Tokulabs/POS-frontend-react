@@ -46,7 +46,7 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
         name: 'cash',
         paid_amount: total,
         transaction_code: '',
-        received_amount: 0,
+        received_amount: total,
         back_amount: 0,
       },
     ],
@@ -65,13 +65,13 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
     // return all values of form and add back_amount to payment_methods
     const paymentMethods: IPaymentMethodsProps[] = values.payment_methods as IPaymentMethodsProps[]
     paymentMethods.forEach((item, index) => {
+      console.log('item', item)
       item.back_amount = backAmountValues[index] || 0
       if (!item.received_amount) item.received_amount = item.paid_amount
       if (item.name === 'cash') item.transaction_code = ''
       else item.received_amount = 0
     })
     values.payment_methods = paymentMethods
-    console.log('values', values)
 
     onSuccessCallback(values)
     form.resetFields()
@@ -82,7 +82,6 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
     index: number,
     setAmountchange: (data: (prevValues: number[]) => number[]) => void,
   ) => {
-    console.log('value', value, 'index', index)
     setAmountchange((prevValues: number[]) => {
       const newValues = [...prevValues]
       newValues[index] = Number(value)
@@ -100,6 +99,7 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
 
   useEffect(() => {
     handleAmountChange(totalValue.toString(), 0, setPaidAmountValues)
+    handleAmountChange(totalValue.toString(), 0, setReceivedAmountValues)
   }, [])
 
   useEffect(() => {
@@ -113,7 +113,6 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
 
   useEffect(() => {
     const change = receivedAmountValues.map((item, index) => item - paidAmountValues[index])
-    console.log('change', change)
     setBackAmountValues(change)
   }, [paidAmountValues, receivedAmountValues])
 
@@ -248,7 +247,7 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
                   Saldo:{' '}
                   <span className='text-xl font-bold'>
                     {isDolar
-                      ? formatToUsd(totalValue - sumTotalPaymentMethods)
+                      ? formatToUsd(totalValue - sumTotalPaymentMethods, showCurrency)
                       : formatNumberToColombianPesos(
                           totalValue - sumTotalPaymentMethods,
                           showCurrency,
@@ -259,7 +258,7 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
                   Total a pagar:{' '}
                   <span className='text-xl font-bold'>
                     {isDolar
-                      ? formatToUsd(totalValue)
+                      ? formatToUsd(totalValue, showCurrency)
                       : formatNumberToColombianPesos(totalValue, showCurrency)}
                   </span>
                 </p>

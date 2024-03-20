@@ -46,7 +46,7 @@ export const getInvoicesNew = async (queryParams: IQueryParams) => {
       return { ...response.data, results: dataFormatted }
     }
   } catch (e) {
-    console.log(e)
+    throw new Error(e as string)
   }
 }
 
@@ -59,7 +59,7 @@ export const postInvoicesNew = async (values: DataPropsForm) => {
       payload: values,
     })
   } catch (e) {
-    console.log(e)
+    throw new Error(e as string)
   }
 }
 
