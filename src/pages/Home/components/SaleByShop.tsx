@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react'
+/* import { useEffect, useState } from 'react'
 import { axiosRequest } from '../../../api/api'
 import { salesByShopURL } from '../../../utils/network'
 import { ISaleByShopProps } from '../types/DashboardTypes'
 import { Pie } from 'react-chartjs-2'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, ChartOptions, ChartData } from 'chart.js'
-import { Spin } from 'antd'
+import { Spin } from 'antd' */
 
-ChartJS.register(ArcElement, Tooltip, Legend)
+/* ChartJS.register(ArcElement, Tooltip, Legend) */
 
 const SaleByShop = () => {
-  const [salesByShopData, setSalesByShopData] = useState<ISaleByShopProps[]>()
+  /* const [salesByShopData, setSalesByShopData] = useState<ISaleByShopProps[]>()
   const [loading, setLoading] = useState(false)
 
   const getData = async () => {
@@ -77,17 +77,17 @@ const SaleByShop = () => {
       },
     },
   }
-
+ */
   return (
     <div className='bg-white p-4 rounded-lg shadow-md'>
-      <h3 className='m-0 font-bold'>Ventas por tienda</h3>
+      {/*  <h3 className='m-0 font-bold'>Ventas por tienda</h3>
       <div className='h-full grid place-items-center'>
         {loading ? (
           <Spin />
         ) : (
           <Pie data={getChartsData()} options={pieOptions} updateMode='resize' />
         )}
-      </div>
+      </div> */}
     </div>
   )
 }
