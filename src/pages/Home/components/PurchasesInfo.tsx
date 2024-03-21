@@ -10,6 +10,7 @@ const PurchasesInfo = () => {
     {} as IPurchaseSummaryProps,
   )
   const [loading, setLoading] = useState(false)
+  const showCurrency = true
 
   const getPurchaseSummary = async () => {
     try {
@@ -42,7 +43,7 @@ const PurchasesInfo = () => {
         <section className='flex flex-col gap-5'>
           <div className='flex flex-col'>
             <p className='m-0 font-bold text-2xl'>
-              {formatNumberToColombianPesos(dataPurchaseSummary.price ?? 0)} COP
+              {formatNumberToColombianPesos(dataPurchaseSummary.price ?? 0, showCurrency)}
             </p>
             <span className='text-gray-2 text-sm'>(Valor)</span>
           </div>

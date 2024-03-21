@@ -12,7 +12,6 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
   isVisible = false,
   onSuccessCallback,
   onCancelCallback,
-  shops,
   total,
   totalUSD,
   salesUsers,
@@ -34,8 +33,9 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
 
   const { dianResolutionData, isLoading } = useDianResolutions('allDianResolutions', {})
 
-  const initialValues: Partial<IInvoiceProps & { shop_id: string; sale_id: string }> = {
-    shop_id: '',
+  const showCurrency = true
+
+  const initialValues: Partial<IInvoiceProps & { sale_id: string }> = {
     sale_id: '',
     customer_name: '',
     customer_id: '',
@@ -46,11 +46,11 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
         name: 'cash',
         paid_amount: total,
         transaction_code: '',
-        received_amount: 0,
+        received_amount: total,
         back_amount: 0,
       },
     ],
-    is_dolar: false,
+    is_dollar: false,
   }
 
   const onSubmit = async (values: DataPropsForm) => {
@@ -65,6 +65,7 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
     // return all values of form and add back_amount to payment_methods
     const paymentMethods: IPaymentMethodsProps[] = values.payment_methods as IPaymentMethodsProps[]
     paymentMethods.forEach((item, index) => {
+      console.log('item', item)
       item.back_amount = backAmountValues[index] || 0
       if (!item.received_amount) item.received_amount = item.paid_amount
       if (item.name === 'cash') item.transaction_code = ''
@@ -81,7 +82,6 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
     index: number,
     setAmountchange: (data: (prevValues: number[]) => number[]) => void,
   ) => {
-    console.log('value', value, 'index', index)
     setAmountchange((prevValues: number[]) => {
       const newValues = [...prevValues]
       newValues[index] = Number(value)
@@ -99,6 +99,7 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
 
   useEffect(() => {
     handleAmountChange(totalValue.toString(), 0, setPaidAmountValues)
+    handleAmountChange(totalValue.toString(), 0, setReceivedAmountValues)
   }, [])
 
   useEffect(() => {
@@ -112,7 +113,6 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
 
   useEffect(() => {
     const change = receivedAmountValues.map((item, index) => item - paidAmountValues[index])
-    console.log('change', change)
     setBackAmountValues(change)
   }, [paidAmountValues, receivedAmountValues])
 
@@ -171,26 +171,6 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
           </div>
           <Form layout='vertical' onFinish={onSubmit} form={form} initialValues={initialValues}>
             <div className='flex w-full gap-2'>
-              <Form.Item
-                style={{ width: '100%' }}
-                label='Tienda'
-                name='shop_id'
-                rules={[{ required: true, message: 'Campo requerido' }]}
-              >
-                <Select
-                  placeholder='Seleccionar tienda'
-                  options={[
-                    {
-                      value: '',
-                      label: 'Seleccionar tienda',
-                    },
-                    ...shops.map((item) => ({
-                      value: item.id,
-                      label: item.name,
-                    })),
-                  ]}
-                />
-              </Form.Item>
               <Form.Item label='Vendedor' name='sale_by_id' style={{ width: '100%' }}>
                 <Select
                   placeholder='Seleccionar Vendedor'
@@ -247,7 +227,7 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
               </div>
             )}
             <div className='flex gap-3 items-center'>
-              <Form.Item style={{ margin: 0 }} name='is_dolar' valuePropName='checked'>
+              <Form.Item style={{ margin: 0 }} name='is_dollar' valuePropName='checked'>
                 <Switch checked={isDolar} onChange={(value) => changeDolarValue(value)} />
               </Form.Item>
               <p className='m-0'>¿Pago en dolares (USD)?</p>
@@ -267,14 +247,19 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
                   Saldo:{' '}
                   <span className='text-xl font-bold'>
                     {isDolar
-                      ? formatToUsd(totalValue - sumTotalPaymentMethods)
-                      : formatNumberToColombianPesos(totalValue - sumTotalPaymentMethods)}
+                      ? formatToUsd(totalValue - sumTotalPaymentMethods, showCurrency)
+                      : formatNumberToColombianPesos(
+                          totalValue - sumTotalPaymentMethods,
+                          showCurrency,
+                        )}
                   </span>
                 </p>
                 <p className='m-0'>
                   Total a pagar:{' '}
                   <span className='text-xl font-bold'>
-                    {isDolar ? formatToUsd(totalValue) : formatNumberToColombianPesos(totalValue)}
+                    {isDolar
+                      ? formatToUsd(totalValue, showCurrency)
+                      : formatNumberToColombianPesos(totalValue, showCurrency)}
                   </span>
                 </p>
               </div>

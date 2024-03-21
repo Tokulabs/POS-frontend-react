@@ -28,6 +28,7 @@ import { getTotal } from './helpers/PurchaseHelpers'
 import { formatNumberToColombianPesos, formatToUsd } from '../../utils/helpers'
 import { postInvoicesNew } from '../Invoices/helpers/services'
 import { useDianResolutions } from '../../hooks/useDianResolution'
+import { ModalStateEnum } from '../../types/ModalTypes'
 
 const formatInventoryAction = (
   inventories: DataPropsForm[],
@@ -92,7 +93,7 @@ const Purchase: FC = () => {
   const [purchaseData, setPurchaseData] = useState<IPurchaseProps[]>([])
   const [purchaseItemQty, setPurchaseItemQty] = useState<IPurchaseAddRemoveProps>({})
   const [purchaseItemDataQty, setPurchaseItemDataQty] = useState<IPurchaseAddRemoveProps>({})
-  const [modalState, setModalstate] = useState(false)
+  const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
   const [showPrintOut, setShowPrintOut] = useState(false)
   const [currentPage, setcurrentPage] = useState(1)
   const [printData, setPrintData] = useState<IPrintData>({} as IPrintData)
@@ -200,74 +201,84 @@ const Purchase: FC = () => {
       clearPurchaseData()
       setcurrentPage(1)
     },
+    onError: () => {
+      notification.error({
+        message: 'Error',
+        description: 'Ha ocurrido un error al crear la factura',
+      })
+      return
+    },
   })
 
   const submitInvoice = async (data?: number | DataPropsForm) => {
-    if (typeof data === 'number') return
-    const customerData: ICustomerDataProps = {
-      customerName: data?.customer_name ? data?.customer_name.toString() : 'Cliente Generico',
-      customerId: data?.customer_id ? data?.customer_id.toString() : '2222222222',
-      customerEmail: data?.customer_email ? data?.customer_email.toString() : null,
-      customerPhone: data?.customer_phone ? data?.customer_phone.toString() : null,
+    try {
+      if (typeof data === 'number') return
+      const customerData: ICustomerDataProps = {
+        customerName: data?.customer_name ? data?.customer_name.toString() : 'Cliente Generico',
+        customerId: data?.customer_id ? data?.customer_id.toString() : '2222222222',
+        customerEmail: data?.customer_email ? data?.customer_email.toString() : null,
+        customerPhone: data?.customer_phone ? data?.customer_phone.toString() : null,
+      }
+      const paymentMethods: IPaymentMethodsProps[] = data?.payment_methods as IPaymentMethodsProps[]
+
+      const paymentMethodsFormated: IPaymentMethodsProps[] = paymentMethods.map(
+        (item: IPaymentMethodsProps) =>
+          ({
+            name: item.name,
+            paid_amount: item.paid_amount,
+            received_amount: item.received_amount,
+            back_amount: item.back_amount,
+            transaction_code: item.transaction_code ? item.transaction_code : null,
+          } ?? []),
+      )
+
+      const dianInformation: IDianResolutionProps =
+        dianResolutionData?.data[0] ?? ({} as IDianResolutionProps)
+
+      const getSalesName =
+        supportSales?.results.find((user: IUserProps) => user.id === (data?.sale_by_id as number))
+          ?.fullname || 'SIGNOS'
+
+      const dataToSend = {
+        shop_id: data?.shop_id as number,
+        sale_by_id: data?.sale_by_id as number,
+        invoice_item_data: purchaseData.map((item) => ({ item_id: item.id, quantity: item.qty })),
+        customer_name: customerData.customerName,
+        customer_id: customerData.customerId,
+        customer_email: customerData.customerEmail,
+        customer_phone: customerData.customerPhone,
+        payment_methods: paymentMethodsFormated,
+        is_dollar: data?.is_dollar as boolean,
+        invoice_number: dianInformation?.current_number as number,
+        dian_document_number: dianInformation?.document_number,
+      }
+
+      mutate(dataToSend)
+      setModalState(ModalStateEnum.off)
+      setPrintData({
+        saleName: getSalesName,
+        customerData,
+        paymentMethods: paymentMethodsFormated,
+        data: purchaseData,
+        dianResolution: dianInformation,
+        invoiceNumber: dianInformation?.current_number,
+        isOverride: false,
+      })
+    } catch (error) {
+      throw new Error(error as string)
+    } finally {
+      setShowPrintOut(true)
     }
-    const paymentMethods: IPaymentMethodsProps[] = data?.payment_methods as IPaymentMethodsProps[]
-
-    const paymentMethodsFormated: IPaymentMethodsProps[] = paymentMethods.map(
-      (item: IPaymentMethodsProps) =>
-        ({
-          name: item.name,
-          paid_amount: item.paid_amount,
-          received_amount: item.received_amount,
-          back_amount: item.back_amount,
-          transaction_code: item.transaction_code ? item.transaction_code : null,
-        } ?? []),
-    )
-
-    const dianInformation: IDianResolutionProps =
-      dianResolutionData?.data[0] ?? ({} as IDianResolutionProps)
-
-    const getSalesName =
-      supportSales?.results.find((user: IUserProps) => user.id === (data?.sale_by_id as number))
-        ?.fullname || 'SIGNOS'
-
-    setPrintData({
-      saleName: getSalesName,
-      customerData,
-      paymentMethods: paymentMethodsFormated,
-      data: purchaseData,
-      dianResolution: dianInformation,
-      invoiceNumber: dianInformation?.current_number,
-      isOverride: false,
-    })
-
-    const dataToSend = {
-      shop_id: data?.shop_id as number,
-      sale_by_id: data?.sale_by_id as number,
-      invoice_item_data: purchaseData.map((item) => ({ item_id: item.id, quantity: item.qty })),
-      customer_name: customerData.customerName,
-      customer_id: customerData.customerId,
-      customer_email: customerData.customerEmail,
-      customer_phone: customerData.customerPhone,
-      payment_methods: paymentMethodsFormated,
-      is_dolar: data?.is_dolar as boolean,
-      invoice_number: dianInformation?.current_number as number,
-      dian_document_number: dianInformation?.document_number,
-    }
-
-    mutate(dataToSend)
-    setModalstate(false)
-    setShowPrintOut(true)
   }
 
   const createPurchase = () => {
-    console.log(purchaseData)
     if (purchaseData.length < 1) {
       notification.error({
         message: 'No tienes productos en la venta en curso',
       })
       return
     }
-    setModalstate(true)
+    setModalState(ModalStateEnum.addItem)
   }
 
   const handlePrint = useReactToPrint({
@@ -354,7 +365,7 @@ const Purchase: FC = () => {
                 <Clock />
               </div>
               <div className='flex flex-col text-right'>
-                <div className='text-sm text-gray-2'>Total</div>
+                <div className='text-sm text-gray-2'>Total COP</div>
                 <div className=''>
                   {formatNumberToColombianPesos(getTotal(purchaseData).total | 0)}
                 </div>
@@ -375,12 +386,12 @@ const Purchase: FC = () => {
           </div>
         </div>
       </div>
-      {modalState && (
+      {modalState === ModalStateEnum.addItem && (
         <AddDataPurchaseForm
-          isVisible={modalState}
+          isVisible={modalState === ModalStateEnum.addItem}
           salesUsers={supportSales?.results ?? []}
           onSuccessCallback={submitInvoice}
-          onCancelCallback={() => setModalstate(false)}
+          onCancelCallback={() => setModalState(ModalStateEnum.off)}
           shops={allShopsData?.results ?? []}
           total={getTotal(purchaseData).total}
           totalUSD={getTotal(purchaseData).totalUSD}

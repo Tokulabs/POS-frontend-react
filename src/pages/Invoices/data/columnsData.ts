@@ -26,8 +26,8 @@ export const columns = [
   },
   {
     title: 'Pago en dolares',
-    dataIndex: 'is_dolar',
-    key: 'is_dolar',
+    dataIndex: 'is_dollar',
+    key: 'is_dollar',
   },
   {
     title: 'Anulada',

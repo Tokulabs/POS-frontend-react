@@ -15,6 +15,11 @@ export interface IInventoryProps {
       name: string
     }
   } | null
+  provider: {
+    name: string
+    legal_name: string
+    id: number
+  } | null
   created_at: string
   total_in_shops: number
   total_in_storage: number
@@ -23,12 +28,6 @@ export interface IInventoryProps {
   usd_price: number
   photo: string
   sum_of_item?: number
-}
-
-export enum ModalStateEnum {
-  addItem,
-  addItemsCSV,
-  off,
 }
 
 export interface IAddInventoryFormProps extends IModalFormProps {

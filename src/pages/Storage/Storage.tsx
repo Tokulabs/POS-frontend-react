@@ -7,10 +7,11 @@ import { columns } from './data/columnsData'
 import { formatNumberToColombianPesos } from '../../utils/helpers'
 import { useGroups } from '../../hooks/useGroups'
 import { useInventories } from '../../hooks/useInventories'
-import { IInventoryProps, ModalStateEnum } from '../Inventories/types/InventoryTypes'
+import { IInventoryProps } from '../Inventories/types/InventoryTypes'
 import { IconEdit, IconTrash } from '@tabler/icons-react'
 import { deleteInventories } from '../Inventories/helpers/services'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { ModalStateEnum } from '../../types/ModalTypes'
 
 export const formatinventoryPhoto = (inventories: IInventoryProps[]) => {
   return inventories.map((item) => ({
@@ -54,11 +55,12 @@ const Storage: FC = () => {
     mutate(id)
   }
 
-  const storageDataFormated = (inventories: IInventoryProps[]) => {
+  const formatEditAndDelete = (inventories: IInventoryProps[]) => {
+    const showCurrency = true
     return inventories.map((item) => ({
       ...item,
-      selling_price: formatNumberToColombianPesos(item.selling_price ?? 0),
-      buying_price: formatNumberToColombianPesos(item.buying_price ?? 0),
+      selling_price: formatNumberToColombianPesos(item.selling_price ?? 0, showCurrency),
+      buying_price: formatNumberToColombianPesos(item.buying_price ?? 0, showCurrency),
       action: (
         <div className='flex justify-center items-center gap-2'>
           <Button type='link' className='p-0' onClick={editInventoryItem(item)}>
@@ -94,7 +96,7 @@ const Storage: FC = () => {
           setEditData({} as IInventoryProps)
           setModalState(ModalStateEnum.addItem)
         }}
-        dataSource={storageDataFormated(formatinventoryPhoto(inventoriesData?.results || []))}
+        dataSource={formatEditAndDelete(formatinventoryPhoto(inventoriesData?.results || []))}
         columns={columns}
         fetching={isLoading}
         totalItems={inventoriesData?.count || 0}

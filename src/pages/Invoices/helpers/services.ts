@@ -39,14 +39,14 @@ export const getInvoicesNew = async (queryParams: IQueryParams) => {
         })),
         invoice_number: item.invoice_number,
         payment_methods: item.payment_methods,
-        is_dolar: item.is_dolar,
+        is_dollar: item.is_dollar,
         is_override: item.is_override,
         dian_document_number: item.dian_document_number,
       }))
       return { ...response.data, results: dataFormatted }
     }
   } catch (e) {
-    console.log(e)
+    throw new Error(e as string)
   }
 }
 
@@ -59,7 +59,7 @@ export const postInvoicesNew = async (values: DataPropsForm) => {
       payload: values,
     })
   } catch (e) {
-    console.log(e)
+    throw new Error(e as string)
   }
 }
 
