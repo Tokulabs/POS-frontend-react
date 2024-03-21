@@ -21,6 +21,7 @@ export const getProviders = async (queryParams: IQueryParams) => {
     if (response) {
       const data = response.data.results.map((item) => ({
         ...item,
+        key: item.id,
       }))
       return { ...response.data, results: data }
     }

@@ -20,6 +20,11 @@ export const columns = [
     key: 'groupInfo',
   },
   {
+    title: 'Proveedor',
+    dataIndex: 'providerInfo',
+    key: 'providerInfo',
+  },
+  {
     title: 'Precio',
     dataIndex: 'selling_price',
     key: 'selling_price',
