@@ -72,6 +72,18 @@ export const SideBarData: ISideBarData[] = [
     ],
   },
   {
+    icon: IconReceipt,
+    title: 'POS',
+    path: '/pos',
+    allowedRoles: [
+      UserRolesEnum.admin,
+      UserRolesEnum.posAdmin,
+      UserRolesEnum.sales,
+      UserRolesEnum.shopAdmin,
+      UserRolesEnum.supportSales,
+    ],
+  },
+  {
     icon: IconBoxMultiple,
     title: 'Categorias',
     path: '/inventory-groups',
