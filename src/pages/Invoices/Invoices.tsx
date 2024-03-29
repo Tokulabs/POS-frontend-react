@@ -40,10 +40,10 @@ const Invoices: FC = () => {
 
   const printOutRef = useRef<HTMLDivElement>(null)
 
-  const { mutate, isLoading: isLoadingOverride } = useMutation({
+  const { mutate, isPending: isLoadingOverride } = useMutation({
     mutationFn: patchOverrideInvoice,
     onSuccess: () => {
-      queryClient.invalidateQueries(['paginatedInvoices', { page: 1 }])
+      queryClient.invalidateQueries({ queryKey: ['paginatedInvoices', { page: 1 }] })
       notification.info({
         message: 'Exito',
         description: 'Factura anulada!',
