@@ -1,5 +1,5 @@
 import { axiosRequest } from '../../../api/api'
-import { DataPropsForm, IQueryParams } from '../../../types/GlobalTypes'
+import { DataPropsForm, IPaginationProps, IQueryParams } from '../../../types/GlobalTypes'
 import { dianResolutionURL } from '../../../utils/network'
 import { IDianResolutionProps } from '../types/DianResolutionTypes'
 
@@ -13,13 +13,13 @@ export const getDianResolutions = async (queryParams: IQueryParams) => {
       })
     }
     finalURL.search = searchParams.toString()
-    const response = await axiosRequest<IDianResolutionProps[]>({
+    const response = await axiosRequest<IPaginationProps<IDianResolutionProps>>({
       url: finalURL,
       hasAuth: true,
       showError: false,
     })
     if (response) {
-      return response
+      return response.data
     }
   } catch (e) {
     console.log(e)
