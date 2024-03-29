@@ -190,10 +190,10 @@ const Purchase: FC = () => {
     setPurchaseItemDataQty({})
   }
 
-  const { mutate, isLoading } = useMutation({
+  const { mutate, isPending: isLoading } = useMutation({
     mutationFn: postInvoicesNew,
     onSuccess: () => {
-      queryClient.invalidateQueries(['paginatedInventories'])
+      queryClient.invalidateQueries({ queryKey: ['paginatedInventories'] })
       notification.success({
         message: 'Exito',
         description: 'Factura Creada!',
@@ -229,7 +229,7 @@ const Purchase: FC = () => {
             received_amount: item.received_amount,
             back_amount: item.back_amount,
             transaction_code: item.transaction_code ? item.transaction_code : null,
-          } ?? []),
+          }) || [],
       )
 
       const dianInformation: IDianResolutionProps =
