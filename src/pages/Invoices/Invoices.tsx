@@ -106,7 +106,7 @@ const Invoices: FC = () => {
       customerEmail: data.customer_email,
       customerPhone: data.customer_phone,
     }
-    const getDianResolution = dianResolutionData?.data.filter(
+    const getDianResolution = dianResolutionData?.results.filter(
       (item) => item.document_number === data.dian_document_number,
     )[0]
 

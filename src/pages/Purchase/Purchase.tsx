@@ -233,7 +233,7 @@ const Purchase: FC = () => {
       )
 
       const dianInformation: IDianResolutionProps =
-        dianResolutionData?.data[0] ?? ({} as IDianResolutionProps)
+        dianResolutionData?.results[0] ?? ({} as IDianResolutionProps)
 
       const getSalesName =
         supportSales?.results.find((user: IUserProps) => user.id === (data?.sale_by_id as number))

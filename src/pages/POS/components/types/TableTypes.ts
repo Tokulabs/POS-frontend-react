@@ -16,6 +16,7 @@ export interface IPosData {
   quantity: number
   total: number
   usd_total: number
+  photo: string
 }
 
 export interface ITableRowProps {

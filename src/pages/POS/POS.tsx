@@ -29,6 +29,7 @@ export const POS = () => {
       quantity: 1,
       total: data.selling_price,
       usd_total: data.usd_price,
+      photo: data.photo ?? '',
     }
   }
 

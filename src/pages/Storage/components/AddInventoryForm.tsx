@@ -35,7 +35,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
   const queryClient = useQueryClient()
 
   const successRegistry = (message: string, description: string) => {
-    queryClient.invalidateQueries(['paginatedInventories'])
+    queryClient.invalidateQueries({ queryKey: ['paginatedInventories'] })
     onSuccessCallback()
     notification.success({
       message: message,
@@ -44,14 +44,14 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
     form.resetFields()
   }
 
-  const { mutate, isLoading } = useMutation({
+  const { mutate, isPending: isLoading } = useMutation({
     mutationFn: postInventoriesNew,
     onSuccess: () => {
       successRegistry('Exito', 'Producto creado!')
     },
   })
 
-  const { mutate: mutateEdit, isLoading: isLoadingEdit } = useMutation({
+  const { mutate: mutateEdit, isPending: isLoadingEdit } = useMutation({
     mutationFn: putInventoriesEdit,
     onSuccess: () => {
       successRegistry('Exito', 'Producto actualizado!')

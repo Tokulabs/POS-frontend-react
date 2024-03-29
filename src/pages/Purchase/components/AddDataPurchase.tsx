@@ -61,7 +61,7 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
       })
       return
     }
-    if (typeof values == null) return
+    if (values == null) return
     // return all values of form and add back_amount to payment_methods
     const paymentMethods: IPaymentMethodsProps[] = values.payment_methods as IPaymentMethodsProps[]
     paymentMethods.forEach((item, index) => {
@@ -146,7 +146,7 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
     <Modal
       forceRender={true}
       width={1000}
-      title={!dianResolutionData?.data?.length ? 'Crear resolución de la DIAN' : 'Crear Venta'}
+      title={!dianResolutionData?.results?.length ? 'Crear resolución de la DIAN' : 'Crear Venta'}
       style={{ position: 'relative' }}
       open={isVisible}
       onCancel={() => {
@@ -156,7 +156,7 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
       footer={false}
       maskClosable={false}
     >
-      {!dianResolutionData?.data?.length ? (
+      {!dianResolutionData?.results?.length ? (
         <div>
           <h1>Debes tener una resolución de la DIAN creada para crear facturas</h1>
           <a href='/dian-resolution'>Crear resolución</a>
@@ -166,7 +166,7 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
           <div className='absolute right-12 top-3'>
             <span className='text-base'>Factura: </span>
             <span className=' text-lg text-blue-500 font-bold'>
-              GUA-{dianResolutionData?.data[0]?.current_number ?? 0}
+              GUA-{dianResolutionData?.results[0]?.current_number ?? 0}
             </span>
           </div>
           <Form layout='vertical' onFinish={onSubmit} form={form} initialValues={initialValues}>
@@ -240,8 +240,8 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
                     totalValue - sumTotalPaymentMethods > 0
                       ? 'text-green-700'
                       : totalValue - sumTotalPaymentMethods < 0
-                      ? 'text-red-500'
-                      : ''
+                        ? 'text-red-500'
+                        : ''
                   }`}
                 >
                   Saldo:{' '}
@@ -361,8 +361,8 @@ const PurchaseForm: FC<ISelectShopPurchase> = ({
                                   : formatNumberToColombianPesos(backAmountValues[index]),
                               )
                             : isDolar
-                            ? formatToUsd(0)
-                            : formatNumberToColombianPesos(0)}
+                              ? formatToUsd(0)
+                              : formatNumberToColombianPesos(0)}
                         </p>
                       </div>
                       <MinusCircleOutlined

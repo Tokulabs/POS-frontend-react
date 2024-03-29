@@ -7,7 +7,11 @@ export const TableData: ITableTitles[] = [
   },
   {
     tableTitle: 'Nombre',
-    tableStyles: 'col-span-3 text-left',
+    tableStyles: 'col-span-2 text-left',
+  },
+  {
+    tableTitle: 'Imagen',
+    tableStyles: 'col-start-4',
   },
   {
     tableTitle: 'Precio COP',
