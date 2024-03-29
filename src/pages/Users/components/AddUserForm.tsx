@@ -15,10 +15,10 @@ const AddUserForm: FC<IModalFormProps> = ({
   const [form] = useForm()
   const queryClient = useQueryClient()
 
-  const { mutate, isLoading } = useMutation({
+  const { mutate, isPending: isLoading } = useMutation({
     mutationFn: postUsersNew,
     onSuccess: () => {
-      queryClient.invalidateQueries(['paginatedUsers'])
+      queryClient.invalidateQueries({ queryKey: ['paginatedUsers'] })
       onSuccessCallback()
       notification.success({
         message: 'Exito',

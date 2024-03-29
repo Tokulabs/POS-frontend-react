@@ -7,13 +7,11 @@ import { useQuery } from '@tanstack/react-query'
 
 const UserActivities: FC = () => {
   const [currentPage, setcurrentPage] = useState(1)
-  const { isLoading, data: userActivities } = useQuery(
-    ['userActivities', currentPage],
-    async () => getUserActivitiesNew({ page: currentPage }),
-    {
-      refetchOnWindowFocus: false,
-    },
-  )
+  const { isLoading, data: userActivities } = useQuery({
+    queryKey: ['userActivities'],
+    queryFn: async () => getUserActivitiesNew({ page: currentPage }),
+    refetchOnWindowFocus: false,
+  })
 
   return (
     <>
