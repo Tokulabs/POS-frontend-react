@@ -19,7 +19,7 @@ const Dian: FC = () => {
             Tenga en cuenta que si crea una resolución nueva esta quedara activa y las demás no
           </span>
           <button onClick={() => setModalState(true)}>Agregar Resolución de la DIAN</button>
-          {dianResolutionData?.data.map((item, index) => (
+          {dianResolutionData?.results.map((item, index) => (
             <div
               key={item.document_number}
               className={`flex justify-start items-center border-solid border-2 rounded-lg gap-5 p-5 ${
