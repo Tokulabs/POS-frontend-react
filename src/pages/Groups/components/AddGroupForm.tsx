@@ -23,10 +23,10 @@ const AddGroupForm: FC<IModalFormProps> = ({
 
   const queryClient = useQueryClient()
 
-  const { mutate, isLoading } = useMutation({
+  const { mutate, isPending: isLoading } = useMutation({
     mutationFn: postGroupsNew,
     onSuccess: () => {
-      queryClient.invalidateQueries(['paginatedGroups'])
+      queryClient.invalidateQueries({ queryKey: ['paginatedGroups'] })
       onSuccessCallback()
       notification.success({
         message: 'Exito',

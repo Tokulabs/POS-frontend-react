@@ -14,10 +14,10 @@ const AddShopsForm: FC<IModalFormProps> = ({
   const [form] = useForm()
   const queryClient = useQueryClient()
 
-  const { mutate, isLoading } = useMutation({
+  const { mutate, isPending: isLoading } = useMutation({
     mutationFn: postShopsNew,
     onSuccess: () => {
-      queryClient.invalidateQueries(['paginatedShops'])
+      queryClient.invalidateQueries({ queryKey: ['paginatedShops'] })
       onSuccessCallback()
       notification.success({
         message: 'Exito',
