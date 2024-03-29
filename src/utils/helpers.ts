@@ -17,3 +17,8 @@ export const formatToUsd = (num: number, showCurrency = false): string => {
 
   return `${formatter.format(num)} ${showCurrency ? 'USD' : ''}`
 }
+
+export const roundNumberToDecimals = (number: number, decimals: number): number => {
+  const factor = Math.pow(10, decimals)
+  return parseFloat((Math.round(number * factor) / factor).toFixed(decimals))
+}
