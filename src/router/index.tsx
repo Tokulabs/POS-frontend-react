@@ -19,6 +19,7 @@ import { SideBarData } from '../layouts/MainLayout/data/data'
 import { useRolePermissions } from '../hooks/useRolespermissions'
 import PaymentTerminals from '../pages/PaymentTerminals/PaymentTerminals'
 import Providers from '../pages/Providers/Providers'
+import { POS } from '../pages/POS/POS'
 
 interface IRouteGuardian {
   element: FC
@@ -121,6 +122,17 @@ export const Router: FC = () => {
                       allowedRoles={
                         SideBarData.filter((item) => item.path === '/purchase')[0].allowedRoles ??
                         []
+                      }
+                    />
+                  }
+                />
+                <Route
+                  path='/pos'
+                  element={
+                    <RouteGuardian
+                      element={() => <POS />}
+                      allowedRoles={
+                        SideBarData.filter((item) => item.path === '/pos')[0].allowedRoles ?? []
                       }
                     />
                   }
