@@ -35,6 +35,18 @@ export const getInventoriesNew = async (queryParams: IQueryParams) => {
   }
 }
 
+export const getInventoryByCode = async (code: string) => {
+  try {
+    const response = await axiosRequest<IInventoryProps>({
+      url: `${inventoryURL}/${code}/`,
+      hasAuth: true,
+    })
+    return response?.data
+  } catch (e: unknown) {
+    throw new Error(e as string)
+  }
+}
+
 export const postInventoriesNew = async (values: DataPropsForm) => {
   try {
     await axiosRequest({
