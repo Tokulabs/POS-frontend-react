@@ -6,7 +6,7 @@ export const useInvoices = (queryKey: string, queryParamas?: IQueryParams) => {
   const queryKeyToSend: QueryKey = [queryKey]
   const { isLoading, data: invoicesData } = useQuery({
     queryKey: queryKeyToSend,
-    queryFn: async () => getInvoicesNew(queryParamas ?? {}),
+    queryFn: async () => getInvoicesNew(queryParamas || {}),
     refetchOnWindowFocus: false,
   })
   return {

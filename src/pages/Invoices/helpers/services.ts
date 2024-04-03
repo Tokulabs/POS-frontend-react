@@ -1,7 +1,8 @@
 import { axiosRequest } from '../../../api/api'
 import { IQueryParams, IPaginationProps, DataPropsForm } from '../../../types/GlobalTypes'
 import { invoiceURL, overrideInvoiceURL } from '../../../utils/network'
-import { IInvoiceProps } from '../types/InvoicesTypes'
+import { IPurchaseProps } from '../../Purchase/types/PurchaseTypes'
+import { IInvoiceProps, IItemInvoice } from '../types/InvoicesTypes'
 
 export const getInvoicesNew = async (queryParams: IQueryParams) => {
   try {
@@ -19,31 +20,24 @@ export const getInvoicesNew = async (queryParams: IQueryParams) => {
       showError: false,
     })
     if (response) {
-      const dataFormatted: IInvoiceProps[] = response.data.results.map((item: any) => ({
+      const data = response.data.results.map((item) => ({
         ...item,
         key: item.id,
-        created_by_name: item.created_by.fullname,
-        shop_name: item.shop.name,
-        sale_name: item.sale_by ? item.sale_by.fullname : 'SIGNOS',
-        customer_id: item.customer_id,
-        customer_name: item.customer_name,
-        customer_email: item.customer_email,
-        customer_phone: item.customer_phone,
-        invoice_items: item.invoice_items.map((itemInvoice: any) => ({
-          code: itemInvoice.item_code,
-          id: itemInvoice.id,
-          selling_price: itemInvoice.item.selling_price,
-          qty: itemInvoice.quantity,
-          item: itemInvoice.item_name,
-          total: itemInvoice.amount,
-        })),
-        invoice_number: item.invoice_number,
-        payment_methods: item.payment_methods,
-        is_dollar: item.is_dollar,
-        is_override: item.is_override,
-        dian_document_number: item.dian_document_number,
+        invoice_items: item.invoice_items.map((itemInvoice: IItemInvoice): IPurchaseProps => {
+          const dataFormated: IPurchaseProps = {
+            code: itemInvoice.item_code,
+            id: itemInvoice.id,
+            selling_price: itemInvoice.item.selling_price,
+            qty: itemInvoice.quantity,
+            item: itemInvoice.item_name,
+            total: itemInvoice.original_amount,
+            usd_price: itemInvoice.item.usd_price,
+            totalUSD: itemInvoice.original_usd_amount,
+          }
+          return dataFormated
+        }),
       }))
-      return { ...response.data, results: dataFormatted }
+      return { ...response.data, result: data }
     }
   } catch (e) {
     throw new Error(e as string)

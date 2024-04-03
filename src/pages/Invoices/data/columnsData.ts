@@ -10,11 +10,6 @@ export const columns = [
     key: 'created_by_name',
   },
   {
-    title: 'Tienda',
-    dataIndex: 'shop_name',
-    key: 'shop_name',
-  },
-  {
     title: 'Fecha',
     dataIndex: 'created_at',
     key: 'created_at',

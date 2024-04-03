@@ -3,13 +3,9 @@ import { FC, useEffect, useRef, useState } from 'react'
 import PrintOut from '../../components/Print/PrintOut'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
 import { DataPropsForm, IPrintData } from '../../types/GlobalTypes'
-import {
-  ICustomerDataProps,
-  IPurchaseProps,
-  PaymentMethodsEnum,
-} from '../Purchase/types/PurchaseTypes'
+import { ICustomerDataProps, PaymentMethodsEnum } from '../Purchase/types/PurchaseTypes'
 import { columns } from './data/columnsData'
-import { IInvoiceProps } from './types/InvoicesTypes'
+import { IInvoiceProps, IItemInvoice } from './types/InvoicesTypes'
 import { useReactToPrint } from 'react-to-print'
 import { formatDateTime } from '../../layouts/helpers/helpers'
 import { formatNumberToColombianPesos } from '../../utils/helpers'
@@ -54,10 +50,11 @@ const Invoices: FC = () => {
     const showCurrency = true
     return invoicesData?.results.map((item) => ({
       ...item,
+      created_by_name: item.created_by.fullname || 'SuperAdmin',
       created_at: formatDateTime(item.created_at as string),
       total: formatNumberToColombianPesos(
         item.invoice_items
-          .map((itemInvoice: IPurchaseProps) => itemInvoice.total)
+          .map((itemInvoice: IItemInvoice) => itemInvoice.original_amount)
           .reduce((a, b) => a + b, 0),
         showCurrency,
       ),
