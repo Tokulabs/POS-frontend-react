@@ -4,8 +4,13 @@ import { roundNumberToDecimals } from '../utils/helpers'
 
 interface ICartStore {
   cartItems: IPosData[]
-  totalPriceCOP: number
-  totalPriceUSD: number
+  subtotalCOP: number
+  discountCOP: number
+  taxesIVACOP: number
+  subtotalUSD: number
+  discountUSD: number
+  totalCOP: number
+  totalUSD: number
   addToCart: (IPosData: IPosData) => void
   removeFromCart: (IPosData: IPosData) => void
   clearCart: () => void
@@ -15,8 +20,13 @@ interface ICartStore {
 
 export const useCart = create<ICartStore>((set, get) => ({
   cartItems: [],
-  totalPriceCOP: 0,
-  totalPriceUSD: 0,
+  subtotalCOP: 0,
+  discountCOP: 0,
+  taxesIVACOP: 0,
+  subtotalUSD: 0,
+  discountUSD: 0,
+  totalCOP: 0,
+  totalUSD: 0,
   addToCart: (product: IPosData) => {
     const { cartItems, addDiscountToItem } = get()
     const productExist = cartItems.find((item) => item.code === product.code)
@@ -62,15 +72,46 @@ export const useCart = create<ICartStore>((set, get) => ({
   clearCart: () => {},
   updateTotalPrice: () => {
     const { cartItems } = get()
-    let total = 0
+    let subtotalCOP = 0
+    let discountCOP = 0
+    let taxesIVACOP = 0
+    let subtotalUSD = 0
+    let discountUSD = 0
+    let totalCOP = 0
     let totalUSD = 0
+
     cartItems.forEach((item) => {
-      total += item.total
-      totalUSD += item.usd_total
+      const priceQuantityCOP = item.quantity * item.selling_price
+      const priceQuantityUSD = item.quantity * item.usd_price
+
+      const itemWithNoTaxCOP = priceQuantityCOP / 1.19
+      const itemWithNoTaxUSD = priceQuantityUSD / 1.19
+
+      const itemDiscountCOP = itemWithNoTaxCOP * item.discount
+      const itemDiscountUSD = itemWithNoTaxUSD * item.discount
+
+      const itemTaxesCOP = priceQuantityCOP - itemWithNoTaxCOP
+      const itemTaxesUSD = priceQuantityUSD - itemWithNoTaxUSD
+
+      const totalItemCOP = itemWithNoTaxCOP - itemDiscountCOP + itemTaxesCOP
+      const totalItemUSD = itemWithNoTaxUSD - itemDiscountUSD + itemTaxesUSD
+
+      subtotalCOP += Math.round(itemWithNoTaxCOP)
+      subtotalUSD += Math.round(itemWithNoTaxUSD)
+      discountCOP += Math.round(itemDiscountCOP)
+      taxesIVACOP += Math.round(itemTaxesCOP)
+      discountUSD += Math.round(itemDiscountUSD)
+      totalCOP += Math.round(totalItemCOP)
+      totalUSD += Math.round(totalItemUSD)
     })
     set({
-      totalPriceCOP: total,
-      totalPriceUSD: totalUSD,
+      subtotalCOP,
+      discountCOP,
+      taxesIVACOP,
+      subtotalUSD,
+      discountUSD,
+      totalCOP,
+      totalUSD,
     })
   },
   addDiscountToItem: (code: string, discount: number) => {

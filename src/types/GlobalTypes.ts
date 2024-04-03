@@ -1,7 +1,7 @@
 import { Moment } from 'moment'
 import { IDianResolutionProps } from '../pages/Dian/types/DianResolutionTypes'
-import { IPaymentMethodsProps } from '../pages/Invoices/types/InvoicesTypes'
-import { IPurchaseProps, ICustomerDataProps } from '../pages/Purchase/types/PurchaseTypes'
+import { IItemInvoice, IPaymentMethodsProps } from '../pages/Invoices/types/InvoicesTypes'
+import { ICustomerDataProps } from '../pages/Purchase/types/PurchaseTypes'
 
 export interface IPurchaseAddRemoveProps {
   [key: number]: number
@@ -33,7 +33,7 @@ export interface IPaginationProps<T> {
 }
 
 export interface IPrintData {
-  data: IPurchaseProps[]
+  data: IItemInvoice[]
   date?: string
   customerData: ICustomerDataProps
   paymentMethods: IPaymentMethodsProps[]
