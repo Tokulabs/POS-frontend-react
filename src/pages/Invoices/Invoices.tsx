@@ -108,15 +108,15 @@ const Invoices: FC = () => {
     )[0]
 
     const printData: IPrintData = {
-      data: data.invoice_items,
-      saleName: data.sale_name,
-      date: data.created_at,
-      customerData,
-      paymentMethods: data.payment_methods,
-      dianResolution: getDianResolution ?? ({} as IDianResolutionProps),
-      invoiceNumber: data.invoice_number,
-      isOverride: data.is_override,
-    }
+      // data: data.invoice_items,
+      // saleName: data.sale_name,
+      // date: data.created_at,
+      // customerData,
+      // paymentMethods: data.payment_methods,
+      // dianResolution: getDianResolution ?? ({} as IDianResolutionProps),
+      // invoiceNumber: data.invoice_number,
+      // isOverride: data.is_override,
+    } as IPrintData
     setPrintData(printData)
     setShowPrintOut(true)
   }
