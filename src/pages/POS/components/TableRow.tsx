@@ -37,7 +37,7 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
   return (
     <li
       className={
-        'w-full grid grid-cols-11 gap-3 py-4 text-center text-base list-none place-items-center border-x-0'
+        'w-full grid grid-cols-11 gap-3 py-4 text-center text-base list-none place-items-center border-x-0 px-1'
       }
     >
       <span className='text-start w-full'>{code}</span>

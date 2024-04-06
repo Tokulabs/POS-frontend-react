@@ -17,6 +17,7 @@ export interface IPosData {
   total: number
   usd_total: number
   photo: string
+  total_in_shops: number
 }
 
 export interface ITableRowProps {

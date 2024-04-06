@@ -13,6 +13,7 @@ import { IPosData } from './components/types/TableTypes'
 // Components
 import { TableHeader } from './components/TableHeader'
 import { TableRow } from './components/TableRow'
+import { AddDataAndPaymentMethods } from './components/AddDataAndPaymentMethods'
 // Data
 import { TableData } from './Data/TableData'
 // Store
@@ -29,9 +30,7 @@ export const POS = () => {
 
   const {
     subtotalCOP,
-    subtotalUSD,
     discountCOP,
-    discountUSD,
     taxesIVACOP,
     totalCOP,
     totalUSD,
@@ -51,6 +50,7 @@ export const POS = () => {
       total: data.selling_price,
       usd_total: data.usd_price,
       photo: data.photo || '',
+      total_in_shops: data.total_in_shops,
     }
   }
 
@@ -75,8 +75,8 @@ export const POS = () => {
   }
 
   const handleChange = (newValue: string) => {
-    setValue(newValue)
     const item = data.filter((item) => item.code === newValue)[0]
+    setValue(newValue)
     addToCart(formatDatatoIPOSData(item))
     updateTotalPrice()
     setValue(null as unknown as string)
@@ -124,7 +124,7 @@ export const POS = () => {
                       />
                     )}
                     <span className='h-full'>
-                      {item.name} - {item.code}
+                      {item.name} - {item.code} - Quedan: {item.total_in_shops}
                     </span>
                   </div>
                 </Select.Option>
@@ -152,7 +152,9 @@ export const POS = () => {
         <footer></footer>
       </section>
       <nav className='w-1/4 h-full flex flex-col justify-between bg-white shadow-lg rounded-sm'>
-        <section>checkout</section>
+        <section className='p-5 h-full bg-green-1 text-white'>
+          <AddDataAndPaymentMethods />
+        </section>
         <section>
           <div className='bg-gray-100 shadow-inner p-5 flex justify-center flex-col items-center gap-4 text-sm font-semibold'>
             <div className='flex w-full justify-between items-center'>
