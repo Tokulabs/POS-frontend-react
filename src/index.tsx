@@ -13,7 +13,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <StoreProvider>
       <React.StrictMode>
         <App></App>
-        {import.meta.env.MODE == 'development' && <ReactQueryDevtools />}
+        {import.meta.env.MODE == 'development' && (
+          <ReactQueryDevtools buttonPosition='bottom-left' />
+        )}
       </React.StrictMode>
     </StoreProvider>
   </QueryClientProvider>,
