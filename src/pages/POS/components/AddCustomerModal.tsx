@@ -1,34 +1,33 @@
 import { Form, Modal, Input, Button } from 'antd'
 import { useForm } from 'antd/es/form/Form'
-import { IAddCustomerModal } from './types/AddCustomerModal'
 import { FC } from 'react'
 import { useCustomerData } from '../../../store/useCustomerStoreZustand'
 import { DataPropsForm } from '../../../types/GlobalTypes'
 
-export const AddCustomerModal: FC<IAddCustomerModal> = ({
-  isVisible = false,
-  onCancelCallback,
-  onSuccessCallback,
-}) => {
+export const AddCustomerModal: FC = () => {
   const [form] = useForm()
 
-  const { customer } = useCustomerData()
+  const { customer, openModalAddCustomer, toggleModalAddCustomer, updateCustomerData } =
+    useCustomerData()
 
   const onSubmit = (values: DataPropsForm) => {
-    console.log(values)
+    const customerToSend = values as typeof customer
+    updateCustomerData(customerToSend)
+    toggleModalAddCustomer(false)
   }
 
   return (
     <Modal
       title='Nuevo Cliente'
-      open={isVisible}
-      onOk={() => onSuccessCallback}
+      open={openModalAddCustomer}
+      onOk={() => toggleModalAddCustomer(false)}
       onCancel={() => {
-        onCancelCallback
+        toggleModalAddCustomer(false)
         form.resetFields()
       }}
       footer={false}
       maskClosable={false}
+      destroyOnClose={true}
     >
       <Form layout='vertical' onFinish={onSubmit} form={form} initialValues={customer}>
         <Form.Item
@@ -37,15 +36,15 @@ export const AddCustomerModal: FC<IAddCustomerModal> = ({
           name='name'
           rules={[{ required: true, message: 'El Nombre es un campo obligatorio' }]}
         >
-          <Input placeholder='Nombre del cliente' type='text' />
+          <Input placeholder='Nombre del cliente' type='text' autoComplete='off' />
         </Form.Item>
         <Form.Item
           style={{ width: '100%' }}
           label='Documento de identidad'
-          name='id'
+          name='idNumber'
           rules={[{ required: true, message: 'El documento es un campo obligatorio' }]}
         >
-          <Input placeholder='Documento de indentidad' type='text' />
+          <Input placeholder='Documento de indentidad' type='text' autoComplete='off' />
         </Form.Item>
         <Form.Item
           style={{ width: '100%' }}
@@ -53,7 +52,7 @@ export const AddCustomerModal: FC<IAddCustomerModal> = ({
           name='email'
           rules={[{ required: true, message: 'El correo electrónico es obligatorio' }]}
         >
-          <Input placeholder='Correo Electornico' type='email' min={1} />
+          <Input placeholder='Correo Electornico' type='email' autoComplete='off' />
         </Form.Item>
         <Form.Item
           style={{ width: '100%' }}
@@ -61,7 +60,7 @@ export const AddCustomerModal: FC<IAddCustomerModal> = ({
           name='phone'
           rules={[{ required: true, message: 'Número de teléfono es obligatorio' }]}
         >
-          <Input placeholder='Número de telefono' type='number' min={1} />
+          <Input placeholder='Número de telefono' type='number' min={1} autoComplete='off' />
         </Form.Item>
         <Form.Item
           style={{ width: '100%' }}
@@ -69,7 +68,7 @@ export const AddCustomerModal: FC<IAddCustomerModal> = ({
           name='address'
           rules={[{ required: true, message: 'La dirección es obligatoria' }]}
         >
-          <Input placeholder='Dirección/Ciudad' type='text' min={1} />
+          <Input placeholder='Dirección/Ciudad' type='text' autoComplete='off' />
         </Form.Item>
         <Form.Item>
           <Button htmlType='submit' type='primary' block loading={false}>

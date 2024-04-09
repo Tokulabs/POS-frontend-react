@@ -51,3 +51,9 @@ export const calcMetaDataProdudct = (product: IPosData) => {
     totalItemUSD: Math.round(totalItemUSD),
   }
 }
+
+export const checkIfObjectHasEmptyFields = (obj: {
+  [key: string]: string | boolean | number
+}): boolean => {
+  return Object.values(obj).some((value) => value)
+}

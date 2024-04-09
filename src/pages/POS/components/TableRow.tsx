@@ -71,6 +71,7 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
           max={100}
           onChange={(event) => addDiscountEvent(event)}
           controls={false}
+          autoComplete='off'
         />
         %
       </div>
@@ -99,6 +100,7 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
           value={quantity}
           controls={false}
           onChange={(event) => changeQuantity(event)}
+          autoComplete='off'
         />
       </div>
       <span className='col-start-10 w-full'>{formatToUsd(usd_total)}</span>

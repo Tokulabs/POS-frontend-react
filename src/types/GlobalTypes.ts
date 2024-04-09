@@ -1,6 +1,6 @@
 import { Moment } from 'moment'
 import { IDianResolutionProps } from '../pages/Dian/types/DianResolutionTypes'
-import { IItemInvoice, IPaymentMethodsProps } from '../pages/Invoices/types/InvoicesTypes'
+import { IPaymentMethodsProps } from '../pages/Invoices/types/InvoicesTypes'
 import { ICustomerDataProps, IPurchaseProps } from '../pages/Purchase/types/PurchaseTypes'
 
 export interface IPurchaseAddRemoveProps {
