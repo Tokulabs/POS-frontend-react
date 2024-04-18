@@ -17,8 +17,8 @@ interface ICustomerDataStore {
 export const useCustomerData = create<ICustomerDataStore>((set) => ({
   openModalAddCustomer: false,
   customer: {
-    idNumber: '',
-    name: '',
+    idNumber: '2222222',
+    name: 'Ventas Mostrador',
     email: '',
     phone: '',
     address: '',
@@ -31,8 +31,8 @@ export const useCustomerData = create<ICustomerDataStore>((set) => ({
   clearCustomerData: () => {
     set({
       customer: {
-        idNumber: '',
-        name: '',
+        idNumber: '2222222',
+        name: 'Ventas Mostrador',
         email: '',
         phone: '',
         address: '',

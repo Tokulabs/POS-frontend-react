@@ -81,7 +81,7 @@ export const AddItemsToPurchase = () => {
   }, [debouncedSearch])
 
   return (
-    <section className='w-full'>
+    <section className='w-full h-full'>
       <Select
         loading={isLoadingSearch}
         size='large'
@@ -122,7 +122,7 @@ export const AddItemsToPurchase = () => {
           </ul>
         </section>
       ) : (
-        <div className='w-full h-96 flex justify-center flex-col items-center font-medium text-2xl text-gray-1'>
+        <div className='w-full flex mt-40 justify-center flex-col items-center font-medium text-2xl text-gray-1'>
           <IconTablePlus size={80} />
           <p>Agregar productos </p>
         </div>
