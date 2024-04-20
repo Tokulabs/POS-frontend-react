@@ -6,7 +6,7 @@ import { Button, Select, Spin } from 'antd'
 import { debounce } from 'lodash'
 import { useQueryClient } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
-import { IconPlus } from '@tabler/icons-react'
+import { IconEdit, IconPlus } from '@tabler/icons-react'
 // Components
 import Clock from '../../../components/Clock/Clock'
 // Store
@@ -15,6 +15,8 @@ import { useCustomerData } from '../../../store/useCustomerStoreZustand'
 import { getCustomers } from '../helpers/services'
 // Types
 import { ICustomerProps } from './types/CustomerTypes'
+
+const DEFAULT_ID = '22222222'
 
 export const AddDataAndPaymentMethods = () => {
   const [isLoadingSearch, setIsLoadingSearch] = useState(false)
@@ -27,7 +29,7 @@ export const AddDataAndPaymentMethods = () => {
     'allDianResolutions',
     {},
   )
-  const { toggleModalAddCustomer } = useCustomerData()
+  const { toggleModalAddCustomer, updateCustomerData, customer } = useCustomerData()
 
   const fetchCustomersByKeyword = async (keyword: string) => {
     try {
@@ -46,10 +48,22 @@ export const AddDataAndPaymentMethods = () => {
   }
 
   const handleChange = (newValue: string) => {
-    const item = data.filter((item) => item.document_id === newValue)[0]
-    setValue(newValue)
-    // TODO what happen when select a customer
-    setValue(null as unknown as string)
+    if (newValue === 'search-id') {
+      toggleModalAddCustomer(true, false)
+      setValue(null as unknown as string)
+    } else {
+      const item = data.filter((item) => item.document_id === newValue)[0]
+      setValue(newValue)
+      updateCustomerData({
+        id: item.id as number,
+        name: item.name,
+        idNumber: item.document_id,
+        phone: item.phone,
+        address: item.address,
+        email: item.email,
+      })
+      setValue(null as unknown as string)
+    }
   }
 
   const handleSearch = (newValue: string) => {
@@ -96,6 +110,7 @@ export const AddDataAndPaymentMethods = () => {
         </section>
       )}
       <section>
+        <h1 className='font-bold text-xl text-green-1'>Cliente</h1>
         <Select
           loading={isLoadingSearch}
           size='large'
@@ -129,44 +144,57 @@ export const AddDataAndPaymentMethods = () => {
                 justifyItems: 'center',
                 alignItems: 'center',
                 width: '100%',
-                marginTop: '1rem',
+                marginTop: data.length > 0 ? '0.5rem' : '0',
+                marginBottom: data.length > 0 ? '0.5rem' : '0',
               }}
-              onClick={() => toggleModalAddCustomer(true)}
             >
               Agregar Cliente
             </Button>
           </Select.Option>
         </Select>
       </section>
-      {/* <section>
-        <span className='text-green-1 text-lg font-bold'>Datos del cliente</span>
-        <div className='flex flex-col gap-1 items-start'>
-          <div className='flex flex-col gap-1 justify-between'>
-            <span className='text-xs font-semibold'>Nombre:</span>
-            <span className='font-bold truncate'>{customer.name ? customer.name : 'N/A'}</span>
+      {customer && (
+        <section>
+          <div className='flex items-center gap-5'>
+            <span className='text-green-1 text-lg font-bold'>Datos del cliente</span>
+            {customer.idNumber !== DEFAULT_ID && (
+              <IconEdit
+                onClick={() => {
+                  toggleModalAddCustomer(true, true)
+                }}
+                size={20}
+                className='text-green-1 cursor-pointer hover:text-green-800'
+              />
+            )}
           </div>
-          <div className='flex flex-col gap-1 justify-between'>
-            <span className='text-xs font-semibold'>Documento:</span>
-            <span className='font-bold truncate'>
-              {customer.idNumber ? customer.idNumber : 'N/A'}
-            </span>
+          <div className='flex flex-col gap-1 items-start'>
+            <div className='flex flex-col gap-1 justify-between'>
+              <span className='text-xs font-semibold'>Nombre:</span>
+              <span className='font-bold truncate'>{customer.name ? customer.name : 'N/A'}</span>
+            </div>
+            <div className='flex flex-col gap-1 justify-between'>
+              <span className='text-xs font-semibold'>Documento:</span>
+              <span className='font-bold truncate'>
+                {customer.idNumber ? customer.idNumber : 'N/A'}
+              </span>
+            </div>
+            <div className='flex flex-col gap-1 justify-between'>
+              <span className='text-xs font-semibold'>Teléfono:</span>
+              <span className='font-bold truncate'>{customer.phone ? customer.phone : 'N/A'}</span>
+            </div>
+            <div className='flex flex-col gap-1 justify-between'>
+              <span className='text-xs font-semibold'>Dirección:</span>
+              <span className='font-bold truncate'>
+                {customer.address ? customer.address : 'N/A'}
+              </span>
+            </div>
+            <div className='flex flex-col gap-1 justify-between'>
+              <span className='text-xs font-semibold'>Correo:</span>
+              <span className='font-bold truncate'>{customer.email ? customer.email : 'N/A'}</span>
+            </div>
           </div>
-          <div className='flex flex-col gap-1 justify-between'>
-            <span className='text-xs font-semibold'>Teléfono:</span>
-            <span className='font-bold truncate'>{customer.phone ? customer.phone : 'N/A'}</span>
-          </div>
-          <div className='flex flex-col gap-1 justify-between'>
-            <span className='text-xs font-semibold'>Dirección:</span>
-            <span className='font-bold truncate'>
-              {customer.address ? customer.address : 'N/A'}
-            </span>
-          </div>
-          <div className='flex flex-col gap-1 justify-between'>
-            <span className='text-xs font-semibold'>Correo:</span>
-            <span className='font-bold truncate'>{customer.email ? customer.email : 'N/A'}</span>
-          </div>
-        </div>
-      </section> */}
+        </section>
+      )}
     </section>
   )
 }

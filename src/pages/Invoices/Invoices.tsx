@@ -3,7 +3,6 @@ import { FC, useEffect, useRef, useState } from 'react'
 import PrintOut from '../../components/Print/PrintOut'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
 import { DataPropsForm, IPrintData } from '../../types/GlobalTypes'
-import { ICustomerDataProps, PaymentMethodsEnum } from '../Purchase/types/PurchaseTypes'
 import { columns } from './data/columnsData'
 import { IInvoiceProps, IItemInvoice } from './types/InvoicesTypes'
 import { useReactToPrint } from 'react-to-print'
@@ -16,6 +15,7 @@ import { UserRolesEnum } from '../Users/types/UserTypes'
 import { useDianResolutions } from '../../hooks/useDianResolution'
 import { IDianResolutionProps } from '../Dian/types/DianResolutionTypes'
 import { useRolePermissions } from '../../hooks/useRolespermissions'
+import { PaymentMethodsEnum } from '../POS/components/types/PaymentMethodsTypes'
 
 const Invoices: FC = () => {
   const [showPrintOut, setShowPrintOut] = useState(false)
@@ -59,7 +59,9 @@ const Invoices: FC = () => {
         showCurrency,
       ),
       is_dollar: item.is_dollar ? 'Si' : 'No',
-      paid_by: item.payment_methods.map((item) => PaymentMethodsEnum[item.name]).join(', '),
+      paid_by: item.payment_methods
+        .map((item) => PaymentMethodsEnum[item.name as keyof typeof PaymentMethodsEnum])
+        .join(', '),
       is_override: item.is_override ? 'Si' : 'No',
       action: (
         <div className='flex'>
@@ -97,7 +99,7 @@ const Invoices: FC = () => {
   }
 
   const formatDataToPrint = (data: IInvoiceProps) => {
-    const customerData: ICustomerDataProps = {
+    const customerData = {
       customerName: data.customer_name,
       customerId: data.customer_id,
       customerEmail: data.customer_email,

@@ -18,6 +18,7 @@ export interface IPosData {
   usd_total: number
   photo: string
   total_in_shops: number
+  is_gift: boolean
 }
 
 export interface ITableRowProps {

@@ -37,6 +37,7 @@ export const AddItemsToPurchase = () => {
       usd_total: data.usd_price,
       photo: data.photo || '',
       total_in_shops: data.total_in_shops,
+      is_gift: false,
     }
   }
 

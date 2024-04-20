@@ -1,5 +1,5 @@
 import { axiosRequest } from '../../../api/api'
-import { IQueryParams, IPaginationProps } from '../../../types/GlobalTypes'
+import { IQueryParams, IPaginationProps, DataPropsForm } from '../../../types/GlobalTypes'
 import { customerURL } from '../../../utils/network'
 import { ICustomerProps } from '../components/types/CustomerTypes'
 
@@ -42,31 +42,33 @@ export const getCustomers = async (queryParams: IQueryParams) => {
 //   }
 // }
 
-// export const postInventoriesNew = async (values: DataPropsForm) => {
-//   try {
-//     await axiosRequest({
-//       method: 'post',
-//       url: inventoryURL,
-//       hasAuth: true,
-//       payload: values,
-//     })
-//   } catch (e: unknown) {
-//     throw new Error(e as string)
-//   }
-// }
+export const postCustomers = async (values: DataPropsForm) => {
+  try {
+    const response = await axiosRequest<ICustomerProps>({
+      method: 'post',
+      url: customerURL,
+      hasAuth: true,
+      payload: values,
+    })
+    return response?.data
+  } catch (e: unknown) {
+    throw new Error(e as string)
+  }
+}
 
-// export const putInventoriesEdit = async (data: { values: DataPropsForm; id: number }) => {
-//   try {
-//     await axiosRequest({
-//       method: 'put',
-//       url: `${inventoryURL}/${data.id}/`,
-//       hasAuth: true,
-//       payload: data.values,
-//     })
-//   } catch (e: unknown) {
-//     throw new Error(e as string)
-//   }
-// }
+export const putCustomersEdit = async (data: { values: DataPropsForm; id: number }) => {
+  try {
+    const response = await axiosRequest<ICustomerProps>({
+      method: 'put',
+      url: `${customerURL}/${data.id}/`,
+      hasAuth: true,
+      payload: data.values,
+    })
+    return response?.data
+  } catch (e: unknown) {
+    throw new Error(e as string)
+  }
+}
 
 // export const deleteInventories = async (id: number) => {
 //   try {

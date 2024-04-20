@@ -2,7 +2,7 @@ import { FC, useState } from 'react'
 import { ITableRowProps } from './types/TableTypes'
 import { IconMinus, IconPlus } from '@tabler/icons-react'
 import { useCart } from '../../../store/useCartStoreZustand'
-import { InputNumber, Image } from 'antd'
+import { InputNumber, Image, Checkbox, CheckboxProps } from 'antd'
 import { formatNumberToColombianPesos, formatToUsd } from '../../../utils/helpers'
 
 export const TableRow: FC<ITableRowProps> = ({ product }) => {
@@ -15,6 +15,7 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
     addDiscountToItem,
     updateTotalPrice,
     updateQuantity,
+    updateIsGift,
   } = useCart()
 
   const actualProduct = cartItems.filter((item) => item.code === product.code)[0]
@@ -34,16 +35,21 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
     updateTotalPrice()
   }
 
+  const onChangeCheckBox: CheckboxProps['onChange'] = (e) => {
+    updateIsGift(code, e.target.checked)
+  }
+
   return (
     <li
       className={
-        'w-full grid grid-cols-11 gap-3 py-4 text-center text-base list-none place-items-center border-x-0 px-1'
+        'w-full grid grid-cols-12 gap-3 py-4 text-center text-base list-none place-items-center border-x-0 px-1'
       }
     >
+      <Checkbox className=' w-full flex justify-center items-center' onChange={onChangeCheckBox} />
       <span className='text-start w-full'>{code}</span>
       <span className='col-span-2 text-left w-full truncate'>{name}</span>
       <span
-        className='col-start-4 text-blue-400 underline cursor-pointer truncate'
+        className='col-start-5 text-blue-400 underline cursor-pointer truncate'
         onClick={() => setVisible(true)}
       >
         Vista Previa
@@ -61,9 +67,9 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
           />
         )}
       </span>
-      <span className='col-start-5 w-full'>{formatNumberToColombianPesos(selling_price)}</span>
-      <span className='col-start-6 w-full'>{formatToUsd(usd_price)}</span>
-      <div className='col-start-7 w-full flex justify-center items-center gap-1'>
+      <span className='col-start-6 w-full'>{formatNumberToColombianPesos(selling_price)}</span>
+      <span className='col-start-7 w-full'>{formatToUsd(usd_price)}</span>
+      <div className='col-start-8 w-full flex justify-center items-center gap-1'>
         <InputNumber
           style={{ width: '80%' }}
           value={discount ? discount : 0}
@@ -75,7 +81,7 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
         />
         %
       </div>
-      <div className='col-span-2 col-start-8 w-full'>
+      <div className='col-span-2 col-start-9 w-full'>
         <InputNumber
           style={{ width: '7.5rem' }}
           size='middle'
@@ -103,8 +109,8 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
           autoComplete='off'
         />
       </div>
-      <span className='col-start-10 w-full'>{formatToUsd(usd_total)}</span>
-      <span className='col-start-11 text-right w-full'>{formatNumberToColombianPesos(total)}</span>
+      <span className='col-start-11 w-full'>{formatToUsd(usd_total)}</span>
+      <span className='col-start-12 text-right w-full'>{formatNumberToColombianPesos(total)}</span>
     </li>
   )
 }

@@ -18,6 +18,7 @@ interface ICartStore {
   updateTotalPrice: () => void
   addDiscountToItem: (code: string, discount: number) => void
   updateQuantity: (code: string, quantity: number) => void
+  updateIsGift: (code: string, isGift: boolean) => void
 }
 
 export const useCart = create<ICartStore>((set, get) => ({
@@ -161,6 +162,16 @@ export const useCart = create<ICartStore>((set, get) => ({
       const { totalItemCOP, totalItemUSD } = calcMetaDataProdudct(productExist)
       productExist.total = totalItemCOP
       productExist.usd_total = totalItemUSD
+      set({
+        cartItems: [...cartItems],
+      })
+    }
+  },
+  updateIsGift: (code: string, isGift: boolean) => {
+    const { cartItems } = get()
+    const productExist = cartItems.find((item) => item.code === code)
+    if (productExist) {
+      productExist.is_gift = isGift
       set({
         cartItems: [...cartItems],
       })

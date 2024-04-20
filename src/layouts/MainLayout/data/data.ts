@@ -61,18 +61,6 @@ export const SideBarData: ISideBarData[] = [
   },
   {
     icon: IconReceipt,
-    title: 'Venta',
-    path: '/purchase',
-    allowedRoles: [
-      UserRolesEnum.admin,
-      UserRolesEnum.posAdmin,
-      UserRolesEnum.sales,
-      UserRolesEnum.shopAdmin,
-      UserRolesEnum.supportSales,
-    ],
-  },
-  {
-    icon: IconReceipt,
     title: 'POS',
     path: '/pos',
     allowedRoles: [

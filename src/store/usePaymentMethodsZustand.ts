@@ -1,6 +1,8 @@
 import { create } from 'zustand'
-import { IPaymentMethod } from '../pages/POS/components/types/PaymentMethodsTypes'
-import { PaymentMethodsEnum } from '../pages/Purchase/types/PurchaseTypes'
+import {
+  IPaymentMethod,
+  PaymentMethodsEnum,
+} from '../pages/POS/components/types/PaymentMethodsTypes'
 
 interface IPaymentMethodStore {
   paymentMethods: IPaymentMethod[]
@@ -8,12 +10,14 @@ interface IPaymentMethodStore {
   totalValueReceived: number
   totalReturnedValue: number
   isDollar: boolean
+  paymentTerminaID: number | null
   addPaymentMethod: (data: IPaymentMethod) => void
   removePaymentMethod: (name: string) => void
   clearPaymentMethods: () => void
   updateTotalValues: () => void
   toggleIsDollar: () => void
   updateValueOfPaymentMethod: (name: PaymentMethodsEnum, field: string, value: number) => void
+  updatePaymentTerminalID: (id: number | null) => void
 }
 
 export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => ({
@@ -22,6 +26,12 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
   totalValueReceived: 0,
   totalReturnedValue: 0,
   isDollar: false,
+  paymentTerminaID: null,
+  updatePaymentTerminalID: (id) => {
+    set({
+      paymentTerminaID: id,
+    })
+  },
   addPaymentMethod: (data) => {
     const { paymentMethods, updateTotalValues } = get()
     const paymentMethodExist = paymentMethods.find((item) => item.name === data.name)
@@ -46,6 +56,8 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
     const { updateTotalValues } = get()
     set({
       paymentMethods: [],
+      paymentTerminaID: null,
+      isDollar: false,
     })
     updateTotalValues()
   },

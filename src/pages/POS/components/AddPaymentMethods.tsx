@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react'
 import { PaymentMethodsEnum } from './types/PaymentMethodsTypes'
 import { usePaymentMethodsData } from '../../../store/usePaymentMethodsZustand'
 import { useCart } from '../../../store/useCartStoreZustand'
-import { formatNumberToColombianPesos } from '../../../utils/helpers'
+import { formatNumberToColombianPesos, formatToUsd } from '../../../utils/helpers'
+import { usePaymentTerminals } from '../../../hooks/usePaymentTerminals'
 
 const OPTIONS = [
   PaymentMethodsEnum.cash,
@@ -14,7 +15,7 @@ const OPTIONS = [
 ]
 
 export const AddPaymentMethods = () => {
-  const { totalCOP } = useCart()
+  const { totalCOP, totalUSD } = useCart()
   const {
     addPaymentMethod,
     totalValueReceived,
@@ -26,15 +27,21 @@ export const AddPaymentMethods = () => {
     isDollar,
     totalReturnedValue,
     updateValueOfPaymentMethod,
+    updatePaymentTerminalID,
+    paymentTerminaID,
   } = usePaymentMethodsData()
 
   const [selectedItems, setSelectedItems] = useState<PaymentMethodsEnum[]>([
     PaymentMethodsEnum.cash,
   ])
+  const [requirePaymentTerminal, setRequirePaymentTerminal] = useState(false)
+
   const filteredOptions = OPTIONS.filter((o) => {
     if (isDollar) return o === PaymentMethodsEnum.cash
     return !selectedItems.includes(o)
   })
+
+  const { paymentTerminalsData } = usePaymentTerminals('allPaymentTerminals', {})
 
   const defaultPaymenthMethod = {
     name: PaymentMethodsEnum.cash,
@@ -69,6 +76,12 @@ export const AddPaymentMethods = () => {
   }, [])
 
   useEffect(() => {
+    const requirePaymentTerminal = selectedItems.some(
+      (item) => item === PaymentMethodsEnum.debitCard || item === PaymentMethodsEnum.creditCard,
+    )
+    setRequirePaymentTerminal(requirePaymentTerminal)
+    if (!requirePaymentTerminal) updatePaymentTerminalID(null)
+
     selectedItems.forEach((item) => {
       if (!paymentMethods.some((method) => method.name === item)) {
         addPaymentMethod({
@@ -87,17 +100,23 @@ export const AddPaymentMethods = () => {
     })
   }, [selectedItems, paymentMethods])
 
+  const onSelectPaymentTerminal = (value: number) => {
+    updatePaymentTerminalID(value)
+  }
+
   return (
     <section className='w-full h-full flex flex-col gap-4 relative'>
       <section className='flex flex-col gap-4 bg-white sticky w-full'>
         <div className='flex justify-start gap-5 items-end'>
           <span className='h-full text-green-1 text-3xl font-bold flex justify-start items-center'>
-            {formatNumberToColombianPesos(totalCOP)}
+            {isDollar ? formatToUsd(totalUSD, true) : formatNumberToColombianPesos(totalCOP, true)}
           </span>
           <Divider type='vertical' className='h-full' />
           <div className='flex flex-col justify-end items-center'>
             <span className='text-green-1 text-xl font-bold'>
-              {formatNumberToColombianPesos(totalValueToPay)}
+              {isDollar
+                ? formatToUsd(totalUSD, true)
+                : formatNumberToColombianPesos(totalValueToPay, true)}
             </span>
             <span className='text-gray-2 font-semibold'>Valor a Pagar</span>
           </div>
@@ -106,36 +125,66 @@ export const AddPaymentMethods = () => {
             <span
               className={`${totalValueReceived < totalCOP ? 'text-red-1' : 'text-green-1'} text-xl font-bold`}
             >
-              {formatNumberToColombianPesos(totalValueReceived)}
+              {isDollar
+                ? formatToUsd(totalUSD, true)
+                : formatNumberToColombianPesos(totalValueReceived, true)}
             </span>
             <span className='text-gray-2 font-semibold'>Valor Total Recibido</span>
           </div>
           <Divider type='vertical' className='h-full' />
           <div className='flex flex-col justify-end items-center'>
             <span className='text-red-1 text-xl font-bold'>
-              {totalReturnedValue > 0 ? formatNumberToColombianPesos(totalReturnedValue) : '0'}
+              {totalReturnedValue > 0
+                ? formatNumberToColombianPesos(totalReturnedValue, true)
+                : '0'}
             </span>
             <span className='text-gray-2 font-semibold'>Cambio</span>
           </div>
           <Divider type='vertical' className='h-full' />
           <div className='flex flex-col justify-end items-center'>
             <span className='text-green-1 text-xl font-bold'>
-              <Switch onChange={toggleIsDollar} />
+              <Switch
+                onChange={() => {
+                  toggleIsDollar()
+                  updateValueOfPaymentMethod(PaymentMethodsEnum.cash, 'paidAmount', totalCOP)
+                  updateValueOfPaymentMethod(PaymentMethodsEnum.cash, 'receivedAmount', totalCOP)
+                }}
+              />
             </span>
-            <span className='text-gray-2 font-semibold'>Pago en dolares?</span>
+            <span className='text-gray-2 font-semibold'>Pago en USD?</span>
           </div>
         </div>
-        <Select
-          mode='multiple'
-          placeholder='Métodos de pago seleccionados'
-          value={selectedItems}
-          onChange={setSelectedItems}
-          style={{ width: '100%' }}
-          options={filteredOptions.map((item) => ({
-            value: item,
-            label: item,
-          }))}
-        />
+        <div className='flex gap-4'>
+          <Select
+            mode='multiple'
+            placeholder='Métodos de pago seleccionados'
+            value={selectedItems}
+            onChange={setSelectedItems}
+            style={{ width: requirePaymentTerminal ? '50%' : '100%' }}
+            options={filteredOptions.map((item) => ({
+              value: item,
+              label: item,
+            }))}
+          />
+          {requirePaymentTerminal && paymentTerminalsData?.results && (
+            <Select
+              style={{ width: '50%' }}
+              placeholder='Selecciona un Datafono'
+              value={paymentTerminaID}
+              onSelect={onSelectPaymentTerminal}
+              options={[
+                {
+                  value: '',
+                  label: 'Selecciona un Datafono',
+                },
+                ...paymentTerminalsData.results.map((item) => ({
+                  value: item.id,
+                  label: item.name,
+                })),
+              ]}
+            />
+          )}
+        </div>
       </section>
       <section className='flex flex-col gap-5'>
         {paymentMethods.map((item, index) => (

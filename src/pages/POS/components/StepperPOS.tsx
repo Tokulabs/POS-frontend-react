@@ -1,16 +1,13 @@
-import { useState, FC } from 'react'
+import { useState, FC, useMemo } from 'react'
 // Components
 import { AddItemsToPurchase } from './AddItemsToPurchase'
+import { AddPaymentMethods } from './AddPaymentMethods'
 // Third Party
 import { Button, Divider, Steps } from 'antd'
-import { IconPlus } from '@tabler/icons-react'
-// Helpers
-import { checkIfObjectHasEmptyFields } from '../../../utils/helpers'
 // Store
-import { useCustomerData } from '../../../store/useCustomerStoreZustand'
 import { useCart } from '../../../store/useCartStoreZustand'
-import { AddPaymentMethods } from './AddPaymentMethods'
 import { usePaymentMethodsData } from '../../../store/usePaymentMethodsZustand'
+import { PaymentMethodsEnum } from './types/PaymentMethodsTypes'
 
 const steps = [
   {
@@ -29,9 +26,9 @@ const steps = [
 
 export const POSStepper: FC = () => {
   const [current, setCurrent] = useState(0)
-  const { toggleModalAddCustomer, customer } = useCustomerData()
   const { cartItems, totalCOP } = useCart()
-  const { paymentMethods, totalValueToPay, clearPaymentMethods } = usePaymentMethodsData()
+  const { paymentMethods, totalValueToPay, clearPaymentMethods, paymentTerminaID } =
+    usePaymentMethodsData()
 
   const next = () => {
     setCurrent(current + 1)
@@ -42,17 +39,26 @@ export const POSStepper: FC = () => {
     clearPaymentMethods()
   }
 
+  const items = steps.map((item) => ({ key: item.title, title: item.title }))
+
+  const requirePaymentTerminal = useMemo(() => {
+    return (
+      paymentMethods.some(
+        (item) =>
+          item.name === PaymentMethodsEnum.debitCard || item.name === PaymentMethodsEnum.creditCard,
+      ) && !paymentTerminaID
+    )
+  }, [paymentMethods, paymentTerminaID])
+
   const isDisabled = () => {
     if (current === 0) {
       return !cartItems.length
     }
     if (current === 1) {
-      return !paymentMethods.length || totalValueToPay !== totalCOP
+      return !paymentMethods.length || totalValueToPay !== totalCOP || requirePaymentTerminal
     }
     return false
   }
-
-  const items = steps.map((item) => ({ key: item.title, title: item.title }))
 
   return (
     <section className='h-full flex flex-col justify-between gap-3'>
@@ -64,15 +70,6 @@ export const POSStepper: FC = () => {
         <div className='w-full flex flex-col border-t-2 gap-4'>
           <div className='flex justify-between items-end'>
             <h1 className='text-2xl font-semibold text-green-1 m-0'>Crear Venta</h1>
-            <Button
-              type='primary'
-              icon={<IconPlus />}
-              size='large'
-              style={{ display: 'flex', justifyItems: 'center', alignItems: 'center' }}
-              onClick={() => toggleModalAddCustomer(true)}
-            >
-              {checkIfObjectHasEmptyFields(customer) ? 'Editar Cliente' : 'Agregar Cliente'}
-            </Button>
           </div>
         </div>
       </header>
