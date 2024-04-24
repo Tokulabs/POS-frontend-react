@@ -26,6 +26,16 @@ export const roundNumberToDecimals = (number: number, decimals: number): number 
 }
 
 export const calcMetaDataProdudct = (product: IPosData) => {
+  if (product.is_gift)
+    return {
+      itemWithNoTaxCOP: 0,
+      itemWithNoTaxUSD: 0,
+      itemDiscountCOP: 0,
+      itemTaxesCOP: 0,
+      itemDiscountUSD: 0,
+      totalItemCOP: 0,
+      totalItemUSD: 0,
+    }
   const priceQuantityCOP = product.quantity * product.selling_price
   const priceQuantityUSD = product.quantity * product.usd_price
 

@@ -55,7 +55,21 @@ export const POSStepper: FC = () => {
       return !cartItems.length
     }
     if (current === 1) {
-      return !paymentMethods.length || totalValueToPay !== totalCOP || requirePaymentTerminal
+      const missingTransactionNumber = paymentMethods.map((item) => {
+        if (item.name !== PaymentMethodsEnum.cash) {
+          if (item.transactionNumber.some((item) => !item)) {
+            return false
+          } else {
+            return true
+          }
+        }
+      })
+      return (
+        !paymentMethods.length ||
+        totalValueToPay !== totalCOP ||
+        requirePaymentTerminal ||
+        missingTransactionNumber.includes(false)
+      )
     }
     return false
   }

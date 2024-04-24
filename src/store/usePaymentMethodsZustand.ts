@@ -16,8 +16,12 @@ interface IPaymentMethodStore {
   clearPaymentMethods: () => void
   updateTotalValues: () => void
   toggleIsDollar: () => void
-  updateValueOfPaymentMethod: (name: PaymentMethodsEnum, field: string, value: number) => void
+  updatePaidAmount: (name: PaymentMethodsEnum, value: number, index?: number) => void
+  updateReceivedAmount: (name: PaymentMethodsEnum, value: number) => void
   updatePaymentTerminalID: (id: number | null) => void
+  addPaidAmountToPaymentMethod: (name: PaymentMethodsEnum) => void
+  removePaidAmountFromPaymentMethod: (name: PaymentMethodsEnum, index: number) => void
+  updateTransactionNumber: (name: PaymentMethodsEnum, value: string, index?: number) => void
 }
 
 export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => ({
@@ -68,7 +72,7 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
     let totalReturnedValue = 0
 
     for (const item of paymentMethods) {
-      totalValueToPay += item.paidAmount
+      totalValueToPay += item.totalPaidAmount
       totalValueReceived += item.receivedAmount
       totalReturnedValue += item.backAmount
     }
@@ -83,52 +87,129 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
       isDollar: !state.isDollar,
     }))
   },
-  updateValueOfPaymentMethod: (name: PaymentMethodsEnum, field: string, value: number) => {
+  updatePaidAmount: (name, value, index = 0) => {
     const { paymentMethods, updateTotalValues } = get()
-    if (name === PaymentMethodsEnum.cash) {
-      const paymentMethodExist = paymentMethods.find((item) => item.name === name)
-      if (!paymentMethodExist) return
-      const newPaymentMethods = paymentMethods.map((item) => {
-        if (item.name === name) {
-          return {
-            ...item,
-            [field]: value,
-          }
+    const paymentMethodExist = paymentMethods.find((item) => item.name === name)
+    if (!paymentMethodExist) return
+    const newPaymentMethods = paymentMethods.map((item) => {
+      if (item.name === name) {
+        const paidAmount = item.paidAmount
+        paidAmount[index] = value
+        const totalPaidAmount = paidAmount.reduce((acc, curr) => acc + curr, 0)
+        return {
+          ...item,
+          paidAmount,
+          totalPaidAmount,
+          receivedAmount: name === PaymentMethodsEnum.cash ? item.receivedAmount : totalPaidAmount,
         }
-        return item
-      })
-      const newPaymentMethodsWithChange = newPaymentMethods.map((item) => {
-        if (item.name === name) {
-          return {
-            ...item,
-            backAmount: item.receivedAmount - item.paidAmount,
-          }
-        }
-        return item
-      })
-      set({
-        paymentMethods: newPaymentMethodsWithChange,
-      })
-      updateTotalValues()
-    } else {
-      if (field === 'paidAmount') {
-        const paymentMethodExist = paymentMethods.find((item) => item.name === name)
-        if (!paymentMethodExist) return
-        const newPaymentMethods = paymentMethods.map((item) => {
-          if (item.name === name) {
-            return {
-              ...item,
-              receivedAmount: value,
-              paidAmount: value,
-            }
-          }
-          return item
-        })
-        set({
-          paymentMethods: newPaymentMethods,
-        })
-        updateTotalValues()
       }
-    }
+      return item
+    })
+    const newPaymentMethodsWithChange = calculateBackAmount(newPaymentMethods, name)
+    set({
+      paymentMethods: newPaymentMethodsWithChange,
+    })
+    updateTotalValues()
+  },
+  updateReceivedAmount: (name, value) => {
+    const { paymentMethods, updateTotalValues } = get()
+    const paymentMethodExist = paymentMethods.find((item) => item.name === name)
+    if (!paymentMethodExist) return
+    const newPaymentMethods = paymentMethods.map((item) => {
+      if (item.name === name) {
+        return {
+          ...item,
+          receivedAmount: value,
+        }
+      }
+      return item
+    })
+    const newPaymentMethodsWithChange = calculateBackAmount(newPaymentMethods, name)
+    set({
+      paymentMethods: newPaymentMethodsWithChange,
+    })
+    updateTotalValues()
+  },
+  addPaidAmountToPaymentMethod: (name) => {
+    const { paymentMethods, updateTotalValues } = get()
+    const paymentMethodExist = paymentMethods.find((item) => item.name === name)
+    if (!paymentMethodExist) return
+    const newPaymentMethods = paymentMethods.map((item) => {
+      if (item.name === name) {
+        const paidAmount = item.paidAmount
+        paidAmount.push(0)
+        const transactionNumber = item.transactionNumber
+        transactionNumber.push('')
+        return {
+          ...item,
+          paidAmount,
+          transactionNumber,
+        }
+      }
+      return item
+    })
+    set({
+      paymentMethods: newPaymentMethods,
+    })
+    updateTotalValues()
+  },
+  removePaidAmountFromPaymentMethod(name, index) {
+    const { paymentMethods, updateTotalValues } = get()
+    const paymentMethodExist = paymentMethods.find((item) => item.name === name)
+    if (!paymentMethodExist) return
+    const newPaymentMethods = paymentMethods.map((item) => {
+      if (item.name === name) {
+        const paidAmount = item.paidAmount
+        paidAmount.splice(index, 1)
+        const transactionNumber = item.transactionNumber
+        transactionNumber.splice(index, 1)
+        const totalPaidAmount = paidAmount.reduce((acc, curr) => acc + curr, 0)
+        return {
+          ...item,
+          paidAmount,
+          transactionNumber,
+          totalPaidAmount,
+        }
+      }
+      return item
+    })
+    set({
+      paymentMethods: newPaymentMethods,
+    })
+    updateTotalValues()
+  },
+  updateTransactionNumber(name, value, index = 0) {
+    const { paymentMethods } = get()
+    const paymentMethodExist = paymentMethods.find((item) => item.name === name)
+    if (!paymentMethodExist) return
+    const newPaymentMethods = paymentMethods.map((item) => {
+      if (item.name === name) {
+        const transactionNumber = item.transactionNumber
+        transactionNumber[index] = value
+        return {
+          ...item,
+          transactionNumber,
+        }
+      }
+      return item
+    })
+    set({
+      paymentMethods: newPaymentMethods,
+    })
   },
 }))
+
+const calculateBackAmount = (
+  paymentMethods: IPaymentMethod[],
+  name: PaymentMethodsEnum,
+): IPaymentMethod[] => {
+  return paymentMethods.map((item) => {
+    if (item.name === name) {
+      return {
+        ...item,
+        backAmount: item.receivedAmount - item.totalPaidAmount,
+      }
+    }
+    return item
+  })
+}

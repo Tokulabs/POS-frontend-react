@@ -12,6 +12,7 @@ interface ICartStore {
   discountUSD: number
   totalCOP: number
   totalUSD: number
+  saleById: number | null
   addToCart: (IPosData: IPosData) => void
   removeFromCart: (IPosData: IPosData) => void
   clearCart: () => void
@@ -19,6 +20,7 @@ interface ICartStore {
   addDiscountToItem: (code: string, discount: number) => void
   updateQuantity: (code: string, quantity: number) => void
   updateIsGift: (code: string, isGift: boolean) => void
+  updateSaleById: (id: number) => void
 }
 
 export const useCart = create<ICartStore>((set, get) => ({
@@ -30,6 +32,7 @@ export const useCart = create<ICartStore>((set, get) => ({
   discountUSD: 0,
   totalCOP: 0,
   totalUSD: 0,
+  saleById: null,
   addToCart: (product: IPosData) => {
     const { cartItems, addDiscountToItem } = get()
     const productExist = cartItems.find((item) => item.code === product.code)
@@ -167,14 +170,20 @@ export const useCart = create<ICartStore>((set, get) => ({
       })
     }
   },
-  updateIsGift: (code: string, isGift: boolean) => {
-    const { cartItems } = get()
+  updateIsGift: async (code: string, isGift: boolean) => {
+    const { cartItems, updateTotalPrice } = get()
     const productExist = cartItems.find((item) => item.code === code)
     if (productExist) {
       productExist.is_gift = isGift
       set({
         cartItems: [...cartItems],
       })
+      updateTotalPrice()
     }
+  },
+  updateSaleById: (id: number) => {
+    set({
+      saleById: id,
+    })
   },
 }))

@@ -1,9 +1,15 @@
-import { Divider, Input, InputNumber, Select, Switch } from 'antd'
 import { useEffect, useState } from 'react'
+// Third Party
+import { Divider, Input, InputNumber, Select, Switch } from 'antd'
+import { IconPlus, IconTrash } from '@tabler/icons-react'
+// Types
 import { PaymentMethodsEnum } from './types/PaymentMethodsTypes'
+// Store
 import { usePaymentMethodsData } from '../../../store/usePaymentMethodsZustand'
 import { useCart } from '../../../store/useCartStoreZustand'
+// Helpers
 import { formatNumberToColombianPesos, formatToUsd } from '../../../utils/helpers'
+// Hooks
 import { usePaymentTerminals } from '../../../hooks/usePaymentTerminals'
 
 const OPTIONS = [
@@ -17,18 +23,22 @@ const OPTIONS = [
 export const AddPaymentMethods = () => {
   const { totalCOP, totalUSD } = useCart()
   const {
-    addPaymentMethod,
     totalValueReceived,
-    updateTotalValues,
     paymentMethods,
     totalValueToPay,
-    removePaymentMethod,
-    toggleIsDollar,
     isDollar,
     totalReturnedValue,
-    updateValueOfPaymentMethod,
-    updatePaymentTerminalID,
     paymentTerminaID,
+    addPaymentMethod,
+    updateTotalValues,
+    removePaymentMethod,
+    toggleIsDollar,
+    updatePaidAmount,
+    updateReceivedAmount,
+    updatePaymentTerminalID,
+    addPaidAmountToPaymentMethod,
+    removePaidAmountFromPaymentMethod,
+    updateTransactionNumber,
   } = usePaymentMethodsData()
 
   const [selectedItems, setSelectedItems] = useState<PaymentMethodsEnum[]>([
@@ -45,10 +55,11 @@ export const AddPaymentMethods = () => {
 
   const defaultPaymenthMethod = {
     name: PaymentMethodsEnum.cash,
-    paidAmount: totalCOP,
+    paidAmount: [totalCOP],
+    totalPaidAmount: totalCOP,
     backAmount: 0,
     receivedAmount: totalCOP,
-    transactionNumber: '',
+    transactionNumber: [''],
   }
 
   const requireTransactionNumber = (name: PaymentMethodsEnum) =>
@@ -63,8 +74,8 @@ export const AddPaymentMethods = () => {
       paymentMethods.forEach((method) => {
         if (method.name !== PaymentMethodsEnum.cash) {
           removePaymentMethod(method.name)
-          updateValueOfPaymentMethod(PaymentMethodsEnum.cash, 'paidAmount', totalCOP)
-          updateValueOfPaymentMethod(PaymentMethodsEnum.cash, 'receivedAmount', totalCOP)
+          updatePaidAmount(PaymentMethodsEnum.cash, totalCOP)
+          updateReceivedAmount(PaymentMethodsEnum.cash, totalCOP)
         }
       })
     }
@@ -86,10 +97,11 @@ export const AddPaymentMethods = () => {
       if (!paymentMethods.some((method) => method.name === item)) {
         addPaymentMethod({
           name: item,
-          paidAmount: item === PaymentMethodsEnum.cash ? totalCOP : 0,
+          paidAmount: isDollar ? [totalCOP] : [0],
+          totalPaidAmount: isDollar ? totalCOP : 0,
           backAmount: 0,
-          receivedAmount: item === PaymentMethodsEnum.cash ? totalCOP : 0,
-          transactionNumber: '',
+          receivedAmount: isDollar ? totalCOP : 0,
+          transactionNumber: [''],
         })
       }
     })
@@ -146,8 +158,8 @@ export const AddPaymentMethods = () => {
               <Switch
                 onChange={() => {
                   toggleIsDollar()
-                  updateValueOfPaymentMethod(PaymentMethodsEnum.cash, 'paidAmount', totalCOP)
-                  updateValueOfPaymentMethod(PaymentMethodsEnum.cash, 'receivedAmount', totalCOP)
+                  updatePaidAmount(PaymentMethodsEnum.cash, totalCOP)
+                  updateReceivedAmount(PaymentMethodsEnum.cash, totalCOP)
                 }}
               />
             </span>
@@ -192,54 +204,78 @@ export const AddPaymentMethods = () => {
             key={index}
             className='border-solid border bg-white border-green-1 rounded-md shadow-md p-4 flex flex-col gap-4 w-full'
           >
-            <span className='font-bold'>{item.name}</span>
-            <section className='flex gap-4 w-full justify-between items-center'>
-              <div className='flex gap-3 w-1/2 items-center'>
-                <span className='w-1/4'>Valor a pagar</span>
-                <InputNumber
-                  style={{ width: '75%' }}
-                  value={isDollar ? totalCOP : item.paidAmount}
-                  min={0}
-                  onChange={(event) =>
-                    updateValueOfPaymentMethod(item.name, 'paidAmount', event as number)
-                  }
-                  controls={false}
-                  autoComplete='off'
-                  required
-                  disabled={isDollar}
-                />
-              </div>
-
-              {!requireTransactionNumber(item.name) && (
+            <div className='flex justify-between items-center'>
+              <span className='font-bold'>{item.name}</span>
+              {(item.name === PaymentMethodsEnum.debitCard ||
+                item.name === PaymentMethodsEnum.creditCard) && (
+                <div
+                  className='flex gap-1 items-center cursor-pointer text-green-1 underline'
+                  onClick={() => addPaidAmountToPaymentMethod(item.name)}
+                >
+                  <IconPlus /> <span>Agregar nueva tarjeta</span>
+                </div>
+              )}
+            </div>
+            {item.paidAmount.map((amount, index) => (
+              <section key={index} className='flex gap-4 w-full justify-between items-center'>
                 <div className='flex gap-3 w-1/2 items-center'>
-                  <span className='w-1/4'>Valor recibido</span>
+                  <span className='w-1/4'>Valor a pagar</span>
                   <InputNumber
                     style={{ width: '75%' }}
-                    value={isDollar ? totalCOP : item.receivedAmount}
+                    value={isDollar ? totalCOP : amount}
                     min={0}
-                    onChange={(event) =>
-                      updateValueOfPaymentMethod(item.name, 'receivedAmount', event as number)
-                    }
+                    onChange={(event) => updatePaidAmount(item.name, event as number, index)}
                     controls={false}
                     autoComplete='off'
-                    required
+                    required={true}
                     disabled={isDollar}
                   />
                 </div>
-              )}
-              {requireTransactionNumber(item.name) && (
-                <div className='flex gap-3 w-1/2 items-center'>
-                  <span className='w-1/4'>Número de transacción</span>
-                  <Input
-                    style={{ width: '75%' }}
-                    defaultValue={item.transactionNumber}
-                    onChange={(event) => console.log(event)}
-                    autoComplete='off'
-                    type='text'
-                  />
-                </div>
-              )}
-            </section>
+
+                {!requireTransactionNumber(item.name) && (
+                  <div className='flex gap-3 w-1/2 items-center'>
+                    <span className='w-1/4'>Valor recibido</span>
+                    <InputNumber
+                      style={{ width: '75%' }}
+                      value={isDollar ? totalCOP : item.receivedAmount}
+                      min={0}
+                      onChange={(event) => updateReceivedAmount(item.name, event as number)}
+                      controls={false}
+                      autoComplete='off'
+                      required={true}
+                      disabled={isDollar}
+                    />
+                  </div>
+                )}
+                {requireTransactionNumber(item.name) && (
+                  <div className='flex gap-3 w-1/2 items-center'>
+                    <span className='w-1/4'>Número de transacción</span>
+                    <Input
+                      style={{ width: '75%' }}
+                      value={item.transactionNumber[index]}
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                        updateTransactionNumber(item.name, event.target.value, index)
+                      }
+                      autoComplete='off'
+                      required={true}
+                      type='text'
+                    />
+                  </div>
+                )}
+                {(item.name === PaymentMethodsEnum.debitCard ||
+                  item.name === PaymentMethodsEnum.creditCard) &&
+                  item.paidAmount.length > 1 && (
+                    <div
+                      className='flex gap-1 items-center cursor-pointer text-green-1 underline'
+                      onClick={() => {
+                        removePaidAmountFromPaymentMethod(item.name, index)
+                      }}
+                    >
+                      <IconTrash />
+                    </div>
+                  )}
+              </section>
+            ))}
           </div>
         ))}
       </section>

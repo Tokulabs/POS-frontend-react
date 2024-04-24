@@ -11,6 +11,8 @@ import { IconEdit, IconPlus } from '@tabler/icons-react'
 import Clock from '../../../components/Clock/Clock'
 // Store
 import { useCustomerData } from '../../../store/useCustomerStoreZustand'
+import { useUsers } from '../../../hooks/useUsers'
+import { useCart } from '../../../store/useCartStoreZustand'
 // Helpers
 import { getCustomers } from '../helpers/services'
 // Types
@@ -29,7 +31,10 @@ export const AddDataAndPaymentMethods = () => {
     'allDianResolutions',
     {},
   )
+  const { usersData } = useUsers('allUsers', { role: 'supportSales' })
+
   const { toggleModalAddCustomer, updateCustomerData, customer } = useCustomerData()
+  const { saleById, updateSaleById } = useCart()
 
   const fetchCustomersByKeyword = async (keyword: string) => {
     try {
@@ -110,6 +115,23 @@ export const AddDataAndPaymentMethods = () => {
         </section>
       )}
       <section>
+        <h1 className='font-bold text-xl text-green-1'>Vendedor</h1>
+        <Select
+          value={saleById}
+          style={{ width: '100%' }}
+          size='large'
+          placeholder='Selecciona una vendedor'
+          onChange={(value) => updateSaleById(value as number)}
+          options={[
+            { value: '', label: 'Selecciona un vendedor' },
+            ...(usersData?.results ?? []).map((item) => ({
+              value: item.id,
+              label: item.fullname,
+            })),
+          ]}
+        />
+      </section>
+      <section>
         <h1 className='font-bold text-xl text-green-1'>Cliente</h1>
         <Select
           loading={isLoadingSearch}
@@ -168,29 +190,35 @@ export const AddDataAndPaymentMethods = () => {
             )}
           </div>
           <div className='flex flex-col gap-1 items-start'>
-            <div className='flex flex-col gap-1 justify-between'>
+            <div className='flex flex-col justify-between'>
               <span className='text-xs font-semibold'>Nombre:</span>
-              <span className='font-bold truncate'>{customer.name ? customer.name : 'N/A'}</span>
+              <span className='font-bold truncate text-sm'>
+                {customer.name ? customer.name : 'N/A'}
+              </span>
             </div>
-            <div className='flex flex-col gap-1 justify-between'>
+            <div className='flex flex-col justify-between'>
               <span className='text-xs font-semibold'>Documento:</span>
-              <span className='font-bold truncate'>
+              <span className='font-bold truncate text-sm'>
                 {customer.idNumber ? customer.idNumber : 'N/A'}
               </span>
             </div>
-            <div className='flex flex-col gap-1 justify-between'>
+            <div className='flex flex-col justify-between'>
               <span className='text-xs font-semibold'>Teléfono:</span>
-              <span className='font-bold truncate'>{customer.phone ? customer.phone : 'N/A'}</span>
+              <span className='font-bold truncate text-sm'>
+                {customer.phone ? customer.phone : 'N/A'}
+              </span>
             </div>
-            <div className='flex flex-col gap-1 justify-between'>
+            <div className='flex flex-col justify-between'>
               <span className='text-xs font-semibold'>Dirección:</span>
-              <span className='font-bold truncate'>
+              <span className='font-bold truncate text-sm'>
                 {customer.address ? customer.address : 'N/A'}
               </span>
             </div>
-            <div className='flex flex-col gap-1 justify-between'>
+            <div className='flex flex-col justify-between'>
               <span className='text-xs font-semibold'>Correo:</span>
-              <span className='font-bold truncate'>{customer.email ? customer.email : 'N/A'}</span>
+              <span className='font-bold truncate text-sm'>
+                {customer.email ? customer.email : 'N/A'}
+              </span>
             </div>
           </div>
         </section>

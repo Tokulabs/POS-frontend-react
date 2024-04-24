@@ -8,8 +8,9 @@ export enum PaymentMethodsEnum {
 
 export interface IPaymentMethod {
   name: PaymentMethodsEnum
-  paidAmount: number
+  paidAmount: number[]
+  totalPaidAmount: number
   backAmount: number
   receivedAmount: number
-  transactionNumber: string
+  transactionNumber: string[]
 }

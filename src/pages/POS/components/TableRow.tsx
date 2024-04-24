@@ -20,7 +20,7 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
 
   const actualProduct = cartItems.filter((item) => item.code === product.code)[0]
 
-  const { code, name, selling_price, usd_price, discount, total, usd_total, quantity } =
+  const { code, name, selling_price, usd_price, discount, total, usd_total, quantity, is_gift } =
     actualProduct
 
   const addDiscountEvent = (event: number | null) => {
@@ -45,7 +45,11 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
         'w-full grid grid-cols-12 gap-3 py-4 text-center text-base list-none place-items-center border-x-0 px-1'
       }
     >
-      <Checkbox className=' w-full flex justify-center items-center' onChange={onChangeCheckBox} />
+      <Checkbox
+        defaultChecked={is_gift}
+        className=' w-full flex justify-center items-center'
+        onChange={onChangeCheckBox}
+      />
       <span className='text-start w-full'>{code}</span>
       <span className='col-span-2 text-left w-full truncate'>{name}</span>
       <span
@@ -78,6 +82,7 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
           onChange={(event) => addDiscountEvent(event)}
           controls={false}
           autoComplete='off'
+          disabled={is_gift}
         />
         %
       </div>
@@ -107,6 +112,7 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
           controls={false}
           onChange={(event) => changeQuantity(event)}
           autoComplete='off'
+          disabled={is_gift}
         />
       </div>
       <span className='col-start-11 w-full'>{formatToUsd(usd_total)}</span>
