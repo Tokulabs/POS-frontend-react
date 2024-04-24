@@ -95,16 +95,16 @@ const PrintOut: FC<{
             return (
               <div key={index} className='grid grid-cols-4 w-full gap-2'>
                 <p className='m-0 text-left text-xs'>
-                  {PaymentMethodsEnum[item.name as keyof typeof PaymentMethodsEnum]}
+                  {PaymentMethodsEnum[item.name as unknown as keyof typeof PaymentMethodsEnum]}
                 </p>
                 <p className='m-0 text-right text-xs'>
-                  {formatNumberToColombianPesos(item.paid_amount)}
+                  {formatNumberToColombianPesos(item.totalPaidAmount)}
                 </p>
                 <p className='m-0 text-right text-xs'>
-                  {formatNumberToColombianPesos(item.received_amount)}
+                  {formatNumberToColombianPesos(item.receivedAmount)}
                 </p>
                 <p className='m-0 text-right text-xs'>
-                  {formatNumberToColombianPesos(item.back_amount)}
+                  {formatNumberToColombianPesos(item.backAmount)}
                 </p>
               </div>
             )

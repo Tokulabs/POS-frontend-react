@@ -1,7 +1,22 @@
 import { Moment } from 'moment'
 import { IDianResolutionProps } from '../pages/Dian/types/DianResolutionTypes'
-import { IPaymentMethodsProps } from '../pages/Invoices/types/InvoicesTypes'
-import { ICustomerDataProps, IPurchaseProps } from '../pages/Purchase/types/PurchaseTypes'
+import {
+  PaymentMethodsEnum,
+  IPaymentMethod,
+} from '../pages/POS/components/types/PaymentMethodsTypes'
+export interface IPurchaseProps {
+  code: string
+  id: number
+  item: string
+  qty: number
+  price?: number
+  total: number
+  action?: React.ReactElement
+  key?: number
+  selling_price?: number
+  usd_price?: number
+  totalUSD?: number
+}
 
 export interface IPurchaseAddRemoveProps {
   [key: number]: number
@@ -15,7 +30,7 @@ export interface DataPropsForm {
     | DataPropsForm
     | React.ReactElement
     | DataPropsForm[]
-    | IPaymentMethodsProps[]
+    | PaymentMethodsEnum[]
     | null
     | Moment[]
 }
@@ -35,8 +50,8 @@ export interface IPaginationProps<T> {
 export interface IPrintData {
   data: IPurchaseProps[]
   date?: string
-  customerData: ICustomerDataProps
-  paymentMethods: IPaymentMethodsProps[]
+  customerData: { customerName: string; customerId: string }
+  paymentMethods: IPaymentMethod[]
   saleName: string
   dianResolution: IDianResolutionProps
   invoiceNumber: number

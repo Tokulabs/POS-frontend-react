@@ -60,9 +60,8 @@ const Invoices: FC = () => {
       ),
       is_dollar: item.is_dollar ? 'Si' : 'No',
       paid_by: item.payment_methods
-        .map((item) => PaymentMethodsEnum[item.name as keyof typeof PaymentMethodsEnum])
+        .map((item) => PaymentMethodsEnum[item.name as unknown as keyof typeof PaymentMethodsEnum])
         .join(', '),
-      is_override: item.is_override ? 'Si' : 'No',
       action: (
         <div className='flex'>
           <Button onClick={() => formatDataToPrint(item)} disabled={isLoadingResolution}>

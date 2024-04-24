@@ -1,8 +1,21 @@
 import { axiosRequest } from '../../../api/api'
 import { IQueryParams, IPaginationProps, DataPropsForm } from '../../../types/GlobalTypes'
 import { invoiceURL, overrideInvoiceURL } from '../../../utils/network'
-import { IPurchaseProps } from '../../Purchase/types/PurchaseTypes'
 import { IInvoiceProps, IItemInvoice } from '../types/InvoicesTypes'
+
+export interface IPurchaseProps {
+  code: string
+  id: number
+  item: string
+  qty: number
+  price?: number
+  total: number
+  action?: React.ReactElement
+  key?: number
+  selling_price?: number
+  usd_price?: number
+  totalUSD?: number
+}
 
 export const getInvoicesNew = async (queryParams: IQueryParams) => {
   try {
