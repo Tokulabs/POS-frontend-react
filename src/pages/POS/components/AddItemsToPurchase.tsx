@@ -4,6 +4,7 @@ import { Select } from 'antd'
 import { AxiosError } from 'axios'
 import { useQueryClient } from '@tanstack/react-query'
 import { debounce } from 'lodash'
+import { IconTablePlus } from '@tabler/icons-react'
 // Types
 import { IInventoryProps } from '../../Inventories/types/InventoryTypes'
 import { IPosData } from './types/TableTypes'
@@ -11,10 +12,13 @@ import { IPosData } from './types/TableTypes'
 import { useCart } from '../../../store/useCartStoreZustand'
 // Helpers
 import { getInventoriesNew } from '../../Inventories/helpers/services'
-import { IconTablePlus } from '@tabler/icons-react'
+// Data
 import { TableData } from '../Data/TableData'
+// Components
 import { TableHeader } from './TableHeader'
 import { TableRow } from './TableRow'
+// Store
+import { useCustomerData } from '../../../store/useCustomerStoreZustand'
 
 export const AddItemsToPurchase = () => {
   const [value, setValue] = useState<string>()
@@ -24,9 +28,15 @@ export const AddItemsToPurchase = () => {
   const queryClient = useQueryClient()
 
   const { addToCart, updateTotalPrice, cartItems } = useCart()
+  const { fetchDefaultCustomer } = useCustomerData()
+
+  useEffect(() => {
+    fetchDefaultCustomer()
+  }, [])
 
   const formatDatatoIPOSData = (data: IInventoryProps): IPosData => {
     return {
+      id: data.id,
       code: data.code,
       name: data.name,
       selling_price: data.selling_price,

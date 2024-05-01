@@ -72,7 +72,7 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
     let totalReturnedValue = 0
 
     for (const item of paymentMethods) {
-      totalValueToPay += item.totalPaidAmount
+      totalValueToPay += item.totalPaidAmount ?? 0
       totalValueReceived += item.receivedAmount
       totalReturnedValue += item.backAmount
     }
@@ -160,8 +160,9 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
     const newPaymentMethods = paymentMethods.map((item) => {
       if (item.name === name) {
         const paidAmount = item.paidAmount
-        paidAmount.splice(index, 1)
         const transactionNumber = item.transactionNumber
+        const receivedAmount = item.receivedAmount - paidAmount[index]
+        paidAmount.splice(index, 1)
         transactionNumber.splice(index, 1)
         const totalPaidAmount = paidAmount.reduce((acc, curr) => acc + curr, 0)
         return {
@@ -169,6 +170,7 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
           paidAmount,
           transactionNumber,
           totalPaidAmount,
+          receivedAmount,
         }
       }
       return item
@@ -207,7 +209,7 @@ const calculateBackAmount = (
     if (item.name === name) {
       return {
         ...item,
-        backAmount: item.receivedAmount - item.totalPaidAmount,
+        backAmount: item.receivedAmount - (item.totalPaidAmount ?? 0),
       }
     }
     return item

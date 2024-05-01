@@ -7,7 +7,9 @@ export const useDianResolutions = (queryKey: string, queryParamas?: IQueryParams
   const { isLoading, data: dianResolutionData } = useQuery({
     queryKey: queryKeyToSend,
     queryFn: async () => await getDianResolutions(queryParamas ?? {}),
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+    refetchOnMount: true,
   })
   return {
     isLoading,

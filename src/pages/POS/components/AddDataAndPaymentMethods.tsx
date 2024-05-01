@@ -103,7 +103,10 @@ export const AddDataAndPaymentMethods = () => {
             <span className='text-xs'># de factura:</span>
 
             <span className='text-green-1 font-bold truncate'>
-              GUA-{dianResolutionData?.results[0].current_number}
+              GUA-
+              {dianResolutionData?.results[0]?.current_number
+                ? dianResolutionData?.results[0]?.current_number + 1
+                : '0'}
             </span>
           </div>
           <div className='flex gap-1 justify-between items-end'>

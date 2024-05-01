@@ -3,6 +3,7 @@ import { IDianResolutionProps } from '../pages/Dian/types/DianResolutionTypes'
 import {
   PaymentMethodsEnum,
   IPaymentMethod,
+  IPaymentMethodToSend,
 } from '../pages/POS/components/types/PaymentMethodsTypes'
 export interface IPurchaseProps {
   code: string
@@ -33,6 +34,7 @@ export interface DataPropsForm {
     | PaymentMethodsEnum[]
     | null
     | Moment[]
+    | IPaymentMethodToSend[]
 }
 
 export interface IQueryParams {

@@ -19,12 +19,10 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   >
     <QueryClientProvider client={queryClient}>
       <StoreProvider>
-        <React.StrictMode>
-          <App></App>
-          {import.meta.env.MODE == 'development' && (
-            <ReactQueryDevtools buttonPosition='bottom-left' />
-          )}
-        </React.StrictMode>
+        <App></App>
+        {import.meta.env.MODE == 'development' && (
+          <ReactQueryDevtools buttonPosition='bottom-left' />
+        )}
       </StoreProvider>
     </QueryClientProvider>
   </ConfigProvider>,

@@ -39,6 +39,7 @@ export const useCart = create<ICartStore>((set, get) => ({
     if (productExist) {
       const originalQuantity = productExist.quantity
       productExist.quantity = originalQuantity + 1
+      console.log(productExist)
       if (
         productExist.total_in_shops === 0 ||
         productExist.quantity > productExist.total_in_shops
@@ -59,6 +60,13 @@ export const useCart = create<ICartStore>((set, get) => ({
         addDiscountToItem(product.code, productExist.discount)
       }
     } else {
+      if (product.total_in_shops === 0) {
+        notification.error({
+          message: 'Producto sin existencias',
+          description: 'Lo sentimos, este producto no cuenta más existencias en tienda',
+        })
+        return
+      }
       set({
         cartItems: [...cartItems, product],
       })
@@ -86,7 +94,19 @@ export const useCart = create<ICartStore>((set, get) => ({
       }
     }
   },
-  clearCart: () => {},
+  clearCart: () => {
+    set({
+      cartItems: [],
+      subtotalCOP: 0,
+      discountCOP: 0,
+      taxesIVACOP: 0,
+      subtotalUSD: 0,
+      discountUSD: 0,
+      totalCOP: 0,
+      totalUSD: 0,
+      saleById: null,
+    })
+  },
   updateTotalPrice: () => {
     const { cartItems } = get()
     let subtotalCOP = 0

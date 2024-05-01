@@ -1,12 +1,15 @@
-import { useState, FC, useMemo } from 'react'
+import { FC, useMemo } from 'react'
 // Components
 import { AddItemsToPurchase } from './AddItemsToPurchase'
 import { AddPaymentMethods } from './AddPaymentMethods'
+import { CreateInvoice } from './CreateInvoice'
 // Third Party
 import { Button, Divider, Steps } from 'antd'
 // Store
 import { useCart } from '../../../store/useCartStoreZustand'
 import { usePaymentMethodsData } from '../../../store/usePaymentMethodsZustand'
+import { usePOSStep } from '../../../store/usePOSSteps'
+// Types
 import { PaymentMethodsEnum } from './types/PaymentMethodsTypes'
 
 const steps = [
@@ -20,22 +23,22 @@ const steps = [
   },
   {
     title: 'Confirmar Venta',
-    content: 'Last-content',
+    content: <CreateInvoice />,
   },
 ]
 
 export const POSStepper: FC = () => {
-  const [current, setCurrent] = useState(0)
   const { cartItems, totalCOP } = useCart()
   const { paymentMethods, totalValueToPay, clearPaymentMethods, paymentTerminaID } =
     usePaymentMethodsData()
+  const { currentStep, updateCurrentStep } = usePOSStep()
 
   const next = () => {
-    setCurrent(current + 1)
+    updateCurrentStep(currentStep + 1)
   }
 
   const prev = () => {
-    setCurrent(current - 1)
+    updateCurrentStep(currentStep - 1)
     clearPaymentMethods()
   }
 
@@ -51,10 +54,10 @@ export const POSStepper: FC = () => {
   }, [paymentMethods, paymentTerminaID])
 
   const isDisabled = () => {
-    if (current === 0) {
+    if (currentStep === 0) {
       return !cartItems.length
     }
-    if (current === 1) {
+    if (currentStep === 1) {
       const missingTransactionNumber = paymentMethods.map((item) => {
         if (item.name !== PaymentMethodsEnum.cash) {
           if (item.transactionNumber.some((item) => !item)) {
@@ -64,11 +67,14 @@ export const POSStepper: FC = () => {
           }
         }
       })
+      const cashPayment = paymentMethods.find((item) => item.name === PaymentMethodsEnum.cash)
+
       return (
         !paymentMethods.length ||
         totalValueToPay !== totalCOP ||
         requirePaymentTerminal ||
-        missingTransactionNumber.includes(false)
+        missingTransactionNumber.includes(false) ||
+        (cashPayment && cashPayment.receivedAmount < cashPayment.paidAmount[0])
       )
     }
     return false
@@ -78,7 +84,7 @@ export const POSStepper: FC = () => {
     <section className='h-full flex flex-col justify-between gap-3'>
       <header>
         <div className='flex flex-col'>
-          <Steps current={current} items={items} />
+          <Steps current={currentStep} items={items} />
           <Divider />
         </div>
         <div className='w-full flex flex-col border-t-2 gap-4'>
@@ -89,20 +95,20 @@ export const POSStepper: FC = () => {
       </header>
       <Divider className='w-full' style={{ margin: '0.5rem' }} />
       <section className='h-full overflow-hidden overflow-y-auto scrollbar-hide'>
-        {steps[current].content}
+        {steps[currentStep].content}
       </section>
       <footer className='flex justify-end'>
-        {current === 0 && (
+        {currentStep === 0 && (
           <Button type='primary' onClick={() => next()} disabled={isDisabled()}>
             Siguiente
           </Button>
         )}
-        {current === 1 && (
+        {currentStep === 1 && (
           <Button type='primary' onClick={() => next()} disabled={isDisabled()}>
             Pagar
           </Button>
         )}
-        {current > 0 && (
+        {currentStep > 0 && currentStep !== 2 && (
           <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
             Volver
           </Button>

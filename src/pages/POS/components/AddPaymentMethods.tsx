@@ -101,7 +101,7 @@ export const AddPaymentMethods = () => {
           totalPaidAmount: isDollar ? totalCOP : 0,
           backAmount: 0,
           receivedAmount: isDollar ? totalCOP : 0,
-          transactionNumber: [''],
+          transactionNumber: [],
         })
       }
     })

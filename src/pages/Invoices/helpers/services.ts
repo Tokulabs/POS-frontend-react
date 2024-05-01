@@ -58,16 +58,12 @@ export const getInvoicesNew = async (queryParams: IQueryParams) => {
 }
 
 export const postInvoicesNew = async (values: DataPropsForm) => {
-  try {
-    await axiosRequest({
-      method: 'post',
-      url: invoiceURL,
-      hasAuth: true,
-      payload: values,
-    })
-  } catch (e) {
-    throw new Error(e as string)
-  }
+  await axiosRequest({
+    method: 'post',
+    url: invoiceURL,
+    hasAuth: true,
+    payload: values,
+  })
 }
 
 export const patchOverrideInvoice = async (invoiceNumber: number) => {
