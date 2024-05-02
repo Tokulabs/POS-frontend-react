@@ -27,7 +27,7 @@ const Dian: FC = () => {
   return (
     <>
       {isPending ? (
-        <h1>Cargando...</h1>
+        <Spin size='large' />
       ) : (
         <div className='bg-white rounded p-4 flex flex-col gap-8'>
           <h4 className='font-bold'>Resoluciones DIAN</h4>

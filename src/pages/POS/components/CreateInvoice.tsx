@@ -88,9 +88,19 @@ export const CreateInvoice = () => {
     <section className='flex justify-center items-center w-full h-full'>
       {isPending && <Spin size='large' />}
       {isError && (
-        <section>
-          <div className='w-24 h-24 rounded bg-red-1'>
-            <IconX size={24} />
+        <section className='flex justify-center items-center flex-col gap-8'>
+          <div className='w-44 h-44 rounded-full flex justify-center items-center bg-red-1'>
+            <IconX size={120} color='white' />
+          </div>
+          <span className='text-2xl text-red-1'>
+            Ha ocurrido un Error al crear la venta!{' '}
+            <span className='font-bold'>intentelo nuevamente</span>
+          </span>
+          <div
+            className='flex flex-col justify-center items-center p-6 bg-red-1 rounded-md border-solid text-white border-white hover:bg-white hover:border-red-1 hover:text-red-1 hover:cursor-pointer'
+            onClick={newPurchase}
+          >
+            <IconScriptPlus size={36} /> <span className='text-lg'>Nueva venta [F2]</span>
           </div>
         </section>
       )}

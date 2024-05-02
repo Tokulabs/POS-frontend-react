@@ -8,7 +8,6 @@ import Users from '../pages/Users/Users'
 import UpdateUserPassword from '../pages/Auth/UpdateUserPassword'
 import InventoryGroup from '../pages/Groups/InventoryGroups'
 import Inventory from '../pages/Inventories/Inventories'
-import Shops from '../pages/Shops/Shops'
 import UserActivities from './../pages/UserActivities/UserActivities'
 import Invoices from './../pages/Invoices/Invoices'
 import Notfound from '../pages/NotFound/404Notfound'
@@ -86,17 +85,6 @@ export const Router: FC = () => {
                       allowedRoles={
                         SideBarData.filter((item) => item.path === '/inventories')[0]
                           .allowedRoles ?? []
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path='/shops'
-                  element={
-                    <RouteGuardian
-                      element={() => <Shops />}
-                      allowedRoles={
-                        SideBarData.filter((item) => item.path === '/shops')[0].allowedRoles ?? []
                       }
                     />
                   }

@@ -5,7 +5,6 @@ import {
   IconReceipt,
   IconBoxMultiple,
   IconUsers,
-  IconBuildingStore,
   IconActivity,
   IconKey,
   IconDatabase,
@@ -81,12 +80,6 @@ export const SideBarData: ISideBarData[] = [
     icon: IconUsers,
     title: 'Usuarios',
     path: '/users',
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
-  },
-  {
-    icon: IconBuildingStore,
-    title: 'Puntos de Venta',
-    path: '/shops',
     allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
   },
   {
