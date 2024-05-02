@@ -27,9 +27,9 @@ export const AddDataAndPaymentMethods = () => {
 
   const queryClient = useQueryClient()
 
-  const { dianResolutionData, isLoading: isLoadingResolution } = useDianResolutions(
-    'allDianResolutions',
-    {},
+  const { dianResolutionData, isPending: isLoadingResolution } = useDianResolutions(
+    'getActiveDianResolution',
+    { active: 'True' },
   )
   const { usersData } = useUsers('allUsers', { role: 'supportSales' })
 

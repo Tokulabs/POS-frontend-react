@@ -23,7 +23,7 @@ const Invoices: FC = () => {
   const [printData, setPrintData] = useState<IPrintData>({} as IPrintData)
   const queryClient = useQueryClient()
   const { isLoading, invoicesData } = useInvoices('paginatedInvoices', { page: currentPage })
-  const { dianResolutionData, isLoading: isLoadingResolution } = useDianResolutions(
+  const { dianResolutionData, isPending: isLoadingResolution } = useDianResolutions(
     'allDianResolutions',
     {},
   )

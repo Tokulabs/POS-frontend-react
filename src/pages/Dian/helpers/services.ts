@@ -27,18 +27,26 @@ export const getDianResolutions = async (queryParams: IQueryParams) => {
 }
 
 export const postDianResolution = async (data: DataPropsForm) => {
-  try {
-    const response = await axiosRequest({
-      url: dianResolutionURL,
-      method: 'post',
-      hasAuth: true,
-      showError: true,
-      payload: data,
-    })
-    if (response) {
-      return response
-    }
-  } catch (e) {
-    console.log(e)
+  const response = await axiosRequest({
+    url: dianResolutionURL,
+    method: 'post',
+    hasAuth: true,
+    showError: true,
+    payload: data,
+  })
+  if (response) {
+    return response
+  }
+}
+
+export const toggleDianResolution = async (id: number) => {
+  const response = await axiosRequest({
+    url: `${dianResolutionURL}/${id}/toggle-active/`,
+    method: 'post',
+    hasAuth: true,
+    showError: true,
+  })
+  if (response) {
+    return response
   }
 }

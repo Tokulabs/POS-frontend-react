@@ -4,7 +4,7 @@ import { getDianResolutions } from '../pages/Dian/helpers/services'
 
 export const useDianResolutions = (queryKey: string, queryParamas?: IQueryParams) => {
   const queryKeyToSend: QueryKey = [queryKey]
-  const { isLoading, data: dianResolutionData } = useQuery({
+  const { isPending, data: dianResolutionData } = useQuery({
     queryKey: queryKeyToSend,
     queryFn: async () => await getDianResolutions(queryParamas ?? {}),
     refetchOnWindowFocus: true,
@@ -12,7 +12,7 @@ export const useDianResolutions = (queryKey: string, queryParamas?: IQueryParams
     refetchOnMount: true,
   })
   return {
-    isLoading,
+    isPending,
     dianResolutionData,
   }
 }
