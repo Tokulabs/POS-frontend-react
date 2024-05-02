@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, useContext } from 'react'
+import { FC, PropsWithChildren, useContext, useEffect } from 'react'
 import UserAvatar from '../../assets/icons/user-avatar.svg'
 import { IconLogout } from '@tabler/icons-react'
 import { logout } from '../../pages/Auth/helpers'
@@ -7,10 +7,26 @@ import { Link, useLocation } from 'react-router-dom'
 import { store } from '../../store'
 import { formatDateTime } from '../helpers/helpers'
 import { useRolePermissions } from '../../hooks/useRolespermissions'
+import { useCart } from '../../store/useCartStoreZustand'
+import { useCustomerData } from '../../store/useCustomerStoreZustand'
+import { usePOSStep } from '../../store/usePOSSteps'
+import { usePaymentMethodsData } from '../../store/usePaymentMethodsZustand'
 
 const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const { state } = useContext(store)
   const location = useLocation()
+
+  const { updateCurrentStep } = usePOSStep()
+  const { clearPaymentMethods } = usePaymentMethodsData()
+  const { clearCart } = useCart()
+  const { clearCustomerData } = useCustomerData()
+
+  useEffect(() => {
+    updateCurrentStep(0)
+    clearCustomerData()
+    clearCart()
+    clearPaymentMethods()
+  }, [location])
 
   return (
     <section className='h-screen max-h-screen w-full relative'>

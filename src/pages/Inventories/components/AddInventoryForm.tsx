@@ -29,10 +29,10 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
 
   const queryClient = useQueryClient()
 
-  const { mutate, isLoading } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: postInventoriesNew,
     onSuccess: () => {
-      queryClient.invalidateQueries(['paginatedInventories'])
+      queryClient.invalidateQueries({queryKey: ['paginatedInventories']})
       onSuccessCallback()
       notification.success({
         message: 'Exito',
@@ -46,7 +46,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
     if (imageUrl) {
       values = { ...values, photo: imageUrl }
     }
-    if (isLoading) return
+    if (isPending) return
     mutate(values)
     setImageurl(null)
   }
@@ -96,7 +96,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
                 className={`w-24 h-24 rounded-full flex flex-col justify-center items-center cursor-pointer ${
                   imageUrl ? '' : 'bg-gray-1'
                 }`}
-                onClick={() => !isLoading && fileSelect.current?.click()}
+                onClick={() => !isPending && fileSelect.current?.click()}
               >
                 {imageUrl ? (
                   <img
@@ -185,7 +185,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
           />
         </Form.Item>
         <Form.Item>
-          <Button htmlType='submit' type='primary' block loading={isLoading}>
+          <Button htmlType='submit' type='primary' block loading={isPending}>
             Submit
           </Button>
         </Form.Item>

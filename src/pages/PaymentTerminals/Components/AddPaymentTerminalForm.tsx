@@ -22,7 +22,7 @@ const AddPaymentTerminalForm: FC<IAddPaymentTerminals> = ({
   const isEdit = !!initialData.id
 
   const successRegistry = (message: string, description: string) => {
-    queryClient.invalidateQueries(['paginatedPaymentTerminals'])
+    queryClient.invalidateQueries({ queryKey: ['paginatedPaymentTerminals'] })
     onSuccessCallback()
     notification.success({
       message: message,
@@ -31,14 +31,14 @@ const AddPaymentTerminalForm: FC<IAddPaymentTerminals> = ({
     form.resetFields()
   }
 
-  const { mutate, isLoading } = useMutation({
+  const { mutate, isPending: isLoading } = useMutation({
     mutationFn: postPaymentTerminals,
     onSuccess: () => {
       successRegistry('Exito', 'Datafono creado!')
     },
   })
 
-  const { mutate: mutateEdit, isLoading: isLoadingEdit } = useMutation({
+  const { mutate: mutateEdit, isPending: isLoadingEdit } = useMutation({
     mutationFn: putPaymentTerminals,
     onSuccess: () => {
       successRegistry('Exito', 'Datafono actualizado!')

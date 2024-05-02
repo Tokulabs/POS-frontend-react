@@ -25,10 +25,10 @@ const Providers: FC = () => {
     setModalState(ModalStateEnum.addItem)
   }
 
-  const { mutate, isLoading: isLoadingDelete } = useMutation({
+  const { mutate, isPending: isLoadingDelete } = useMutation({
     mutationFn: deleteProviders,
     onSuccess: () => {
-      queryClient.invalidateQueries(['paginatedProviders'])
+      queryClient.invalidateQueries({ queryKey: ['paginatedProviders'] })
       notification.success({
         message: 'Exito',
         description: 'Datafono eliminado!',

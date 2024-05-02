@@ -25,10 +25,10 @@ const PaymentTerminals: FC = () => {
     setModalState(ModalStateEnum.addItem)
   }
 
-  const { mutate, isLoading: isLoadingDelete } = useMutation({
+  const { mutate, isPending: isLoadingDelete } = useMutation({
     mutationFn: deletePaymentTerminals,
     onSuccess: () => {
-      queryClient.invalidateQueries(['paginatedPaymentTerminals'])
+      queryClient.invalidateQueries({ queryKey: ['paginatedPaymentTerminals'] })
       notification.success({
         message: 'Exito',
         description: 'Datafono eliminado!',

@@ -1,5 +1,6 @@
 import { IModalFormProps } from '../../../types/ModalTypes'
 import { IGroupsProps } from '../../Groups/types/GroupTypes'
+import { IProvider } from '../../Providers/types/ProviderTypes'
 
 export interface IInventoryProps {
   id: number
@@ -33,4 +34,5 @@ export interface IInventoryProps {
 export interface IAddInventoryFormProps extends IModalFormProps {
   initialData: IInventoryProps
   groups: IGroupsProps[]
+  providers: IProvider[]
 }

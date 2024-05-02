@@ -12,6 +12,7 @@ import { IconEdit, IconTrash } from '@tabler/icons-react'
 import { deleteInventories } from '../Inventories/helpers/services'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ModalStateEnum } from '../../types/ModalTypes'
+import { useProviders } from '../../hooks/useProviders'
 
 export const formatinventoryPhoto = (inventories: IInventoryProps[]) => {
   return inventories.map((item) => ({
@@ -36,13 +37,14 @@ const Storage: FC = () => {
     page: currentPage,
   })
   const { groupsData } = useGroups('allGroups', {})
+  const { providersData } = useProviders('allProviders', {})
 
   const queryClient = useQueryClient()
 
-  const { mutate, isLoading: isLoadingDelete } = useMutation({
+  const { mutate, isPending: isLoadingDelete } = useMutation({
     mutationFn: deleteInventories,
     onSuccess: () => {
-      queryClient.invalidateQueries(['paginatedInventories'])
+      queryClient.invalidateQueries({ queryKey: ['paginatedInventories'] })
       notification.success({
         message: 'Exito',
         description: 'Item eliminado!',
@@ -75,7 +77,7 @@ const Storage: FC = () => {
           >
             <Button type='link' className='p-0'>
               <IconTrash className='text-red-1 hover:text-red-400' />
-            </Button>{' '}
+            </Button>
           </Popconfirm>
         </div>
       ),
@@ -110,6 +112,7 @@ const Storage: FC = () => {
             isVisible={modalState === ModalStateEnum.addItem}
             onCancelCallback={() => setModalState(ModalStateEnum.off)}
             groups={groupsData?.results ?? []}
+            providers={providersData?.results ?? []}
           />
         )}
         <AddInventoryFormCSV

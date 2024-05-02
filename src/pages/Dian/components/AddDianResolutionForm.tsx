@@ -18,10 +18,10 @@ const AddDianResolutionForm: FC<IModalFormProps> = ({
   const [form] = useForm()
   const queryClient = useQueryClient()
 
-  const { mutate, isLoading } = useMutation({
+  const { mutate, isPending: isLoading } = useMutation({
     mutationFn: postDianResolution,
     onSuccess: () => {
-      queryClient.invalidateQueries(['allDianResolutions'])
+      queryClient.invalidateQueries({ queryKey: ['allDianResolutions'] })
       onSuccessCallback()
       notification.success({
         message: 'Exito',

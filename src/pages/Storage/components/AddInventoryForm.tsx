@@ -17,6 +17,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
   onCancelCallback,
   groups,
   initialData,
+  providers,
 }) => {
   const [form] = useForm()
   const [imageUrl, setImageurl] = useState<string | null>(initialData.photo ?? '')
@@ -26,6 +27,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
   const initialValues = {
     ...initialData,
     group_id: initialData.group?.id ?? '',
+    provider_id: initialData.provider?.id ?? '',
   }
 
   const isEdit = !!initialData.id
@@ -33,7 +35,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
   const queryClient = useQueryClient()
 
   const successRegistry = (message: string, description: string) => {
-    queryClient.invalidateQueries(['paginatedInventories'])
+    queryClient.invalidateQueries({ queryKey: ['paginatedInventories'] })
     onSuccessCallback()
     notification.success({
       message: message,
@@ -42,17 +44,17 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
     form.resetFields()
   }
 
-  const { mutate, isLoading } = useMutation({
+  const { mutate, isPending: isLoading } = useMutation({
     mutationFn: postInventoriesNew,
     onSuccess: () => {
-      successRegistry('Exito', 'Item creado!')
+      successRegistry('Exito', 'Producto creado!')
     },
   })
 
-  const { mutate: mutateEdit, isLoading: isLoadingEdit } = useMutation({
+  const { mutate: mutateEdit, isPending: isLoadingEdit } = useMutation({
     mutationFn: putInventoriesEdit,
     onSuccess: () => {
-      successRegistry('Exito', 'Item actualizado!')
+      successRegistry('Exito', 'Producto actualizado!')
     },
   })
 
@@ -220,6 +222,26 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
             />
           </Form.Item>
         </div>
+        <Form.Item
+          style={{ width: '100%' }}
+          label='Proveedor'
+          name='provider_id'
+          rules={[{ required: true, message: 'El proveedor es requerido' }]}
+        >
+          <Select
+            placeholder='Selecciona un proveedor'
+            options={[
+              {
+                value: '',
+                label: 'Selecciona un proveedor',
+              },
+              ...providers.map((item) => ({
+                value: item.id,
+                label: item.legal_name,
+              })),
+            ]}
+          />
+        </Form.Item>
         <Form.Item>
           <Button
             htmlType='submit'

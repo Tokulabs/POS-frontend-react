@@ -1,11 +1,10 @@
 import { FC } from 'react'
 import { formatDateTime } from '../../layouts/helpers/helpers'
-import { PaymentMethodsEnum } from '../../pages/Purchase/types/PurchaseTypes'
-import { getTotal } from './../../pages/Purchase/helpers/PurchaseHelpers'
 import LogoSignos from './../../assets/logos/signos_logo.png'
 import { formatNumberToColombianPesos } from '../../utils/helpers'
 import { IPrintData } from '../../types/GlobalTypes'
 import OverrideImage from '../../assets/logos/images.png'
+import { PaymentMethodsEnum } from '../../pages/POS/components/types/PaymentMethodsTypes'
 
 const PrintOut: FC<{
   printData: IPrintData
@@ -20,7 +19,6 @@ const PrintOut: FC<{
     invoiceNumber,
     isOverride,
   } = printData
-  const { iva, subTotalBase, total } = getTotal(data)
 
   return (
     <article className='bg-transparent flex flex-col w-[19rem] justify-center items-center text-center p-3 gap-1 relative'>
@@ -80,10 +78,10 @@ const PrintOut: FC<{
             <p className='m-0 text-right text-sm'>Total</p>
           </section>
           <section className='text-xs text-right'>
-            <p className='m-0 text-right text-sm'>{formatNumberToColombianPesos(subTotalBase)}</p>
-            <p className='m-0 text-right text-sm'>{formatNumberToColombianPesos(iva)}</p>
+            <p className='m-0 text-right text-sm'>{}</p>
+            <p className='m-0 text-right text-sm'>{}</p>
             <p className='m-0 text-right text-sm'>0</p>
-            <p className='m-0 text-right text-sm'>{formatNumberToColombianPesos(total)}</p>
+            <p className='m-0 text-right text-sm'>{}</p>
           </section>
         </section>
         <section className='grid grid-cols-4 w-full p-1'>
@@ -96,15 +94,17 @@ const PrintOut: FC<{
           {paymentMethods.map((item, index) => {
             return (
               <div key={index} className='grid grid-cols-4 w-full gap-2'>
-                <p className='m-0 text-left text-xs'>{PaymentMethodsEnum[item.name]}</p>
-                <p className='m-0 text-right text-xs'>
-                  {formatNumberToColombianPesos(item.paid_amount)}
+                <p className='m-0 text-left text-xs'>
+                  {PaymentMethodsEnum[item.name as unknown as keyof typeof PaymentMethodsEnum]}
                 </p>
                 <p className='m-0 text-right text-xs'>
-                  {formatNumberToColombianPesos(item.received_amount)}
+                  {formatNumberToColombianPesos(item.totalPaidAmount)}
                 </p>
                 <p className='m-0 text-right text-xs'>
-                  {formatNumberToColombianPesos(item.back_amount)}
+                  {formatNumberToColombianPesos(item.receivedAmount)}
+                </p>
+                <p className='m-0 text-right text-xs'>
+                  {formatNumberToColombianPesos(item.backAmount)}
                 </p>
               </div>
             )

@@ -8,9 +8,7 @@ import Users from '../pages/Users/Users'
 import UpdateUserPassword from '../pages/Auth/UpdateUserPassword'
 import InventoryGroup from '../pages/Groups/InventoryGroups'
 import Inventory from '../pages/Inventories/Inventories'
-import Shops from '../pages/Shops/Shops'
 import UserActivities from './../pages/UserActivities/UserActivities'
-import Purchase from '../pages/Purchase/Purchase'
 import Invoices from './../pages/Invoices/Invoices'
 import Notfound from '../pages/NotFound/404Notfound'
 import Dian from '../pages/Dian/Dian'
@@ -19,6 +17,7 @@ import { SideBarData } from '../layouts/MainLayout/data/data'
 import { useRolePermissions } from '../hooks/useRolespermissions'
 import PaymentTerminals from '../pages/PaymentTerminals/PaymentTerminals'
 import Providers from '../pages/Providers/Providers'
+import { POS } from '../pages/POS/POS'
 
 interface IRouteGuardian {
   element: FC
@@ -91,17 +90,6 @@ export const Router: FC = () => {
                   }
                 />
                 <Route
-                  path='/shops'
-                  element={
-                    <RouteGuardian
-                      element={() => <Shops />}
-                      allowedRoles={
-                        SideBarData.filter((item) => item.path === '/shops')[0].allowedRoles ?? []
-                      }
-                    />
-                  }
-                />
-                <Route
                   path='/user-activities'
                   element={
                     <RouteGuardian
@@ -114,13 +102,12 @@ export const Router: FC = () => {
                   }
                 />
                 <Route
-                  path='/purchase'
+                  path='/pos'
                   element={
                     <RouteGuardian
-                      element={() => <Purchase />}
+                      element={() => <POS />}
                       allowedRoles={
-                        SideBarData.filter((item) => item.path === '/purchase')[0].allowedRoles ??
-                        []
+                        SideBarData.filter((item) => item.path === '/pos')[0].allowedRoles ?? []
                       }
                     />
                   }

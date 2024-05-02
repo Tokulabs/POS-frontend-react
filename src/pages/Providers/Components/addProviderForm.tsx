@@ -22,7 +22,7 @@ const AddProviderForm: FC<IAddProvider> = ({
   const isEdit = !!initialData.id
 
   const successRegistry = (message: string, description: string) => {
-    queryClient.invalidateQueries(['paginatedProviders'])
+    queryClient.invalidateQueries({ queryKey: ['paginatedProviders'] })
     onSuccessCallback()
     notification.success({
       message: message,
@@ -31,14 +31,14 @@ const AddProviderForm: FC<IAddProvider> = ({
     form.resetFields()
   }
 
-  const { mutate, isLoading } = useMutation({
+  const { mutate, isPending: isLoading } = useMutation({
     mutationFn: postProviders,
     onSuccess: () => {
       successRegistry('Exito', 'Proveedor creado!')
     },
   })
 
-  const { mutate: mutateEdit, isLoading: isLoadingEdit } = useMutation({
+  const { mutate: mutateEdit, isPending: isLoadingEdit } = useMutation({
     mutationFn: putProviders,
     onSuccess: () => {
       successRegistry('Exito', 'Proveedor actualizado!')

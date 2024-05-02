@@ -3,13 +3,8 @@ import { FC, useEffect, useRef, useState } from 'react'
 import PrintOut from '../../components/Print/PrintOut'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
 import { DataPropsForm, IPrintData } from '../../types/GlobalTypes'
-import {
-  ICustomerDataProps,
-  IPurchaseProps,
-  PaymentMethodsEnum,
-} from '../Purchase/types/PurchaseTypes'
 import { columns } from './data/columnsData'
-import { IInvoiceProps } from './types/InvoicesTypes'
+import { IInvoiceProps, IItemInvoice } from './types/InvoicesTypes'
 import { useReactToPrint } from 'react-to-print'
 import { formatDateTime } from '../../layouts/helpers/helpers'
 import { formatNumberToColombianPesos } from '../../utils/helpers'
@@ -20,6 +15,7 @@ import { UserRolesEnum } from '../Users/types/UserTypes'
 import { useDianResolutions } from '../../hooks/useDianResolution'
 import { IDianResolutionProps } from '../Dian/types/DianResolutionTypes'
 import { useRolePermissions } from '../../hooks/useRolespermissions'
+import { PaymentMethodsEnum } from '../POS/components/types/PaymentMethodsTypes'
 
 const Invoices: FC = () => {
   const [showPrintOut, setShowPrintOut] = useState(false)
@@ -27,7 +23,7 @@ const Invoices: FC = () => {
   const [printData, setPrintData] = useState<IPrintData>({} as IPrintData)
   const queryClient = useQueryClient()
   const { isLoading, invoicesData } = useInvoices('paginatedInvoices', { page: currentPage })
-  const { dianResolutionData, isLoading: isLoadingResolution } = useDianResolutions(
+  const { dianResolutionData, isPending: isLoadingResolution } = useDianResolutions(
     'allDianResolutions',
     {},
   )
@@ -40,10 +36,10 @@ const Invoices: FC = () => {
 
   const printOutRef = useRef<HTMLDivElement>(null)
 
-  const { mutate, isLoading: isLoadingOverride } = useMutation({
+  const { mutate, isPending: isLoadingOverride } = useMutation({
     mutationFn: patchOverrideInvoice,
     onSuccess: () => {
-      queryClient.invalidateQueries(['paginatedInvoices', { page: 1 }])
+      queryClient.invalidateQueries({ queryKey: ['paginatedInvoices', { page: 1 }] })
       notification.info({
         message: 'Exito',
         description: 'Factura anulada!',
@@ -54,16 +50,18 @@ const Invoices: FC = () => {
     const showCurrency = true
     return invoicesData?.results.map((item) => ({
       ...item,
+      created_by_name: item.created_by.fullname || 'SuperAdmin',
       created_at: formatDateTime(item.created_at as string),
       total: formatNumberToColombianPesos(
         item.invoice_items
-          .map((itemInvoice: IPurchaseProps) => itemInvoice.total)
+          .map((itemInvoice: IItemInvoice) => itemInvoice.original_amount)
           .reduce((a, b) => a + b, 0),
         showCurrency,
       ),
       is_dollar: item.is_dollar ? 'Si' : 'No',
-      paid_by: item.payment_methods.map((item) => PaymentMethodsEnum[item.name]).join(', '),
-      is_override: item.is_override ? 'Si' : 'No',
+      paid_by: item.payment_methods
+        .map((item) => PaymentMethodsEnum[item.name as unknown as keyof typeof PaymentMethodsEnum])
+        .join(', '),
       action: (
         <div className='flex'>
           <Button onClick={() => formatDataToPrint(item)} disabled={isLoadingResolution}>
@@ -100,26 +98,26 @@ const Invoices: FC = () => {
   }
 
   const formatDataToPrint = (data: IInvoiceProps) => {
-    const customerData: ICustomerDataProps = {
+    const customerData = {
       customerName: data.customer_name,
       customerId: data.customer_id,
       customerEmail: data.customer_email,
       customerPhone: data.customer_phone,
     }
-    const getDianResolution = dianResolutionData?.data.filter(
+    const getDianResolution = dianResolutionData?.results.filter(
       (item) => item.document_number === data.dian_document_number,
     )[0]
 
     const printData: IPrintData = {
-      data: data.invoice_items,
-      saleName: data.sale_name,
-      date: data.created_at,
-      customerData,
-      paymentMethods: data.payment_methods,
-      dianResolution: getDianResolution ?? ({} as IDianResolutionProps),
-      invoiceNumber: data.invoice_number,
-      isOverride: data.is_override,
-    }
+      // data: data.invoice_items,
+      // saleName: data.sale_name,
+      // date: data.created_at,
+      // customerData,
+      // paymentMethods: data.payment_methods,
+      // dianResolution: getDianResolution ?? ({} as IDianResolutionProps),
+      // invoiceNumber: data.invoice_number,
+      // isOverride: data.is_override,
+    } as IPrintData
     setPrintData(printData)
     setShowPrintOut(true)
   }
