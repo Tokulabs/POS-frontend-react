@@ -5,9 +5,9 @@ export const columns = [
     key: 'invoice_number',
   },
   {
-    title: 'Creado Por',
-    dataIndex: 'created_by_name',
-    key: 'created_by_name',
+    title: 'Vendido por Por',
+    dataIndex: 'sale_by_name',
+    key: 'sale_by_name',
   },
   {
     title: 'Fecha',

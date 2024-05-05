@@ -1,24 +1,43 @@
 import { useMutation } from '@tanstack/react-query'
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { postInvoicesNew } from '../../Invoices/helpers/services'
-import { DataPropsForm } from '../../../types/GlobalTypes'
+import { DataPropsForm, IPrintData } from '../../../types/GlobalTypes'
 import { useCart } from '../../../store/useCartStoreZustand'
 import { useCustomerData } from '../../../store/useCustomerStoreZustand'
 import { usePaymentMethodsData } from '../../../store/usePaymentMethodsZustand'
 import { IPaymentMethodToSend, PaymentMethodsEnum } from './types/PaymentMethodsTypes'
 import { usePOSStep } from '../../../store/usePOSSteps'
-import { Spin } from 'antd'
+import { Spin, notification } from 'antd'
 import { IconCheck, IconPrinter, IconScriptPlus, IconX } from '@tabler/icons-react'
 import { useKeyPress } from '../../../hooks/useKeyPress'
+import { useReactToPrint } from 'react-to-print'
+import PrintOut from '../../../components/Print/PrintOut'
+import { buildPrintDataFromInvoiceProps } from '../../../utils/helpers'
+import { IInvoiceProps } from '../../Invoices/types/InvoicesTypes'
 
 export const CreateInvoice = () => {
+  const componentRef = useRef<HTMLDivElement>(null)
+  const [dataToPrint, setDataToPrint] = useState<IPrintData>({} as IPrintData)
   const { cartItems, saleById, clearCart } = useCart()
   const { customer, clearCustomerData } = useCustomerData()
-  const { paymentTerminaID, paymentMethods, clearPaymentMethods } = usePaymentMethodsData()
+  const { paymentTerminaID, paymentMethods, clearPaymentMethods, isDollar } =
+    usePaymentMethodsData()
   const { currentStep, updateCurrentStep } = usePOSStep()
+
+  const [api] = notification.useNotification()
+
+  const openNotification = (message: string) => {
+    api.info({
+      message,
+    })
+  }
 
   useKeyPress('F2', () => {
     newPurchase()
+  })
+
+  useKeyPress('F1', () => {
+    handlePrint()
   })
 
   const getKeyFromValue = (value: string): string | undefined => {
@@ -52,9 +71,7 @@ export const CreateInvoice = () => {
   })
 
   const customer_id = customer.id
-
   const payment_terminal_id = paymentTerminaID || null
-
   const sale_by_id = saleById || null
 
   const {
@@ -63,6 +80,12 @@ export const CreateInvoice = () => {
     isError,
   } = useMutation({
     mutationFn: postInvoicesNew,
+    onSuccess: async (response) => {
+      const dataToPrintHelper = await buildPrintDataFromInvoiceProps(
+        response?.data ?? ({} as IInvoiceProps),
+      )
+      setDataToPrint(dataToPrintHelper)
+    },
   })
 
   const invoiceData: DataPropsForm = {
@@ -71,6 +94,7 @@ export const CreateInvoice = () => {
     payment_terminal_id,
     sale_by_id,
     payment_methods,
+    is_dollar: isDollar,
   }
 
   useEffect(() => {
@@ -84,8 +108,15 @@ export const CreateInvoice = () => {
     updateCurrentStep(0)
   }
 
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+    onBeforePrint: () => openNotification('Imprimiendo factura...'),
+    onAfterPrint: () => openNotification('Factura impresa correctamente!'),
+    removeAfterPrint: true,
+  })
+
   return (
-    <section className='flex justify-center items-center w-full h-full'>
+    <section className='flex justify-center items-center w-full h-full relative'>
       {isPending && <Spin size='large' />}
       {isError && (
         <section className='flex justify-center items-center flex-col gap-8'>
@@ -111,7 +142,10 @@ export const CreateInvoice = () => {
           </div>
           <span className='text-4xl text-green-1 font-bold'>Factura creada correctamente!</span>
           <div className='flex gap-4'>
-            <div className='flex flex-col justify-center items-center p-6 bg-green-1 rounded-md border-solid text-white border-white hover:bg-white hover:border-green-1 hover:text-green-1 hover:cursor-pointer'>
+            <div
+              className='flex flex-col justify-center items-center p-6 bg-green-1 rounded-md border-solid text-white border-white hover:bg-white hover:border-green-1 hover:text-green-1 hover:cursor-pointer'
+              onClick={handlePrint}
+            >
               <IconPrinter size={36} />
               <span className='text-lg'>Impimir [F1]</span>
             </div>
@@ -123,6 +157,11 @@ export const CreateInvoice = () => {
             </div>
           </div>
         </section>
+      )}
+      {dataToPrint.dianResolution && (
+        <div ref={componentRef} className='flex absolute -z-10'>
+          <PrintOut printDataComponent={dataToPrint} />
+        </div>
       )}
     </section>
   )

@@ -1,4 +1,4 @@
-import { Button, notification } from 'antd'
+import { Button, Spin, notification } from 'antd'
 import { FC, useEffect, useRef, useState } from 'react'
 import PrintOut from '../../components/Print/PrintOut'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
@@ -7,7 +7,7 @@ import { columns } from './data/columnsData'
 import { IInvoiceProps, IItemInvoice } from './types/InvoicesTypes'
 import { useReactToPrint } from 'react-to-print'
 import { formatDateTime } from '../../layouts/helpers/helpers'
-import { formatNumberToColombianPesos } from '../../utils/helpers'
+import { calcTotalPrices, formatNumberToColombianPesos } from '../../utils/helpers'
 import { useInvoices } from '../../hooks/useInvoices'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { patchOverrideInvoice } from './helpers/services'
@@ -16,6 +16,7 @@ import { useDianResolutions } from '../../hooks/useDianResolution'
 import { IDianResolutionProps } from '../Dian/types/DianResolutionTypes'
 import { useRolePermissions } from '../../hooks/useRolespermissions'
 import { PaymentMethodsEnum } from '../POS/components/types/PaymentMethodsTypes'
+import { IPosData } from '../POS/components/types/TableTypes'
 
 const Invoices: FC = () => {
   const [showPrintOut, setShowPrintOut] = useState(false)
@@ -23,10 +24,7 @@ const Invoices: FC = () => {
   const [printData, setPrintData] = useState<IPrintData>({} as IPrintData)
   const queryClient = useQueryClient()
   const { isLoading, invoicesData } = useInvoices('paginatedInvoices', { page: currentPage })
-  const { dianResolutionData, isPending: isLoadingResolution } = useDianResolutions(
-    'allDianResolutions',
-    {},
-  )
+
   const allowedRolesOverride = [
     UserRolesEnum.admin,
     UserRolesEnum.posAdmin,
@@ -47,34 +45,30 @@ const Invoices: FC = () => {
     },
   })
   const pushActionToList = () => {
-    const showCurrency = true
-    return invoicesData?.results.map((item) => ({
-      ...item,
-      created_by_name: item.created_by.fullname || 'SuperAdmin',
-      created_at: formatDateTime(item.created_at as string),
-      total: formatNumberToColombianPesos(
-        item.invoice_items
-          .map((itemInvoice: IItemInvoice) => itemInvoice.original_amount)
-          .reduce((a, b) => a + b, 0),
-        showCurrency,
-      ),
-      is_dollar: item.is_dollar ? 'Si' : 'No',
-      paid_by: item.payment_methods
-        .map((item) => PaymentMethodsEnum[item.name as unknown as keyof typeof PaymentMethodsEnum])
-        .join(', '),
-      action: (
-        <div className='flex'>
-          <Button onClick={() => formatDataToPrint(item)} disabled={isLoadingResolution}>
-            {isLoadingResolution ? 'Cargando' : 'Imprimir'}
-          </Button>
-          {isLoadingOverride
-            ? 'Cargando...'
-            : hasPermission && (
-                <Button onClick={() => overrideInvoice(item.invoice_number)}>Anular</Button>
-              )}
-        </div>
-      ),
-    }))
+    const invoiceData: IInvoiceProps[] = invoicesData?.results ?? ({} as IInvoiceProps[])
+    // return invoicesData?.results.map((item) => ({
+    //   ...item,
+    //   sale_by_name: item.sale_by.fullname || 'SuperAdmin',
+    //   created_at: formatDateTime(item.created_at as string),
+    //   total:
+    //   is_dollar: item.is_dollar ? 'Si' : 'No',
+    //   is_override: item.is_override ? 'Si' : 'No',
+    //   paid_by: item.payment_methods
+    //     .map((item) => PaymentMethodsEnum[item.name as unknown as keyof typeof PaymentMethodsEnum])
+    //     .join(', '),
+    //   action: (
+    //     <div className='flex'>
+    //       <Button onClick={() => console.log('imprimir')}>Imprimir</Button>
+    //       {isLoadingOverride ? (
+    //         <Spin />
+    //       ) : (
+    //         hasPermission && (
+    //           <Button onClick={() => overrideInvoice(item.invoice_number)}>Anular</Button>
+    //         )
+    //       )}
+    //     </div>
+    //   ),
+    // }))
   }
 
   const handlePrint = useReactToPrint({
@@ -97,31 +91,6 @@ const Invoices: FC = () => {
     mutate(invoiceNumber)
   }
 
-  const formatDataToPrint = (data: IInvoiceProps) => {
-    const customerData = {
-      customerName: data.customer_name,
-      customerId: data.customer_id,
-      customerEmail: data.customer_email,
-      customerPhone: data.customer_phone,
-    }
-    const getDianResolution = dianResolutionData?.results.filter(
-      (item) => item.document_number === data.dian_document_number,
-    )[0]
-
-    const printData: IPrintData = {
-      // data: data.invoice_items,
-      // saleName: data.sale_name,
-      // date: data.created_at,
-      // customerData,
-      // paymentMethods: data.payment_methods,
-      // dianResolution: getDianResolution ?? ({} as IDianResolutionProps),
-      // invoiceNumber: data.invoice_number,
-      // isOverride: data.is_override,
-    } as IPrintData
-    setPrintData(printData)
-    setShowPrintOut(true)
-  }
-
   useEffect(() => {
     if (showPrintOut) {
       handlePrint()
@@ -140,9 +109,6 @@ const Invoices: FC = () => {
         currentPage={currentPage}
         onChangePage={(page) => setcurrentPage(page)}
       />
-      <div ref={printOutRef}>
-        {showPrintOut && !isLoadingResolution ? <PrintOut printData={printData} /> : null}
-      </div>
     </>
   )
 }
