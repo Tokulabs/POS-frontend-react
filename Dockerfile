@@ -1,9 +1,6 @@
-FROM node:21
-
-ENV PORT=3000
-
+FROM node:21 as build-stage
 WORKDIR /inventory-frontend
-COPY package.json .
+COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build
