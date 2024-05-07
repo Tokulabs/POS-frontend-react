@@ -28,10 +28,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Setup Node 20
-        uses: actions/setup-node@v2
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: '20'
 
       - name: chmod
         run: chmod -R +x ./.github
@@ -44,4 +44,4 @@ jobs:
 
       - name: Upload Artifact to s3
         run: aws s3 cp $GITHUB_WORKSPACE/dist s3://${{ env.S3BUCKET }} --recursive
-        #Note: build is for create-react-app builds and dist for vite builds
+        # Note: build is for create-react-app builds and dist for vite builds
