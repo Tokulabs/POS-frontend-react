@@ -1,12 +1,12 @@
-name: Deploy React Book App from GitHub to AWS Elastic Beanstalk
+name: Deploy React App from GitHub to AWS Elastic Beanstalk
 on:
-  # activates the workflow when there is a push on the main branch
+  # activates the workflow when there is a push on the master branch
   push:
     branches:
       - master
 jobs:
   deploy:
-    runs-on: ubuntu-latest # the OS your job should run on
+    runs-on: ubuntu-latest # the operating system your job should run on
     strategy:
       matrix:
         node-version: [21.x]
@@ -17,7 +17,7 @@ jobs:
 
       - name: Generate Deployment Package
         # zip all files except .git
-        run: zip -r PosFrontendApp.zip * -x "**.git**"
+        run: zip -r deploy-pos-signos-frontend.zip * -x "**.git**"
 
       - name: Get timestamp
         uses: gerred/actions/current-time@master
@@ -39,11 +39,11 @@ jobs:
           #  input the credentials you used to setup AWS CLI and credentials for the application environment
           aws_access_key: '${{ secrets.ACCESS_KEY }}'
           aws_secret_key: '${{ secrets.SECRET_ACCESS_KEY }}'
-          application_name: POS-signos-frontend
+          application_name: POS-signos-frontend-env
           environment_name: POS-signos-frontend-env
           version_label: 'app-${{ steps.format-time.outputs.replaced }}'
           region: us-east-1
-          deployment_package: PosFrontendApp.zip
+          deployment_package: deploy-pos-signos-frontend.zip
 
       - name: Deployed!
         run: echo App deployed to ELB
