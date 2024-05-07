@@ -7,7 +7,7 @@ on:
 
 env:
   applicationfolder: 'dist'
-  AWS_REGION: eu-east-1
+  AWS_REGION: us-east-1
   S3BUCKET: tokulabs-prod
   CI: false
 
