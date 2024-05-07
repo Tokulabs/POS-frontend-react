@@ -3,7 +3,7 @@ import { IQueryParams } from '../types/GlobalTypes'
 import { getInvoicesNew } from '../pages/Invoices/helpers/services'
 
 export const useInvoices = (queryKey: string, queryParamas?: IQueryParams) => {
-  const queryKeyToSend: QueryKey = [queryKey]
+  const queryKeyToSend: QueryKey = [queryKey, queryParamas]
   const { isLoading, data: invoicesData } = useQuery({
     queryKey: queryKeyToSend,
     queryFn: async () => getInvoicesNew(queryParamas || {}),

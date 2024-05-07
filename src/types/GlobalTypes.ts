@@ -1,27 +1,11 @@
 import { Moment } from 'moment'
-import { IDianResolutionProps } from '../pages/Dian/types/DianResolutionTypes'
 import {
   PaymentMethodsEnum,
-  IPaymentMethod,
   IPaymentMethodToSend,
 } from '../pages/POS/components/types/PaymentMethodsTypes'
-export interface IPurchaseProps {
-  code: string
-  id: number
-  item: string
-  qty: number
-  price?: number
-  total: number
-  action?: React.ReactElement
-  key?: number
-  selling_price?: number
-  usd_price?: number
-  totalUSD?: number
-}
-
-export interface IPurchaseAddRemoveProps {
-  [key: number]: number
-}
+import { ICustomerProps } from '../pages/POS/components/types/CustomerTypes'
+import { IPosData } from '../pages/POS/components/types/TableTypes'
+import { IDianResolutionProps } from '../pages/Dian/types/DianResolutionTypes'
 
 export interface DataPropsForm {
   [key: string]:
@@ -48,13 +32,14 @@ export interface IPaginationProps<T> {
   previous: string | null
   results: T[]
 }
-
 export interface IPrintData {
-  data: IPurchaseProps[]
-  date?: string
-  customerData: { customerName: string; customerId: string }
-  paymentMethods: IPaymentMethod[]
-  saleName: string
+  created_at: string
+  customerData: ICustomerProps
+  dataItems: IPosData[]
+  paymentMethods: IPaymentMethodToSend[]
+  saleBy: {
+    fullname: string
+  }
   dianResolution: IDianResolutionProps
   invoiceNumber: number
   isOverride: boolean

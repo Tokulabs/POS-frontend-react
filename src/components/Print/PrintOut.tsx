@@ -1,24 +1,28 @@
 import { FC } from 'react'
 import { formatDateTime } from '../../layouts/helpers/helpers'
 import LogoSignos from './../../assets/logos/signos_logo.png'
-import { formatNumberToColombianPesos } from '../../utils/helpers'
-import { IPrintData } from '../../types/GlobalTypes'
+import { calcTotalPrices, formatNumberToColombianPesos } from '../../utils/helpers'
 import OverrideImage from '../../assets/logos/images.png'
 import { PaymentMethodsEnum } from '../../pages/POS/components/types/PaymentMethodsTypes'
+import { IPrintData } from '../../types/GlobalTypes'
 
-const PrintOut: FC<{
-  printData: IPrintData
-}> = ({ printData }) => {
+interface IPrintCOmponent {
+  printDataComponent: IPrintData
+}
+
+const PrintOut: FC<IPrintCOmponent> = ({ printDataComponent }) => {
   const {
     customerData,
-    data,
+    dataItems,
     paymentMethods,
-    saleName,
-    date,
+    saleBy,
     dianResolution,
     invoiceNumber,
     isOverride,
-  } = printData
+    created_at,
+  } = printDataComponent
+
+  const { discountCOP, taxesIVACOP, totalCOP, subtotalCOP } = calcTotalPrices(dataItems)
 
   return (
     <article className='bg-transparent flex flex-col w-[19rem] justify-center items-center text-center p-3 gap-1 relative'>
@@ -42,12 +46,13 @@ const PrintOut: FC<{
           habilita del {dianResolution.from_number} al {dianResolution.to_number}
         </p>
         <p className='m-0 text-xs self-start'>
-          Nombre: {customerData.customerName} ID: {customerData.customerId}
+          Nombre: {customerData.name} ID: {customerData.document_id}
         </p>
         <section className='flex justify-between items-center w-full'>
           <p className='m-0 text-xs text-start'>D. E ./P. O. S GUA-{invoiceNumber}</p>
           <p className='m-0 text-xs text-start'>
-            Fec. {date ? formatDateTime(date, true, false) : formatDateTime(undefined, true)}
+            Fec.{' '}
+            {created_at ? formatDateTime(created_at, true, false) : formatDateTime(undefined, true)}
           </p>
         </section>
       </section>
@@ -59,12 +64,12 @@ const PrintOut: FC<{
           <p className='m-0 text-right text-sm font-bold'>Subtotal</p>
         </section>
         <section className='border-0 border-b-[1px] border-black border-solid p-1'>
-          {data.map((item, index) => {
+          {dataItems.map((item, index) => {
             return (
               <div key={index} className='grid grid-cols-4 w-full gap-2'>
                 <p className='m-0 text-left text-xs truncate'>{item.code}</p>
-                <p className='m-0 text-left text-xs uppercase'>{item.item}</p>
-                <p className='m-0 text-right text-xs'>{item.qty}</p>
+                <p className='m-0 text-left text-xs uppercase'>{item.name}</p>
+                <p className='m-0 text-right text-xs'>{item.quantity}</p>
                 <p className='m-0 text-right text-xs'>{formatNumberToColombianPesos(item.total)}</p>
               </div>
             )
@@ -74,14 +79,14 @@ const PrintOut: FC<{
           <section className='text-xs text-right font-bold'>
             <p className='m-0 text-right text-sm'>Subtotal base</p>
             <p className='m-0 text-right text-sm'>IVA 19%</p>
-            <p className='m-0 text-right text-sm'>INC</p>
+            <p className='m-0 text-right text-sm'>Descuento</p>
             <p className='m-0 text-right text-sm'>Total</p>
           </section>
           <section className='text-xs text-right'>
-            <p className='m-0 text-right text-sm'>{}</p>
-            <p className='m-0 text-right text-sm'>{}</p>
-            <p className='m-0 text-right text-sm'>0</p>
-            <p className='m-0 text-right text-sm'>{}</p>
+            <p className='m-0 text-right text-sm'>{formatNumberToColombianPesos(subtotalCOP)}</p>
+            <p className='m-0 text-right text-sm'>{formatNumberToColombianPesos(taxesIVACOP)}</p>
+            <p className='m-0 text-right text-sm'>{formatNumberToColombianPesos(discountCOP)}</p>
+            <p className='m-0 text-right text-sm'>{formatNumberToColombianPesos(totalCOP)}</p>
           </section>
         </section>
         <section className='grid grid-cols-4 w-full p-1'>
@@ -98,20 +103,20 @@ const PrintOut: FC<{
                   {PaymentMethodsEnum[item.name as unknown as keyof typeof PaymentMethodsEnum]}
                 </p>
                 <p className='m-0 text-right text-xs'>
-                  {formatNumberToColombianPesos(item.totalPaidAmount)}
+                  {formatNumberToColombianPesos(item.paid_amount ?? 0)}
                 </p>
                 <p className='m-0 text-right text-xs'>
-                  {formatNumberToColombianPesos(item.receivedAmount)}
+                  {formatNumberToColombianPesos(item.received_amount ?? 0)}
                 </p>
                 <p className='m-0 text-right text-xs'>
-                  {formatNumberToColombianPesos(item.backAmount)}
+                  {formatNumberToColombianPesos(item.back_amount ?? 0)}
                 </p>
               </div>
             )
           })}
         </section>
       </article>
-      <h5 className='self-start'>Venderdor: {saleName}</h5>
+      <h5 className='self-start'>Venderdor: {saleBy.fullname}</h5>
       <h4 className='font-bold uppercase'>GRACIAS POR SU COMPRA !!!!</h4>
     </article>
   )

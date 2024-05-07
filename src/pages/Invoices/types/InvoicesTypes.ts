@@ -1,4 +1,6 @@
-import { IPaymentMethod } from '../../POS/components/types/PaymentMethodsTypes'
+import { IDianResolutionProps } from '../../Dian/types/DianResolutionTypes'
+import { ICustomerProps } from '../../POS/components/types/CustomerTypes'
+import { IPaymentMethodToSend } from '../../POS/components/types/PaymentMethodsTypes'
 
 export interface IInvoiceProps {
   id: number
@@ -8,15 +10,14 @@ export interface IInvoiceProps {
     fullname: string
   }
   invoice_items: IItemInvoice[]
-  sale_name: string
-  customer_id: string
-  customer_name: string
-  customer_email: string | null
-  customer_phone: string | null
-  payment_methods: IPaymentMethod[]
+  sale_by: {
+    fullname: string
+  }
+  customer: ICustomerProps
+  payment_methods: IPaymentMethodToSend[]
   is_dollar: boolean
   invoice_number: number
-  dian_document_number: string
+  dian_resolution: IDianResolutionProps
   is_override: boolean
   key?: number
 }
@@ -35,4 +36,5 @@ export interface IItemInvoice {
   original_usd_amount: number
   quantity: number
   usd_amount: number
+  is_gift: boolean
 }

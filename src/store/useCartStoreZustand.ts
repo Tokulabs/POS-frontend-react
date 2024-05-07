@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { IPosData } from '../pages/POS/components/types/TableTypes'
-import { calcMetaDataProdudct } from '../utils/helpers'
+import { calcMetaDataProdudct, calcTotalPrices } from '../utils/helpers'
 import { notification } from 'antd'
 
 interface ICartStore {
@@ -42,7 +42,7 @@ export const useCart = create<ICartStore>((set, get) => ({
       console.log(productExist)
       if (
         productExist.total_in_shops === 0 ||
-        productExist.quantity > productExist.total_in_shops
+        productExist.quantity > (productExist.total_in_shops || 0)
       ) {
         notification.error({
           message: 'Producto sin existencias',
@@ -109,33 +109,8 @@ export const useCart = create<ICartStore>((set, get) => ({
   },
   updateTotalPrice: () => {
     const { cartItems } = get()
-    let subtotalCOP = 0
-    let discountCOP = 0
-    let taxesIVACOP = 0
-    let subtotalUSD = 0
-    let discountUSD = 0
-    let totalCOP = 0
-    let totalUSD = 0
-
-    cartItems.forEach((item) => {
-      const {
-        itemDiscountCOP,
-        itemDiscountUSD,
-        itemTaxesCOP,
-        itemWithNoTaxCOP,
-        itemWithNoTaxUSD,
-        totalItemCOP,
-        totalItemUSD,
-      } = calcMetaDataProdudct(item)
-
-      subtotalCOP += Math.round(itemWithNoTaxCOP)
-      subtotalUSD += Math.round(itemWithNoTaxUSD)
-      discountCOP += Math.round(itemDiscountCOP)
-      taxesIVACOP += Math.round(itemTaxesCOP)
-      discountUSD += Math.round(itemDiscountUSD)
-      totalCOP += Math.round(totalItemCOP)
-      totalUSD += Math.round(totalItemUSD)
-    })
+    const { discountCOP, discountUSD, subtotalCOP, subtotalUSD, taxesIVACOP, totalCOP, totalUSD } =
+      calcTotalPrices(cartItems)
     set({
       subtotalCOP,
       discountCOP,
@@ -170,7 +145,7 @@ export const useCart = create<ICartStore>((set, get) => ({
       productExist.quantity = quantity
       if (
         productExist.total_in_shops === 0 ||
-        productExist.quantity > productExist.total_in_shops
+        productExist.quantity > (productExist.total_in_shops || 0)
       ) {
         notification.error({
           message: 'Producto sin existencias',
