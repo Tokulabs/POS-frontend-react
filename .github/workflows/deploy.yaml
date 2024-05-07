@@ -1,0 +1,47 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  applicationfolder: 'dist'
+  AWS_REGION: eu-east-1
+  S3BUCKET: tokulabs-prod
+  CI: false
+
+jobs:
+  build:
+    name: Build and Package
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@0e613a0980cbf65ed5b322eb7a1e075d28913a83
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Node 21
+        uses: actions/setup-node@v3
+        with:
+          node-version: 21
+
+      - name: chmod
+        run: chmod -R +x ./.github
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build and Package
+        run: npm run build
+
+      - name: Upload Artifact to s3
+        run: aws s3 cp $GITHUB_WORKSPACE/build s3://${{ env.S3BUCKET }} --recursive
+        #Note: build is for create-react-app builds and dist for vite builds
