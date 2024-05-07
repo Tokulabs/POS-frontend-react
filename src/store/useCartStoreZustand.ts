@@ -42,7 +42,7 @@ export const useCart = create<ICartStore>((set, get) => ({
       console.log(productExist)
       if (
         productExist.total_in_shops === 0 ||
-        productExist.quantity > productExist.total_in_shops
+        productExist.quantity > (productExist.total_in_shops || 0)
       ) {
         notification.error({
           message: 'Producto sin existencias',
@@ -145,7 +145,7 @@ export const useCart = create<ICartStore>((set, get) => ({
       productExist.quantity = quantity
       if (
         productExist.total_in_shops === 0 ||
-        productExist.quantity > productExist.total_in_shops
+        productExist.quantity > (productExist.total_in_shops || 0)
       ) {
         notification.error({
           message: 'Producto sin existencias',

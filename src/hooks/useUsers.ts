@@ -3,7 +3,7 @@ import { IQueryParams } from '../types/GlobalTypes'
 import { getUsersNew } from '../pages/Users/helpers/services'
 
 export const useUsers = (queryKey: string, queryParamas?: IQueryParams) => {
-  const queryKeyToSend: QueryKey = [queryKey]
+  const queryKeyToSend: QueryKey = [queryKey, queryParamas]
   const { isLoading, data: usersData } = useQuery({
     queryKey: queryKeyToSend,
     queryFn: async () => getUsersNew(queryParamas ?? {}),

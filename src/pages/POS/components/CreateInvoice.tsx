@@ -24,14 +24,6 @@ export const CreateInvoice = () => {
     usePaymentMethodsData()
   const { currentStep, updateCurrentStep } = usePOSStep()
 
-  const [api] = notification.useNotification()
-
-  const openNotification = (message: string) => {
-    api.info({
-      message,
-    })
-  }
-
   useKeyPress('F2', () => {
     newPurchase()
   })
@@ -64,7 +56,7 @@ export const CreateInvoice = () => {
           paid_amount: paidAmount,
           transaction_code: item.transactionNumber[index] || null,
           back_amount: item.backAmount || 0,
-          received_amount: paidAmount,
+          received_amount: item.name === PaymentMethodsEnum.cash ? item.receivedAmount : paidAmount,
         })
       }
     })
@@ -110,8 +102,8 @@ export const CreateInvoice = () => {
 
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
-    onBeforePrint: () => openNotification('Imprimiendo factura...'),
-    onAfterPrint: () => openNotification('Factura impresa correctamente!'),
+    onBeforePrint: () => notification.info({ message: 'Imprimiendo factura...' }),
+    onAfterPrint: () => notification.info({ message: 'Factura impresa correctamente' }),
     removeAfterPrint: true,
   })
 
@@ -158,7 +150,7 @@ export const CreateInvoice = () => {
           </div>
         </section>
       )}
-      {dataToPrint.dianResolution && (
+      {dataToPrint?.dataItems?.length > 0 && (
         <div ref={componentRef} className='flex absolute -z-10'>
           <PrintOut printDataComponent={dataToPrint} />
         </div>

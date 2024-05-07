@@ -3,7 +3,7 @@ import { IQueryParams } from '../types/GlobalTypes'
 import { getGroupsNew } from '../pages/Groups/helpers/services'
 
 export const useGroups = (queryKey: string, queryParamas?: IQueryParams) => {
-  const queryKeyToSend: QueryKey = [queryKey]
+  const queryKeyToSend: QueryKey = [queryKey, queryParamas]
   const { isLoading, data: groupsData } = useQuery({
     queryKey: queryKeyToSend,
     queryFn: async () => getGroupsNew(queryParamas ?? {}),

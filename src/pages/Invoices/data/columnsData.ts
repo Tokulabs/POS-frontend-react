@@ -20,7 +20,7 @@ export const columns = [
     key: 'total',
   },
   {
-    title: 'Pago en dolares',
+    title: 'Moneda de Pago',
     dataIndex: 'is_dollar',
     key: 'is_dollar',
   },

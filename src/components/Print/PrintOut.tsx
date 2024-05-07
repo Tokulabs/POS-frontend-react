@@ -79,7 +79,7 @@ const PrintOut: FC<IPrintCOmponent> = ({ printDataComponent }) => {
           <section className='text-xs text-right font-bold'>
             <p className='m-0 text-right text-sm'>Subtotal base</p>
             <p className='m-0 text-right text-sm'>IVA 19%</p>
-            <p className='m-0 text-right text-sm'>Descuanto</p>
+            <p className='m-0 text-right text-sm'>Descuento</p>
             <p className='m-0 text-right text-sm'>Total</p>
           </section>
           <section className='text-xs text-right'>

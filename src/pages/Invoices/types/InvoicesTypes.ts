@@ -1,3 +1,4 @@
+import { IDianResolutionProps } from '../../Dian/types/DianResolutionTypes'
 import { ICustomerProps } from '../../POS/components/types/CustomerTypes'
 import { IPaymentMethodToSend } from '../../POS/components/types/PaymentMethodsTypes'
 
@@ -16,7 +17,7 @@ export interface IInvoiceProps {
   payment_methods: IPaymentMethodToSend[]
   is_dollar: boolean
   invoice_number: number
-  dian_document_number: string
+  dian_resolution: IDianResolutionProps
   is_override: boolean
   key?: number
 }

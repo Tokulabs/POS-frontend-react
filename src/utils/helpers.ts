@@ -1,5 +1,3 @@
-import { getDianResolutions } from '../pages/Dian/helpers/services'
-import { IDianResolutionProps } from '../pages/Dian/types/DianResolutionTypes'
 import { IInvoiceProps } from '../pages/Invoices/types/InvoicesTypes'
 import { ICustomerProps } from '../pages/POS/components/types/CustomerTypes'
 import { IPosData } from '../pages/POS/components/types/TableTypes'
@@ -118,25 +116,24 @@ export const buildPrintDataFromInvoiceProps = async (
   return {
     customerData: invoice?.customer ?? ({} as ICustomerProps),
     dataItems:
-      invoice?.invoice_items.map((item) => {
-        return {
-          code: item.item_code,
-          name: item.item_name,
-          selling_price: item.item.selling_price,
-          usd_price: item.item.usd_price,
-          discount: item.discount,
-          quantity: item.quantity,
-          total: item.amount,
-          usd_total: item.usd_amount,
-          total_in_shops: item.original_amount,
-          is_gift: item.is_gift,
-          id: item.id,
-        } as IPosData
-      }) ?? ([] as IPosData[]),
-    dianResolution:
-      (await getDianResolutions({ document_number: invoice.dian_document_number }).then(
-        (res) => res?.results[0],
-      )) ?? ({} as IDianResolutionProps),
+      invoice.invoice_items
+        .filter((item) => !item.is_gift)
+        .map((item) => {
+          return {
+            code: item.item_code,
+            name: item.item_name,
+            selling_price: item.item.selling_price,
+            usd_price: item.item.usd_price,
+            discount: item.discount,
+            quantity: item.quantity,
+            total: item.amount,
+            usd_total: item.usd_amount,
+            total_in_shops: item.original_amount,
+            is_gift: item.is_gift,
+            id: item.id,
+          } as IPosData
+        }) ?? ([] as IPosData[]),
+    dianResolution: invoice.dian_resolution,
     invoiceNumber: invoice.invoice_number,
     isOverride: invoice.is_override,
     paymentMethods: invoice.payment_methods,

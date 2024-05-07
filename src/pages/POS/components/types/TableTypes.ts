@@ -16,9 +16,9 @@ export interface IPosData {
   quantity: number
   total: number
   usd_total: number
-  total_in_shops: number
   is_gift: boolean
   id: number
+  total_in_shops?: number
   photo?: string
 }
 
