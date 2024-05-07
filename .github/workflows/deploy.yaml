@@ -6,7 +6,6 @@ on:
       - master
 
 env:
-  applicationfolder: 'dist'
   AWS_REGION: us-east-1
   S3BUCKET: tokulabs-prod
   CI: false
@@ -43,5 +42,5 @@ jobs:
         run: npm run build
 
       - name: Upload Artifact to s3
-        run: aws s3 cp $GITHUB_WORKSPACE/build s3://${{ env.S3BUCKET }} --recursive
+        run: aws s3 cp $GITHUB_WORKSPACE/dist s3://${{ env.S3BUCKET }} --recursive
         #Note: build is for create-react-app builds and dist for vite builds
