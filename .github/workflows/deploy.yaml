@@ -5,6 +5,12 @@ on:
     branches:
       - master
 
+env:
+  VITE_BASE_URL: ${{ secrets.VITE_BASE_URL}}
+  AWS_REGION: us-east-1
+  S3BUCKET: ${{ secrets.BUCKET_NAME}}
+  CI: false
+
 jobs:
   build:
     name: Build and Package
@@ -12,11 +18,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    env:
-      VITE_BASE_URL: ${{ env.VITE_BASE_URL}}
-      AWS_REGION: us-east-1
-      S3BUCKET: ${{ secrets.BUCKET_NAME}}
-      CI: false
     steps:
       - uses: actions/checkout@v4
 
