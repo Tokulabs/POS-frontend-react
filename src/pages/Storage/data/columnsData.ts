@@ -5,6 +5,11 @@ export const columns = [
     key: 'code',
   },
   {
+    title: 'Activo',
+    dataIndex: 'active',
+    key: 'active',
+  },
+  {
     title: 'Foto',
     dataIndex: 'photoInfo',
     key: 'photoInfo',

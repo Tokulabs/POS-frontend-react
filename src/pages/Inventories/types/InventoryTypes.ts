@@ -4,6 +4,7 @@ import { IProvider } from '../../Providers/types/ProviderTypes'
 
 export interface IInventoryProps {
   id: number
+  active: boolean
   code: string
   name: string
   created_by: {

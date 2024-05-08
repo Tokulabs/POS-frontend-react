@@ -4,19 +4,28 @@ import { columns } from './data/columsData'
 import AddProviderForm from './Components/addProviderForm'
 import { useProviders } from '../../hooks/useProviders'
 import { IProvider } from './types/ProviderTypes'
-import { IconEdit, IconTrash } from '@tabler/icons-react'
-import { Button, Popconfirm, notification } from 'antd'
+import {
+  IconCircleCheck,
+  IconCircleX,
+  IconEdit,
+  IconSquareCheck,
+  IconTrash,
+} from '@tabler/icons-react'
+import { Button, Popconfirm, Switch, notification } from 'antd'
 import { ModalStateEnum } from '../../types/ModalTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { deleteProviders } from './helpers/services'
+import { toggleActiveProvider } from './helpers/services'
 
 const Providers: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
+  const [showActive, setShowActive] = useState(true)
+  const [editData, setEditData] = useState<IProvider>({} as IProvider)
+
   const { isLoading, providersData } = useProviders('paginatedProviders', {
     page: currentPage,
+    active: showActive ? 'True' : undefined,
   })
-  const [editData, setEditData] = useState<IProvider>({} as IProvider)
 
   const queryClient = useQueryClient()
 
@@ -26,17 +35,17 @@ const Providers: FC = () => {
   }
 
   const { mutate, isPending: isLoadingDelete } = useMutation({
-    mutationFn: deleteProviders,
-    onSuccess: () => {
+    mutationFn: toggleActiveProvider,
+    onSuccess: (item) => {
       queryClient.invalidateQueries({ queryKey: ['paginatedProviders'] })
       notification.success({
         message: 'Exito',
-        description: 'Datafono eliminado!',
+        description: `Proveedor ${item?.data.active ? 'Activado' : 'Desactivado'}`,
       })
     },
   })
 
-  const confirmDelete = (id: number) => {
+  const toggleActive = (id: number) => {
     if (isLoadingDelete) return
     mutate(id)
   }
@@ -44,21 +53,30 @@ const Providers: FC = () => {
   const formatEditAndDelete = (paymentTerminals: IProvider[]) => {
     return paymentTerminals.map((item) => ({
       ...item,
+      active: item.active ? (
+        <IconCircleCheck className='text-green-1' />
+      ) : (
+        <IconCircleX className='text-red-1' />
+      ),
       action: (
         <div className='flex justify-center items-center gap-2'>
           <Button type='link' className='p-0' onClick={editProviderData(item)}>
             <IconEdit />
           </Button>
           <Popconfirm
-            title='Eliminar Proveedor'
-            description='¿Estas seguro de eliminar este proveedor?'
-            onConfirm={() => confirmDelete(item.id)}
-            okText='Si, Eliminar'
+            title={`${item.active ? 'Desactivar' : 'Activar'} Proveedor`}
+            description={`¿Estas seguro de ${item.active ? 'desactivar' : 'activar'} este proveedor?`}
+            onConfirm={() => toggleActive(item.id)}
+            okText={`Si ${item.active ? 'Desactivar' : 'Activar'}`}
             cancelText='Cancelar'
           >
             <Button type='link' className='p-0'>
-              <IconTrash className='text-red-1 hover:text-red-400' />
-            </Button>{' '}
+              {item.active ? (
+                <IconTrash className='text-red-1 hover:text-red-400' />
+              ) : (
+                <IconSquareCheck className='text-green-1 hover:text-green-400' />
+              )}
+            </Button>
           </Popconfirm>
         </div>
       ),
@@ -70,6 +88,16 @@ const Providers: FC = () => {
       <ContentLayout
         pageTitle='Provedores'
         buttonTitle='Crear proveedor'
+        extraButton={
+          <div className='flex flex-col items-center gap-2'>
+            <span className='font-bold text-green-1'>Activos</span>
+            <Switch
+              value={showActive}
+              loading={isLoading}
+              onChange={() => setShowActive(!showActive)}
+            />
+          </div>
+        }
         setModalState={() => {
           setEditData({} as IProvider)
           setModalState(ModalStateEnum.addItem)

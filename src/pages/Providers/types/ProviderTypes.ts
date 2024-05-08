@@ -5,6 +5,11 @@ export interface IProvider {
   name: string
   legal_name: string
   nit: string
+  phone: string
+  email: string
+  bank_account: string
+  account_type: string
+  active: boolean
   action?: React.ReactElement
 }
 

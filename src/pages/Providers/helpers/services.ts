@@ -9,6 +9,7 @@ export const getProviders = async (queryParams: IQueryParams) => {
     const searchParams = new URLSearchParams()
     if (queryParams) {
       Object.entries(queryParams).forEach(([key, value]) => {
+        if (!value) return
         searchParams.set(key, value.toString())
       })
     }
@@ -56,14 +57,10 @@ export const putProviders = async (data: { values: DataPropsForm; id: number }) 
   }
 }
 
-export const deleteProviders = async (id: number) => {
-  try {
-    await axiosRequest({
-      method: 'delete',
-      url: `${providersURL}/${id}/`,
-      hasAuth: true,
-    })
-  } catch (e: unknown) {
-    throw new Error(e as string)
-  }
+export const toggleActiveProvider = async (id: number) => {
+  return await axiosRequest<IProvider>({
+    method: 'post',
+    url: `${providersURL}/${id}/toggle-active/`,
+    hasAuth: true,
+  })
 }

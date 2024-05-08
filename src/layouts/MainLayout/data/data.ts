@@ -86,7 +86,7 @@ export const SideBarData: ISideBarData[] = [
     icon: IconActivity,
     title: 'Actividad de Usuarios',
     path: '/user-activities',
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
+    allowedRoles: [UserRolesEnum.admin],
   },
   {
     icon: IconKey,

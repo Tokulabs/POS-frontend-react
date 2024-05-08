@@ -1,7 +1,7 @@
 import { FC, useState } from 'react'
 import { useDianResolutions } from '../../hooks/useDianResolution'
 import AddDianResolutionForm from './components/AddDianResolutionForm'
-import { IconArticle, IconArticleOff } from '@tabler/icons-react'
+import { IconArticle, IconArticleOff, IconCirclePlus } from '@tabler/icons-react'
 import { Button, Spin, Switch } from 'antd'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toggleDianResolution } from './helpers/services'
@@ -41,15 +41,19 @@ const Dian: FC = () => {
         <Spin size='large' />
       ) : (
         <div className='h-full bg-white rounded p-4 flex flex-col justify-between gap-3'>
-          <div className='w-full flex flex-col gap-4 mx-auto bg-white'>
+          <div className='w-full flex justify-between items-end gap-4 mx-auto bg-white'>
             <div className='w-full flex gap-1 justify-center flex-col'>
               <h4 className='font-bold text-green-1 text-3xl m-0'>Resoluciones DIAN</h4>
               <span className='font-semibold text-sm'>
                 (Tenga en cuenta que solo puede tener una resolucion de la DIAN activa a la vez)
               </span>
             </div>
-            <Button className='w-full' type='primary' onClick={() => setModalState(true)}>
-              Agregar Resolución de la DIAN
+            <Button
+              className='flex justify-center items-center gap-1'
+              type='primary'
+              onClick={() => setModalState(true)}
+            >
+              <IconCirclePlus /> <span>Resolución de la DIAN</span>
             </Button>
           </div>
           <div className='h-full overflow-hidden overflow-y-auto scrollbar-hide'>
@@ -101,7 +105,7 @@ const Dian: FC = () => {
                           <span className='font-bold'>{`${item.from_number} - ${item.to_number}`}</span>
                         </div>
                         <div className='flex flex-col'>
-                          <span className='text-sm'>Última factura #</span>
+                          <span className='text-sm'>Última factura registrada</span>
                           <span className='font-bold'>{item.current_number}</span>
                         </div>
                       </div>

@@ -9,6 +9,7 @@ export const getInventoriesNew = async (queryParams: IQueryParams) => {
     const searchParams = new URLSearchParams()
     if (queryParams) {
       Object.entries(queryParams).forEach(([key, value]) => {
+        if (!value) return
         searchParams.set(key, value.toString())
       })
     }
@@ -73,16 +74,12 @@ export const putInventoriesEdit = async (data: { values: DataPropsForm; id: numb
   }
 }
 
-export const deleteInventories = async (id: number) => {
-  try {
-    await axiosRequest({
-      method: 'delete',
-      url: `${inventoryURL}/${id}/`,
-      hasAuth: true,
-    })
-  } catch (e: unknown) {
-    throw new Error(e as string)
-  }
+export const toogleInventories = async (id: number) => {
+  return await axiosRequest<IInventoryProps>({
+    method: 'post',
+    url: `${inventoryURL}/${id}/toggle-active/`,
+    hasAuth: true,
+  })
 }
 
 export const postImageToCloudinary = async (file: FormData) => {

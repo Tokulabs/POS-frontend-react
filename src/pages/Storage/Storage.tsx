@@ -1,15 +1,21 @@
 import { FC, useState } from 'react'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
 import AddInventoryForm from './components/AddInventoryForm'
-import { Button, Popconfirm, notification } from 'antd'
+import { Button, Popconfirm, Switch, notification } from 'antd'
 import AddInventoryFormCSV from './components/AddInventoryFormCSV'
 import { columns } from './data/columnsData'
 import { formatNumberToColombianPesos } from '../../utils/helpers'
 import { useGroups } from '../../hooks/useGroups'
 import { useInventories } from '../../hooks/useInventories'
 import { IInventoryProps } from '../Inventories/types/InventoryTypes'
-import { IconEdit, IconTrash } from '@tabler/icons-react'
-import { deleteInventories } from '../Inventories/helpers/services'
+import {
+  IconCircleCheck,
+  IconCircleX,
+  IconEdit,
+  IconSquareCheck,
+  IconTrash,
+} from '@tabler/icons-react'
+import { toogleInventories } from '../Inventories/helpers/services'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ModalStateEnum } from '../../types/ModalTypes'
 import { useProviders } from '../../hooks/useProviders'
@@ -31,10 +37,12 @@ export const formatinventoryPhoto = (inventories: IInventoryProps[]) => {
 const Storage: FC = () => {
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
   const [currentPage, setcurrentPage] = useState(1)
+  const [showActive, setShowActive] = useState(true)
   const [editData, setEditData] = useState<IInventoryProps>({} as IInventoryProps)
 
   const { isLoading, inventoriesData } = useInventories('paginatedInventories', {
     page: currentPage,
+    active: showActive ? 'True' : undefined,
   })
   const { groupsData } = useGroups('allGroups', {})
   const { providersData } = useProviders('allProviders', {})
@@ -42,17 +50,17 @@ const Storage: FC = () => {
   const queryClient = useQueryClient()
 
   const { mutate, isPending: isLoadingDelete } = useMutation({
-    mutationFn: deleteInventories,
-    onSuccess: () => {
+    mutationFn: toogleInventories,
+    onSuccess: (item) => {
       queryClient.invalidateQueries({ queryKey: ['paginatedInventories'] })
       notification.success({
         message: 'Exito',
-        description: 'Item eliminado!',
+        description: `Prodcuto ${item?.data.active ? 'Activado' : 'Desactivado'}`,
       })
     },
   })
 
-  const confirm = (id: number) => {
+  const confirmtoggle = (id: number) => {
     if (isLoadingDelete) return
     mutate(id)
   }
@@ -61,6 +69,11 @@ const Storage: FC = () => {
     const showCurrency = true
     return inventories.map((item) => ({
       ...item,
+      active: item.active ? (
+        <IconCircleCheck className='text-green-1' />
+      ) : (
+        <IconCircleX className='text-red-1' />
+      ),
       selling_price: formatNumberToColombianPesos(item.selling_price ?? 0, showCurrency),
       buying_price: formatNumberToColombianPesos(item.buying_price ?? 0, showCurrency),
       action: (
@@ -69,14 +82,18 @@ const Storage: FC = () => {
             <IconEdit />
           </Button>
           <Popconfirm
-            title='Eliminar Producto'
-            description='¿Estas seguro de eliminar este producto?'
-            onConfirm={() => confirm(item.id)}
-            okText='Si, Eliminar'
+            title={`${item.active ? 'Desactivar' : 'Activar'} Producto`}
+            description={`¿Estas seguro de ${item.active ? 'desactivar' : 'activar'} este producto?`}
+            onConfirm={() => confirmtoggle(item.id)}
+            okText={`Si ${item.active ? 'Desactivar' : 'Activar'}`}
             cancelText='Cancelar'
           >
             <Button type='link' className='p-0'>
-              <IconTrash className='text-red-1 hover:text-red-400' />
+              {item.active ? (
+                <IconTrash className='text-red-1 hover:text-red-400' />
+              ) : (
+                <IconSquareCheck className='text-green-1 hover:text-green-400' />
+              )}
             </Button>
           </Popconfirm>
         </div>
@@ -94,6 +111,16 @@ const Storage: FC = () => {
       <ContentLayout
         pageTitle='Administrador de Inventario'
         buttonTitle='Agregar productos'
+        extraButton={
+          <div className='flex flex-col items-center gap-2'>
+            <span className='font-bold text-green-1'>Activos</span>
+            <Switch
+              value={showActive}
+              loading={isLoading}
+              onChange={() => setShowActive(!showActive)}
+            />
+          </div>
+        }
         setModalState={() => {
           setEditData({} as IInventoryProps)
           setModalState(ModalStateEnum.addItem)

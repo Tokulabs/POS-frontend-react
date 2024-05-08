@@ -35,7 +35,7 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
       <div className='bg-white h-full rounded p-4 flex flex-col justify-top gap-6'>
         <div className='flex justify-between items-center'>
           <h1 className='m-0 p-0 text-2xl text-green-1 font-semibold'>{pageTitle}</h1>
-          <div className='flex items-center'>
+          <div className='flex items-end gap-3'>
             <div>
               <Search
                 placeholder='input search text'
