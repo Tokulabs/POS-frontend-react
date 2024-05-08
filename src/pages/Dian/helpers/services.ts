@@ -9,6 +9,7 @@ export const getDianResolutions = async (queryParams: IQueryParams) => {
     const searchParams = new URLSearchParams()
     if (queryParams) {
       Object.entries(queryParams).forEach(([key, value]) => {
+        if (!value) return
         searchParams.set(key, value.toString())
       })
     }
