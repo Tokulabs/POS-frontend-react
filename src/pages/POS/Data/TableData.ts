@@ -34,11 +34,15 @@ export const TableData: ITableTitles[] = [
     tableStyles: 'col-span-2 col-start-9 w-full',
   },
   {
-    tableTitle: 'Total USD',
+    tableTitle: 'IVA',
     tableStyles: 'col-start-11 w-full',
   },
   {
+    tableTitle: 'Total USD',
+    tableStyles: 'col-start-12 w-full',
+  },
+  {
     tableTitle: 'Total COP',
-    tableStyles: 'col-start-12 text-right w-full',
+    tableStyles: 'col-start-13 text-right w-full',
   },
 ]

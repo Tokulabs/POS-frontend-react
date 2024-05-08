@@ -70,7 +70,7 @@ const PaymentTerminals: FC = () => {
     <>
       <ContentLayout
         pageTitle='Datafono'
-        buttonTitle='Agregar Datafono'
+        buttonTitle='Crear Datafono'
         setModalState={() => {
           setEditData({} as IPaymentTerminal)
           setModalState(ModalStateEnum.addItem)

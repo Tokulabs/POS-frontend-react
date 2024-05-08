@@ -14,7 +14,7 @@ const Users: FC = () => {
     <>
       <ContentLayout
         pageTitle='Categorias'
-        buttonTitle='+ Categoria'
+        buttonTitle='Categoria'
         setModalState={setModalState}
         dataSource={groupsData?.results as unknown as DataPropsForm[]}
         columns={columns}

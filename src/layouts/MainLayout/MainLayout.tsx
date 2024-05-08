@@ -81,9 +81,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
             })}
           </ul>
         </div>
-        <div className='max-h-screen overflow-hidden overflow-y-auto flex-1 p-5'>
-          <div>{children}</div>
-        </div>
+        <div className='max-h-full w-full overflow-hidden p-5'>{children}</div>
       </div>
     </section>
   )

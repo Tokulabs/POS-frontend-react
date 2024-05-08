@@ -50,7 +50,6 @@ export const AddCustomerModal: FC = () => {
         message: 'Exito',
         description: 'Cliente creado!',
       })
-      console.log(customer)
       form.resetFields()
     },
   })

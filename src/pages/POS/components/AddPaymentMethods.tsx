@@ -120,18 +120,25 @@ export const AddPaymentMethods = () => {
     <section className='w-full h-full flex flex-col gap-4 relative'>
       <section className='flex flex-col gap-4 bg-white sticky w-full'>
         <div className='flex justify-start gap-5 items-end'>
-          <span className='h-full text-green-1 text-3xl font-bold flex justify-start items-center'>
-            {isDollar ? formatToUsd(totalUSD, true) : formatNumberToColombianPesos(totalCOP, true)}
-          </span>
-          <Divider type='vertical' className='h-full' />
           <div className='flex flex-col justify-end items-center'>
             <span className='text-green-1 text-xl font-bold'>
               {isDollar
                 ? formatToUsd(totalUSD, true)
                 : formatNumberToColombianPesos(totalValueToPay, true)}
             </span>
-            <span className='text-gray-2 font-semibold'>Valor a Pagar</span>
+            <span className='text-gray-2 font-semibold text-sm'>Valor a Pagar</span>
           </div>
+          {!isDollar && <Divider type='vertical' className='h-full' />}
+          {!isDollar && (
+            <div className='flex flex-col justify-end items-center'>
+              <span
+                className={`${totalCOP - totalValueToPay < 0 ? 'text-red-1' : 'text-green-1'} text-xl font-bold `}
+              >
+                {formatNumberToColombianPesos(totalCOP - totalValueToPay, true)}
+              </span>
+              <span className='text-gray-2 font-semibold text-sm'>Diferencia</span>
+            </div>
+          )}
           <Divider type='vertical' className='h-full' />
           <div className='flex flex-col justify-end items-center'>
             <span
@@ -141,7 +148,7 @@ export const AddPaymentMethods = () => {
                 ? formatToUsd(totalUSD, true)
                 : formatNumberToColombianPesos(totalValueReceived, true)}
             </span>
-            <span className='text-gray-2 font-semibold'>Valor Total Recibido</span>
+            <span className='text-gray-2 font-semibold text-sm'>Valor Total Recibido</span>
           </div>
           <Divider type='vertical' className='h-full' />
           <div className='flex flex-col justify-end items-center'>
@@ -150,7 +157,7 @@ export const AddPaymentMethods = () => {
                 ? formatNumberToColombianPesos(totalReturnedValue, true)
                 : '0'}
             </span>
-            <span className='text-gray-2 font-semibold'>Cambio</span>
+            <span className='text-gray-2 font-semibold text-sm'>Cambio</span>
           </div>
           <Divider type='vertical' className='h-full' />
           <div className='flex flex-col justify-end items-center'>
@@ -163,7 +170,7 @@ export const AddPaymentMethods = () => {
                 }}
               />
             </span>
-            <span className='text-gray-2 font-semibold'>Pago en USD?</span>
+            <span className='text-gray-2 font-semibold text-sm'>Pago en USD?</span>
           </div>
         </div>
         <div className='flex gap-4'>
