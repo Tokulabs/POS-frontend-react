@@ -9,6 +9,7 @@ export const getPaymentTerminals = async (queryParams: IQueryParams) => {
     const searchParams = new URLSearchParams()
     if (queryParams) {
       Object.entries(queryParams).forEach(([key, value]) => {
+        if (!value) return
         searchParams.set(key, value.toString())
       })
     }
@@ -56,14 +57,10 @@ export const putPaymentTerminals = async (data: { values: DataPropsForm; id: num
   }
 }
 
-export const deletePaymentTerminals = async (id: number) => {
-  try {
-    await axiosRequest({
-      method: 'delete',
-      url: `${paymentTerminalsURL}/${id}/`,
-      hasAuth: true,
-    })
-  } catch (e: unknown) {
-    throw new Error(e as string)
-  }
+export const toggleActivePaymentTemrinal = async (id: number) => {
+  return await axiosRequest<IPaymentTerminal>({
+    method: 'post',
+    url: `${paymentTerminalsURL}/${id}/toggle-active/`,
+    hasAuth: true,
+  })
 }

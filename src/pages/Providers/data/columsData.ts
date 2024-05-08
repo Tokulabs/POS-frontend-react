@@ -10,6 +10,11 @@ export const columns = [
     key: 'name',
   },
   {
+    title: 'Activo',
+    dataIndex: 'active',
+    key: 'active',
+  },
+  {
     title: 'Razón Social',
     dataIndex: 'legal_name',
     key: 'legal_name',
@@ -18,6 +23,26 @@ export const columns = [
     title: 'NIT',
     dataIndex: 'nit',
     key: 'nit',
+  },
+  {
+    title: 'Teléfono',
+    dataIndex: 'phone',
+    key: 'phone',
+  },
+  {
+    title: 'Correo',
+    dataIndex: 'email',
+    key: 'email',
+  },
+  {
+    title: 'Cuenta Bancaria',
+    dataIndex: 'bank_account',
+    key: 'bank_account',
+  },
+  {
+    title: 'Tipo de Cuenta',
+    dataIndex: 'account_type',
+    key: 'account_type',
   },
   {
     title: '',

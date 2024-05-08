@@ -5,6 +5,11 @@ export const columns = [
     key: 'key',
   },
   {
+    title: 'Activo',
+    dataIndex: 'active',
+    key: 'active',
+  },
+  {
     title: 'Número único',
     dataIndex: 'account_code',
     key: 'account_code',

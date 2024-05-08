@@ -22,7 +22,7 @@ export interface DataPropsForm {
 }
 
 export interface IQueryParams {
-  [key: string]: string | number | boolean
+  [key: string]: string | number | boolean | null | undefined
 }
 
 export interface IPaginationProps<T> {
