@@ -1,4 +1,4 @@
-import { Popconfirm, Spin, notification } from 'antd'
+import { Popconfirm, Spin, Tooltip, notification } from 'antd'
 import { FC, useRef, useState } from 'react'
 import PrintOut from '../../components/Print/PrintOut'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
@@ -72,6 +72,19 @@ const Invoices: FC = () => {
       }))
 
       const { totalCOP, totalUSD } = calcTotalPrices(itemPOSDetails)
+
+      const isDebitOrCredit = item.payment_methods.some(
+        (item) =>
+          PaymentMethodsEnum[item.name as unknown as keyof typeof PaymentMethodsEnum] ===
+            PaymentMethodsEnum.debitCard ||
+          PaymentMethodsEnum[item.name as unknown as keyof typeof PaymentMethodsEnum] ===
+            PaymentMethodsEnum.creditCard,
+      )
+
+      const methodsStrings = item.payment_methods
+        .map((item) => PaymentMethodsEnum[item.name as unknown as keyof typeof PaymentMethodsEnum])
+        .join(', ')
+
       return {
         ...item,
         sale_by_name: item.sale_by.fullname || 'SuperAdmin',
@@ -83,11 +96,27 @@ const Invoices: FC = () => {
             <IconX />
           </div>
         ) : null,
-        paid_by: item.payment_methods
-          .map(
-            (item) => PaymentMethodsEnum[item.name as unknown as keyof typeof PaymentMethodsEnum],
-          )
-          .join(', '),
+        paid_by: isDebitOrCredit ? (
+          <Tooltip
+            mouseLeaveDelay={0.3}
+            destroyTooltipOnHide={true}
+            title={
+              <div>
+                <span>
+                  Datáfono: <strong>{item.payment_terminal?.name}</strong>
+                </span>
+                <br />
+                <span>
+                  Código único: <strong>{item.payment_terminal?.account_code}</strong>
+                </span>
+              </div>
+            }
+          >
+            <span className='truncate'>{methodsStrings}</span>
+          </Tooltip>
+        ) : (
+          <span className='truncate'>{methodsStrings}</span>
+        ),
         action: (
           <div className='flex text-3xl gap-3'>
             <div className='text-green-1 cursor-pointer'>
@@ -152,7 +181,7 @@ const Invoices: FC = () => {
   }
 
   return (
-    <section className='relative'>
+    <section className='relative h-full'>
       <ContentLayout
         pageTitle='Facturas'
         dataSource={pushActionToList() as unknown as DataPropsForm[]}

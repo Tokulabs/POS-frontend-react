@@ -39,7 +39,6 @@ export const useCart = create<ICartStore>((set, get) => ({
     if (productExist) {
       const originalQuantity = productExist.quantity
       productExist.quantity = originalQuantity + 1
-      console.log(productExist)
       if (
         productExist.total_in_shops === 0 ||
         productExist.quantity > (productExist.total_in_shops || 0)

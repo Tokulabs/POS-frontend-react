@@ -3,7 +3,11 @@ import { ITableRowProps } from './types/TableTypes'
 import { IconMinus, IconPlus } from '@tabler/icons-react'
 import { useCart } from '../../../store/useCartStoreZustand'
 import { InputNumber, Image, Checkbox, CheckboxProps } from 'antd'
-import { formatNumberToColombianPesos, formatToUsd } from '../../../utils/helpers'
+import {
+  calcMetaDataProdudct,
+  formatNumberToColombianPesos,
+  formatToUsd,
+} from '../../../utils/helpers'
 
 export const TableRow: FC<ITableRowProps> = ({ product }) => {
   const [visible, setVisible] = useState(false)
@@ -17,6 +21,8 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
     updateQuantity,
     updateIsGift,
   } = useCart()
+
+  const { itemTaxesCOP } = calcMetaDataProdudct(product)
 
   const actualProduct = cartItems.filter((item) => item.code === product.code)[0]
 
@@ -42,7 +48,7 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
   return (
     <li
       className={
-        'w-full grid grid-cols-12 gap-3 py-4 text-center text-base list-none place-items-center border-x-0 px-1'
+        'w-full grid grid-cols-13 gap-3 py-4 text-center text-base list-none place-items-center border-x-0 px-1'
       }
     >
       <Checkbox
@@ -115,8 +121,9 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
           disabled={is_gift}
         />
       </div>
-      <span className='col-start-11 w-full'>{formatToUsd(usd_total)}</span>
-      <span className='col-start-12 text-right w-full'>{formatNumberToColombianPesos(total)}</span>
+      <span className='col-start-11 w-full'>{formatNumberToColombianPesos(itemTaxesCOP)}</span>
+      <span className='col-start-12 w-full'>{formatToUsd(usd_total)}</span>
+      <span className='col-start-13 text-right w-full'>{formatNumberToColombianPesos(total)}</span>
     </li>
   )
 }

@@ -6,9 +6,9 @@ on:
       - master
 
 env:
-  VITE_BASE_URL: http://127.0.0.1:8000/
+  VITE_BASE_URL: ${{ env.VITE_BASE_URL}}
   AWS_REGION: us-east-1
-  S3BUCKET: tokulabs-prod
+  S3BUCKET: ${{ secrets.BUCKET_NAME}}
   CI: false
 
 jobs:

@@ -1,7 +1,8 @@
 import { FC, PropsWithChildren, ReactNode } from 'react'
-import { Table } from 'antd'
+import { Button, Table } from 'antd'
 import { DataPropsForm } from '../../types/GlobalTypes'
 import Search from 'antd/es/input/Search'
+import { IconCirclePlus } from '@tabler/icons-react'
 
 interface IContentLayoutProps {
   pageTitle: string
@@ -31,9 +32,9 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
 }) => {
   return (
     <>
-      <div className='bg-white rounded p-4 flex flex-col gap-8'>
+      <div className='bg-white h-full rounded p-4 flex flex-col justify-top gap-6'>
         <div className='flex justify-between items-center'>
-          <h1 className='m-0 p-0 text-base font-semibold'>{pageTitle}</h1>
+          <h1 className='m-0 p-0 text-2xl text-green-1 font-semibold'>{pageTitle}</h1>
           <div className='flex items-center'>
             <div>
               <Search
@@ -43,26 +44,33 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
               />
             </div>
             {buttonTitle && (
-              <button onClick={() => setModalState && setModalState(true)} className='ml-3'>
+              <Button
+                type='primary'
+                onClick={() => setModalState && setModalState(true)}
+                className='ml-3 flex justify-center items-center gap-2'
+              >
+                <IconCirclePlus />
                 {buttonTitle}
-              </button>
+              </Button>
             )}
             {extraButton}
           </div>
         </div>
-        <Table
-          dataSource={dataSource}
-          columns={columns}
-          loading={fetching}
-          size='small'
-          pagination={{
-            current: currentPage,
-            total: totalItems,
-            size: 'small',
-            onChange: (page) => onChangePage(page),
-            showSizeChanger: false,
-          }}
-        />
+        <div className='h-full overflow-hidden overflow-y-auto scrollbar-hide'>
+          <Table
+            dataSource={dataSource}
+            columns={columns}
+            loading={fetching}
+            size='middle'
+            pagination={{
+              current: currentPage,
+              total: totalItems,
+              size: 'small',
+              onChange: (page) => onChangePage(page),
+              showSizeChanger: false,
+            }}
+          />
+        </div>
       </div>
       {children}
     </>

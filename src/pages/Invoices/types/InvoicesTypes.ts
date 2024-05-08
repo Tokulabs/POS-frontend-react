@@ -15,6 +15,10 @@ export interface IInvoiceProps {
   }
   customer: ICustomerProps
   payment_methods: IPaymentMethodToSend[]
+  payment_terminal: {
+    name: string
+    account_code: string
+  } | null
   is_dollar: boolean
   invoice_number: number
   dian_resolution: IDianResolutionProps
