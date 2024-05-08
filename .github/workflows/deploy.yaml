@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  VITE_BASE_URL: ${{ secrets.VITE_BASE_URL}}
+  VITE_BASE_URL: ${{ vars.VITE_BASE_URL}}
   AWS_REGION: us-east-1
   S3BUCKET: ${{ secrets.BUCKET_NAME}}
   CI: false
