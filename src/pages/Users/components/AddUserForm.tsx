@@ -2,35 +2,55 @@ import { Form, Modal, Input, Select, Button, notification } from 'antd'
 import { FC } from 'react'
 import { DataPropsForm } from '../../../types/GlobalTypes'
 import { useForm } from 'antd/es/form/Form'
-import { IModalFormProps } from '../../../types/ModalTypes'
-import { UserRolesEnum } from '../types/UserTypes'
+import { IAddUser, UserRolesEnum } from '../types/UserTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { postUsersNew } from '../helpers/services'
+import { postUsersNew, putUsers } from '../helpers/services'
 
-const AddUserForm: FC<IModalFormProps> = ({
+const AddUserForm: FC<IAddUser> = ({
   isVisible = false,
   onSuccessCallback,
   onCancelCallback,
+  initialData,
 }) => {
   const [form] = useForm()
   const queryClient = useQueryClient()
 
+  const initialValues = {
+    ...initialData,
+    role: Object.keys(UserRolesEnum).find(
+      (key) => UserRolesEnum[key as keyof typeof UserRolesEnum] === initialData.role,
+    ),
+  }
+
+  const isEdit = !!initialData.id
+
+  const successRegistry = (message: string, description: string) => {
+    queryClient.invalidateQueries({ queryKey: ['paginatedUsers'] })
+    onSuccessCallback()
+    notification.success({
+      message: message,
+      description: description,
+    })
+    form.resetFields()
+  }
+
   const { mutate, isPending: isLoading } = useMutation({
     mutationFn: postUsersNew,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['paginatedUsers'] })
-      onSuccessCallback()
-      notification.success({
-        message: 'Exito',
-        description: 'Usuario creado!',
-      })
-      form.resetFields()
+      successRegistry('Exito', 'Usuario creado!')
+    },
+  })
+
+  const { mutate: mutateEdit, isPending: isLoadingEdit } = useMutation({
+    mutationFn: putUsers,
+    onSuccess: () => {
+      successRegistry('Exito', 'Usuario actualizado!')
     },
   })
 
   const onSubmit = async (values: DataPropsForm) => {
-    if (isLoading) return
-    mutate(values)
+    if (isLoading || isLoadingEdit) return
+    isEdit ? mutateEdit({ values, id: initialData.id }) : mutate(values, {})
   }
 
   return (
@@ -43,8 +63,9 @@ const AddUserForm: FC<IModalFormProps> = ({
         form.resetFields()
       }}
       footer={false}
+      maskClosable={false}
     >
-      <Form layout='vertical' onFinish={onSubmit} form={form}>
+      <Form layout='vertical' onFinish={onSubmit} form={form} initialValues={initialValues}>
         <Form.Item
           label='Email'
           name='email'

@@ -51,7 +51,7 @@ export const AddPaymentMethods = () => {
     return !selectedItems.includes(o)
   })
 
-  const { paymentTerminalsData } = usePaymentTerminals('allPaymentTerminals', {})
+  const { paymentTerminalsData } = usePaymentTerminals('allPaymentTerminals', { active: 'True' })
 
   const defaultPaymenthMethod = {
     name: PaymentMethodsEnum.cash,

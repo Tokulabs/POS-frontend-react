@@ -44,8 +44,8 @@ const Storage: FC = () => {
     page: currentPage,
     active: showActive ? 'True' : undefined,
   })
-  const { groupsData } = useGroups('allGroups', {})
-  const { providersData } = useProviders('allProviders', {})
+  const { groupsData } = useGroups('allGroups', { active: 'True' })
+  const { providersData } = useProviders('allProviders', { active: 'True' })
 
   const queryClient = useQueryClient()
 

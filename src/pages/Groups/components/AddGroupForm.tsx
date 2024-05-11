@@ -3,42 +3,56 @@ import { FC } from 'react'
 import { DataPropsForm } from '../../../types/GlobalTypes'
 import { useForm } from 'antd/es/form/Form'
 import { useGroups } from '../../../hooks/useGroups'
-import { IModalFormProps } from '../../../types/ModalTypes'
-import { IGroupsProps } from '../types/GroupTypes'
+import { IAddGroups, IGroupsProps } from '../types/GroupTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { postGroupsNew } from '../helpers/services'
+import { postGroupsNew, putGroupsNew } from '../helpers/services'
 
-const AddGroupForm: FC<IModalFormProps> = ({
+const AddGroupForm: FC<IAddGroups> = ({
   isVisible = false,
   onSuccessCallback,
   onCancelCallback,
+  initialData,
 }) => {
   const [form] = useForm()
-  const initialValues = {
-    name: '',
-  }
-  const { groupsData } = useGroups('allGroups', {})
-
-  const allGroupsData = groupsData?.results ?? []
-
   const queryClient = useQueryClient()
+
+  const initialValues = {
+    ...initialData,
+  }
+
+  const isEdit = !!initialData.id
+
+  const { groupsData: allGroupsData } = useGroups('allGroups', {
+    active: 'True',
+  })
+
+  const successRegistry = (message: string, description: string) => {
+    queryClient.invalidateQueries({ queryKey: ['paginatedGroups'] })
+    onSuccessCallback()
+    notification.success({
+      message: message,
+      description: description,
+    })
+    form.resetFields()
+  }
 
   const { mutate, isPending: isLoading } = useMutation({
     mutationFn: postGroupsNew,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['paginatedGroups'] })
-      onSuccessCallback()
-      notification.success({
-        message: 'Exito',
-        description: 'Grupo creado!',
-      })
-      form.resetFields()
+      successRegistry('Exito', 'Categoria creada!')
+    },
+  })
+
+  const { mutate: mutateEdit, isPending: isLoadingEdit } = useMutation({
+    mutationFn: putGroupsNew,
+    onSuccess: () => {
+      successRegistry('Exito', 'Categoria actualizada!')
     },
   })
 
   const onSubmit = async (values: DataPropsForm) => {
-    if (isLoading) return
-    mutate(values)
+    if (isLoading || isLoadingEdit) return
+    isEdit ? mutateEdit({ values, id: initialData.id }) : mutate(values, {})
   }
 
   return (
@@ -64,12 +78,10 @@ const AddGroupForm: FC<IModalFormProps> = ({
         <Form.Item label='Categoria Padre' name='belongs_to_id'>
           <Select
             placeholder='Selecciona una categoria'
-            options={[
-              ...allGroupsData.map((item: IGroupsProps) => ({
-                value: item.id,
-                label: item.name,
-              })),
-            ]}
+            options={allGroupsData?.results.map((item: IGroupsProps) => ({
+              value: item.id,
+              label: item.name,
+            }))}
           />
         </Form.Item>
         <Form.Item>

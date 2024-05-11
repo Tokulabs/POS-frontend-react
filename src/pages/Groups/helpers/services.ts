@@ -35,14 +35,27 @@ export const getGroupsNew = async (queryParams: IQueryParams) => {
 }
 
 export const postGroupsNew = async (values: DataPropsForm) => {
-  try {
-    await axiosRequest({
-      method: 'post',
-      url: groupURL,
-      hasAuth: true,
-      payload: values,
-    })
-  } catch (e) {
-    console.log(e)
-  }
+  await axiosRequest({
+    method: 'post',
+    url: groupURL,
+    hasAuth: true,
+    payload: values,
+  })
+}
+
+export const putGroupsNew = async (data: { values: DataPropsForm; id: number }) => {
+  await axiosRequest<IGroupsProps>({
+    method: 'put',
+    url: `${groupURL}/${data.id}/`,
+    hasAuth: true,
+    payload: data.values,
+  })
+}
+
+export const toggleActiveGroups = async (id: number) => {
+  return await axiosRequest<IGroupsProps>({
+    method: 'post',
+    url: `${groupURL}/${id}/toggle_active/`,
+    hasAuth: true,
+  })
 }
