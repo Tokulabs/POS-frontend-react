@@ -10,6 +10,11 @@ export const columns = [
     key: 'name',
   },
   {
+    title: 'Activo',
+    dataIndex: 'active',
+    key: 'active',
+  },
+  {
     title: 'Categoria Padre',
     dataIndex: 'belongsTo',
     key: 'belongsTo',

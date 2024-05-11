@@ -34,4 +34,9 @@ export const columns = [
     dataIndex: 'created_at',
     key: 'created_at',
   },
+  {
+    title: '',
+    dataIndex: 'action',
+    key: 'action',
+  },
 ]

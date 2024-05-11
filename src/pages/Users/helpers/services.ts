@@ -26,7 +26,7 @@ export const getUsersNew = async (queryParams: IQueryParams) => {
         key: item.id,
         created_at: formatDateTime(item.created_at),
         last_login: item.last_login ? formatDateTime(item.last_login) : 'N/A',
-        is_active: item.is_active.toString(),
+        is_active: item.is_active,
         role: UserRolesEnum[item.role as keyof typeof UserRolesEnum] || 'Rol desconocido',
       }))
       return { ...response.data, results: data }
@@ -37,14 +37,27 @@ export const getUsersNew = async (queryParams: IQueryParams) => {
 }
 
 export const postUsersNew = async (values: DataPropsForm) => {
-  try {
-    await axiosRequest({
-      method: 'post',
-      url: createUserURL,
-      hasAuth: true,
-      payload: values,
-    })
-  } catch (e) {
-    console.log(e)
-  }
+  await axiosRequest({
+    method: 'post',
+    url: createUserURL,
+    hasAuth: true,
+    payload: values,
+  })
+}
+
+export const putUsers = async (data: { values: DataPropsForm; id: number }) => {
+  await axiosRequest({
+    method: 'put',
+    url: `${usersURL}/${data.id}/`,
+    hasAuth: true,
+    payload: data.values,
+  })
+}
+
+export const toggleActiveUser = async (id: number) => {
+  return await axiosRequest<IUserProps>({
+    method: 'post',
+    url: `${usersURL}/${id}/toggle-active/`,
+    hasAuth: true,
+  })
 }

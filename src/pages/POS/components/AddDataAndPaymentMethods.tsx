@@ -31,7 +31,7 @@ export const AddDataAndPaymentMethods = () => {
     'getActiveDianResolution',
     { active: 'True' },
   )
-  const { usersData } = useUsers('allUsers', { role: 'supportSales' })
+  const { usersData } = useUsers('allUsers', { role: 'supportSales', is_active: 'True' })
 
   const { toggleModalAddCustomer, updateCustomerData, customer } = useCustomerData()
   const { saleById, updateSaleById } = useCart()
