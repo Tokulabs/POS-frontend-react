@@ -80,4 +80,4 @@ const Inventories: FC = () => {
   )
 }
 
-export default Inventories
+export { Inventories }

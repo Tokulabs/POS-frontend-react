@@ -1,3 +1,4 @@
+import { FC } from 'react'
 // Components
 import { POSStepper } from './components/StepperPOS'
 import { AddCustomerModal } from './components/AddCustomerModal'
@@ -11,7 +12,7 @@ import { useDianResolutions } from '../../hooks/useDianResolution'
 import { IconFileSad } from '@tabler/icons-react'
 import { Spin } from 'antd'
 
-export const POS = () => {
+const POS: FC = () => {
   const { openModalAddCustomer } = useCustomerData()
   const { currentStep } = usePOSStep()
 
@@ -47,3 +48,5 @@ export const POS = () => {
     </section>
   )
 }
+
+export { POS }

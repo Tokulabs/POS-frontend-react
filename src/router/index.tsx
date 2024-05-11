@@ -1,184 +1,43 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { FC } from 'react'
+import { RouteObject, RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { SideBarData } from '../layouts/MainLayout/data/data'
 import Login from '../pages/Auth/Login'
 import CheckUser from '../pages/Auth/CheckUser'
-import Home from './../pages/Home/Home'
-import { AuthRoutes } from './../components/Auth/AuthRoutes'
-import Users from '../pages/Users/Users'
 import UpdateUserPassword from '../pages/Auth/UpdateUserPassword'
-import InventoryGroup from '../pages/Groups/InventoryGroups'
-import Inventory from '../pages/Inventories/Inventories'
-import UserActivities from './../pages/UserActivities/UserActivities'
-import Invoices from './../pages/Invoices/Invoices'
-import Notfound from '../pages/NotFound/404Notfound'
-import { Dian } from '../pages/Dian/Dian'
-import Storage from '../pages/Storage/Storage'
-import { SideBarData } from '../layouts/MainLayout/data/data'
-import { useRolePermissions } from '../hooks/useRolespermissions'
-import PaymentTerminals from '../pages/PaymentTerminals/PaymentTerminals'
-import Providers from '../pages/Providers/Providers'
-import { POS } from '../pages/POS/POS'
+import AuthRoutes from '../components/Auth/AuthRoutes'
 
-interface IRouteGuardian {
-  element: FC
-  allowedRoles: string[]
+const Router: FC = () => {
+  const router = createBrowserRouter([
+    {
+      element: <AuthRoutes />,
+      children: SideBarData.map((item) => {
+        const Component = item.component
+        const routerData: RouteObject = {
+          path: item.path,
+          element: <Component />,
+        }
+        return routerData
+      }),
+    },
+    {
+      path: '/login',
+      element: <Login />,
+    },
+    {
+      path: '/check-user',
+      element: <CheckUser />,
+    },
+    {
+      path: '/create-password',
+      element: <UpdateUserPassword />,
+    },
+    {
+      path: '*',
+      element: <h1>404</h1>,
+    },
+  ])
+
+  return <RouterProvider router={router} />
 }
 
-const RouteGuardian: FC<IRouteGuardian> = ({ element, allowedRoles }) => {
-  const Element: FC = element
-  const { hasPermission } = useRolePermissions(allowedRoles)
-
-  return hasPermission ? <Element /> : <Notfound />
-}
-
-export const Router: FC = () => {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path='/login' element={<Login />} />
-        <Route path='/check-user' element={<CheckUser />} />
-        <Route path='/create-password' element={<UpdateUserPassword />} />
-        <Route
-          path='*'
-          element={
-            <AuthRoutes>
-              <Routes>
-                <Route
-                  path='/'
-                  element={
-                    <RouteGuardian
-                      element={() => <Home />}
-                      allowedRoles={
-                        SideBarData.filter((item) => item.path === '/')[0].allowedRoles ?? []
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path='/users'
-                  element={
-                    <RouteGuardian
-                      element={() => <Users />}
-                      allowedRoles={
-                        SideBarData.filter((item) => item.path === '/users')[0].allowedRoles ?? []
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path='/inventory-groups'
-                  element={
-                    <RouteGuardian
-                      element={() => <InventoryGroup />}
-                      allowedRoles={
-                        SideBarData.filter((item) => item.path === '/inventory-groups')[0]
-                          .allowedRoles ?? []
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path='/inventories'
-                  element={
-                    <RouteGuardian
-                      element={() => <Inventory />}
-                      allowedRoles={
-                        SideBarData.filter((item) => item.path === '/inventories')[0]
-                          .allowedRoles ?? []
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path='/user-activities'
-                  element={
-                    <RouteGuardian
-                      element={() => <UserActivities />}
-                      allowedRoles={
-                        SideBarData.filter((item) => item.path === '/user-activities')[0]
-                          .allowedRoles ?? []
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path='/pos'
-                  element={
-                    <RouteGuardian
-                      element={() => <POS />}
-                      allowedRoles={
-                        SideBarData.filter((item) => item.path === '/pos')[0].allowedRoles ?? []
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path='/invoices'
-                  element={
-                    <RouteGuardian
-                      element={() => <Invoices />}
-                      allowedRoles={
-                        SideBarData.filter((item) => item.path === '/invoices')[0].allowedRoles ??
-                        []
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path='/dian-resolution'
-                  element={
-                    <RouteGuardian
-                      element={() => <Dian />}
-                      allowedRoles={
-                        SideBarData.filter((item) => item.path === '/dian-resolution')[0]
-                          .allowedRoles ?? []
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path='/storage'
-                  element={
-                    <RouteGuardian
-                      element={() => <Storage />}
-                      allowedRoles={
-                        SideBarData.filter((item) => item.path === '/storage')[0].allowedRoles ?? []
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path='/payment-terminals'
-                  element={
-                    <RouteGuardian
-                      element={() => <PaymentTerminals />}
-                      allowedRoles={
-                        SideBarData.filter((item) => item.path === '/payment-terminals')[0]
-                          .allowedRoles ?? []
-                      }
-                    />
-                  }
-                />
-                <Route
-                  path='/providers'
-                  element={
-                    <RouteGuardian
-                      element={() => <Providers />}
-                      allowedRoles={
-                        SideBarData.filter((item) => item.path === '/providers')[0].allowedRoles ??
-                        []
-                      }
-                    />
-                  }
-                />
-                <Route path='*' element={<Notfound />} />
-              </Routes>
-            </AuthRoutes>
-          }
-        ></Route>
-      </Routes>
-    </BrowserRouter>
-  )
-}
-
-export default Router
+export { Router }

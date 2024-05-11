@@ -87,4 +87,4 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   )
 }
 
-export default MainLayout
+export { MainLayout }

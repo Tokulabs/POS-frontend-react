@@ -16,7 +16,7 @@ import {
 } from '@tabler/icons-react'
 import { toggleActiveGroups } from './helpers/services'
 
-const Users: FC = () => {
+const InventoryGroups: FC = () => {
   const [currentPage, setcurrentPage] = useState(1)
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
   const [showActive, setShowActive] = useState(true)
@@ -122,4 +122,4 @@ const Users: FC = () => {
   )
 }
 
-export default Users
+export { InventoryGroups }

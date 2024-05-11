@@ -122,4 +122,4 @@ const Providers: FC = () => {
   )
 }
 
-export default Providers
+export { Providers }
