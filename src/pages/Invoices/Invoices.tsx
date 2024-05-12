@@ -199,4 +199,4 @@ const Invoices: FC = () => {
     </section>
   )
 }
-export default Invoices
+export { Invoices }

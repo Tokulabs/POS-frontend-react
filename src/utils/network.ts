@@ -19,5 +19,6 @@ export const customerURL = baseURL + 'app/customer'
 export const purchaseSummaryURL = baseURL + 'app/purchase-summary'
 export const dianResolutionURL = baseURL + 'app/dian-resolution'
 export const overrideInvoiceURL = baseURL + 'app/update-invoice'
+export const downloadReportURL = baseURL + 'app/'
 
 export const cloudinaryURL = 'https://api.cloudinary.com/v1_1/de4vbdzth/upload'

@@ -152,4 +152,4 @@ const Storage: FC = () => {
   )
 }
 
-export default Storage
+export { Storage }

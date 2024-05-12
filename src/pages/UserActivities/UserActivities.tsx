@@ -27,4 +27,4 @@ const UserActivities: FC = () => {
     </>
   )
 }
-export default UserActivities
+export { UserActivities }

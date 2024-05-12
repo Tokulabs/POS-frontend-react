@@ -122,4 +122,4 @@ const PaymentTerminals: FC = () => {
   )
 }
 
-export default PaymentTerminals
+export { PaymentTerminals }
