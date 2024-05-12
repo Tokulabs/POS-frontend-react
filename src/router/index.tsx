@@ -5,18 +5,29 @@ import Login from '../pages/Auth/Login'
 import CheckUser from '../pages/Auth/CheckUser'
 import UpdateUserPassword from '../pages/Auth/UpdateUserPassword'
 import AuthRoutes from '../components/Auth/AuthRoutes'
+import { useRolePermissions } from '../hooks/useRolespermissions'
+import Notfound from '../pages/NotFound/404Notfound'
+import { MainLayout } from '../layouts/MainLayout/MainLayout'
+import { useAuth } from '../hooks/useAuth'
 
 const Router: FC = () => {
+  const { isLogged } = useAuth({})
   const router = createBrowserRouter([
     {
       element: <AuthRoutes />,
       children: SideBarData.map((item) => {
+        const { hasPermission } = useRolePermissions(item.allowedRoles || [])
         const Component = item.component
         const routerData: RouteObject = {
           path: item.path,
           element: <Component />,
         }
-        return routerData
+        return hasPermission
+          ? routerData
+          : {
+              path: '*',
+              element: <Notfound />,
+            }
       }),
     },
     {
@@ -33,7 +44,13 @@ const Router: FC = () => {
     },
     {
       path: '*',
-      element: <h1>404</h1>,
+      element: isLogged ? (
+        <MainLayout>
+          <Notfound />
+        </MainLayout>
+      ) : (
+        <Notfound fullscreen={true} />
+      ),
     },
   ])
 
