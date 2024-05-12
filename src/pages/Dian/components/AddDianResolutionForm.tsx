@@ -69,7 +69,7 @@ const AddDianResolutionForm: FC<IModalFormProps> = ({
           <Input placeholder='Numero de Resolución' type='text' />
         </Form.Item>
         <Form.Item
-          label='RangePicker'
+          label='Fechas de Resolución'
           name='dian_resolution_dates'
           rules={[{ required: true, message: 'Campo requerido' }]}
         >

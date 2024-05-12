@@ -7,6 +7,7 @@ import { tokenName } from '../utils/constants'
 interface IAxiosRequestProps {
   method?: 'get' | 'post' | 'patch' | 'delete' | 'put'
   url: string | URL
+  headers?: Record<string, string>
   payload?: DataPropsForm | FormData
   hasAuth?: boolean
   showError?: boolean
@@ -14,6 +15,7 @@ interface IAxiosRequestProps {
     message: string
     description?: string
   }
+  isFile?: boolean
 }
 
 export const getAuthToken = (): IAuthToken | null => {
@@ -30,15 +32,18 @@ export const axiosRequest = async <T>({
   hasAuth = false,
   errorObject,
   showError = true,
+  headers,
+  isFile = false,
 }: IAxiosRequestProps): Promise<AxiosResponse<T> | null> => {
-  const headers = hasAuth ? getAuthToken() : {}
+  const headersNew = hasAuth ? { ...headers, ...getAuthToken() } : { ...headers }
   const urlStr = url instanceof URL ? url.toString() : url
   try {
     const response: AxiosResponse<T> = await axios({
       method,
       url: urlStr,
       data: payload,
-      headers: { ...headers },
+      headers: { ...headersNew },
+      responseType: isFile ? 'arraybuffer' : 'json',
     })
     if (response) return response
   } catch (e: unknown) {
@@ -50,8 +55,8 @@ export const axiosRequest = async <T>({
       description: errorObjectDescription
         ? errorObjectDescription
         : err.response?.data.error
-        ? err.response?.data.error
-        : err.response?.data.code,
+          ? err.response?.data.error
+          : err.response?.data.code,
     })
     throw Error(err.response?.data.error)
   }
