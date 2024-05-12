@@ -4,13 +4,15 @@ import { logout } from '../../pages/Auth/helpers'
 import { IAuthProps } from '../../types/AuthTypes'
 import Loading from '../Loading/Loading'
 import { MainLayout } from '../../layouts/MainLayout/MainLayout'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 
 export const AuthRoutes: FC = () => {
   const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
 
   const AuthProps: IAuthProps = {
     errorCallback: () => {
+      navigate('/login')
       logout()
     },
     successCallback: () => {

@@ -5,7 +5,6 @@ import { axiosRequest } from '../../../api/api'
 
 export const logout = () => {
   localStorage.removeItem(tokenName)
-  window.location.href = '/login'
 }
 
 export const authHandler = async (): Promise<IUser | null> => {

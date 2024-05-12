@@ -64,7 +64,7 @@ const reportsToDownload: IReportToDownload[] = [
   },
   {
     url: 'factura_electronica_export/',
-    name: 'Reporte Facturación lectrónica',
+    name: 'Reporte Facturación Electrónica',
   },
 ]
 
