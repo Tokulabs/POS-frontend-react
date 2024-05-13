@@ -51,4 +51,4 @@ jobs:
             folder: dist
             bucket: ${{ env.S3BUCKET }}
             dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-            invalidation: / *
+            invalidation: /index.html *
