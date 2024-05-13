@@ -7,12 +7,13 @@ import { IAuthProps } from '../../types/AuthTypes'
 import { ActionTypes } from '../../types/StoreTypes'
 import { updatePasswordURL } from '../../utils/network'
 import { store } from './../../store/index'
-import { notification } from 'antd'
 import { DataPropsForm } from '../../types/GlobalTypes'
+import { toast } from 'sonner'
 
 const UpdateUserPassword: FC = () => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+
   const {
     dispatch,
     state: { updatePasswordUserId },
@@ -33,10 +34,7 @@ const UpdateUserPassword: FC = () => {
 
   const onSubmit = async (values: DataPropsForm) => {
     if (values['password'] !== values['confirmPassword']) {
-      notification.error({
-        message: 'Datos incorrectos',
-        description: 'Las contraseñas no concuerdan',
-      })
+      toast.error('Datos incorrectos')
       return
     }
     try {
@@ -52,10 +50,7 @@ const UpdateUserPassword: FC = () => {
           payload: null,
         })
         navigate('/login')
-        notification.success({
-          message: 'Contraseña actualizada con exito!',
-          description: 'La contraseña fue creada correctamente',
-        })
+        toast.success('Contraseña actualizada con exito!')
       }
     } catch (e) {
       console.log(e)

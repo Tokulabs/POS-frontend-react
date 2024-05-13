@@ -1,8 +1,8 @@
-import { notification } from 'antd'
 import axios, { AxiosResponse } from 'axios'
 import { IAuthToken, ICustomAxiosError } from '../types/AuthTypes'
 import { DataPropsForm } from '../types/GlobalTypes'
 import { tokenName } from '../utils/constants'
+import { toast } from 'sonner'
 
 interface IAxiosRequestProps {
   method?: 'get' | 'post' | 'patch' | 'delete' | 'put'
@@ -50,14 +50,13 @@ export const axiosRequest = async <T>({
     if (!showError) return null
     const err = e as ICustomAxiosError
     const errorObjectDescription = errorObject?.description
-    notification.error({
-      message: errorObject ? errorObject.message : 'Error',
-      description: errorObjectDescription
+    toast.error(
+      errorObjectDescription
         ? errorObjectDescription
         : err.response?.data.error
           ? err.response?.data.error
           : err.response?.data.code,
-    })
+    )
     throw Error(err.response?.data.error)
   }
   return null

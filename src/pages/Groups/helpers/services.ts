@@ -55,7 +55,7 @@ export const putGroupsNew = async (data: { values: DataPropsForm; id: number }) 
 export const toggleActiveGroups = async (id: number) => {
   return await axiosRequest<IGroupsProps>({
     method: 'post',
-    url: `${groupURL}/${id}/toggle_active/`,
+    url: `${groupURL}/${id}/toggle-active/`,
     hasAuth: true,
   })
 }

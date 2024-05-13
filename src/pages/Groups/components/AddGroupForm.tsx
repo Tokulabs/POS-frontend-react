@@ -1,4 +1,4 @@
-import { Form, Modal, Input, Select, Button, notification } from 'antd'
+import { Form, Modal, Input, Select, Button } from 'antd'
 import { FC } from 'react'
 import { DataPropsForm } from '../../../types/GlobalTypes'
 import { useForm } from 'antd/es/form/Form'
@@ -6,6 +6,7 @@ import { useGroups } from '../../../hooks/useGroups'
 import { IAddGroups, IGroupsProps } from '../types/GroupTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { postGroupsNew, putGroupsNew } from '../helpers/services'
+import { toast } from 'sonner'
 
 const AddGroupForm: FC<IAddGroups> = ({
   isVisible = false,
@@ -26,27 +27,24 @@ const AddGroupForm: FC<IAddGroups> = ({
     active: 'True',
   })
 
-  const successRegistry = (message: string, description: string) => {
+  const successRegistry = (description: string) => {
     queryClient.invalidateQueries({ queryKey: ['paginatedGroups'] })
     onSuccessCallback()
-    notification.success({
-      message: message,
-      description: description,
-    })
+    toast.success(description)
     form.resetFields()
   }
 
   const { mutate, isPending: isLoading } = useMutation({
     mutationFn: postGroupsNew,
     onSuccess: () => {
-      successRegistry('Exito', 'Categoria creada!')
+      successRegistry('Categoria creada!')
     },
   })
 
   const { mutate: mutateEdit, isPending: isLoadingEdit } = useMutation({
     mutationFn: putGroupsNew,
     onSuccess: () => {
-      successRegistry('Exito', 'Categoria actualizada!')
+      successRegistry('Categoria actualizada!')
     },
   })
 

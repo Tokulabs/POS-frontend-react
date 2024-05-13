@@ -1,8 +1,9 @@
 import { FC, useMemo } from 'react'
 // Third party
-import { Form, Modal, Input, Button, notification } from 'antd'
+import { Form, Modal, Input, Button } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useMutation } from '@tanstack/react-query'
+import { toast } from 'sonner'
 // Store
 import { useCustomerData } from '../../../store/useCustomerStoreZustand'
 // Types
@@ -29,10 +30,7 @@ export const AddCustomerModal: FC = () => {
         id: data?.id as number,
         idNumber: data?.document_id,
       })
-      notification.success({
-        message: 'Exito',
-        description: 'Cliente actualizado!',
-      })
+      toast.success('Cliente actualizado!')
       form.resetFields()
     },
   })
@@ -46,10 +44,7 @@ export const AddCustomerModal: FC = () => {
         id: data?.id as number,
         idNumber: data?.document_id,
       })
-      notification.success({
-        message: 'Exito',
-        description: 'Cliente creado!',
-      })
+      toast.success('Cliente creado!')
       form.resetFields()
     },
   })

@@ -1,4 +1,4 @@
-import { Modal, Form, DatePicker, Button, Select, notification, Spin } from 'antd'
+import { Modal, Form, DatePicker, Button, Select, Spin } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { FC } from 'react'
 import { DataPropsForm } from '../../types/GlobalTypes'
@@ -7,6 +7,7 @@ import { Moment } from 'moment'
 import { axiosRequest } from '../../api/api'
 import { useMutation } from '@tanstack/react-query'
 import { downloadReportURL } from '../../utils/network'
+import { toast } from 'sonner'
 
 export const downloadReport = async (data: { payload: DataPropsForm | undefined; url: string }) => {
   const response = await axiosRequest({
@@ -83,10 +84,7 @@ const DownloadReports: FC<IModalDownloadReports> = ({
     mutationFn: downloadReport,
     onSuccess: () => {
       onSuccessCallback()
-      notification.success({
-        message: 'Exito',
-        description: 'Reporte descargado!',
-      })
+      toast.success('Reporte descargado!')
       form.resetFields()
     },
   })

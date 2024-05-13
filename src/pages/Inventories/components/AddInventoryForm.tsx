@@ -1,4 +1,4 @@
-import { Form, Modal, Input, Select, Button, notification } from 'antd'
+import { Form, Modal, Input, Select, Button } from 'antd'
 import { ChangeEvent, FC, useRef, useState } from 'react'
 import { DataPropsForm } from '../../../types/GlobalTypes'
 import { useForm } from 'antd/es/form/Form'
@@ -6,6 +6,7 @@ import { IconPhoto, IconPlus } from '@tabler/icons-react'
 import { IAddInventoryFormProps } from '../types/InventoryTypes'
 import { postImageToCloudinary, postInventoriesNew } from '../helpers/services'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 
 const AddInventoryForm: FC<IAddInventoryFormProps> = ({
   isVisible = false,
@@ -32,12 +33,9 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
   const { mutate, isPending } = useMutation({
     mutationFn: postInventoriesNew,
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['paginatedInventories']})
+      queryClient.invalidateQueries({ queryKey: ['paginatedInventories'] })
       onSuccessCallback()
-      notification.success({
-        message: 'Exito',
-        description: 'Item creado!',
-      })
+      toast.success('Item creado!')
       form.resetFields()
     },
   })

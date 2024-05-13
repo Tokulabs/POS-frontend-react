@@ -1,10 +1,11 @@
-import { Modal, Input, Switch, Button, notification, Form } from 'antd'
+import { Modal, Input, Switch, Button, Form } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { FC } from 'react'
 import { DataPropsForm } from '../../../types/GlobalTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { postPaymentTerminals, putPaymentTerminals } from '../helpers/services'
 import { IAddPaymentTerminals } from '../types/PaymentTerminalTypes'
+import { toast } from 'sonner'
 
 const AddPaymentTerminalForm: FC<IAddPaymentTerminals> = ({
   isVisible = false,
@@ -21,27 +22,24 @@ const AddPaymentTerminalForm: FC<IAddPaymentTerminals> = ({
 
   const isEdit = !!initialData.id
 
-  const successRegistry = (message: string, description: string) => {
+  const successRegistry = (description: string) => {
     queryClient.invalidateQueries({ queryKey: ['paginatedPaymentTerminals'] })
     onSuccessCallback()
-    notification.success({
-      message: message,
-      description: description,
-    })
+    toast.success(description)
     form.resetFields()
   }
 
   const { mutate, isPending: isLoading } = useMutation({
     mutationFn: postPaymentTerminals,
     onSuccess: () => {
-      successRegistry('Exito', 'Datafono creado!')
+      successRegistry('Datafono creado!')
     },
   })
 
   const { mutate: mutateEdit, isPending: isLoadingEdit } = useMutation({
     mutationFn: putPaymentTerminals,
     onSuccess: () => {
-      successRegistry('Exito', 'Datafono actualizado!')
+      successRegistry('Datafono actualizado!')
     },
   })
 

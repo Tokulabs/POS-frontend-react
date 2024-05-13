@@ -1,7 +1,7 @@
 import { FC, useState } from 'react'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
 import AddInventoryForm from './components/AddInventoryForm'
-import { Button, Popconfirm, Switch, notification } from 'antd'
+import { Button, Popconfirm, Switch } from 'antd'
 import AddInventoryFormCSV from './components/AddInventoryFormCSV'
 import { columns } from './data/columnsData'
 import { formatNumberToColombianPesos } from '../../utils/helpers'
@@ -19,6 +19,7 @@ import { toogleInventories } from '../Inventories/helpers/services'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ModalStateEnum } from '../../types/ModalTypes'
 import { useProviders } from '../../hooks/useProviders'
+import { toast } from 'sonner'
 
 export const formatinventoryPhoto = (inventories: IInventoryProps[]) => {
   return inventories.map((item) => ({
@@ -53,10 +54,7 @@ const Storage: FC = () => {
     mutationFn: toogleInventories,
     onSuccess: (item) => {
       queryClient.invalidateQueries({ queryKey: ['paginatedInventories'] })
-      notification.success({
-        message: 'Exito',
-        description: `Prodcuto ${item?.data.active ? 'Activado' : 'Desactivado'}`,
-      })
+      toast.success(`Prodcuto ${item?.data.active ? 'Activado' : 'Desactivado'}`)
     },
   })
 

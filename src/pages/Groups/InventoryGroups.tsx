@@ -5,7 +5,7 @@ import { columns } from './data/columnData'
 import { useGroups } from '../../hooks/useGroups'
 import { IGroupsProps } from './types/GroupTypes'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
-import { Button, Popconfirm, Switch, notification } from 'antd'
+import { Button, Popconfirm, Switch } from 'antd'
 import { ModalStateEnum } from '../../types/ModalTypes'
 import {
   IconCircleCheck,
@@ -15,6 +15,7 @@ import {
   IconSquareCheck,
 } from '@tabler/icons-react'
 import { toggleActiveGroups } from './helpers/services'
+import { toast } from 'sonner'
 
 const InventoryGroups: FC = () => {
   const [currentPage, setcurrentPage] = useState(1)
@@ -37,11 +38,8 @@ const InventoryGroups: FC = () => {
   const { mutate, isPending: isLoadingDelete } = useMutation({
     mutationFn: toggleActiveGroups,
     onSuccess: (item) => {
-      queryClient.invalidateQueries({ queryKey: ['paginatedProviders'] })
-      notification.success({
-        message: 'Exito',
-        description: `Proveedor ${item?.data.active ? 'Activado' : 'Desactivado'}`,
-      })
+      queryClient.invalidateQueries({ queryKey: ['paginatedGroups'] })
+      toast.success(`Categoria ${item?.data.active ? 'Activado' : 'Desactivado'}`)
     },
   })
 
@@ -84,41 +82,39 @@ const InventoryGroups: FC = () => {
   }
 
   return (
-    <>
-      <ContentLayout
-        pageTitle='Categorias'
-        buttonTitle='Categoria'
-        extraButton={
-          <div className='flex flex-col items-center gap-2'>
-            <span className='font-bold text-green-1'>Activos</span>
-            <Switch
-              value={showActive}
-              loading={isLoading}
-              onChange={() => setShowActive(!showActive)}
-            />
-          </div>
-        }
-        setModalState={() => {
-          setEditData({} as IGroupsProps)
-          setModalState(ModalStateEnum.addItem)
-        }}
-        dataSource={formatEditAndDelete(groupsData?.results || [])}
-        columns={columns}
-        fetching={isLoading}
-        totalItems={groupsData?.count || 0}
-        currentPage={currentPage}
-        onChangePage={(page) => setcurrentPage(page)}
-      >
-        {modalState === ModalStateEnum.addItem && (
-          <AddGroupForm
-            initialData={editData}
-            onSuccessCallback={() => setModalState(ModalStateEnum.off)}
-            isVisible={modalState === ModalStateEnum.addItem}
-            onCancelCallback={() => setModalState(ModalStateEnum.off)}
+    <ContentLayout
+      pageTitle='Categorias'
+      buttonTitle='Categoria'
+      extraButton={
+        <div className='flex flex-col items-center gap-2'>
+          <span className='font-bold text-green-1'>Activos</span>
+          <Switch
+            value={showActive}
+            loading={isLoading}
+            onChange={() => setShowActive(!showActive)}
           />
-        )}
-      </ContentLayout>
-    </>
+        </div>
+      }
+      setModalState={() => {
+        setEditData({} as IGroupsProps)
+        setModalState(ModalStateEnum.addItem)
+      }}
+      dataSource={formatEditAndDelete(groupsData?.results || [])}
+      columns={columns}
+      fetching={isLoading}
+      totalItems={groupsData?.count || 0}
+      currentPage={currentPage}
+      onChangePage={(page) => setcurrentPage(page)}
+    >
+      {modalState === ModalStateEnum.addItem && (
+        <AddGroupForm
+          initialData={editData}
+          onSuccessCallback={() => setModalState(ModalStateEnum.off)}
+          isVisible={modalState === ModalStateEnum.addItem}
+          onCancelCallback={() => setModalState(ModalStateEnum.off)}
+        />
+      )}
+    </ContentLayout>
   )
 }
 

@@ -1,10 +1,11 @@
-import { Form, Modal, Input, Select, Button, notification } from 'antd'
+import { Form, Modal, Input, Select, Button } from 'antd'
 import { FC } from 'react'
 import { DataPropsForm } from '../../../types/GlobalTypes'
 import { useForm } from 'antd/es/form/Form'
 import { IAddUser, UserRolesEnum } from '../types/UserTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { postUsersNew, putUsers } from '../helpers/services'
+import { toast } from 'sonner'
 
 const AddUserForm: FC<IAddUser> = ({
   isVisible = false,
@@ -24,27 +25,24 @@ const AddUserForm: FC<IAddUser> = ({
 
   const isEdit = !!initialData.id
 
-  const successRegistry = (message: string, description: string) => {
+  const successRegistry = (description: string) => {
     queryClient.invalidateQueries({ queryKey: ['paginatedUsers'] })
     onSuccessCallback()
-    notification.success({
-      message: message,
-      description: description,
-    })
+    toast.success(description)
     form.resetFields()
   }
 
   const { mutate, isPending: isLoading } = useMutation({
     mutationFn: postUsersNew,
     onSuccess: () => {
-      successRegistry('Exito', 'Usuario creado!')
+      successRegistry('Usuario creado!')
     },
   })
 
   const { mutate: mutateEdit, isPending: isLoadingEdit } = useMutation({
     mutationFn: putUsers,
     onSuccess: () => {
-      successRegistry('Exito', 'Usuario actualizado!')
+      successRegistry('Usuario actualizado!')
     },
   })
 
