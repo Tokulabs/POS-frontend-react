@@ -43,5 +43,12 @@ jobs:
         run: npm run build
 
       - name: Upload Artifact to s3
-        run: aws s3 cp $GITHUB_WORKSPACE/dist s3://${{ env.S3BUCKET }} --recursive
-        # Note: build is for create-react-app builds and dist for vite builds
+        run: aws s3 cp $GITHUB_WORKSPACE/dist s3://${{ env.BUCKET_NAME }} --recursive
+
+      - name: Deploy
+          uses: lbertenasco/s3-deploy@v1
+          with:
+            folder: dist
+            bucket: ${{ secrets.BUCKET_NAME }}
+            dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+            invalidation: / *
