@@ -1,4 +1,4 @@
-import { Popconfirm, Spin, Tooltip, notification } from 'antd'
+import { Popconfirm, Spin, Tooltip } from 'antd'
 import { FC, useRef, useState } from 'react'
 import PrintOut from '../../components/Print/PrintOut'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
@@ -21,6 +21,7 @@ import { useRolePermissions } from '../../hooks/useRolespermissions'
 import { PaymentMethodsEnum } from '../POS/components/types/PaymentMethodsTypes'
 import { IPosData } from '../POS/components/types/TableTypes'
 import { IconCircleX, IconPrinter, IconX } from '@tabler/icons-react'
+import { toast } from 'sonner'
 
 const Invoices: FC = () => {
   const [currentPage, setcurrentPage] = useState(1)
@@ -42,10 +43,7 @@ const Invoices: FC = () => {
     mutationFn: patchOverrideInvoice,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['paginatedInvoices', { page: currentPage }] })
-      notification.success({
-        message: 'Exito',
-        description: 'Factura anulada!',
-      })
+      toast.info('Factura anulada!')
     },
   })
 
@@ -157,16 +155,10 @@ const Invoices: FC = () => {
   const handlePrint = useReactToPrint({
     content: () => printOutRef.current,
     onAfterPrint: () => {
-      notification.success({
-        message: 'Impresión exitosa',
-        description: 'La factura se ha impreso correctamente',
-      })
+      toast.success('La factura se ha impreso correctamente')
     },
     onPrintError: () => {
-      notification.error({
-        message: 'Error al imprimir',
-        description: 'Ha ocurrido un error al imprimir la factura',
-      })
+      toast.error('Ha ocurrido un error al imprimir la factura')
     },
     removeAfterPrint: true,
   })

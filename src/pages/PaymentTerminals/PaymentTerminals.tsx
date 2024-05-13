@@ -11,10 +11,11 @@ import {
   IconSquareCheck,
   IconTrash,
 } from '@tabler/icons-react'
-import { Button, Popconfirm, Switch, notification } from 'antd'
+import { Button, Popconfirm, Switch } from 'antd'
 import { ModalStateEnum } from '../../types/ModalTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toggleActivePaymentTemrinal } from './helpers/services'
+import { toast } from 'sonner'
 
 const PaymentTerminals: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -37,10 +38,7 @@ const PaymentTerminals: FC = () => {
     mutationFn: toggleActivePaymentTemrinal,
     onSuccess: (item) => {
       queryClient.invalidateQueries({ queryKey: ['paginatedPaymentTerminals'] })
-      notification.success({
-        message: 'Exito',
-        description: `Datafono ${item?.data.active ? 'Activado' : 'Desactivado'}`,
-      })
+      toast.success(`Datafono ${item?.data.active ? 'Activado' : 'Desactivado'}`)
     },
   })
 

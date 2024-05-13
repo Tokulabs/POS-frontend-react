@@ -1,4 +1,4 @@
-import { Form, Modal, Input, Select, Button, notification } from 'antd'
+import { Form, Modal, Input, Select, Button } from 'antd'
 import { ChangeEvent, FC, useRef, useState } from 'react'
 import { DataPropsForm } from '../../../types/GlobalTypes'
 import { useForm } from 'antd/es/form/Form'
@@ -10,6 +10,7 @@ import {
   putInventoriesEdit,
 } from '../../Inventories/helpers/services'
 import { IAddInventoryFormProps } from '../../Inventories/types/InventoryTypes'
+import { toast } from 'sonner'
 
 const AddInventoryForm: FC<IAddInventoryFormProps> = ({
   isVisible = false,
@@ -34,27 +35,24 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
 
   const queryClient = useQueryClient()
 
-  const successRegistry = (message: string, description: string) => {
+  const successRegistry = (description: string) => {
     queryClient.invalidateQueries({ queryKey: ['paginatedInventories'] })
     onSuccessCallback()
-    notification.success({
-      message: message,
-      description: description,
-    })
+    toast.success(description)
     form.resetFields()
   }
 
   const { mutate, isPending: isLoading } = useMutation({
     mutationFn: postInventoriesNew,
     onSuccess: () => {
-      successRegistry('Exito', 'Producto creado!')
+      successRegistry('Producto creado!')
     },
   })
 
   const { mutate: mutateEdit, isPending: isLoadingEdit } = useMutation({
     mutationFn: putInventoriesEdit,
     onSuccess: () => {
-      successRegistry('Exito', 'Producto actualizado!')
+      successRegistry('Producto actualizado!')
     },
   })
 

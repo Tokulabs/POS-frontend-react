@@ -11,10 +11,11 @@ import {
   IconSquareCheck,
   IconTrash,
 } from '@tabler/icons-react'
-import { Button, Popconfirm, Switch, notification } from 'antd'
+import { Button, Popconfirm, Switch } from 'antd'
 import { ModalStateEnum } from '../../types/ModalTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toggleActiveProvider } from './helpers/services'
+import { toast } from 'sonner'
 
 const Providers: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -38,10 +39,7 @@ const Providers: FC = () => {
     mutationFn: toggleActiveProvider,
     onSuccess: (item) => {
       queryClient.invalidateQueries({ queryKey: ['paginatedProviders'] })
-      notification.success({
-        message: 'Exito',
-        description: `Proveedor ${item?.data.active ? 'Activado' : 'Desactivado'}`,
-      })
+      toast.success(`Proveedor ${item?.data.active ? 'Activado' : 'Desactivado'}`)
     },
   })
 

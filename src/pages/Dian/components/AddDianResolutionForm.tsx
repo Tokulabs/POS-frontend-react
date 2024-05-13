@@ -1,4 +1,4 @@
-import { Form, Modal, Input, Button, notification, DatePicker } from 'antd'
+import { Form, Modal, Input, Button, DatePicker } from 'antd'
 import { FC } from 'react'
 import { DataPropsForm } from '../../../types/GlobalTypes'
 import { useForm } from 'antd/es/form/Form'
@@ -6,6 +6,7 @@ import { IModalFormProps } from '../../../types/ModalTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Moment } from 'moment'
 import { postDianResolution } from '../helpers/services'
+import { toast } from 'sonner'
 
 const { RangePicker } = DatePicker
 const dateFormat = 'YYYY-MM-DD'
@@ -23,10 +24,7 @@ const AddDianResolutionForm: FC<IModalFormProps> = ({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['allDianResolutions'] })
       onSuccessCallback()
-      notification.success({
-        message: 'Exito',
-        description: 'Resolución Creada!',
-      })
+      toast.success('Resolución Creada!')
       form.resetFields()
     },
   })

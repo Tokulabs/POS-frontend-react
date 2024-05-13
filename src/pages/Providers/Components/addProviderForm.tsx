@@ -1,10 +1,11 @@
-import { Modal, Input, Button, notification, Form, Select } from 'antd'
+import { Modal, Input, Button, Form, Select } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { FC } from 'react'
 import { DataPropsForm } from '../../../types/GlobalTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { postProviders, putProviders } from '../helpers/services'
 import { IAddProvider } from '../types/ProviderTypes'
+import { toast } from 'sonner'
 
 const AddProviderForm: FC<IAddProvider> = ({
   isVisible = false,
@@ -21,27 +22,24 @@ const AddProviderForm: FC<IAddProvider> = ({
 
   const isEdit = !!initialData.id
 
-  const successRegistry = (message: string, description: string) => {
+  const successRegistry = (description: string) => {
     queryClient.invalidateQueries({ queryKey: ['paginatedProviders'] })
     onSuccessCallback()
-    notification.success({
-      message: message,
-      description: description,
-    })
+    toast.success(description)
     form.resetFields()
   }
 
   const { mutate, isPending: isLoading } = useMutation({
     mutationFn: postProviders,
     onSuccess: () => {
-      successRegistry('Exito', 'Proveedor creado!')
+      successRegistry('Proveedor creado!')
     },
   })
 
   const { mutate: mutateEdit, isPending: isLoadingEdit } = useMutation({
     mutationFn: putProviders,
     onSuccess: () => {
-      successRegistry('Exito', 'Proveedor actualizado!')
+      successRegistry('Proveedor actualizado!')
     },
   })
 

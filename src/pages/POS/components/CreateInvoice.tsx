@@ -7,13 +7,14 @@ import { useCustomerData } from '../../../store/useCustomerStoreZustand'
 import { usePaymentMethodsData } from '../../../store/usePaymentMethodsZustand'
 import { IPaymentMethodToSend, PaymentMethodsEnum } from './types/PaymentMethodsTypes'
 import { usePOSStep } from '../../../store/usePOSSteps'
-import { Spin, notification } from 'antd'
+import { Spin } from 'antd'
 import { IconCheck, IconPrinter, IconScriptPlus, IconX } from '@tabler/icons-react'
 import { useKeyPress } from '../../../hooks/useKeyPress'
 import { useReactToPrint } from 'react-to-print'
 import PrintOut from '../../../components/Print/PrintOut'
 import { buildPrintDataFromInvoiceProps } from '../../../utils/helpers'
 import { IInvoiceProps } from '../../Invoices/types/InvoicesTypes'
+import { toast } from 'sonner'
 
 export const CreateInvoice = () => {
   const componentRef = useRef<HTMLDivElement>(null)
@@ -102,8 +103,10 @@ export const CreateInvoice = () => {
 
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
-    onBeforePrint: () => notification.info({ message: 'Imprimiendo factura...' }),
-    onAfterPrint: () => notification.info({ message: 'Factura impresa correctamente' }),
+    onBeforePrint: () => {
+      toast.info('Imprimiendo factura...')
+    },
+    onAfterPrint: () => toast.info('Factura impresa correctamente'),
     removeAfterPrint: true,
   })
 

@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { IPosData } from '../pages/POS/components/types/TableTypes'
 import { calcMetaDataProdudct, calcTotalPrices } from '../utils/helpers'
-import { notification } from 'antd'
+import { toast } from 'sonner'
 
 interface ICartStore {
   cartItems: IPosData[]
@@ -43,10 +43,7 @@ export const useCart = create<ICartStore>((set, get) => ({
         productExist.total_in_shops === 0 ||
         productExist.quantity > (productExist.total_in_shops || 0)
       ) {
-        notification.error({
-          message: 'Producto sin existencias',
-          description: 'Lo sentimos, este producto no cuenta más existencias en tienda',
-        })
+        toast.error('Lo sentimos, este producto no cuenta más existencias en tienda')
         productExist.quantity = originalQuantity
         return
       }
@@ -60,10 +57,7 @@ export const useCart = create<ICartStore>((set, get) => ({
       }
     } else {
       if (product.total_in_shops === 0) {
-        notification.error({
-          message: 'Producto sin existencias',
-          description: 'Lo sentimos, este producto no cuenta más existencias en tienda',
-        })
+        toast.error('Lo sentimos, este producto no cuenta más existencias en tienda')
         return
       }
       set({
@@ -146,10 +140,7 @@ export const useCart = create<ICartStore>((set, get) => ({
         productExist.total_in_shops === 0 ||
         productExist.quantity > (productExist.total_in_shops || 0)
       ) {
-        notification.error({
-          message: 'Producto sin existencias',
-          description: 'Lo sentimos, este producto no cuenta más existencias en tienda',
-        })
+        toast.error('Lo sentimos, este producto no cuenta más existencias en tienda')
         productExist.quantity = originalQuantity
         return
       }

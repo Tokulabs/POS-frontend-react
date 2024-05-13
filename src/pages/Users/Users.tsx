@@ -5,7 +5,7 @@ import { columns } from './data/columsData'
 import { useUsers } from '../../hooks/useUsers'
 import { IUserProps } from './types/UserTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Button, Popconfirm, Switch, notification } from 'antd'
+import { Button, Popconfirm, Switch } from 'antd'
 import {
   IconCircleCheck,
   IconCircleX,
@@ -15,6 +15,7 @@ import {
 } from '@tabler/icons-react'
 import { ModalStateEnum } from '../../types/ModalTypes'
 import { toggleActiveUser } from './helpers/services'
+import { toast } from 'sonner'
 
 const Users: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -37,10 +38,7 @@ const Users: FC = () => {
     mutationFn: toggleActiveUser,
     onSuccess: (item) => {
       queryClient.invalidateQueries({ queryKey: ['paginatedUsers'] })
-      notification.success({
-        message: 'Exito',
-        description: `Usuario ${item?.data.is_active ? 'Activado' : 'Desactivado'}`,
-      })
+      toast.success(`Usuario ${item?.data.is_active ? 'Activado' : 'Desactivado'}`)
     },
   })
 
