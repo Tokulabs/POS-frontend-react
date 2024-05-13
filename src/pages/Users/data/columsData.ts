@@ -15,6 +15,11 @@ export const columns = [
     key: 'fullname',
   },
   {
+    title: 'Identificación',
+    dataIndex: 'document_id',
+    key: 'document_id',
+  },
+  {
     title: 'Activo',
     dataIndex: 'is_active',
     key: 'is_active',

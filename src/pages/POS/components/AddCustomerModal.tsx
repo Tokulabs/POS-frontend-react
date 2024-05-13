@@ -103,7 +103,7 @@ export const AddCustomerModal: FC = () => {
         </Form.Item>
         <Form.Item
           style={{ width: '100%' }}
-          label='Documento de identidad'
+          label='Número de identificación'
           name='idNumber'
           rules={[{ required: true, message: 'El documento es un campo obligatorio' }]}
         >

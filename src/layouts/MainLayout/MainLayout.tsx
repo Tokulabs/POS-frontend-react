@@ -23,8 +23,9 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
     UserRolesEnum.admin,
     UserRolesEnum.posAdmin,
     UserRolesEnum.shopAdmin,
+    UserRolesEnum.sales,
   ]
-  const { hasPermission } = useRolePermissions(allowedRolesOverride)
+  const { hasPermission: hasPermissionDownloads } = useRolePermissions(allowedRolesOverride)
   const { state } = useContext(store)
   const location = useLocation()
   const navigate = useNavigate()
@@ -66,7 +67,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
             </div>
           </div>
           <div className='flex items-center gap-6'>
-            {hasPermission && (
+            {hasPermissionDownloads && (
               <Tooltip title='Descargar Reportes'>
                 <span
                   className='text-white hover:text-gray-100 cursor-pointer flex flex-col items-center'

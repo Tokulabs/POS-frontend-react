@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react'
+import { FC, useCallback, useMemo } from 'react'
 // Components
 import { AddItemsToPurchase } from './AddItemsToPurchase'
 import { AddPaymentMethods } from './AddPaymentMethods'
@@ -53,20 +53,26 @@ export const POSStepper: FC = () => {
     )
   }, [paymentMethods, paymentTerminaID])
 
-  const isDisabled = () => {
+  const isDisabled = useCallback(() => {
     if (currentStep === 0) {
       return !cartItems.length
     }
     if (currentStep === 1) {
       const missingTransactionNumber = paymentMethods.map((item) => {
         if (item.name !== PaymentMethodsEnum.cash) {
-          if (item.transactionNumber.some((item) => !item)) {
-            return false
+          if (item.transactionNumber && item.transactionNumber.length > 0) {
+            if (item.transactionNumber.some((num) => !num)) {
+              return false
+            } else {
+              return true
+            }
           } else {
-            return true
+            return false
           }
         }
+        return null
       })
+
       const cashPayment = paymentMethods.find((item) => item.name === PaymentMethodsEnum.cash)
 
       return (
@@ -78,7 +84,7 @@ export const POSStepper: FC = () => {
       )
     }
     return false
-  }
+  }, [paymentMethods, currentStep, cartItems, totalCOP, totalValueToPay, requirePaymentTerminal])
 
   return (
     <section className='h-full flex flex-col justify-between gap-3'>

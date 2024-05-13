@@ -74,6 +74,13 @@ const AddUserForm: FC<IAddUser> = ({
           <Input placeholder='Email' type='email' />
         </Form.Item>
         <Form.Item
+          label='Identificación'
+          name='document_id'
+          rules={[{ required: true, message: 'Campo obligatorio' }]}
+        >
+          <Input placeholder='Docuemnto de Identidad' type='number' />
+        </Form.Item>
+        <Form.Item
           label='Nombre'
           name='fullname'
           rules={[{ required: true, message: 'El Nombre es un campo obligatorio' }]}
