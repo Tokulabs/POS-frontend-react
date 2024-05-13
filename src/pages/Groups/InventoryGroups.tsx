@@ -21,7 +21,9 @@ const InventoryGroups: FC = () => {
   const [currentPage, setcurrentPage] = useState(1)
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
   const [showActive, setShowActive] = useState(true)
-  const [editData, setEditData] = useState<IGroupsProps>({} as IGroupsProps)
+  const [editData, setEditData] = useState<IGroupsProps & { belongs_to_id: number | undefined }>(
+    {} as IGroupsProps & { belongs_to_id: number },
+  )
 
   const { groupsData, isLoading } = useGroups('paginatedGroups', {
     page: currentPage,
@@ -31,7 +33,7 @@ const InventoryGroups: FC = () => {
   const queryClient = useQueryClient()
 
   const editGroupsData = (item: IGroupsProps) => () => {
-    setEditData(item)
+    setEditData({ ...item, belongs_to_id: item.belongs_to?.id || undefined })
     setModalState(ModalStateEnum.addItem)
   }
 
@@ -96,7 +98,7 @@ const InventoryGroups: FC = () => {
         </div>
       }
       setModalState={() => {
-        setEditData({} as IGroupsProps)
+        setEditData({} as IGroupsProps & { belongs_to_id: number | undefined })
         setModalState(ModalStateEnum.addItem)
       }}
       dataSource={formatEditAndDelete(groupsData?.results || [])}
