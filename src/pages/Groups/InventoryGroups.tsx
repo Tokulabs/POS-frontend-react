@@ -41,7 +41,7 @@ const InventoryGroups: FC = () => {
     mutationFn: toggleActiveGroups,
     onSuccess: (item) => {
       queryClient.invalidateQueries({ queryKey: ['paginatedGroups'] })
-      toast.success(`Categoria ${item?.data.active ? 'Activado' : 'Desactivado'}`)
+      toast.success(`Categoria ${item?.data.active ? 'Activada' : 'Desactivada'}`)
     },
   })
 

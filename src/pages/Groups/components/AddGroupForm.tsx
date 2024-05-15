@@ -76,6 +76,17 @@ const AddGroupForm: FC<IAddGroups> = ({
         <Form.Item label='Categoria Padre' name='belongs_to_id'>
           <Select
             placeholder='Selecciona una categoria'
+            listHeight={200}
+            showSearch
+            optionFilterProp='children'
+            filterOption={(input, option) =>
+              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+            }
+            filterSort={(optionA, optionB) =>
+              (optionA?.label ?? '')
+                .toLowerCase()
+                .localeCompare((optionB?.label ?? '').toLowerCase())
+            }
             options={allGroupsData?.results.map((item: IGroupsProps) => ({
               value: item.id,
               label: item.name,

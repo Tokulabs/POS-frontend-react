@@ -9,6 +9,7 @@ import { Button, Divider, Steps } from 'antd'
 import { useCart } from '../../../store/useCartStoreZustand'
 import { usePaymentMethodsData } from '../../../store/usePaymentMethodsZustand'
 import { usePOSStep } from '../../../store/usePOSSteps'
+import { useCustomerData } from '../../../store/useCustomerStoreZustand'
 // Types
 import { PaymentMethodsEnum } from './types/PaymentMethodsTypes'
 
@@ -32,6 +33,7 @@ export const POSStepper: FC = () => {
   const { paymentMethods, totalValueToPay, clearPaymentMethods, paymentTerminaID } =
     usePaymentMethodsData()
   const { currentStep, updateCurrentStep } = usePOSStep()
+  const { customer } = useCustomerData()
 
   const next = () => {
     updateCurrentStep(currentStep + 1)
@@ -75,16 +77,27 @@ export const POSStepper: FC = () => {
 
       const cashPayment = paymentMethods.find((item) => item.name === PaymentMethodsEnum.cash)
 
+      const existCustomer = Boolean(customer.idNumber && customer.name)
+
       return (
         !paymentMethods.length ||
         totalValueToPay !== totalCOP ||
         requirePaymentTerminal ||
         missingTransactionNumber.includes(false) ||
+        !existCustomer ||
         (cashPayment && cashPayment.receivedAmount < cashPayment.paidAmount[0])
       )
     }
     return false
-  }, [paymentMethods, currentStep, cartItems, totalCOP, totalValueToPay, requirePaymentTerminal])
+  }, [
+    paymentMethods,
+    currentStep,
+    cartItems,
+    totalCOP,
+    totalValueToPay,
+    requirePaymentTerminal,
+    customer,
+  ])
 
   return (
     <section className='h-full flex flex-col justify-between gap-3'>

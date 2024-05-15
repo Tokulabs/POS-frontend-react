@@ -207,6 +207,17 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
           >
             <Select
               placeholder='Selecciona una categoria'
+              listHeight={200}
+              showSearch
+              optionFilterProp='children'
+              filterOption={(input, option) =>
+                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+              }
+              filterSort={(optionA, optionB) =>
+                (optionA?.label ?? '')
+                  .toLowerCase()
+                  .localeCompare((optionB?.label ?? '').toLowerCase())
+              }
               options={[
                 {
                   value: '',
@@ -228,6 +239,17 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
         >
           <Select
             placeholder='Selecciona un proveedor'
+            listHeight={200}
+            showSearch
+            optionFilterProp='children'
+            filterOption={(input, option) =>
+              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+            }
+            filterSort={(optionA, optionB) =>
+              (optionA?.label ?? '')
+                .toLowerCase()
+                .localeCompare((optionB?.label ?? '').toLowerCase())
+            }
             options={[
               {
                 value: '',
