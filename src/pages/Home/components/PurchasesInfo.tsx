@@ -35,7 +35,7 @@ const PurchasesInfo = () => {
   }, [])
 
   return (
-    <div className='bg-white p-4 rounded-lg md:col-span-2 flex flex-col gap-4 shadow-md'>
+    <div className='bg-white h-full p-4 rounded-lg md:col-span-2 flex flex-col gap-4 shadow-md'>
       <h3 className='m-0 font-bold'>Ventas Totales</h3>
       {loading ? (
         <Spin />

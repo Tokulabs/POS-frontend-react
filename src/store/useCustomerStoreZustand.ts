@@ -1,6 +1,4 @@
 import { create } from 'zustand'
-import { getCustomers } from '../pages/POS/helpers/services'
-import { AxiosError } from 'axios'
 
 interface ICustomerDataStore {
   openModalAddCustomer: boolean
@@ -16,7 +14,6 @@ interface ICustomerDataStore {
   updateCustomerData: (data: ICustomerDataStore['customer']) => void
   clearCustomerData: () => void
   toggleModalAddCustomer: (value: boolean, isEdit: boolean) => void
-  fetchDefaultCustomer: () => void
 }
 
 export const useCustomerData = create<ICustomerDataStore>((set) => ({
@@ -52,25 +49,5 @@ export const useCustomerData = create<ICustomerDataStore>((set) => ({
       openModalAddCustomer: value,
       isEditUser: isEdit,
     })
-  },
-  fetchDefaultCustomer: async () => {
-    try {
-      const data = await getCustomers({ keyword: '22222222' })
-      const customerByDefault = data?.results.filter((item) => item.document_id === '22222222')[0]
-      if (!customerByDefault) return
-      set({
-        customer: {
-          id: customerByDefault.id as number,
-          idNumber: customerByDefault.document_id,
-          name: customerByDefault.name,
-          email: customerByDefault.email,
-          phone: customerByDefault.phone,
-          address: customerByDefault.address,
-        },
-      })
-    } catch (error) {
-      const e = error as AxiosError
-      console.error(e)
-    }
   },
 }))

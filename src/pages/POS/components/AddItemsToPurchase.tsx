@@ -17,8 +17,6 @@ import { TableData } from '../Data/TableData'
 // Components
 import { TableHeader } from './TableHeader'
 import { TableRow } from './TableRow'
-// Store
-import { useCustomerData } from '../../../store/useCustomerStoreZustand'
 
 export const AddItemsToPurchase = () => {
   const [value, setValue] = useState<string>()
@@ -28,11 +26,6 @@ export const AddItemsToPurchase = () => {
   const queryClient = useQueryClient()
 
   const { addToCart, updateTotalPrice, cartItems } = useCart()
-  const { fetchDefaultCustomer } = useCustomerData()
-
-  useEffect(() => {
-    fetchDefaultCustomer()
-  }, [])
 
   const formatDatatoIPOSData = (data: IInventoryProps): IPosData => {
     return {

@@ -3,6 +3,7 @@ import { IAuthToken, ICustomAxiosError } from '../types/AuthTypes'
 import { DataPropsForm } from '../types/GlobalTypes'
 import { tokenName } from '../utils/constants'
 import { toast } from 'sonner'
+import { isObject } from 'lodash'
 
 interface IAxiosRequestProps {
   method?: 'get' | 'post' | 'patch' | 'delete' | 'put'
@@ -55,7 +56,9 @@ export const axiosRequest = async <T>({
         ? errorObjectDescription
         : err.response?.data.error
           ? err.response?.data.error
-          : err.response?.data.code,
+          : isObject(err.response?.data)
+            ? Object.values(err.response?.data)[0]
+            : err.message,
     )
     throw Error(err.response?.data.error)
   }

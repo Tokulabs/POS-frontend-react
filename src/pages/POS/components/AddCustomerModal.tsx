@@ -102,7 +102,7 @@ export const AddCustomerModal: FC = () => {
           name='idNumber'
           rules={[{ required: true, message: 'El documento es un campo obligatorio' }]}
         >
-          <Input placeholder='Documento de indentidad' type='text' autoComplete='off' />
+          <Input placeholder='Número de identificación' type='text' autoComplete='off' />
         </Form.Item>
         <Form.Item
           style={{ width: '100%' }}
@@ -112,20 +112,10 @@ export const AddCustomerModal: FC = () => {
         >
           <Input placeholder='Correo Electornico' type='email' autoComplete='off' />
         </Form.Item>
-        <Form.Item
-          style={{ width: '100%' }}
-          label='Número de teléfono'
-          name='phone'
-          rules={[{ required: true, message: 'Número de teléfono es obligatorio' }]}
-        >
+        <Form.Item style={{ width: '100%' }} label='Número de teléfono' name='phone'>
           <Input placeholder='Número de telefono' type='number' min={1} autoComplete='off' />
         </Form.Item>
-        <Form.Item
-          style={{ width: '100%' }}
-          label='Dirección/Ciudad'
-          name='address'
-          rules={[{ required: true, message: 'La dirección es obligatoria' }]}
-        >
+        <Form.Item style={{ width: '100%' }} label='Dirección/Ciudad' name='address'>
           <Input placeholder='Dirección/Ciudad' type='text' autoComplete='off' />
         </Form.Item>
         <Form.Item>
