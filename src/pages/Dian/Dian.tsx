@@ -1,14 +1,28 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useDianResolutions } from '../../hooks/useDianResolution'
 import AddDianResolutionForm from './components/AddDianResolutionForm'
-import { IconArticle, IconArticleOff, IconCirclePlus } from '@tabler/icons-react'
-import { Button, Spin, Switch } from 'antd'
+import {
+  IconArticle,
+  IconArticleOff,
+  IconCirclePlus,
+  IconDeviceFloppy,
+  IconEdit,
+} from '@tabler/icons-react'
+import { Button, InputNumber, Spin, Switch } from 'antd'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toggleDianResolution } from './helpers/services'
+import { putDiaResolution, toggleDianResolution } from './helpers/services'
 import { Reorder } from 'framer-motion'
+import { UserRolesEnum } from '../Users/types/UserTypes'
+import { useRolePermissions } from '../../hooks/useRolespermissions'
+import { IDianResolutionProps } from './types/DianResolutionTypes'
+import { toast } from 'sonner'
 
 const Dian: FC = () => {
   const [modalState, setModalState] = useState(false)
+  const [currentNumber, setCurrentNumber] = useState<number>(0)
+  const [edit, setEdit] = useState(false)
+  const allowedRolesOverride = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
+  const { hasPermission } = useRolePermissions(allowedRolesOverride)
 
   const { dianResolutionData, isPending } = useDianResolutions('allDianResolutions', {})
 
@@ -24,15 +38,41 @@ const Dian: FC = () => {
 
   const queryClient = useQueryClient()
 
+  useEffect(() => {
+    setCurrentNumber(sortedDianDataResolution?.[0].current_number ?? 0)
+  }, [dianResolutionData])
+
   const { mutate, isPending: isPendingToggle } = useMutation({
     mutationFn: toggleDianResolution,
     onSuccess: () => {
+      toast.success('Resolución actualizada!')
+      queryClient.invalidateQueries({ queryKey: ['allDianResolutions'] })
+    },
+  })
+
+  const { mutate: mutatePut, isPending: isPendingPut } = useMutation({
+    mutationFn: putDiaResolution,
+    onSuccess: () => {
+      toast.success('Último número actualizado!')
       queryClient.invalidateQueries({ queryKey: ['allDianResolutions'] })
     },
   })
 
   const toggleResolutionActive = (id: number) => async () => {
     mutate(id)
+  }
+
+  const updateCurrentNumber = (item: IDianResolutionProps) => {
+    const infoDianToUpdate = {
+      current_number: currentNumber,
+      document_number: item.document_number,
+      from_date: item.from_date,
+      from_number: item.from_number,
+      to_date: item.to_date,
+      to_number: item.to_number,
+    }
+    mutatePut({ id: item.id, payload: infoDianToUpdate })
+    setEdit(false)
   }
 
   return (
@@ -95,18 +135,47 @@ const Dian: FC = () => {
                       >
                         {item.document_number}
                       </h1>
-                      <div className='flex gap-8 items-center'>
-                        <div className='flex flex-col'>
+                      <div className='flex gap-10 items-top'>
+                        <div className='flex flex-col gap-2 justify-between'>
                           <span className='text-sm'>Fechas válidas</span>
                           <span className='font-bold'>{`${item.from_date} / ${item.to_date}`}</span>
                         </div>
-                        <div className='flex flex-col'>
+                        <div className='flex flex-col gap-2 justify-between'>
                           <span className='text-sm'>Número habilitados</span>
                           <span className='font-bold'>{`${item.from_number} - ${item.to_number}`}</span>
                         </div>
-                        <div className='flex flex-col'>
+                        <div className='flex flex-col gap-2 justify-between'>
                           <span className='text-sm'>Última factura registrada</span>
-                          <span className='font-bold'>{item.current_number}</span>
+                          <div className='flex items-center gap-3 cursor-pointer'>
+                            <span className='font-bold'>{item.current_number}</span>
+                            {hasPermission &&
+                              item.active &&
+                              (edit ? (
+                                <InputNumber
+                                  style={{ width: '12rem' }}
+                                  addonAfter={
+                                    isPendingPut ? (
+                                      <Spin size='small' />
+                                    ) : (
+                                      <span
+                                        onClick={() => updateCurrentNumber(item)}
+                                        className='text-green-1 cursor-pointer'
+                                      >
+                                        <IconDeviceFloppy size={24} />
+                                      </span>
+                                    )
+                                  }
+                                  onPressEnter={() => updateCurrentNumber(item)}
+                                  value={currentNumber}
+                                  onChange={(value) => setCurrentNumber(value as number)}
+                                  disabled={isPendingPut}
+                                />
+                              ) : (
+                                <span className='text-green-1'>
+                                  <IconEdit onClick={() => setEdit(true)} size={20} />
+                                </span>
+                              ))}
+                          </div>
                         </div>
                       </div>
                     </div>
