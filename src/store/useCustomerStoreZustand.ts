@@ -8,8 +8,8 @@ interface ICustomerDataStore {
     idNumber: string
     name: string
     email: string
-    phone: string
-    address: string
+    phone: string | null
+    address: string | null
   }
   updateCustomerData: (data: ICustomerDataStore['customer']) => void
   clearCustomerData: () => void

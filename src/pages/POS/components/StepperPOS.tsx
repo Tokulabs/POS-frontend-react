@@ -113,7 +113,9 @@ export const POSStepper: FC = () => {
         </div>
       </header>
       <Divider className='w-full' style={{ margin: '0.5rem' }} />
-      <section className='h-full overflow-hidden overflow-y-auto scrollbar-hide'>
+      <section
+        className={`h-full ${currentStep === 0 ? 'overflow-hidden ' : 'overflow-hidden overflow-y-auto scrollbar-hide'}`}
+      >
         {steps[currentStep].content}
       </section>
       <footer className='flex justify-end'>

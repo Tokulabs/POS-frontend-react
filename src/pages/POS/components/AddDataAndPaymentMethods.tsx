@@ -53,8 +53,8 @@ export const AddDataAndPaymentMethods = () => {
         id: item.id as number,
         name: item.name,
         idNumber: item.document_id,
-        phone: item.phone,
-        address: item.address,
+        phone: item.phone || '',
+        address: item.address || '',
         email: item.email,
       })
       setValue(null as unknown as string)
