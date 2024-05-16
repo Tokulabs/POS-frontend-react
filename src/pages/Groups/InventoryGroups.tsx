@@ -18,7 +18,7 @@ import { toggleActiveGroups } from './helpers/services'
 import { toast } from 'sonner'
 
 const InventoryGroups: FC = () => {
-  const [currentPage, setcurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(1)
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
   const [showActive, setShowActive] = useState(true)
   const [search, setSearch] = useState('')
@@ -108,8 +108,11 @@ const InventoryGroups: FC = () => {
       fetching={isLoading}
       totalItems={groupsData?.count || 0}
       currentPage={currentPage}
-      onChangePage={(page) => setcurrentPage(page)}
-      onSearch={setSearch}
+      onChangePage={(page) => setCurrentPage(page)}
+      onSearch={(value) => {
+        setSearch(value)
+        setCurrentPage(1)
+      }}
     >
       {modalState === ModalStateEnum.addItem && (
         <AddGroupForm
