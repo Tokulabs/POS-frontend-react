@@ -21,11 +21,13 @@ const InventoryGroups: FC = () => {
   const [currentPage, setcurrentPage] = useState(1)
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
   const [showActive, setShowActive] = useState(true)
+  const [search, setSearch] = useState('')
   const [editData, setEditData] = useState<IGroupsProps & { belongs_to_id: number | undefined }>(
     {} as IGroupsProps & { belongs_to_id: number },
   )
 
   const { groupsData, isLoading } = useGroups('paginatedGroups', {
+    keyword: search,
     page: currentPage,
     active: showActive ? 'True' : undefined,
   })
@@ -107,6 +109,7 @@ const InventoryGroups: FC = () => {
       totalItems={groupsData?.count || 0}
       currentPage={currentPage}
       onChangePage={(page) => setcurrentPage(page)}
+      onSearch={setSearch}
     >
       {modalState === ModalStateEnum.addItem && (
         <AddGroupForm

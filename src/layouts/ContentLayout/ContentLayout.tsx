@@ -1,8 +1,8 @@
 import { FC, PropsWithChildren, ReactNode } from 'react'
-import { Button, Table } from 'antd'
+import { Button, Table, Tooltip } from 'antd'
 import { DataPropsForm } from '../../types/GlobalTypes'
 import Search from 'antd/es/input/Search'
-import { IconCirclePlus } from '@tabler/icons-react'
+import { IconCirclePlus, IconRefresh } from '@tabler/icons-react'
 
 interface IContentLayoutProps {
   pageTitle: string
@@ -15,6 +15,7 @@ interface IContentLayoutProps {
   currentPage: number
   extraButton?: ReactNode
   onChangePage?: (page: number) => void
+  onSearch?: (value: string) => void
 }
 
 const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
@@ -29,6 +30,7 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
   totalItems,
   currentPage,
   onChangePage = () => null,
+  onSearch = () => null,
 }) => {
   return (
     <>
@@ -36,12 +38,11 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
         <div className='flex justify-between items-center'>
           <h1 className='m-0 p-0 text-2xl text-green-1 font-semibold'>{pageTitle}</h1>
           <div className='flex items-end gap-3'>
-            <div>
-              <Search
-                placeholder='input search text'
-                onSearch={() => console.log('buscar')}
-                enterButton
-              />
+            <div className='text-green-1 flex gap-4 items-center'>
+              <Tooltip title='Refrescar datos'>
+                <IconRefresh className='cursor-pointer' onClick={() => onSearch('')} />
+              </Tooltip>
+              <Search placeholder='Buscar' onSearch={onSearch} enterButton />
             </div>
             {buttonTitle && (
               <Button

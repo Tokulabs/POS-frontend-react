@@ -38,7 +38,9 @@ const inventoriesDataFormated = (inventories: IInventoryProps[]) => {
 const Inventories: FC = () => {
   const [currentPage, setcurrentPage] = useState(1)
   const [showActive, setShowActive] = useState(true)
+  const [search, setSearch] = useState('')
   const { isLoading, inventoriesData } = useInventories('paginatedInventories', {
+    keyword: search,
     page: currentPage,
     active: showActive ? 'True' : undefined,
   })
@@ -62,6 +64,7 @@ const Inventories: FC = () => {
         fetching={isLoading}
         totalItems={inventoriesData?.count || 0}
         currentPage={currentPage}
+        onSearch={setSearch}
         onChangePage={(page) => setcurrentPage(page)}
       >
         {/* <AddInventoryForm

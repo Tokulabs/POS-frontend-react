@@ -21,8 +21,10 @@ const Users: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
   const [showActive, setShowActive] = useState(true)
+  const [search, setSearch] = useState('')
   const [editData, setEditData] = useState<IUserProps>({} as IUserProps)
   const { isLoading, usersData } = useUsers('paginatedUsers', {
+    keyword: search,
     page: currentPage,
     is_active: showActive ? 'True' : undefined,
   })
@@ -105,6 +107,7 @@ const Users: FC = () => {
         fetching={isLoading}
         currentPage={currentPage}
         onChangePage={(page) => setCurrentPage(page)}
+        onSearch={setSearch}
       >
         {modalState === ModalStateEnum.addItem && (
           <AddUserForm

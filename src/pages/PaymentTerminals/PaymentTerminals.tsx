@@ -21,7 +21,10 @@ const PaymentTerminals: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
   const [showActive, setShowActive] = useState(true)
+  const [search, setSearch] = useState('')
+
   const { isLoading, paymentTerminalsData } = usePaymentTerminals('paginatedPaymentTerminals', {
+    keyword: search,
     page: currentPage,
     active: showActive ? 'True' : undefined,
   })
@@ -106,6 +109,7 @@ const PaymentTerminals: FC = () => {
         fetching={isLoading}
         currentPage={currentPage}
         onChangePage={(page) => setCurrentPage(page)}
+        onSearch={setSearch}
       >
         {modalState === ModalStateEnum.addItem && (
           <AddPaymentTerminalForm
