@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { axiosRequest } from '../../../api/api'
 import { topSellURL } from '../../../utils/network'
 import { IInventoryProps } from '../../Inventories/types/InventoryTypes'
+import { IconCameraOff } from '@tabler/icons-react'
 
 const TopSell = () => {
   const [dataTopSell, setDataTopSell] = useState<IInventoryProps[]>()
@@ -44,11 +45,24 @@ const TopSell = () => {
         ) : (
           dataTopSell?.map((item, index) => (
             <article className='min-w-0 min-w-md bg-[#f3f5ff] rounded-md' key={index}>
-              <img
-                className='w-full h-40 lg:h-20 object-cover rounded-md'
-                src={item.photo}
-                alt='photo item'
-              />
+              {item.photo ? (
+                <img
+                  className='w-full h-40 lg:h-20 object-cover rounded-md'
+                  src={item.photo}
+                  alt='photo item'
+                />
+              ) : (
+                <span className='text-green-1'>
+                  <IconCameraOff
+                    style={{
+                      width: '100%',
+                      height: '5rem',
+                      objectFit: 'cover',
+                      borderRadius: '0.375rem',
+                    }}
+                  />
+                </span>
+              )}
               <section className='px-2 py-3'>
                 <p className='m-0 text-xs text-[#262932] font-bold truncate'>{item.name}</p>
                 <p className='m-0 text-sm text-[#5f626e]'>{item.sum_of_item}</p>
