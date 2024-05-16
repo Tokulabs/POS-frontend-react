@@ -117,7 +117,7 @@ export const AddItemsToPurchase = () => {
         ))}
       </Select>
       {cartItems.length > 0 ? (
-        <section>
+        <section className='h-full overflow-hidden overflow-y-auto scrollbar-hide'>
           <TableHeader tableColumnsData={TableData} />
           <ul className='p-0 divide-solid divide-y divide-gray-1'>
             {cartItems.map((product) => (

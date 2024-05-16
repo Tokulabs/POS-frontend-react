@@ -53,7 +53,12 @@ export const AddCustomerModal: FC = () => {
     const customerToSend = values as typeof customer
     if (isEditUser) {
       mutate({
-        values: { ...customerToSend, document_id: customerToSend.idNumber },
+        values: {
+          ...customerToSend,
+          document_id: customerToSend.idNumber,
+          phone: customerToSend.phone?.length ? customerToSend.phone : null,
+          address: customerToSend.address?.length ? customerToSend.address : null,
+        },
         id: customer.id as number,
       })
       toggleModalAddCustomer(false, false)
@@ -62,6 +67,8 @@ export const AddCustomerModal: FC = () => {
       mutatePost({
         ...customerToSend,
         document_id: customerToSend.idNumber,
+        phone: customerToSend.phone?.length ? customerToSend.phone : null,
+        address: customerToSend.address?.length ? customerToSend.address : null,
       })
       toggleModalAddCustomer(false, false)
     }
