@@ -24,7 +24,7 @@ import { IconCircleX, IconPrinter, IconX } from '@tabler/icons-react'
 import { toast } from 'sonner'
 
 const Invoices: FC = () => {
-  const [currentPage, setcurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(1)
   const [printData, setPrintData] = useState<IPrintData>({} as IPrintData)
   const [search, setSearch] = useState('')
   const queryClient = useQueryClient()
@@ -185,8 +185,11 @@ const Invoices: FC = () => {
         fetching={isLoading}
         totalItems={invoicesData?.count || 0}
         currentPage={currentPage}
-        onChangePage={(page) => setcurrentPage(page)}
-        onSearch={setSearch}
+        onChangePage={(page) => setCurrentPage(page)}
+        onSearch={(value) => {
+          setSearch(value)
+          setCurrentPage(1)
+        }}
       />
       {printData?.dataItems?.length > 0 && (
         <div ref={printOutRef} className='flex absolute -z-10'>

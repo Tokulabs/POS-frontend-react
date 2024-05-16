@@ -107,7 +107,10 @@ const Users: FC = () => {
         fetching={isLoading}
         currentPage={currentPage}
         onChangePage={(page) => setCurrentPage(page)}
-        onSearch={setSearch}
+        onSearch={(value) => {
+          setSearch(value)
+          setCurrentPage(1)
+        }}
       >
         {modalState === ModalStateEnum.addItem && (
           <AddUserForm
