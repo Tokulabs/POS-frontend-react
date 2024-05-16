@@ -39,7 +39,9 @@ const Dian: FC = () => {
   const queryClient = useQueryClient()
 
   useEffect(() => {
-    setCurrentNumber(sortedDianDataResolution?.[0].current_number || 0)
+    setCurrentNumber(
+      dianResolutionData?.results.filter((item) => item.active)[0]?.current_number ?? 0,
+    )
   }, [dianResolutionData])
 
   const { mutate, isPending: isPendingToggle } = useMutation({
