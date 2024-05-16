@@ -161,7 +161,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
             name='total_in_storage'
             rules={[{ required: true, message: 'La cantidad es un campo obligatorio' }]}
           >
-            <Input placeholder='Cantidad' type='number' min={1} />
+            <Input placeholder='Cantidad' type='number' min={0} />
           </Form.Item>
           <Form.Item
             style={{ width: '100%' }}
@@ -169,7 +169,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
             name='total_in_shops'
             rules={[{ required: true, message: 'La cantidad es un campo obligatorio' }]}
           >
-            <Input placeholder='Cantidad' type='number' min={1} />
+            <Input placeholder='Cantidad' type='number' min={0} />
           </Form.Item>
         </div>
         <div className='flex gap-2 w-full'>

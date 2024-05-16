@@ -25,7 +25,7 @@ const PrintOut: FC<IPrintCOmponent> = ({ printDataComponent }) => {
   const { discountCOP, taxesIVACOP, totalCOP, subtotalCOP } = calcTotalPrices(dataItems)
 
   return (
-    <article className='bg-transparent flex flex-col w-[19rem] justify-center items-center text-center p-3 gap-1 relative'>
+    <article className='bg-transparent flex flex-col w-[18.5rem] justify-center items-center text-center p-2 gap-1 relative'>
       {isOverride && (
         <img
           className='absolute top-24 left-0 -z-10 opacity-40 w-72 h-96'

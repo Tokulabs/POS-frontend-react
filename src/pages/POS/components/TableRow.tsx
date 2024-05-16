@@ -59,10 +59,12 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
       <span className='text-start w-full'>{code}</span>
       <span className='col-span-2 text-left w-full truncate'>{name}</span>
       <span
-        className='col-start-5 text-blue-400 underline cursor-pointer truncate'
-        onClick={() => setVisible(true)}
+        className={`col-start-5 ${product.photo ? 'text-blue-400 underline cursor-pointer' : 'text-red-1'} truncate`}
+        onClick={() => {
+          product.photo && setVisible(true)
+        }}
       >
-        Vista Previa
+        {product.photo ? 'Ver foto' : 'Sin foto'}
         {visible && (
           <Image
             style={{ display: 'none' }}
