@@ -51,3 +51,13 @@ export const toggleDianResolution = async (id: number) => {
     return response
   }
 }
+
+export const putDiaResolution = async (data: { payload: DataPropsForm; id: number }) => {
+  await axiosRequest({
+    url: `${dianResolutionURL}/${data.id}/`,
+    method: 'put',
+    hasAuth: true,
+    showError: true,
+    payload: data.payload,
+  })
+}
