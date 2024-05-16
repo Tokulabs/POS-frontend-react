@@ -49,7 +49,7 @@ export const AddItemsToPurchase = () => {
       setIsLoadingSearch(true)
       const data = await queryClient.fetchQuery({
         queryKey: ['inventoriesByKeyword'],
-        queryFn: async () => getInventoriesNew({ keyword, active: 'True' }),
+        queryFn: async () => getInventoriesNew({ keyword, active: 'True', page: 1 }),
       })
       setData(data?.results || [])
     } catch (error) {

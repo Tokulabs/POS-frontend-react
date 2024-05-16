@@ -26,9 +26,13 @@ import { toast } from 'sonner'
 const Invoices: FC = () => {
   const [currentPage, setcurrentPage] = useState(1)
   const [printData, setPrintData] = useState<IPrintData>({} as IPrintData)
+  const [search, setSearch] = useState('')
   const queryClient = useQueryClient()
 
-  const { isLoading, invoicesData } = useInvoices('paginatedInvoices', { page: currentPage })
+  const { isLoading, invoicesData } = useInvoices('paginatedInvoices', {
+    keyword: search,
+    page: currentPage,
+  })
 
   const allowedRolesOverride = [
     UserRolesEnum.admin,
@@ -182,6 +186,7 @@ const Invoices: FC = () => {
         totalItems={invoicesData?.count || 0}
         currentPage={currentPage}
         onChangePage={(page) => setcurrentPage(page)}
+        onSearch={setSearch}
       />
       {printData?.dataItems?.length > 0 && (
         <div ref={printOutRef} className='flex absolute -z-10'>

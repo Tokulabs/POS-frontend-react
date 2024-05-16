@@ -39,9 +39,11 @@ const Storage: FC = () => {
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
   const [currentPage, setcurrentPage] = useState(1)
   const [showActive, setShowActive] = useState(true)
+  const [search, setSearch] = useState('')
   const [editData, setEditData] = useState<IInventoryProps>({} as IInventoryProps)
 
   const { isLoading, inventoriesData } = useInventories('paginatedInventories', {
+    keyword: search,
     page: currentPage,
     active: showActive ? 'True' : undefined,
   })
@@ -129,6 +131,7 @@ const Storage: FC = () => {
         totalItems={inventoriesData?.count || 0}
         currentPage={currentPage}
         onChangePage={(page) => setcurrentPage(page)}
+        onSearch={setSearch}
       >
         {modalState === ModalStateEnum.addItem && (
           <AddInventoryForm
