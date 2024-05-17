@@ -1,3 +1,5 @@
+import { Moment } from 'moment'
+
 export const formatDateTime = (
   dateString?: string | undefined,
   haveHour?: boolean,
@@ -40,4 +42,23 @@ const getDateFormated = (dateString: string | undefined, haveHour?: boolean) => 
     return `${fechaFormateada} ${hourFormatted}:${minuteFormatted}`
   }
   return fechaFormateada
+}
+
+export const getArrayDatesOrDateWithHour = (dates: Moment[], includeHour: boolean) => {
+  const newDates = dates.map((date) => {
+    const year = date.year()
+    const month = date.month()
+    const day = date.date()
+    const newDate = new Date(year, month, day)
+    let dateString = newDate.toISOString().split('T')[0]
+    if (includeHour) {
+      const hours = String(date.hour()).padStart(2, '0')
+      const minutes = String(date.minute()).padStart(2, '0')
+      const seconds = String(date.second()).padStart(2, '0')
+      const timeString = `${hours}:${minutes}:${seconds}`
+      dateString += ` ${timeString}`
+    }
+    return dateString
+  })
+  return newDates
 }

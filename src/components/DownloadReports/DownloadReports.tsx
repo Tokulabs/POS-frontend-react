@@ -1,13 +1,19 @@
+import { FC } from 'react'
+// Third Party
 import { Modal, Form, DatePicker, Button, Select, Spin } from 'antd'
 import { useForm } from 'antd/es/form/Form'
-import { FC } from 'react'
-import { DataPropsForm } from '../../types/GlobalTypes'
 import { IconDownload } from '@tabler/icons-react'
 import { Moment } from 'moment'
-import { axiosRequest } from '../../api/api'
 import { useMutation } from '@tanstack/react-query'
-import { downloadReportURL } from '../../utils/network'
 import { toast } from 'sonner'
+// Types
+import { DataPropsForm } from '../../types/GlobalTypes'
+// Axios
+import { axiosRequest } from '../../api/api'
+// Utils
+import { downloadReportURL } from '../../utils/network'
+// Helpers
+import { getArrayDatesOrDateWithHour } from '../../layouts/helpers/helpers'
 
 export const downloadReport = async (data: { payload: DataPropsForm | undefined; url: string }) => {
   const response = await axiosRequest({
@@ -34,6 +40,7 @@ export const downloadReport = async (data: { payload: DataPropsForm | undefined;
 
 const { RangePicker } = DatePicker
 const dateFormat = 'YYYY-MM-DD'
+const dateFormatHour = 'YYYY-MM-DD HH:mm:ss'
 
 interface IModalDownloadReports {
   isVisible: boolean
@@ -64,7 +71,7 @@ const reportsToDownload: IReportToDownload[] = [
     name: 'Reporte de Facturas',
   },
   {
-    url: 'factura_electronica_export/',
+    url: 'electronic_invoice_export/',
     name: 'Reporte Facturación Electrónica',
   },
 ]
@@ -98,13 +105,12 @@ const DownloadReports: FC<IModalDownloadReports> = ({
       return
     }
     const dowloadDates: Moment[] = values['document_dates'] as Moment[]
-    const newDates = dowloadDates.map((date) => {
-      const year = date.year()
-      const month = date.month()
-      const day = date.date()
-      const newDate = new Date(year, month, day)
-      return newDate.toISOString().split('T')[0]
-    })
+
+    let newDates: string[]
+
+    if (values['report_type'] === 'electronic_invoice_export/')
+      newDates = getArrayDatesOrDateWithHour(dowloadDates, true)
+    else newDates = getArrayDatesOrDateWithHour(dowloadDates, false)
 
     mutate({
       payload: { start_date: newDates[0], end_date: newDates[1] },
@@ -160,7 +166,16 @@ const DownloadReports: FC<IModalDownloadReports> = ({
                   label='Fechas del reporte'
                   rules={[{ required: true }]}
                 >
-                  <RangePicker style={{ width: '100%' }} format={dateFormat} picker='date' />
+                  <RangePicker
+                    showTime={getFieldValue('report_type') === 'electronic_invoice_export/'}
+                    style={{ width: '100%' }}
+                    format={
+                      getFieldValue('report_type') !== 'electronic_invoice_export/'
+                        ? dateFormat
+                        : dateFormatHour
+                    }
+                    picker='date'
+                  />
                 </Form.Item>
               ) : null
             }

@@ -27,4 +27,7 @@ export interface ISaleByShopProps {
 export interface IPurchaseSummaryProps {
   count: number
   selling_price: number
+  gift_count: number
+  selling_price_gifts: number
+  price_dolar: number
 }
