@@ -10,7 +10,7 @@ const PurchasesInfo = () => {
     {} as IPurchaseSummaryProps,
   )
   const [loading, setLoading] = useState(false)
-  const showCurrency = true
+  const showCurrency = false
 
   const getPurchaseSummary = async () => {
     try {
@@ -41,38 +41,48 @@ const PurchasesInfo = () => {
         <Spin />
       ) : (
         <section className='flex flex-col gap-5'>
-          <div className='flex gap-6 justify-between'>
+          <div className='grid grid-cols-2'>
             <div className='flex flex-col'>
-              <p className='m-0 font-bold text-2xl'>
+              <p className='m-0 font-bold text-2xl overflow-hidden truncate'>
                 {formatNumberToColombianPesos(dataPurchaseSummary.selling_price ?? 0, showCurrency)}
               </p>
-              <span className='text-gray-2 text-sm'>(Valor)</span>
+              <span className='text-gray-2 text-sm overflow-hidden truncate'>(Valor COP)</span>
             </div>
-            <div className='flex flex-col items-end'>
-              <p className='m-0 font-bold text-2xl'>{dataPurchaseSummary.count ?? 0}</p>
-              <span className='text-gray-2 text-sm'>(Cantidad de productos)</span>
+            <div className='flex flex-col'>
+              <p className='m-0 font-bold text-2xl overflow-hidden truncate'>
+                {dataPurchaseSummary.count ?? 0}
+              </p>
+              <span className='text-gray-2 text-sm overflow-hidden truncate'>
+                (Cantidad de productos)
+              </span>
             </div>
           </div>
-          <div className='flex gap-6 justify-between'>
+          <div className='grid grid-cols-2'>
             <div className='flex flex-col'>
-              <p className='m-0 font-bold text-2xl'>
+              <p className='m-0 font-bold text-2xl overflow-hidden truncate'>
                 {formatNumberToColombianPesos(
                   dataPurchaseSummary.selling_price_gifts ?? 0,
                   showCurrency,
                 )}
               </p>
-              <span className='text-gray-2 text-sm'>(Valor regalos)</span>
+              <span className='text-gray-2 text-sm overflow-hidden truncate'>
+                (Valor regalos COP)
+              </span>
             </div>
-            <div className='flex flex-col items-end'>
-              <p className='m-0 font-bold text-2xl'>{dataPurchaseSummary.gift_count ?? 0}</p>
-              <span className='text-gray-2 text-sm'>(Cantidad de regalos)</span>
+            <div className='flex flex-col'>
+              <p className='m-0 font-bold text-2xl overflow-hidden truncate'>
+                {dataPurchaseSummary.gift_count ?? 0}
+              </p>
+              <span className='text-gray-2 text-sm overflow-hidden truncate'>
+                (Cantidad de regalos)
+              </span>
             </div>
           </div>
           <div className='flex flex-col'>
-            <p className='m-0 font-bold text-2xl'>
+            <p className='m-0 font-bold text-2xl overflow-hidden truncate'>
               {formatToUsd(dataPurchaseSummary.price_dolar ?? 0, showCurrency)}
             </p>
-            <span className='text-gray-2 text-sm'>(Venta en dolares)</span>
+            <span className='text-gray-2 text-sm overflow-hidden truncate'>(Venta USD)</span>
           </div>
         </section>
       )}
