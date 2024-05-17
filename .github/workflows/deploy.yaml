@@ -49,6 +49,6 @@ jobs:
         uses: reggionick/s3-deploy@v4
         with:
           folder: dist
-          bucket: ${{ secrets.S3_BUCKET }}
+          bucket: ${{ env.S3BUCKET }}
           dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
           bucket-region: us-east-1
