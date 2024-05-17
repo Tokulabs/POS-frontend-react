@@ -54,7 +54,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <section className='h-screen max-h-screen w-full relative'>
       <nav className='bg-green-1 w-full h-16 flex justify-between items-center py-0 absolute top-0'>
-        <h1 className='w-56 text-white m-0 px-5'>POS GUASA</h1>
+        <h1 className='w-56 text-white m-0 px-5'>KIOSPOT V1</h1>
         <div className='flex items-center justify-between flex-1 px-5'>
           <div className='flex items-center gap-2'>
             <img className='w-8 h-8' src={UserAvatar} alt='user-avatar' />
