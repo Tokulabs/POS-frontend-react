@@ -42,13 +42,10 @@ jobs:
       - name: Build and Package
         run: npm run build
 
-      - name: Upload Artifact to s3
-        run: aws s3 cp $GITHUB_WORKSPACE/dist s3://${{ env.S3BUCKET }} --recursive
-
       - name: Deploy
-        uses: reggionick/s3-deploy@v4
+        uses: lbertenasco/s3-deploy@v1
         with:
           folder: dist
           bucket: ${{ env.S3BUCKET }}
           dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-          bucket-region: us-east-1
+          invalidation: /index.html
