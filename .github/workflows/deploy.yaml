@@ -6,9 +6,9 @@ on:
       - master
 
 env:
-  VITE_BASE_URL: ${{ vars.VITE_BASE_URL}}
+  VITE_BASE_URL: ${{ vars.VITE_BASE_URL }}
   AWS_REGION: us-east-1
-  S3BUCKET: ${{ secrets.BUCKET_NAME}}
+  S3BUCKET: ${{ secrets.BUCKET_NAME }}
   CI: false
 
 jobs:
@@ -42,13 +42,10 @@ jobs:
       - name: Build and Package
         run: npm run build
 
-      - name: Upload Artifact to s3
-        run: aws s3 cp $GITHUB_WORKSPACE/dist s3://${{ env.S3BUCKET }} --recursive
-
       - name: Deploy
         uses: lbertenasco/s3-deploy@v1
         with:
           folder: dist
           bucket: ${{ env.S3BUCKET }}
           dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-          invalidation: /index.html *
+          invalidation: /index.html
