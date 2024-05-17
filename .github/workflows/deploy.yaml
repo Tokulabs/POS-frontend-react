@@ -46,8 +46,9 @@ jobs:
         run: aws s3 cp $GITHUB_WORKSPACE/dist s3://${{ env.S3BUCKET }} --recursive
 
       - name: Deploy
-        uses: lbertenasco/s3-deploy@v1
+        uses: reggionick/s3-deploy@v4
         with:
           folder: dist
           bucket: ${{ env.S3BUCKET }}
           dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+          bucket-region: us-east-1
