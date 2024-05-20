@@ -17,11 +17,21 @@ import { TableData } from '../Data/TableData'
 // Components
 import { TableHeader } from './TableHeader'
 import { TableRow } from './TableRow'
+import { useKeyPress } from '../../../hooks/useKeyPress'
 
 export const AddItemsToPurchase = () => {
   const [value, setValue] = useState<string>()
   const [isLoadingSearch, setIsLoadingSearch] = useState(false)
   const [data, setData] = useState<IInventoryProps[]>([])
+
+  const moveToInput = () => {
+    const input = document.getElementById('searchBar')
+    input?.focus()
+  }
+
+  useKeyPress('F3', () => {
+    moveToInput()
+  })
 
   const queryClient = useQueryClient()
 
@@ -87,12 +97,13 @@ export const AddItemsToPurchase = () => {
   return (
     <section className='w-full h-full'>
       <Select
+        id='searchBar'
         loading={isLoadingSearch}
         size='large'
         showSearch
         style={{ width: '100%' }}
         value={value}
-        placeholder='Buscar producto'
+        placeholder='Buscar producto (F3 para volver al input)'
         suffixIcon={null}
         filterOption={false}
         onSearch={handleSearch}
