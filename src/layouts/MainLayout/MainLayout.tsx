@@ -58,7 +58,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
           <h1 className='text-white m-0'>Kiospot V.1</h1>
           <div className='flex'>
             <span className='text-white font-semibold text-sm'>
-              ({UserRolesEnum[String(state.user?.role) as keyof typeof UserRolesEnum]})
+              ({UserRolesEnum[state.user?.role as keyof typeof UserRolesEnum]})
             </span>
           </div>
         </div>
