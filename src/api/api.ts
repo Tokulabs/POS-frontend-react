@@ -51,16 +51,14 @@ export const axiosRequest = async <T>({
     if (!showError) return null
     const err = e as ICustomAxiosError
     const errorObjectDescription = errorObject?.description
-    toast.error(
-      errorObjectDescription
-        ? errorObjectDescription
-        : err.response?.data.error
-          ? err.response?.data.error
-          : isObject(err.response?.data)
-            ? Object.values(err.response?.data)[0]
-            : err.message,
-    )
-    throw Error(err.response?.data.error)
+    const errorMessage =
+      err.response?.data?.error ??
+      (err.response &&
+        (isObject(err.response.data) && Object.values(err.response.data).length > 0
+          ? Object.values(err.response.data)[0]
+          : err.message))
+    toast.error(errorObjectDescription ?? errorMessage)
+    throw Error(errorObjectDescription ?? errorMessage)
   }
   return null
 }
