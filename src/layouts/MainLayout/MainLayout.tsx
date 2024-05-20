@@ -54,19 +54,26 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <section className='h-screen max-h-screen w-full relative'>
       <nav className='bg-green-1 w-full h-16 flex justify-between items-center py-0 absolute top-0'>
-        <h1 className='w-56 text-white m-0 px-5'>KIOSPOT V1</h1>
-        <div className='flex items-center justify-between flex-1 px-5'>
+        <div className='flex flex-col justify-center items-start w-56 m-0 px-5'>
+          <h1 className='text-white m-0'>Kiospot V.1</h1>
+          <div className='flex'>
+            <span className='text-white font-semibold text-sm'>
+              ({UserRolesEnum[String(state.user?.role) as keyof typeof UserRolesEnum]})
+            </span>
+          </div>
+        </div>
+        <div className='flex items-center gap-6'>
           <div className='flex items-center gap-2'>
             <img className='w-8 h-8' src={UserAvatar} alt='user-avatar' />
             <div className='flex flex-col'>
-              <p className='m-0 text-sm text-white'>{state.user?.email}</p>
+              <span className='m-0 text-sm text-white'>{state.user?.email}</span>
               <div className='flex gap-1 justify-center sm-0 text-[10px] text-white'>
                 <span>Última conexión:</span>
                 <span>{formatDateTime(state.user?.last_login)}</span>
               </div>
             </div>
           </div>
-          <div className='flex items-center gap-6'>
+          <div className='flex items-center justify-between flex-1 px-5 gap-5'>
             {hasPermissionDownloads && (
               <Tooltip title='Descargar Reportes'>
                 <span

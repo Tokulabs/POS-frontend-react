@@ -20,7 +20,7 @@ import { UserRolesEnum } from '../Users/types/UserTypes'
 import { useRolePermissions } from '../../hooks/useRolespermissions'
 import { PaymentMethodsEnum } from '../POS/components/types/PaymentMethodsTypes'
 import { IPosData } from '../POS/components/types/TableTypes'
-import { IconCircleX, IconPrinter, IconX } from '@tabler/icons-react'
+import { IconFileOff, IconPrinter, IconX } from '@tabler/icons-react'
 import { toast } from 'sonner'
 
 const Invoices: FC = () => {
@@ -145,7 +145,7 @@ const Invoices: FC = () => {
                     okText='Si, Anular'
                     cancelText='Cancelar'
                   >
-                    <IconCircleX />
+                    <IconFileOff />
                   </Popconfirm>
                 </div>
               )
