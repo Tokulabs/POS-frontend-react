@@ -75,7 +75,7 @@ export const useCart = create<ICartStore>((set, get) => ({
         productExist.total = productExist.quantity * product.selling_price
         productExist.usd_total = productExist.quantity * product.usd_price
         set({
-          cartItems: [...cartItems].reverse(),
+          cartItems: [...cartItems],
         })
         if (productExist.discount > 0) {
           addDiscountToItem(product.code, productExist.discount)
@@ -120,13 +120,13 @@ export const useCart = create<ICartStore>((set, get) => ({
     if (productExist) {
       productExist.discount = discount
       set({
-        cartItems: [...cartItems].reverse(),
+        cartItems: [...cartItems],
       })
       const { totalItemCOP, totalItemUSD } = calcMetaDataProdudct(productExist)
       productExist.total = totalItemCOP
       productExist.usd_total = totalItemUSD
       set({
-        cartItems: [...cartItems].reverse(),
+        cartItems: [...cartItems],
       })
     }
   },
@@ -145,13 +145,13 @@ export const useCart = create<ICartStore>((set, get) => ({
         return
       }
       set({
-        cartItems: [...cartItems].reverse(),
+        cartItems: [...cartItems],
       })
       const { totalItemCOP, totalItemUSD } = calcMetaDataProdudct(productExist)
       productExist.total = totalItemCOP
       productExist.usd_total = totalItemUSD
       set({
-        cartItems: [...cartItems].reverse(),
+        cartItems: [...cartItems],
       })
     }
   },
@@ -161,7 +161,7 @@ export const useCart = create<ICartStore>((set, get) => ({
     if (productExist) {
       productExist.is_gift = isGift
       set({
-        cartItems: [...cartItems].reverse(),
+        cartItems: [...cartItems],
       })
       updateTotalPrice()
     }
