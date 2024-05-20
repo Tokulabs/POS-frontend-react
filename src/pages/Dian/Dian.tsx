@@ -187,7 +187,7 @@ const Dian: FC = () => {
                     <span
                       className={`font-bold ${item.active ? 'text-green-500' : 'text-red-500'}`}
                     >
-                      Activar / Desactivar resolución
+                      {item.active ? 'Desactivar' : 'Activar'}
                     </span>
                     <Switch
                       value={item.active}

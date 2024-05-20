@@ -7,13 +7,7 @@ import { IGroupsProps } from './types/GroupTypes'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { Button, Popconfirm, Switch } from 'antd'
 import { ModalStateEnum } from '../../types/ModalTypes'
-import {
-  IconCircleCheck,
-  IconCircleX,
-  IconEdit,
-  IconTrash,
-  IconSquareCheck,
-} from '@tabler/icons-react'
+import { IconCircleCheck, IconCircleX, IconEdit, IconPower } from '@tabler/icons-react'
 import { toggleActiveGroups } from './helpers/services'
 import { toast } from 'sonner'
 
@@ -73,11 +67,9 @@ const InventoryGroups: FC = () => {
             cancelText='Cancelar'
           >
             <Button type='link' className='p-0'>
-              {item.active ? (
-                <IconTrash className='text-red-1 hover:text-red-400' />
-              ) : (
-                <IconSquareCheck className='text-green-1 hover:text-green-400' />
-              )}
+              <IconPower
+                className={`${item.active ? 'text-red-1 hover:text-red-400' : 'text-green-1 hover:text-green-300'}`}
+              />
             </Button>
           </Popconfirm>
         </div>

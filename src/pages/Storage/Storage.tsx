@@ -8,13 +8,7 @@ import { formatNumberToColombianPesos } from '../../utils/helpers'
 import { useGroups } from '../../hooks/useGroups'
 import { useInventories } from '../../hooks/useInventories'
 import { IInventoryProps } from '../Inventories/types/InventoryTypes'
-import {
-  IconCircleCheck,
-  IconCircleX,
-  IconEdit,
-  IconSquareCheck,
-  IconTrash,
-} from '@tabler/icons-react'
+import { IconCircleCheck, IconCircleX, IconEdit, IconPower } from '@tabler/icons-react'
 import { toogleInventories } from '../Inventories/helpers/services'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ModalStateEnum } from '../../types/ModalTypes'
@@ -89,11 +83,9 @@ const Storage: FC = () => {
             cancelText='Cancelar'
           >
             <Button type='link' className='p-0'>
-              {item.active ? (
-                <IconTrash className='text-red-1 hover:text-red-400' />
-              ) : (
-                <IconSquareCheck className='text-green-1 hover:text-green-400' />
-              )}
+              <IconPower
+                className={`${item.active ? 'text-red-1 hover:text-red-400' : 'text-green-1 hover:text-green-300'}`}
+              />
             </Button>
           </Popconfirm>
         </div>

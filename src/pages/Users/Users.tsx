@@ -6,13 +6,7 @@ import { useUsers } from '../../hooks/useUsers'
 import { IUserProps } from './types/UserTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Button, Popconfirm, Switch } from 'antd'
-import {
-  IconCircleCheck,
-  IconCircleX,
-  IconEdit,
-  IconTrash,
-  IconSquareCheck,
-} from '@tabler/icons-react'
+import { IconCircleCheck, IconCircleX, IconEdit, IconPower } from '@tabler/icons-react'
 import { ModalStateEnum } from '../../types/ModalTypes'
 import { toggleActiveUser } from './helpers/services'
 import { toast } from 'sonner'
@@ -70,11 +64,9 @@ const Users: FC = () => {
             cancelText='Cancelar'
           >
             <Button type='link' className='p-0'>
-              {item.is_active ? (
-                <IconTrash className='text-red-1 hover:text-red-400' />
-              ) : (
-                <IconSquareCheck className='text-green-1 hover:text-green-400' />
-              )}
+              <IconPower
+                className={`${item.is_active ? 'text-red-1 hover:text-red-400' : 'text-green-1 hover:text-green-300'}`}
+              />
             </Button>
           </Popconfirm>
         </div>

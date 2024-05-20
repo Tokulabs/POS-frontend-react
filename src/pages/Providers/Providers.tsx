@@ -4,13 +4,7 @@ import { columns } from './data/columsData'
 import AddProviderForm from './Components/addProviderForm'
 import { useProviders } from '../../hooks/useProviders'
 import { IProvider } from './types/ProviderTypes'
-import {
-  IconCircleCheck,
-  IconCircleX,
-  IconEdit,
-  IconSquareCheck,
-  IconTrash,
-} from '@tabler/icons-react'
+import { IconCircleCheck, IconCircleX, IconEdit, IconPower } from '@tabler/icons-react'
 import { Button, Popconfirm, Switch } from 'antd'
 import { ModalStateEnum } from '../../types/ModalTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -71,11 +65,9 @@ const Providers: FC = () => {
             cancelText='Cancelar'
           >
             <Button type='link' className='p-0'>
-              {item.active ? (
-                <IconTrash className='text-red-1 hover:text-red-400' />
-              ) : (
-                <IconSquareCheck className='text-green-1 hover:text-green-400' />
-              )}
+              <IconPower
+                className={`${item.active ? 'text-red-1 hover:text-red-400' : 'text-green-1 hover:text-green-300'}`}
+              />
             </Button>
           </Popconfirm>
         </div>
