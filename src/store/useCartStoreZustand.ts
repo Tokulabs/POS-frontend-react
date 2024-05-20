@@ -50,7 +50,7 @@ export const useCart = create<ICartStore>((set, get) => ({
       productExist.total = productExist.quantity * product.selling_price
       productExist.usd_total = productExist.quantity * product.usd_price
       set({
-        cartItems: [...cartItems].reverse(),
+        cartItems: [...cartItems],
       })
       if (productExist.discount > 0) {
         addDiscountToItem(product.code, productExist.discount)
