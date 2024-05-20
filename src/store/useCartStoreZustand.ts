@@ -61,7 +61,7 @@ export const useCart = create<ICartStore>((set, get) => ({
         return
       }
       set({
-        cartItems: [...cartItems, product].reverse(),
+        cartItems: [product, ...cartItems],
       })
     }
   },
