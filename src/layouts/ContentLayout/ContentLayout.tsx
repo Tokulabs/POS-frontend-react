@@ -3,6 +3,7 @@ import { Button, Table, Tooltip } from 'antd'
 import { DataPropsForm } from '../../types/GlobalTypes'
 import Search from 'antd/es/input/Search'
 import { IconCirclePlus, IconRefresh } from '@tabler/icons-react'
+import { useKeyPress } from '../../hooks/useKeyPress'
 
 interface IContentLayoutProps {
   pageTitle: string
@@ -32,6 +33,13 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
   onChangePage = () => null,
   onSearch = () => null,
 }) => {
+  const moveToInput = () => {
+    const input = document.getElementById('searchBarLayout')
+    input?.focus()
+  }
+  useKeyPress('F3', () => {
+    moveToInput()
+  })
   return (
     <>
       <div className='bg-white h-full rounded p-4 flex flex-col justify-top gap-6'>
@@ -42,7 +50,12 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
               <Tooltip title='Refrescar datos'>
                 <IconRefresh className='cursor-pointer' onClick={() => onSearch('')} />
               </Tooltip>
-              <Search placeholder='Buscar' onSearch={onSearch} enterButton />
+              <Search
+                id='searchBarLayout'
+                placeholder='Buscar (F3 para buscar)'
+                onSearch={onSearch}
+                enterButton
+              />
             </div>
             {buttonTitle && (
               <Button

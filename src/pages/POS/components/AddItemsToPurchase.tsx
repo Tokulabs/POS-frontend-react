@@ -103,7 +103,7 @@ export const AddItemsToPurchase = () => {
         showSearch
         style={{ width: '100%' }}
         value={value}
-        placeholder='Buscar producto (F3 para volver al input)'
+        placeholder='Buscar producto (F3 para volver al buscador)'
         suffixIcon={null}
         filterOption={false}
         onSearch={handleSearch}
