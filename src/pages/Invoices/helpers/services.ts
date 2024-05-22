@@ -1,7 +1,7 @@
 import { axiosRequest } from '../../../api/api'
 import { IQueryParams, IPaginationProps, DataPropsForm } from '../../../types/GlobalTypes'
-import { invoiceURL, overrideInvoiceURL } from '../../../utils/network'
-import { IInvoiceProps } from '../types/InvoicesTypes'
+import { invoiceURL, overrideInvoiceURL, invoiceMinimalURL } from '../../../utils/network'
+import { IInvoiceMinimalProps, IInvoiceProps } from '../types/InvoicesTypes'
 
 export interface IPurchaseProps {
   code: string
@@ -18,7 +18,7 @@ export interface IPurchaseProps {
 }
 
 export const getInvoicesNew = async (queryParams: IQueryParams) => {
-  const finalURL = new URL(invoiceURL)
+  const finalURL = new URL(invoiceMinimalURL)
   const searchParams = new URLSearchParams()
   if (queryParams) {
     Object.entries(queryParams).forEach(([key, value]) => {
@@ -27,15 +27,15 @@ export const getInvoicesNew = async (queryParams: IQueryParams) => {
     })
   }
   finalURL.search = searchParams.toString()
-  const response = await axiosRequest<IPaginationProps<IInvoiceProps>>({
+  const response = await axiosRequest<IPaginationProps<IInvoiceMinimalProps>>({
     url: finalURL,
     hasAuth: true,
     showError: false,
   })
   if (response) {
-    const data: IInvoiceProps[] = response.data.results.map((item) => ({
+    const data: IInvoiceMinimalProps[] = response.data.results.map((item) => ({
       ...item,
-      key: item.id,
+      key: item.invoice_number,
     }))
     return { ...response.data, results: data }
   }
@@ -50,7 +50,7 @@ export const postInvoicesNew = async (values: DataPropsForm) => {
   })
 }
 
-export const patchOverrideInvoice = async (invoiceNumber: number) => {
+export const patchOverrideInvoice = async (invoiceNumber: string) => {
   return await axiosRequest({
     method: 'patch',
     url: `${overrideInvoiceURL}/${invoiceNumber}/`,
@@ -58,10 +58,10 @@ export const patchOverrideInvoice = async (invoiceNumber: number) => {
   })
 }
 
-export const getInvoiceByCode = async (code: number) => {
+export const getInvoiceByCode = async (invoiceNumber: string) => {
   const finalURL = new URL(invoiceURL)
-  finalURL.searchParams.set('invoice_number', code.toString())
-  return await axiosRequest<IInvoiceProps>({
+  finalURL.searchParams.set('invoice_number', invoiceNumber)
+  return await axiosRequest<IPaginationProps<IInvoiceProps>>({
     method: 'get',
     url: finalURL,
     hasAuth: true,

@@ -40,10 +40,10 @@ const PrintOut: FC<IPrintCOmponent> = ({ printDataComponent }) => {
       <section className='flex flex-col justify-center items-center gap-1'>
         <p className='m-0 text-sm'>Tel. (091) 851 0935/0654</p>
         <p className='m-0 text-xs'>
-          {`Documento oficial Nro, ${dianResolution.document_number}\n del ${dianResolution.from_date} Vigente hasta ${dianResolution.to_date}`}
+          {`Documento oficial Nro, ${dianResolution?.document_number}\n del ${dianResolution?.from_date} Vigente hasta ${dianResolution?.to_date}`}
         </p>
         <p className='m-0 text-[0.75rem] mb-2'>
-          habilita del {dianResolution.from_number} al {dianResolution.to_number}
+          habilita del {dianResolution?.from_number} al {dianResolution?.to_number}
         </p>
         <p className='m-0 text-xs self-start'>
           Nombre: {customerData.name} ID: {customerData.document_id}

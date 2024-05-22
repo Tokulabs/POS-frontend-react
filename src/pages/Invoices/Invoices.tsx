@@ -1,31 +1,31 @@
 import { Popconfirm, Spin, Tooltip } from 'antd'
-import { FC, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import PrintOut from '../../components/Print/PrintOut'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
 import { DataPropsForm, IPrintData } from '../../types/GlobalTypes'
 import { columns } from './data/columnsData'
-import { IInvoiceProps } from './types/InvoicesTypes'
+import { IInvoiceMinimalProps, IInvoiceProps } from './types/InvoicesTypes'
 import { useReactToPrint } from 'react-to-print'
 import { formatDateTime } from '../../layouts/helpers/helpers'
 import {
   buildPrintDataFromInvoiceProps,
-  calcTotalPrices,
   formatNumberToColombianPesos,
   formatToUsd,
 } from '../../utils/helpers'
 import { useInvoices } from '../../hooks/useInvoices'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { patchOverrideInvoice } from './helpers/services'
+import { getInvoiceByCode, patchOverrideInvoice } from './helpers/services'
 import { UserRolesEnum } from '../Users/types/UserTypes'
 import { useRolePermissions } from '../../hooks/useRolespermissions'
 import { PaymentMethodsEnum } from '../POS/components/types/PaymentMethodsTypes'
-import { IPosData } from '../POS/components/types/TableTypes'
 import { IconFileOff, IconPrinter, IconX } from '@tabler/icons-react'
 import { toast } from 'sonner'
 
 const Invoices: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [printData, setPrintData] = useState<IPrintData>({} as IPrintData)
+  const [isPrintReady, setIsPrintReady] = useState(false)
+
   const [search, setSearch] = useState('')
   const queryClient = useQueryClient()
 
@@ -51,30 +51,36 @@ const Invoices: FC = () => {
     },
   })
 
-  const confirmOverride = (id: number) => {
+  const { mutate: mutatePrint, isPending: isLoadingPrint } = useMutation({
+    mutationFn: getInvoiceByCode,
+    onSuccess: (invoiceData) => {
+      const printData = buildPrintDataFromInvoiceProps(
+        invoiceData?.data?.results[0] as IInvoiceProps,
+      )
+      setPrintData(printData)
+      if (printData.invoiceNumber) {
+        setIsPrintReady(true)
+      }
+    },
+  })
+
+  useEffect(() => {
+    if (isPrintReady && !isLoadingPrint) {
+      handlePrint()
+      setIsPrintReady(false) // Reset the flag after printing
+    }
+  }, [isPrintReady, isLoadingPrint])
+
+  const confirmOverride = (id: string) => {
     if (isLoadingOverride) return
     mutate(id)
   }
 
   const pushActionToList = () => {
-    const invoiceData: IInvoiceProps[] = invoicesData?.results ?? ([] as IInvoiceProps[])
+    const invoiceData: IInvoiceMinimalProps[] =
+      invoicesData?.results ?? ([] as IInvoiceMinimalProps[])
 
     return invoiceData.map((item) => {
-      const itemPOSDetails: IPosData[] = item.invoice_items.map((item) => ({
-        code: item.item_code,
-        name: item.item_name,
-        selling_price: item.item.selling_price,
-        usd_price: item.item.usd_price,
-        discount: item.discount,
-        quantity: item.quantity,
-        total: item.amount,
-        usd_total: item.usd_amount,
-        is_gift: item.is_gift,
-        id: item.id,
-      }))
-
-      const { totalCOP, totalUSD } = calcTotalPrices(itemPOSDetails)
-
       const isDebitOrCredit = item.payment_methods.some(
         (item) =>
           PaymentMethodsEnum[item.name as unknown as keyof typeof PaymentMethodsEnum] ===
@@ -91,8 +97,8 @@ const Invoices: FC = () => {
         ...item,
         sale_by_name: item.sale_by.fullname || 'SuperAdmin',
         created_at: formatDateTime(item.created_at as string),
-        total: formatNumberToColombianPesos(totalCOP),
-        is_dollar: item.is_dollar ? `USD (${formatToUsd(totalUSD)})` : 'COP',
+        total: formatNumberToColombianPesos(item.total_sum),
+        is_dollar: item.is_dollar ? `USD (${formatToUsd(item.total_sum_usd)})` : 'COP',
         is_override: item.is_override ? (
           <div className='text-red-1'>
             <IconX />
@@ -125,9 +131,9 @@ const Invoices: FC = () => {
               <Popconfirm
                 title='imprimir factua'
                 description='¿Estas seguro deseas imprimir esta factura?'
-                onOpenChange={() => setDataToprint(item)}
-                onConfirm={() => printOut()}
+                onConfirm={() => setDataToprint(item.invoice_number)}
                 okText='Si, imprimir'
+                okButtonProps={{ disabled: isLoadingPrint }}
                 cancelText='Cancelar'
               >
                 <IconPrinter />
@@ -160,20 +166,17 @@ const Invoices: FC = () => {
     content: () => printOutRef.current,
     onAfterPrint: () => {
       toast.success('La factura se ha impreso correctamente')
+      setPrintData({} as IPrintData)
     },
     onPrintError: () => {
       toast.error('Ha ocurrido un error al imprimir la factura')
+      setPrintData({} as IPrintData)
     },
     removeAfterPrint: true,
   })
 
-  const printOut = async () => {
-    handlePrint()
-  }
-
-  const setDataToprint = async (invoiceData: IInvoiceProps) => {
-    const dataTransformed = await buildPrintDataFromInvoiceProps(invoiceData)
-    setPrintData(dataTransformed)
+  const setDataToprint = (invoiceNumber: string) => {
+    mutatePrint(invoiceNumber)
   }
 
   return (

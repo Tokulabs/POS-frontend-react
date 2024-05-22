@@ -26,6 +26,21 @@ export interface IInvoiceProps {
   key?: number
 }
 
+export interface IInvoiceMinimalProps {
+  invoice_number: string
+  is_dollar: boolean
+  is_override: boolean
+  created_at: string
+  payment_terminal: {
+    name: string
+    account_code: string
+  } | null
+  payment_methods: { name: string }[]
+  sale_by: { fullname: string }
+  total_sum: number
+  total_sum_usd: number
+}
+
 export interface IItemInvoice {
   id: number
   amount: number

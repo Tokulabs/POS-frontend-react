@@ -110,9 +110,7 @@ export const checkIfObjectHasEmptyFields = (obj: {
   return Object.values(obj).some((value) => value)
 }
 
-export const buildPrintDataFromInvoiceProps = async (
-  invoice: IInvoiceProps,
-): Promise<IPrintData> => {
+export const buildPrintDataFromInvoiceProps = (invoice: IInvoiceProps): IPrintData => {
   return {
     customerData: invoice?.customer ?? ({} as ICustomerProps),
     dataItems:
