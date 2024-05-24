@@ -95,7 +95,7 @@ const Invoices: FC = () => {
 
       return {
         ...item,
-        sale_by_name: item.sale_by.fullname || 'SuperAdmin',
+        sale_by_name: item.sale_by?.fullname ?? 'SuperAdmin',
         created_at: formatDateTime(item.created_at as string),
         total: formatNumberToColombianPesos(item.total_sum),
         is_dollar: item.is_dollar ? `USD (${formatToUsd(item.total_sum_usd)})` : 'COP',
