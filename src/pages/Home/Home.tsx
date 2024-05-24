@@ -15,7 +15,7 @@ const Home: FC = () => {
           <PurchasesInfo />
         </div>
       </section>
-      <section className='bg-white'>
+      {/* <section className='bg-white'>
         <div className='flex items-center w-full'>
           <div className='w-full'>
             <h2>Ventas Por Hora</h2>
@@ -36,7 +36,7 @@ const Home: FC = () => {
             <SalesChart data={monthlyData} dataKey='totalMoneySold' xAxisKey='time' />
           </div>
         </div>
-      </section>
+      </section> */}
     </main>
   )
 }

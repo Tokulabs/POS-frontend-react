@@ -101,6 +101,7 @@ const PrintOut: FC<IPrintCOmponent> = ({ printDataComponent }) => {
               <div key={index} className='grid grid-cols-4 w-full gap-2'>
                 <p className='m-0 text-left text-xs'>
                   {PaymentMethodsEnum[item.name as unknown as keyof typeof PaymentMethodsEnum]}
+                  {item.transaction_code ? ` - ${item.transaction_code}` : ''}
                 </p>
                 <p className='m-0 text-right text-xs'>
                   {formatNumberToColombianPesos(item.paid_amount ?? 0)}
