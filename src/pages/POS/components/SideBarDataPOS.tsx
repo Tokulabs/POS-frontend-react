@@ -25,7 +25,7 @@ export const SideBarDataPOS = () => {
       {isLoadingResolution ? (
         <Spin />
       ) : (
-        <section className='flex flex-col p-5 w-full justify-start gap-1bg-white  shadow-md'>
+        <section className='flex flex-col p-5 w-full justify-start gap-1 bg-white shadow-md'>
           <div className='flex justify-between items-end'>
             <span className='text-xs'>Resolución activa:</span>
             <span className='text-green-1 font-bold truncate'>

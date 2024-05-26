@@ -25,6 +25,11 @@ export const columns = [
     key: 'groupInfo',
   },
   {
+    title: 'Centro de costos',
+    dataIndex: 'cost_center',
+    key: 'cost_center',
+  },
+  {
     title: 'Proveedor',
     dataIndex: 'providerInfo',
     key: 'providerInfo',

@@ -78,7 +78,7 @@ export const AddDataAndPaymentMethods = () => {
   }, [debouncedSearch])
 
   return (
-    <section className='flex flex-1 flex-col h-full gap-3 justify-end p-5 overflow-hidden overflow-y-auto scrollbar-hide '>
+    <section className='flex flex-col h-full gap-3 justify-start p-5 overflow-hidden overflow-y-scroll scrollbar-hide '>
       <section>
         <h1 className='font-bold text-xl text-green-1'>Vendedor</h1>
         <Select

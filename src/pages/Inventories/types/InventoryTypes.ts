@@ -30,6 +30,7 @@ export interface IInventoryProps {
   usd_price: number
   photo: string
   sum_of_item?: number
+  cost_center: string | null
 }
 
 export interface IAddInventoryFormProps extends IModalFormProps {

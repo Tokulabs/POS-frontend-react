@@ -29,6 +29,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
     ...initialData,
     group_id: initialData.group?.id ?? '',
     provider_id: initialData.provider?.id ?? '',
+    cost_center: initialData.cost_center ?? '',
   }
 
   const isEdit = !!initialData.id
@@ -231,37 +232,64 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
             />
           </Form.Item>
         </div>
-        <Form.Item
-          style={{ width: '100%' }}
-          label='Proveedor'
-          name='provider_id'
-          rules={[{ required: true, message: 'El proveedor es requerido' }]}
-        >
-          <Select
-            placeholder='Selecciona un proveedor'
-            listHeight={200}
-            showSearch
-            optionFilterProp='children'
-            filterOption={(input, option) =>
-              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-            }
-            filterSort={(optionA, optionB) =>
-              (optionA?.label ?? '')
-                .toLowerCase()
-                .localeCompare((optionB?.label ?? '').toLowerCase())
-            }
-            options={[
-              {
-                value: '',
-                label: 'Selecciona un proveedor',
-              },
-              ...providers.map((item) => ({
-                value: item.id,
-                label: item.legal_name,
-              })),
-            ]}
-          />
-        </Form.Item>
+        <div className='flex gap-2 w-full'>
+          <Form.Item
+            style={{ width: '100%' }}
+            label='Proveedor'
+            name='provider_id'
+            rules={[{ required: true, message: 'El proveedor es requerido' }]}
+          >
+            <Select
+              placeholder='Selecciona un proveedor'
+              listHeight={200}
+              showSearch
+              optionFilterProp='children'
+              filterOption={(input, option) =>
+                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+              }
+              filterSort={(optionA, optionB) =>
+                (optionA?.label ?? '')
+                  .toLowerCase()
+                  .localeCompare((optionB?.label ?? '').toLowerCase())
+              }
+              options={[
+                {
+                  value: '',
+                  label: 'Selecciona un proveedor',
+                },
+                ...providers.map((item) => ({
+                  value: item.id,
+                  label: item.legal_name,
+                })),
+              ]}
+            />
+          </Form.Item>
+          <Form.Item
+            style={{ width: '100%' }}
+            label='Cento de Costos'
+            name='cost_center'
+            rules={[{ required: true, message: 'El centro de costos es requerido' }]}
+          >
+            <Select
+              placeholder='Selecciona un Centro de Costos'
+              listHeight={200}
+              options={[
+                {
+                  value: '',
+                  label: 'Selecciona un centro de costos',
+                },
+                {
+                  value: 'Guasá',
+                  label: 'Guasá',
+                },
+                {
+                  value: 'CHOCOLATE',
+                  label: 'CHOCOLATE',
+                },
+              ]}
+            />
+          </Form.Item>
+        </div>
         <Form.Item>
           <Button
             htmlType='submit'
