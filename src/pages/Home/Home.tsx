@@ -1,11 +1,49 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import PurchasesInfo from './components/PurchasesInfo'
 import SummaryData from './components/SummaryData'
 import TopSell from './components/TopSell'
-import { SalesChart } from '../../components/Charts/SalesChart'
-import { dailyData, hourlyData, monthlyData, weeklyData } from './data/chartData'
+import { Tabs } from 'antd'
+import { SalesByHour } from './components/SalesByHour'
+import { SalesByKeyframe } from './components/SalesByKeyFrame'
+import { useQueryClient } from '@tanstack/react-query'
+// import { SalesByUser } from './components/SalesByUser'
 
 const Home: FC = () => {
+  const [dataType, setDataType] = useState('daily')
+  const queryClient = useQueryClient()
+  const DataTabs = [
+    {
+      label: `Hoy ${new Date().toLocaleDateString()}`,
+      key: '1',
+      children: <SalesByHour update={dataType} />,
+    },
+    {
+      label: 'Últimos 7 días',
+      key: 'daily',
+      children: <SalesByKeyframe type={dataType} />,
+    },
+    {
+      label: 'Últimas 5 semanas',
+      key: 'weekly',
+      children: <SalesByKeyframe type={dataType} />,
+    },
+    {
+      label: `Año ${new Date().getFullYear()}`,
+      key: 'monthly',
+      children: <SalesByKeyframe type={dataType} />,
+    },
+  ]
+
+  const onchange = (key: string) => {
+    setDataType(key)
+  }
+
+  useEffect(() => {
+    if (dataType === '1') {
+      queryClient.invalidateQueries({ queryKey: ['summaryByHour'] })
+    }
+  }, [dataType])
+
   return (
     <main className='flex flex-col gap-4 h-full overflow-hidden overflow-y-auto scrollbar-hide'>
       <SummaryData />
@@ -15,27 +53,11 @@ const Home: FC = () => {
           <PurchasesInfo />
         </div>
       </section>
-      {/* <section className='bg-white'>
-        <div className='flex items-center w-full'>
-          <div className='w-full'>
-            <h2>Ventas Por Hora</h2>
-            <SalesChart data={hourlyData} dataKey='totalProductsSold' xAxisKey='time' />
-          </div>
-          <div className='w-full'>
-            <h2>Sales by Day</h2>
-            <SalesChart data={dailyData} dataKey='totalMoneySold' xAxisKey='time' />
-          </div>
-        </div>
-        <div className='flex items-center w-full'>
-          <div className='w-full'>
-            <h2>Sales by Week</h2>
-            <SalesChart data={weeklyData} dataKey='totalMoneySold' xAxisKey='time' />
-          </div>
-          <div className='w-full'>
-            <h2>Sales by Month</h2>
-            <SalesChart data={monthlyData} dataKey='totalMoneySold' xAxisKey='time' />
-          </div>
-        </div>
+      <section className='bg-white shadow-md rounded-lg p-5'>
+        <Tabs onChange={onchange} type='card' items={DataTabs} />
+      </section>
+      {/* <section className='bg-white shadow-md rounded-lg p-5'>
+        <SalesByUser />
       </section> */}
     </main>
   )

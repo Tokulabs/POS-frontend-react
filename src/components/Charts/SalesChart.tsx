@@ -12,9 +12,11 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import { formatNumberToColombianPesos } from '../../utils/helpers'
+import { ISummaryByHour, ISummaryByKeyframe } from '../../pages/Home/types/DashboardTypes'
+import { dateFormater, convertToCurrentWeek } from '../../pages/Home/helpers/dateFormater'
 
 interface SalesChartProps {
-  data: { time: string; totalProductsSold?: number; totalMoneySold?: number }[]
+  data: ISummaryByHour[] | ISummaryByKeyframe[]
   dataKey: string
   xAxisKey: string
 }
@@ -24,32 +26,46 @@ const SalesChart: React.FC<SalesChartProps> = ({ data, dataKey, xAxisKey }) => (
     <LineChart
       data={data}
       margin={{
-        top: 5,
-        right: 30,
-        left: 20,
-        bottom: 5,
+        top: 15,
+        right: 35,
+        left: 25,
+        bottom: 10,
       }}
     >
       <CartesianGrid strokeDasharray='3 3' />
-      <XAxis dataKey={xAxisKey} />
+      <XAxis
+        dataKey={xAxisKey}
+        tickFormatter={(value: number) => {
+          if (dataKey === 'total_quantity') return `${value.toString().padStart(2, '0')}:00`
+          if (xAxisKey === 'day') return dateFormater(value.toString())
+          if (xAxisKey === 'week_number') return convertToCurrentWeek(value.toString())
+          return value.toString()
+        }}
+      />
       <YAxis
         tickFormatter={(value: number) => {
-          if (dataKey === 'totalProductsSold') return value.toString()
+          if (dataKey === 'total_quantity') return value.toString()
           return formatNumberToColombianPesos(value)
         }}
       />
       <Tooltip
+        labelFormatter={(value: number) => {
+          if (dataKey === 'total_quantity') return `${value.toString().padStart(2, '0')}:00`
+          if (xAxisKey === 'day') return dateFormater(value.toString())
+          if (xAxisKey === 'week_number') return convertToCurrentWeek(value.toString())
+          return value.toString()
+        }}
         formatter={(value: number) => {
-          if (dataKey === 'totalProductsSold') return value.toString()
+          if (dataKey === 'total_quantity') return value.toString()
           return formatNumberToColombianPesos(value)
         }}
       />
       <Legend />
       <Line
-        name={dataKey === 'totalProductsSold' ? 'Total Productos vendidos' : 'Total Ventas'}
+        name={dataKey === 'total_quantity' ? 'Total Productos vendidos' : 'Total Ventas'}
         type='monotone'
         dataKey={dataKey}
-        stroke='#8884d8'
+        stroke='#269962'
         strokeWidth={2}
         activeDot={{ r: 8 }}
       />

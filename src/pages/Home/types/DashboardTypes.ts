@@ -31,3 +31,21 @@ export interface IPurchaseSummaryProps {
   selling_price_gifts: number
   price_dolar: number
 }
+
+export interface ISummaryByHour {
+  time: number
+  total_quantity: number
+}
+
+export interface ISummaryByKeyframe {
+  total_amount: number
+  month?: string
+  week_number?: string
+  day?: string
+}
+
+export interface ISalesByUser {
+  sale_by__id: number
+  sale_by__fullname: string
+  total_invoice: number
+}
