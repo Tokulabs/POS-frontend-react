@@ -21,7 +21,7 @@ export const AddDataAndPaymentMethods = () => {
 
   const queryClient = useQueryClient()
 
-  const { usersData } = useUsers('allUsers', { role: 'supportSales', is_active: 'True' })
+  const { usersData } = useUsers('allUsers', { keyword: 'sales', is_active: 'True' })
 
   const { toggleModalAddCustomer, updateCustomerData, customer } = useCustomerData()
   const { saleById, updateSaleById } = useCart()
