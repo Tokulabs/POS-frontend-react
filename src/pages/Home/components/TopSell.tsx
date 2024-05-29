@@ -4,6 +4,8 @@ import { IconCameraOff } from '@tabler/icons-react'
 import { useTopSellingProducts } from '../../../hooks/useSummaryData'
 import moment from 'moment'
 import dayjs from 'dayjs'
+import { UserRolesEnum } from '../../Users/types/UserTypes'
+import { useRolePermissions } from '../../../hooks/useRolespermissions'
 
 const TopSell = () => {
   const dateFormat = 'YYYY-MM-DD'
@@ -16,6 +18,13 @@ const TopSell = () => {
   })
   const { RangePicker } = DatePicker
 
+  const allowedRolesOverride = [
+    UserRolesEnum.admin,
+    UserRolesEnum.posAdmin,
+    UserRolesEnum.shopAdmin,
+  ]
+  const { hasPermission: hasPermissionToSeeData } = useRolePermissions(allowedRolesOverride)
+
   return (
     <div className='bg-white p-4 rounded-lg md:col-span-2 flex flex-col gap-4 shadow-md'>
       <div className='w-full flex flex-col gap-3'>
@@ -23,18 +32,20 @@ const TopSell = () => {
           Top Productos del <span className='font-bold text-base'>{startDate}</span> al{' '}
           <span className='font-bold text-base'>{endDate}</span>
         </p>
-        <RangePicker
-          style={{ width: '50%' }}
-          defaultValue={[dayjs(startDate), dayjs(endDate)]}
-          onChange={(dates) => {
-            if (dates[0] && dates[1]) {
-              setStartDate(dates[0].format(dateFormat))
-              setEndDate(dates[1].format(dateFormat))
-            }
-          }}
-          format={dateFormat}
-          picker='date'
-        />
+        {hasPermissionToSeeData && (
+          <RangePicker
+            style={{ width: '50%' }}
+            defaultValue={[dayjs(startDate), dayjs(endDate)]}
+            onChange={(dates) => {
+              if (dates[0] && dates[1]) {
+                setStartDate(dates[0].format(dateFormat))
+                setEndDate(dates[1].format(dateFormat))
+              }
+            }}
+            format={dateFormat}
+            picker='date'
+          />
+        )}
       </div>
       <div className='grid items-center grid-cols-1 md:grid-cols-2 lg:grid-cols-5 xl:grid-cols-7 gap-4'>
         {isLoading ? (
