@@ -70,8 +70,6 @@ const DownloadReports: FC<IModalDownloadReports> = ({
   const allowedRolesSales = [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin]
   const { hasPermission: hasPermissionSales } = useRolePermissions(allowedRolesSales)
 
-  console.log('hasPermissionSales', hasPermissionSales)
-
   const reportsToDownload: IReportToDownload[] = [
     {
       url: 'daily_report_export/',
