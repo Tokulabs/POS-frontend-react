@@ -1,56 +1,56 @@
-import { Spin } from 'antd'
-import { useEffect, useState } from 'react'
-import { axiosRequest } from '../../../api/api'
+import { useState } from 'react'
+import { Spin, DatePicker } from 'antd'
 import { formatNumberToColombianPesos, formatToUsd } from '../../../utils/helpers'
-import { purchaseSummaryURL } from '../../../utils/network'
-import { IPurchaseSummaryProps } from '../types/DashboardTypes'
+import { usePurchaseSummary } from '../../../hooks/useSummaryData'
+import moment from 'moment'
+import dayjs from 'dayjs'
 
 const PurchasesInfo = () => {
-  const [dataPurchaseSummary, setDataPurchaseSummary] = useState<IPurchaseSummaryProps>(
-    {} as IPurchaseSummaryProps,
-  )
-  const [loading, setLoading] = useState(false)
+  const dateFormat = 'YYYY-MM-DD'
+  const today = moment().format(dateFormat)
+  const [startDate, setStartDate] = useState<string>(today)
+  const [endDate, setEndDate] = useState<string>(today)
+  const { RangePicker } = DatePicker
+
+  const { purchaseSummary, isLoading } = usePurchaseSummary('purchaseSummary', {
+    start_date: startDate,
+    end_date: endDate,
+  })
   const showCurrency = false
-
-  const getPurchaseSummary = async () => {
-    try {
-      setLoading(true)
-      const response = await axiosRequest<IPurchaseSummaryProps>({
-        url: purchaseSummaryURL,
-        hasAuth: true,
-      })
-      if (response) {
-        const result = response.data
-        setDataPurchaseSummary(result)
-      }
-    } catch (e) {
-      console.log(e)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    getPurchaseSummary()
-  }, [])
 
   return (
     <div className='bg-white h-full p-4 rounded-lg md:col-span-2 flex flex-col gap-4 shadow-md'>
-      <h3 className='m-0 font-bold'>Ventas Totales</h3>
-      {loading ? (
+      <div className='w-full flex flex-col gap-3'>
+        <p className='m-0 text-sm'>
+          Ventas del <span className='font-bold text-base'>{startDate}</span> al{' '}
+          <span className='font-bold text-base'>{endDate}</span>
+        </p>
+        <RangePicker
+          defaultValue={[dayjs(startDate), dayjs(endDate)]}
+          onChange={(dates) => {
+            if (dates[0] && dates[1]) {
+              setStartDate(dates[0].format(dateFormat))
+              setEndDate(dates[1].format(dateFormat))
+            }
+          }}
+          format={dateFormat}
+          picker='date'
+        />
+      </div>
+      {isLoading ? (
         <Spin />
       ) : (
         <section className='flex flex-col gap-5'>
           <div className='grid grid-cols-2'>
             <div className='flex flex-col'>
               <p className='m-0 font-bold text-2xl overflow-hidden truncate'>
-                {formatNumberToColombianPesos(dataPurchaseSummary.selling_price ?? 0, showCurrency)}
+                {formatNumberToColombianPesos(purchaseSummary?.selling_price ?? 0, showCurrency)}
               </p>
               <span className='text-gray-2 text-sm overflow-hidden truncate'>(Valor COP)</span>
             </div>
             <div className='flex flex-col'>
               <p className='m-0 font-bold text-2xl overflow-hidden truncate'>
-                {dataPurchaseSummary.count ?? 0}
+                {purchaseSummary?.count ?? 0}
               </p>
               <span className='text-gray-2 text-sm overflow-hidden truncate'>
                 (Cantidad de productos)
@@ -61,7 +61,7 @@ const PurchasesInfo = () => {
             <div className='flex flex-col'>
               <p className='m-0 font-bold text-2xl overflow-hidden truncate'>
                 {formatNumberToColombianPesos(
-                  dataPurchaseSummary.selling_price_gifts ?? 0,
+                  purchaseSummary?.selling_price_gifts ?? 0,
                   showCurrency,
                 )}
               </p>
@@ -71,7 +71,7 @@ const PurchasesInfo = () => {
             </div>
             <div className='flex flex-col'>
               <p className='m-0 font-bold text-2xl overflow-hidden truncate'>
-                {dataPurchaseSummary.gift_count ?? 0}
+                {purchaseSummary?.gift_count ?? 0}
               </p>
               <span className='text-gray-2 text-sm overflow-hidden truncate'>
                 (Cantidad de regalos)
@@ -80,7 +80,7 @@ const PurchasesInfo = () => {
           </div>
           <div className='flex flex-col'>
             <p className='m-0 font-bold text-2xl overflow-hidden truncate'>
-              {formatToUsd(dataPurchaseSummary.price_dolar ?? 0, showCurrency)}
+              {formatToUsd(purchaseSummary?.price_dolar ?? 0, showCurrency)}
             </p>
             <span className='text-gray-2 text-sm overflow-hidden truncate'>(Venta USD)</span>
           </div>

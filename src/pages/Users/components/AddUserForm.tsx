@@ -86,6 +86,13 @@ const AddUserForm: FC<IAddUser> = ({
           <Input placeholder='Nombre de usuario' type='text' />
         </Form.Item>
         <Form.Item
+          label='Meta Diaria'
+          name='daily_goal'
+          rules={[{ required: true, message: 'La meta diaria es un campo obligatorio' }]}
+        >
+          <Input placeholder='Meta Diaria' type='number' />
+        </Form.Item>
+        <Form.Item
           label='Rol'
           name='role'
           rules={[{ required: true, message: 'El Rol es un campo obligatorio' }]}

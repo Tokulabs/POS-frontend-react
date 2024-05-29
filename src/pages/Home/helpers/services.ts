@@ -1,7 +1,19 @@
 import { axiosRequest } from '../../../api/api'
 import { DataPropsForm, IQueryParams } from '../../../types/GlobalTypes'
-import { summaryByHour, summaryByKeyframe, salesByUser } from '../../../utils/network'
-import { ISalesByUser, ISummaryByHour, ISummaryByKeyframe } from '../types/DashboardTypes'
+import {
+  summaryByHour,
+  summaryByKeyframe,
+  salesByUser,
+  purchaseSummaryURL,
+  topSellURL,
+} from '../../../utils/network'
+import {
+  IPurchaseSummaryProps,
+  ISalesByUser,
+  ISummaryByHour,
+  ISummaryByKeyframe,
+  ITopSellingProps,
+} from '../types/DashboardTypes'
 
 export const getSummaryByHour = async () => {
   const finalURL = new URL(summaryByHour)
@@ -39,12 +51,38 @@ export const getSummaryByKeyFrame = async (queryParams: IQueryParams) => {
 
 export const getSummarybyUser = async (value: DataPropsForm) => {
   const response = await axiosRequest<ISalesByUser[]>({
+    method: 'post',
     url: salesByUser,
     hasAuth: true,
     showError: true,
     payload: value,
   })
-  console.log(response)
+  if (response) {
+    return response.data
+  }
+}
+
+export const postPurchaseSummary = async (value: DataPropsForm) => {
+  const response = await axiosRequest<IPurchaseSummaryProps>({
+    method: 'post',
+    url: purchaseSummaryURL,
+    hasAuth: true,
+    showError: true,
+    payload: value,
+  })
+  if (response) {
+    return response.data
+  }
+}
+
+export const postTopSeelingProducts = async (value: DataPropsForm) => {
+  const response = await axiosRequest<ITopSellingProps[]>({
+    method: 'post',
+    url: topSellURL,
+    hasAuth: true,
+    showError: true,
+    payload: value,
+  })
   if (response) {
     return response.data
   }

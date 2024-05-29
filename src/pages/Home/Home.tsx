@@ -6,7 +6,7 @@ import { Tabs } from 'antd'
 import { SalesByHour } from './components/SalesByHour'
 import { SalesByKeyframe } from './components/SalesByKeyFrame'
 import { useQueryClient } from '@tanstack/react-query'
-// import { SalesByUser } from './components/SalesByUser'
+import { SalesByUser } from './components/SalesByUser'
 
 const Home: FC = () => {
   const [dataType, setDataType] = useState('daily')
@@ -56,9 +56,9 @@ const Home: FC = () => {
       <section className='bg-white shadow-md rounded-lg p-5'>
         <Tabs onChange={onchange} type='card' items={DataTabs} />
       </section>
-      {/* <section className='bg-white shadow-md rounded-lg p-5'>
+      <section className='bg-white shadow-md rounded-lg p-5'>
         <SalesByUser />
-      </section> */}
+      </section>
     </main>
   )
 }
