@@ -19,13 +19,14 @@ import { UserRolesEnum } from '../../pages/Users/types/UserTypes'
 const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
 
-  const allowedRolesOverride = [
+  const allowedRolesDownload = [
     UserRolesEnum.admin,
     UserRolesEnum.posAdmin,
     UserRolesEnum.shopAdmin,
     UserRolesEnum.sales,
   ]
-  const { hasPermission: hasPermissionDownloads } = useRolePermissions(allowedRolesOverride)
+  const { hasPermission: hasPermissionDownloads } = useRolePermissions(allowedRolesDownload)
+
   const { state } = useContext(store)
   const location = useLocation()
   const navigate = useNavigate()

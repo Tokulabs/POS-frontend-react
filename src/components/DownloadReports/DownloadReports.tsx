@@ -14,6 +14,8 @@ import { axiosRequest } from '../../api/api'
 import { downloadReportURL } from '../../utils/network'
 // Helpers
 import { getArrayDatesOrDateWithHour } from '../../layouts/helpers/helpers'
+import { useRolePermissions } from '../../hooks/useRolespermissions'
+import { UserRolesEnum } from '../../pages/Users/types/UserTypes'
 
 export const downloadReport = async (data: { payload: DataPropsForm | undefined; url: string }) => {
   const response = await axiosRequest({
@@ -51,30 +53,8 @@ interface IModalDownloadReports {
 interface IReportToDownload {
   url: string
   name: string
+  show: boolean
 }
-
-const reportsToDownload: IReportToDownload[] = [
-  {
-    url: 'daily_report_export/',
-    name: 'Reporte Diario',
-  },
-  {
-    url: 'inventories_report_export/',
-    name: 'Reporte de inventarios',
-  },
-  {
-    url: 'product_sales_report_export/',
-    name: 'Reporte Ventas de Productos',
-  },
-  {
-    url: 'invoices_report_export/',
-    name: 'Reporte de Facturas',
-  },
-  {
-    url: 'electronic_invoice_export/',
-    name: 'Reporte Facturación Electrónica',
-  },
-]
 
 const DownloadReports: FC<IModalDownloadReports> = ({
   isVisible,
@@ -86,6 +66,39 @@ const DownloadReports: FC<IModalDownloadReports> = ({
     report_type: 'daily_report_export/',
     document_dates: [],
   }
+
+  const allowedRolesSales = [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin]
+  const { hasPermission: hasPermissionSales } = useRolePermissions(allowedRolesSales)
+
+  console.log('hasPermissionSales', hasPermissionSales)
+
+  const reportsToDownload: IReportToDownload[] = [
+    {
+      url: 'daily_report_export/',
+      name: 'Reporte Diario',
+      show: true,
+    },
+    {
+      url: 'inventories_report_export/',
+      name: 'Reporte de inventarios',
+      show: true,
+    },
+    {
+      url: 'product_sales_report_export/',
+      name: 'Reporte Ventas de Productos',
+      show: true,
+    },
+    {
+      url: 'invoices_report_export/',
+      name: 'Reporte de Facturas',
+      show: hasPermissionSales,
+    },
+    {
+      url: 'electronic_invoice_export/',
+      name: 'Reporte Facturación Electrónica',
+      show: hasPermissionSales,
+    },
+  ]
 
   const { mutate, isPending: isLoading } = useMutation({
     mutationFn: downloadReport,
@@ -145,10 +158,12 @@ const DownloadReports: FC<IModalDownloadReports> = ({
             <Select
               placeholder='Selecciona el Reporte a Descargar'
               options={[
-                ...reportsToDownload.map((report) => ({
-                  value: report.url,
-                  label: report.name,
-                })),
+                ...reportsToDownload
+                  .filter((item) => item.show)
+                  .map((report) => ({
+                    value: report.url,
+                    label: report.name,
+                  })),
               ]}
             />
           </Form.Item>

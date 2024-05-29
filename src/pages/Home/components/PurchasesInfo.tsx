@@ -4,6 +4,8 @@ import { formatNumberToColombianPesos, formatToUsd } from '../../../utils/helper
 import { usePurchaseSummary } from '../../../hooks/useSummaryData'
 import moment from 'moment'
 import dayjs from 'dayjs'
+import { useRolePermissions } from '../../../hooks/useRolespermissions'
+import { UserRolesEnum } from '../../Users/types/UserTypes'
 
 const PurchasesInfo = () => {
   const dateFormat = 'YYYY-MM-DD'
@@ -18,6 +20,13 @@ const PurchasesInfo = () => {
   })
   const showCurrency = false
 
+  const allowedRolesOverride = [
+    UserRolesEnum.admin,
+    UserRolesEnum.posAdmin,
+    UserRolesEnum.shopAdmin,
+  ]
+  const { hasPermission: hasPermissionToSeeData } = useRolePermissions(allowedRolesOverride)
+
   return (
     <div className='bg-white h-full p-4 rounded-lg md:col-span-2 flex flex-col gap-4 shadow-md'>
       <div className='w-full flex flex-col gap-3'>
@@ -25,17 +34,19 @@ const PurchasesInfo = () => {
           Ventas del <span className='font-bold text-base'>{startDate}</span> al{' '}
           <span className='font-bold text-base'>{endDate}</span>
         </p>
-        <RangePicker
-          defaultValue={[dayjs(startDate), dayjs(endDate)]}
-          onChange={(dates) => {
-            if (dates[0] && dates[1]) {
-              setStartDate(dates[0].format(dateFormat))
-              setEndDate(dates[1].format(dateFormat))
-            }
-          }}
-          format={dateFormat}
-          picker='date'
-        />
+        {hasPermissionToSeeData && (
+          <RangePicker
+            defaultValue={[dayjs(startDate), dayjs(endDate)]}
+            onChange={(dates) => {
+              if (dates[0] && dates[1]) {
+                setStartDate(dates[0].format(dateFormat))
+                setEndDate(dates[1].format(dateFormat))
+              }
+            }}
+            format={dateFormat}
+            picker='date'
+          />
+        )}
       </div>
       {isLoading ? (
         <Spin />
