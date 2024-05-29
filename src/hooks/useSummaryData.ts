@@ -4,6 +4,8 @@ import {
   getSummaryByHour,
   getSummaryByKeyFrame,
   getSummarybyUser,
+  postPurchaseSummary,
+  postTopSeelingProducts,
 } from '../pages/Home/helpers/services'
 
 export const useSummaryByhour = (queryKey: string) => {
@@ -43,5 +45,31 @@ export const useSummaryByUser = (queryKey: string, payload: DataPropsForm) => {
   return {
     isLoading,
     summaryByUser,
+  }
+}
+
+export const usePurchaseSummary = (queryKey: string, payload: DataPropsForm) => {
+  const queryKeyToSend: QueryKey = [queryKey, payload]
+  const { isLoading, data: purchaseSummary } = useQuery({
+    queryKey: queryKeyToSend,
+    queryFn: async () => await postPurchaseSummary(payload),
+    refetchOnWindowFocus: false,
+  })
+  return {
+    isLoading,
+    purchaseSummary,
+  }
+}
+
+export const useTopSellingProducts = (queryKey: string, payload: DataPropsForm) => {
+  const queryKeyToSend: QueryKey = [queryKey, payload]
+  const { isLoading, data: topSellingProducts } = useQuery({
+    queryKey: queryKeyToSend,
+    queryFn: async () => await postTopSeelingProducts(payload),
+    refetchOnWindowFocus: false,
+  })
+  return {
+    isLoading,
+    topSellingProducts,
   }
 }

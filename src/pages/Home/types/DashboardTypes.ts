@@ -13,10 +13,9 @@ export interface ISummaryDataProps {
 }
 
 export interface ITopSellingProps {
-  title: string
-  value: number
-  icon: ForwardRefExoticComponent<Omit<IconProps, 'ref'> & RefAttributes<Icon>>
-  color?: string
+  name: string
+  photo: string
+  sum_top_ten_items: number
 }
 export interface ISaleByShopProps {
   amount_total: number
@@ -48,4 +47,5 @@ export interface ISalesByUser {
   sale_by__id: number
   sale_by__fullname: string
   total_invoice: number
+  sale_by__daily_goal: number
 }
