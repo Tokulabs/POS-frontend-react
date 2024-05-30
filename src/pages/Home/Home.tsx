@@ -54,10 +54,10 @@ const Home: FC = () => {
         </div>
       </section>
       <section className='bg-white shadow-md rounded-lg p-5'>
-        <Tabs onChange={onchange} type='card' items={DataTabs} />
+        <SalesByUser />
       </section>
       <section className='bg-white shadow-md rounded-lg p-5'>
-        <SalesByUser />
+        <Tabs onChange={onchange} type='card' items={DataTabs} />
       </section>
     </main>
   )
