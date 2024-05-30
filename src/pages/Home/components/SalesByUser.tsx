@@ -29,7 +29,7 @@ const SalesByUser = () => {
                 key={item.sale_by__id}
               >
                 <span
-                  className={`font-bold text-lg text-center ${percentage < 50 ? 'text-[#FF0000]' : percentage > 100 ? 'text-[#269962]' : 'text-[#007bff]'}`}
+                  className={`font-bold text-lg text-center ${percentage < 50 ? 'text-red-500' : percentage > 100 ? 'text-green-1' : 'text-[#007bff]'}`}
                 >
                   {item.sale_by__fullname}
                 </span>

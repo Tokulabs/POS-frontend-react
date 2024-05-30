@@ -15,6 +15,11 @@ export const columns = [
     key: 'fullname',
   },
   {
+    title: 'Tipo',
+    dataIndex: 'document_type',
+    key: 'document_type',
+  },
+  {
     title: 'Identificación',
     dataIndex: 'document_id',
     key: 'document_id',
