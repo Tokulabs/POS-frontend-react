@@ -1,6 +1,6 @@
 import { FC, useMemo } from 'react'
 // Third party
-import { Form, Modal, Input, Button } from 'antd'
+import { Form, Modal, Input, Button, Select } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
@@ -10,6 +10,7 @@ import { useCustomerData } from '../../../store/useCustomerStoreZustand'
 import { DataPropsForm } from '../../../types/GlobalTypes'
 // Helpers
 import { postCustomers, putCustomersEdit } from '../helpers/services'
+import { UserDocumentTypeEnum } from '../../Users/types/UserTypes'
 
 export const AddCustomerModal: FC = () => {
   const [form] = useForm()
@@ -29,6 +30,7 @@ export const AddCustomerModal: FC = () => {
         ...data,
         id: data?.id as number,
         idNumber: data?.document_id,
+        documentType: data?.document_type as UserDocumentTypeEnum,
       })
       toast.success('Cliente actualizado!')
       form.resetFields()
@@ -43,6 +45,7 @@ export const AddCustomerModal: FC = () => {
         ...data,
         id: data?.id as number,
         idNumber: data?.document_id,
+        documentType: data?.document_type as UserDocumentTypeEnum,
       })
       toast.success('Cliente creado!')
       form.resetFields()
@@ -56,6 +59,7 @@ export const AddCustomerModal: FC = () => {
         values: {
           ...customerToSend,
           document_id: customerToSend.idNumber,
+          document_type: customerToSend.documentType,
           phone: customerToSend.phone?.length ? customerToSend.phone : null,
           address: customerToSend.address?.length ? customerToSend.address : null,
         },
@@ -67,6 +71,7 @@ export const AddCustomerModal: FC = () => {
       mutatePost({
         ...customerToSend,
         document_id: customerToSend.idNumber,
+        document_type: customerToSend.documentType,
         phone: customerToSend.phone?.length ? customerToSend.phone : null,
         address: customerToSend.address?.length ? customerToSend.address : null,
       })
@@ -103,14 +108,36 @@ export const AddCustomerModal: FC = () => {
         >
           <Input placeholder='Nombre del cliente' type='text' autoComplete='off' />
         </Form.Item>
-        <Form.Item
-          style={{ width: '100%' }}
-          label='Número de identificación'
-          name='idNumber'
-          rules={[{ required: true, message: 'El documento es un campo obligatorio' }]}
-        >
-          <Input placeholder='Número de identificación' type='text' autoComplete='off' />
-        </Form.Item>
+        <div className='w-full flex items-start gap-2'>
+          <Form.Item
+            style={{ width: '20%' }}
+            label='Tipo'
+            name='documentType'
+            rules={[{ required: true, message: 'Campo obligatorio' }]}
+          >
+            <Select
+              dropdownStyle={{ width: 'auto' }}
+              placeholder='Tipo'
+              optionLabelProp='value'
+              options={[
+                { value: 'CC', label: UserDocumentTypeEnum.CC },
+                { value: 'CE', label: UserDocumentTypeEnum.CE },
+                { value: 'NIT', label: UserDocumentTypeEnum.NIT },
+                { value: 'TI', label: UserDocumentTypeEnum.TI },
+                { value: 'PA', label: UserDocumentTypeEnum.PA },
+                { value: 'DIE', label: UserDocumentTypeEnum.DIE },
+              ]}
+            />
+          </Form.Item>
+          <Form.Item
+            style={{ width: '100%' }}
+            label='Número de identificación'
+            name='idNumber'
+            rules={[{ required: true, message: 'El documento es un campo obligatorio' }]}
+          >
+            <Input placeholder='Número de identificación' type='text' autoComplete='off' />
+          </Form.Item>
+        </div>
         <Form.Item
           style={{ width: '100%' }}
           label='Correo electrónico'

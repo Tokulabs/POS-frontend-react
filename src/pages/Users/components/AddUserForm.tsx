@@ -2,7 +2,7 @@ import { Form, Modal, Input, Select, Button } from 'antd'
 import { FC } from 'react'
 import { DataPropsForm } from '../../../types/GlobalTypes'
 import { useForm } from 'antd/es/form/Form'
-import { IAddUser, UserRolesEnum } from '../types/UserTypes'
+import { IAddUser, UserDocumentTypeEnum, UserRolesEnum } from '../types/UserTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { postUsersNew, putUsers } from '../helpers/services'
 import { toast } from 'sonner'
@@ -71,13 +71,35 @@ const AddUserForm: FC<IAddUser> = ({
         >
           <Input placeholder='Email' type='email' />
         </Form.Item>
-        <Form.Item
-          label='Identificación'
-          name='document_id'
-          rules={[{ required: true, message: 'Campo obligatorio' }]}
-        >
-          <Input placeholder='Docuemnto de Identidad' type='number' />
-        </Form.Item>
+        <div className='w-full flex items-start gap-2'>
+          <Form.Item
+            style={{ width: '20%' }}
+            label='Tipo'
+            name='document_type'
+            rules={[{ required: true, message: 'Campo obligatorio' }]}
+          >
+            <Select
+              dropdownStyle={{ width: 'auto' }}
+              placeholder='Tipo'
+              optionLabelProp='value'
+              options={[
+                { value: 'CC', label: UserDocumentTypeEnum.CC },
+                { value: 'CE', label: UserDocumentTypeEnum.CE },
+                { value: 'NIT', label: UserDocumentTypeEnum.NIT },
+                { value: 'TI', label: UserDocumentTypeEnum.TI },
+                { value: 'PA', label: UserDocumentTypeEnum.PA },
+              ]}
+            />
+          </Form.Item>
+          <Form.Item
+            style={{ width: '80%' }}
+            label='Identificación'
+            name='document_id'
+            rules={[{ required: true, message: 'Campo obligatorio' }]}
+          >
+            <Input placeholder='Documento de Identidad' type='number' />
+          </Form.Item>
+        </div>
         <Form.Item
           label='Nombre'
           name='fullname'

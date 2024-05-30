@@ -3,9 +3,9 @@ import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
 import AddUserForm from './components/AddUserForm'
 import { columns } from './data/columsData'
 import { useUsers } from '../../hooks/useUsers'
-import { IUserProps } from './types/UserTypes'
+import { IUserProps, UserDocumentTypeEnum } from './types/UserTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Button, Popconfirm, Switch } from 'antd'
+import { Button, Popconfirm, Switch, Tooltip } from 'antd'
 import { IconCircleCheck, IconCircleX, IconEdit, IconPower } from '@tabler/icons-react'
 import { ModalStateEnum } from '../../types/ModalTypes'
 import { toggleActiveUser } from './helpers/services'
@@ -50,6 +50,13 @@ const Users: FC = () => {
         <IconCircleCheck className='text-green-1' />
       ) : (
         <IconCircleX className='text-red-1' />
+      ),
+      document_type: (
+        <Tooltip
+          title={UserDocumentTypeEnum[item.document_type as keyof typeof UserDocumentTypeEnum]}
+        >
+          <span>{item.document_type}</span>
+        </Tooltip>
       ),
       action: (
         <div className='flex justify-center items-center gap-2'>

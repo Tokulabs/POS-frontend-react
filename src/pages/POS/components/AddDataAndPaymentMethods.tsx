@@ -53,6 +53,7 @@ export const AddDataAndPaymentMethods = () => {
         id: item.id as number,
         name: item.name,
         idNumber: item.document_id,
+        documentType: item.document_type,
         phone: item.phone || '',
         address: item.address || '',
         email: item.email,
@@ -166,7 +167,7 @@ export const AddDataAndPaymentMethods = () => {
                 <div className='flex flex-col justify-between'>
                   <span className='text-xs font-semibold'>Documento:</span>
                   <span className='font-bold truncate text-sm'>
-                    {customer.idNumber ? customer.idNumber : 'N/A'}
+                    {customer.documentType} {customer.idNumber ? customer.idNumber : 'N/A'}
                   </span>
                 </div>
                 <div className='flex flex-col justify-between'>

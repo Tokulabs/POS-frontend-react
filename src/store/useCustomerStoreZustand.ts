@@ -6,6 +6,7 @@ interface ICustomerDataStore {
   customer: {
     id: number | null
     idNumber: string
+    documentType: string
     name: string
     email: string
     phone: string | null
@@ -22,6 +23,7 @@ export const useCustomerData = create<ICustomerDataStore>((set) => ({
   customer: {
     id: null,
     idNumber: '',
+    documentType: '',
     name: '',
     email: '',
     phone: '',
@@ -37,6 +39,7 @@ export const useCustomerData = create<ICustomerDataStore>((set) => ({
       customer: {
         id: null,
         idNumber: '',
+        documentType: '',
         name: '',
         email: '',
         phone: '',
