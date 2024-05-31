@@ -56,6 +56,7 @@ export const AddDataAndPaymentMethods = () => {
         documentType: item.document_type,
         phone: item.phone || '',
         address: item.address || '',
+        city: item.city || '',
         email: item.email,
       })
       setValue(null as unknown as string)
@@ -180,6 +181,12 @@ export const AddDataAndPaymentMethods = () => {
                   <span className='text-xs font-semibold'>Dirección:</span>
                   <span className='font-bold truncate text-sm'>
                     {customer.address ? customer.address : 'N/A'}
+                  </span>
+                </div>
+                <div className='flex flex-col justify-between'>
+                  <span className='text-xs font-semibold'>Ciudad:</span>
+                  <span className='font-bold truncate text-sm'>
+                    {customer.city ? customer.city : 'N/A'}
                   </span>
                 </div>
                 <div className='flex flex-col justify-between'>

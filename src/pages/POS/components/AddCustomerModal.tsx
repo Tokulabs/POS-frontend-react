@@ -149,8 +149,11 @@ export const AddCustomerModal: FC = () => {
         <Form.Item style={{ width: '100%' }} label='Número de teléfono' name='phone'>
           <Input placeholder='Número de telefono' type='number' min={1} autoComplete='off' />
         </Form.Item>
-        <Form.Item style={{ width: '100%' }} label='Dirección/Ciudad' name='address'>
-          <Input placeholder='Dirección/Ciudad' type='text' autoComplete='off' />
+        <Form.Item style={{ width: '100%' }} label='Ciudad' name='city'>
+          <Input placeholder='Ciudad' type='text' autoComplete='off' />
+        </Form.Item>
+        <Form.Item style={{ width: '100%' }} label='Dirección' name='address'>
+          <Input placeholder='Dirección' type='text' autoComplete='off' />
         </Form.Item>
         <Form.Item>
           <Button htmlType='submit' type='primary' block loading={false}>
