@@ -57,11 +57,13 @@ export const AddCustomerModal: FC = () => {
     if (isEditUser) {
       mutate({
         values: {
-          ...customerToSend,
+          name: customerToSend.name,
+          email: customerToSend.email,
           document_id: customerToSend.idNumber,
           document_type: customerToSend.documentType,
           phone: customerToSend.phone?.length ? customerToSend.phone : null,
           address: customerToSend.address?.length ? customerToSend.address : null,
+          city: customerToSend.city?.length ? customerToSend.city : null,
         },
         id: customer.id as number,
       })
@@ -69,11 +71,13 @@ export const AddCustomerModal: FC = () => {
       return
     } else {
       mutatePost({
-        ...customerToSend,
+        name: customerToSend.name,
+        email: customerToSend.email,
         document_id: customerToSend.idNumber,
         document_type: customerToSend.documentType,
         phone: customerToSend.phone?.length ? customerToSend.phone : null,
         address: customerToSend.address?.length ? customerToSend.address : null,
+        city: customerToSend.city?.length ? customerToSend.city : null,
       })
       toggleModalAddCustomer(false, false)
     }
