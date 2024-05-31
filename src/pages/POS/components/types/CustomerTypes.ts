@@ -6,4 +6,5 @@ export interface ICustomerProps {
   phone: string | null
   email: string
   address: string | null
+  city: string | null
 }

@@ -11,6 +11,7 @@ interface ICustomerDataStore {
     email: string
     phone: string | null
     address: string | null
+    city: string | null
   }
   updateCustomerData: (data: ICustomerDataStore['customer']) => void
   clearCustomerData: () => void
@@ -27,6 +28,7 @@ export const useCustomerData = create<ICustomerDataStore>((set) => ({
     name: '',
     email: '',
     phone: '',
+    city: '',
     address: '',
   },
   updateCustomerData: (data) => {
@@ -44,6 +46,7 @@ export const useCustomerData = create<ICustomerDataStore>((set) => ({
         email: '',
         phone: '',
         address: '',
+        city: '',
       },
     })
   },
