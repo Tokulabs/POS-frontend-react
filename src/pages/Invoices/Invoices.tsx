@@ -1,31 +1,41 @@
-import { Popconfirm, Spin, Tooltip } from 'antd'
+// React
 import { FC, useEffect, useRef, useState } from 'react'
+// Third party
+import { useReactToPrint } from 'react-to-print'
+import { Button, Popconfirm, Spin, Tooltip } from 'antd'
+import { IconEdit, IconFileOff, IconPrinter, IconX } from '@tabler/icons-react'
+import { toast } from 'sonner'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+// Custom Components and Layouts
 import PrintOut from '../../components/Print/PrintOut'
 import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
+import { ChangePaymentMethodsInvoice } from './Components/ChangePaymentMethodsInvoice'
+// Types
 import { DataPropsForm, IPrintData } from '../../types/GlobalTypes'
-import { columns } from './data/columnsData'
 import { IInvoiceMinimalProps, IInvoiceProps } from './types/InvoicesTypes'
-import { useReactToPrint } from 'react-to-print'
+import { ModalStateEnum } from '../../types/ModalTypes'
+import { PaymentMethodsEnum } from '../POS/components/types/PaymentMethodsTypes'
+import { UserRolesEnum } from '../Users/types/UserTypes'
+// Data
+import { columns } from './data/columnsData'
+// Helpers and Utilities
 import { formatDateTime } from '../../layouts/helpers/helpers'
 import {
   buildPrintDataFromInvoiceProps,
   formatNumberToColombianPesos,
   formatToUsd,
 } from '../../utils/helpers'
-import { useInvoices } from '../../hooks/useInvoices'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { getInvoiceByCode, patchOverrideInvoice } from './helpers/services'
-import { UserRolesEnum } from '../Users/types/UserTypes'
+// Hooks
+import { useInvoices } from '../../hooks/useInvoices'
 import { useRolePermissions } from '../../hooks/useRolespermissions'
-import { PaymentMethodsEnum } from '../POS/components/types/PaymentMethodsTypes'
-import { IconFileOff, IconPrinter, IconX } from '@tabler/icons-react'
-import { toast } from 'sonner'
 
 const Invoices: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [printData, setPrintData] = useState<IPrintData>({} as IPrintData)
   const [isPrintReady, setIsPrintReady] = useState(false)
-
+  const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
+  const [invoiceIdToEdit, setInvoiceIdToEdit] = useState<number>(0)
   const [search, setSearch] = useState('')
   const queryClient = useQueryClient()
 
@@ -39,7 +49,11 @@ const Invoices: FC = () => {
     UserRolesEnum.posAdmin,
     UserRolesEnum.shopAdmin,
   ]
+  const allowedRolesEditPaymentMethods = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
   const { hasPermission } = useRolePermissions(allowedRolesOverride)
+  const { hasPermission: hasPermissionEditPaymentMethods } = useRolePermissions(
+    allowedRolesEditPaymentMethods,
+  )
 
   const printOutRef = useRef<HTMLDivElement>(null)
 
@@ -54,9 +68,7 @@ const Invoices: FC = () => {
   const { mutate: mutatePrint, isPending: isLoadingPrint } = useMutation({
     mutationFn: getInvoiceByCode,
     onSuccess: (invoiceData) => {
-      const printData = buildPrintDataFromInvoiceProps(
-        invoiceData?.data?.results[0] as IInvoiceProps,
-      )
+      const printData = buildPrintDataFromInvoiceProps(invoiceData as IInvoiceProps)
       setPrintData(printData)
       if (printData.invoiceNumber) {
         setIsPrintReady(true)
@@ -74,6 +86,11 @@ const Invoices: FC = () => {
   const confirmOverride = (id: string) => {
     if (isLoadingOverride) return
     mutate(id)
+  }
+
+  const editPaymentInformation = (item: IInvoiceMinimalProps) => () => {
+    setInvoiceIdToEdit(Number(item.invoice_number))
+    setModalState(ModalStateEnum.addItem)
   }
 
   const pushActionToList = () => {
@@ -104,26 +121,39 @@ const Invoices: FC = () => {
             <IconX />
           </div>
         ) : null,
-        paid_by: isDebitOrCredit ? (
-          <Tooltip
-            mouseLeaveDelay={0.3}
-            destroyTooltipOnHide={true}
-            title={
-              <div>
-                <span>
-                  Datáfono: <strong>{item.payment_terminal?.name}</strong>
-                </span>
-                <br />
-                <span>
-                  Código único: <strong>{item.payment_terminal?.account_code}</strong>
-                </span>
-              </div>
-            }
-          >
-            <span className='truncate'>{methodsStrings}</span>
-          </Tooltip>
-        ) : (
-          <span className='truncate'>{methodsStrings}</span>
+        paid_by: (
+          <div className='flex justify-start items-center'>
+            {hasPermissionEditPaymentMethods && (
+              <Button
+                type='link'
+                className='p-0 m-0 flex justify-center items-center'
+                onClick={editPaymentInformation(item)}
+              >
+                <IconEdit />
+              </Button>
+            )}
+            {isDebitOrCredit ? (
+              <Tooltip
+                mouseLeaveDelay={0.3}
+                destroyTooltipOnHide={true}
+                title={
+                  <div>
+                    <span>
+                      Datáfono: <strong>{item.payment_terminal?.name}</strong>
+                    </span>
+                    <br />
+                    <span>
+                      Código único: <strong>{item.payment_terminal?.account_code}</strong>
+                    </span>
+                  </div>
+                }
+              >
+                <span className='truncate'>{methodsStrings}</span>
+              </Tooltip>
+            ) : (
+              <span className='truncate'>{methodsStrings}</span>
+            )}
+          </div>
         ),
         action: (
           <div className='flex text-3xl gap-3'>
@@ -194,6 +224,14 @@ const Invoices: FC = () => {
           setCurrentPage(1)
         }}
       />
+      {modalState === ModalStateEnum.addItem && (
+        <ChangePaymentMethodsInvoice
+          invoiceId={invoiceIdToEdit}
+          onSuccessCallback={() => setModalState(ModalStateEnum.off)}
+          isVisible={modalState === ModalStateEnum.addItem}
+          onCancelCallback={() => setModalState(ModalStateEnum.off)}
+        />
+      )}
       {printData?.dataItems?.length > 0 && (
         <div ref={printOutRef} className='flex absolute -z-10'>
           <PrintOut printDataComponent={printData} />

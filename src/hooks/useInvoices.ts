@@ -1,10 +1,10 @@
 import { QueryKey, useQuery } from '@tanstack/react-query'
 import { IQueryParams } from '../types/GlobalTypes'
-import { getInvoicesNew } from '../pages/Invoices/helpers/services'
+import { getInvoiceByCode, getInvoicesNew } from '../pages/Invoices/helpers/services'
 
 export const useInvoices = (queryKey: string, queryParamas?: IQueryParams) => {
   const queryKeyToSend: QueryKey = [queryKey, queryParamas]
-  const { isLoading, data: invoicesData } = useQuery({
+  const { isPending: isLoading, data: invoicesData } = useQuery({
     queryKey: queryKeyToSend,
     queryFn: async () => getInvoicesNew(queryParamas || {}),
     refetchOnWindowFocus: false,
@@ -12,5 +12,19 @@ export const useInvoices = (queryKey: string, queryParamas?: IQueryParams) => {
   return {
     isLoading,
     invoicesData,
+  }
+}
+
+export const useGetinvoiceByCode = (queryKey: string, invoiceId: string) => {
+  const queryKeyToSend: QueryKey = [queryKey, invoiceId]
+  const { isPending, data: invoicesByCodeData } = useQuery({
+    queryKey: queryKeyToSend,
+    queryFn: async () => getInvoiceByCode(invoiceId),
+    refetchOnWindowFocus: false,
+    gcTime: 0,
+  })
+  return {
+    isPending,
+    invoicesByCodeData,
   }
 }

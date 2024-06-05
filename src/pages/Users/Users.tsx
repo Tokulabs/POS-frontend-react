@@ -3,13 +3,14 @@ import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
 import AddUserForm from './components/AddUserForm'
 import { columns } from './data/columsData'
 import { useUsers } from '../../hooks/useUsers'
-import { IUserProps, UserDocumentTypeEnum } from './types/UserTypes'
+import { IUserProps, UserDocumentTypeEnum, UserRolesEnum } from './types/UserTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Button, Popconfirm, Switch, Tooltip } from 'antd'
 import { IconCircleCheck, IconCircleX, IconEdit, IconPower } from '@tabler/icons-react'
 import { ModalStateEnum } from '../../types/ModalTypes'
 import { toggleActiveUser } from './helpers/services'
 import { toast } from 'sonner'
+import { useRolePermissions } from '../../hooks/useRolespermissions'
 
 const Users: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -43,6 +44,9 @@ const Users: FC = () => {
     mutate(id)
   }
 
+  const allowedRolesDownload = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
+  const { hasPermission: hasPermissionsToEdit } = useRolePermissions(allowedRolesDownload)
+
   const formatEditAndDelete = (userData: IUserProps[]) => {
     return userData.map((item) => ({
       ...item,
@@ -60,9 +64,12 @@ const Users: FC = () => {
       ),
       action: (
         <div className='flex justify-center items-center gap-2'>
-          <Button type='link' className='p-0' onClick={editUserData(item)}>
-            <IconEdit />
-          </Button>
+          {hasPermissionsToEdit && (
+            <Button type='link' className='p-0' onClick={editUserData(item)}>
+              <IconEdit />
+            </Button>
+          )}
+
           <Popconfirm
             title={`${item.is_active ? 'Desactivar' : 'Activar'} Usuario`}
             description={`¿Estas seguro de ${item.is_active ? 'desactivar' : 'activar'} este usuario?`}

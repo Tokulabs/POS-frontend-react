@@ -10,12 +10,12 @@ interface IPaymentMethodStore {
   totalValueReceived: number
   totalReturnedValue: number
   isDollar: boolean
-  paymentTerminaID: number | null
+  paymentTerminalID: number | null
   addPaymentMethod: (data: IPaymentMethod) => void
   removePaymentMethod: (name: string) => void
   clearPaymentMethods: () => void
   updateTotalValues: () => void
-  toggleIsDollar: () => void
+  toggleIsDollar: (value?: boolean) => void
   updatePaidAmount: (name: PaymentMethodsEnum, value: number, index?: number) => void
   updateReceivedAmount: (name: PaymentMethodsEnum, value: number) => void
   updatePaymentTerminalID: (id: number | null) => void
@@ -30,10 +30,10 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
   totalValueReceived: 0,
   totalReturnedValue: 0,
   isDollar: false,
-  paymentTerminaID: null,
+  paymentTerminalID: null,
   updatePaymentTerminalID: (id) => {
     set({
-      paymentTerminaID: id,
+      paymentTerminalID: id,
     })
   },
   addPaymentMethod: (data) => {
@@ -60,7 +60,7 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
     const { updateTotalValues } = get()
     set({
       paymentMethods: [],
-      paymentTerminaID: null,
+      paymentTerminalID: null,
       isDollar: false,
     })
     updateTotalValues()
@@ -82,10 +82,17 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
       totalReturnedValue,
     })
   },
-  toggleIsDollar: () => {
-    set((state) => ({
-      isDollar: !state.isDollar,
-    }))
+  toggleIsDollar: (value?: boolean) => {
+    if (value) {
+      set({
+        isDollar: value,
+      })
+      return
+    } else {
+      set((state) => ({
+        isDollar: !state.isDollar,
+      }))
+    }
   },
   updatePaidAmount: (name, value, index = 0) => {
     const { paymentMethods, updateTotalValues } = get()

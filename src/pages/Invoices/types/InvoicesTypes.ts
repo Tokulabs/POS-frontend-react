@@ -16,6 +16,7 @@ export interface IInvoiceProps {
   customer: ICustomerProps
   payment_methods: IPaymentMethodToSend[]
   payment_terminal: {
+    id: number
     name: string
     account_code: string
   } | null

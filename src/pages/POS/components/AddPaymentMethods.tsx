@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 // Third Party
 import { Divider, Input, InputNumber, Select, Switch } from 'antd'
 import { IconPlus, IconTrash } from '@tabler/icons-react'
 // Types
-import { PaymentMethodsEnum } from './types/PaymentMethodsTypes'
+import { IPaymentMethod, PaymentMethodsEnum } from './types/PaymentMethodsTypes'
 // Store
 import { usePaymentMethodsData } from '../../../store/usePaymentMethodsZustand'
 import { useCart } from '../../../store/useCartStoreZustand'
@@ -20,15 +20,23 @@ const OPTIONS = [
   PaymentMethodsEnum.bankTransfer,
 ]
 
-export const AddPaymentMethods = () => {
-  const { totalCOP, totalUSD } = useCart()
+export const AddPaymentMethods: FC<{
+  totalCOPProp?: number
+  TotalUSDProp?: number
+  paymentMethodsProp?: IPaymentMethod[]
+  paymentTerminalIDProp?: number | null
+  isDollarProp?: boolean
+}> = ({ TotalUSDProp, totalCOPProp, paymentMethodsProp, paymentTerminalIDProp, isDollarProp }) => {
+  const { totalCOP: totalCOPState, totalUSD: totalUSDState } = useCart()
+  const totalCOP = totalCOPProp || totalCOPState
+  const totalUSD = TotalUSDProp || totalUSDState
   const {
     totalValueReceived,
     paymentMethods,
     totalValueToPay,
     isDollar,
     totalReturnedValue,
-    paymentTerminaID,
+    paymentTerminalID,
     addPaymentMethod,
     updateTotalValues,
     removePaymentMethod,
@@ -41,9 +49,7 @@ export const AddPaymentMethods = () => {
     updateTransactionNumber,
   } = usePaymentMethodsData()
 
-  const [selectedItems, setSelectedItems] = useState<PaymentMethodsEnum[]>([
-    PaymentMethodsEnum.cash,
-  ])
+  const [selectedItems, setSelectedItems] = useState<PaymentMethodsEnum[]>([])
   const [requirePaymentTerminal, setRequirePaymentTerminal] = useState(false)
 
   const filteredOptions = OPTIONS.filter((o) => {
@@ -71,29 +77,41 @@ export const AddPaymentMethods = () => {
   useEffect(() => {
     if (isDollar) {
       setSelectedItems([PaymentMethodsEnum.cash])
-      paymentMethods.forEach((method) => {
-        if (method.name !== PaymentMethodsEnum.cash) {
-          removePaymentMethod(method.name)
-          updatePaidAmount(PaymentMethodsEnum.cash, totalCOP)
-          updateReceivedAmount(PaymentMethodsEnum.cash, totalCOP)
-        }
-      })
+      paymentMethods.map((item) => removePaymentMethod(item.name))
+      addPaymentMethod(defaultPaymenthMethod)
     }
   }, [isDollar])
 
   useEffect(() => {
     updateTotalValues()
-    addPaymentMethod(defaultPaymenthMethod)
+    if (isDollarProp) toggleIsDollar(isDollarProp)
+
+    if (paymentMethodsProp) {
+      const newSelectedItems: PaymentMethodsEnum[] = []
+      paymentMethodsProp.map((item) => {
+        addPaymentMethod(item)
+        newSelectedItems.push(item.name)
+      })
+      setSelectedItems(newSelectedItems)
+    } else {
+      addPaymentMethod(defaultPaymenthMethod)
+      selectPaymentMethod([PaymentMethodsEnum.cash])
+    }
   }, [])
 
-  useEffect(() => {
-    const requirePaymentTerminal = selectedItems.some(
+  const checkIfRequirePaymentTerminal = (items: PaymentMethodsEnum[]) => {
+    const requirePaymentTerminal = items.some(
       (item) => item === PaymentMethodsEnum.debitCard || item === PaymentMethodsEnum.creditCard,
     )
     setRequirePaymentTerminal(requirePaymentTerminal)
     if (!requirePaymentTerminal) updatePaymentTerminalID(null)
+    if (requirePaymentTerminal && paymentMethodsProp)
+      updatePaymentTerminalID(paymentTerminalIDProp || null)
+  }
 
-    selectedItems.forEach((item) => {
+  const selectPaymentMethod = (paymentMethodsSelected: PaymentMethodsEnum[]) => {
+    setSelectedItems(paymentMethodsSelected)
+    paymentMethodsSelected.forEach((item) => {
       if (!paymentMethods.some((method) => method.name === item)) {
         addPaymentMethod({
           name: item,
@@ -105,12 +123,20 @@ export const AddPaymentMethods = () => {
         })
       }
     })
+  }
+
+  const deselectPaymentMethod = (name: string) => {
+    setSelectedItems(selectedItems.filter((item) => item !== name))
     paymentMethods.forEach((method) => {
-      if (!selectedItems.includes(method.name)) {
+      if (name === method.name) {
         removePaymentMethod(method.name)
       }
     })
-  }, [selectedItems, paymentMethods])
+  }
+
+  useEffect(() => {
+    checkIfRequirePaymentTerminal(selectedItems)
+  }, [selectedItems])
 
   const onSelectPaymentTerminal = (value: number) => {
     updatePaymentTerminalID(value)
@@ -119,50 +145,53 @@ export const AddPaymentMethods = () => {
   return (
     <section className='w-full h-full flex flex-col gap-4 relative'>
       <section className='flex flex-col gap-4 bg-white sticky w-full'>
-        <div className='flex justify-start gap-5 items-end'>
-          <div className='flex flex-col justify-end items-center'>
-            <span className='text-green-1 text-xl font-bold'>
-              {isDollar
-                ? formatToUsd(totalUSD, true)
-                : formatNumberToColombianPesos(totalValueToPay, true)}
-            </span>
-            <span className='text-gray-2 font-semibold text-sm'>Valor a Pagar</span>
-          </div>
-          {!isDollar && <Divider type='vertical' className='h-full' />}
-          {!isDollar && (
+        <div className='flex justify-between'>
+          <div className='flex justify-start gap-5 items-end'>
+            <div className='flex flex-col justify-end items-center'>
+              <span className='text-green-1 text-xl font-bold'>
+                {isDollar
+                  ? formatToUsd(totalUSD, true)
+                  : formatNumberToColombianPesos(totalValueToPay, true)}
+              </span>
+              <span className='text-gray-2 font-semibold text-sm'>Valor a Pagar</span>
+            </div>
+            {!isDollar && <Divider type='vertical' className='h-full' />}
+            {!isDollar && (
+              <div className='flex flex-col justify-end items-center'>
+                <span
+                  className={`${totalCOP - totalValueToPay < 0 ? 'text-red-1' : 'text-green-1'} text-xl font-bold `}
+                >
+                  {formatNumberToColombianPesos(totalCOP - totalValueToPay, true)}
+                </span>
+                <span className='text-gray-2 font-semibold text-sm'>Diferencia</span>
+              </div>
+            )}
+            <Divider type='vertical' className='h-full' />
             <div className='flex flex-col justify-end items-center'>
               <span
-                className={`${totalCOP - totalValueToPay < 0 ? 'text-red-1' : 'text-green-1'} text-xl font-bold `}
+                className={`${totalValueReceived < totalCOP ? 'text-red-1' : 'text-green-1'} text-xl font-bold`}
               >
-                {formatNumberToColombianPesos(totalCOP - totalValueToPay, true)}
+                {isDollar
+                  ? formatToUsd(totalUSD, true)
+                  : formatNumberToColombianPesos(totalValueReceived, true)}
               </span>
-              <span className='text-gray-2 font-semibold text-sm'>Diferencia</span>
+              <span className='text-gray-2 font-semibold text-sm'>Valor Total Recibido</span>
             </div>
-          )}
-          <Divider type='vertical' className='h-full' />
-          <div className='flex flex-col justify-end items-center'>
-            <span
-              className={`${totalValueReceived < totalCOP ? 'text-red-1' : 'text-green-1'} text-xl font-bold`}
-            >
-              {isDollar
-                ? formatToUsd(totalUSD, true)
-                : formatNumberToColombianPesos(totalValueReceived, true)}
-            </span>
-            <span className='text-gray-2 font-semibold text-sm'>Valor Total Recibido</span>
+            <Divider type='vertical' className='h-full' />
+            <div className='flex flex-col justify-end items-center'>
+              <span className='text-red-1 text-xl font-bold'>
+                {totalReturnedValue > 0
+                  ? formatNumberToColombianPesos(totalReturnedValue, true)
+                  : formatNumberToColombianPesos(0, true)}
+              </span>
+              <span className='text-gray-2 font-semibold text-sm'>Cambio</span>
+            </div>
+            <Divider type='vertical' className='h-full' />
           </div>
-          <Divider type='vertical' className='h-full' />
-          <div className='flex flex-col justify-end items-center'>
-            <span className='text-red-1 text-xl font-bold'>
-              {totalReturnedValue > 0
-                ? formatNumberToColombianPesos(totalReturnedValue, true)
-                : '0'}
-            </span>
-            <span className='text-gray-2 font-semibold text-sm'>Cambio</span>
-          </div>
-          <Divider type='vertical' className='h-full' />
           <div className='flex flex-col justify-end items-center'>
             <span className='text-green-1 text-xl font-bold'>
               <Switch
+                value={isDollar}
                 onChange={() => {
                   toggleIsDollar()
                   updatePaidAmount(PaymentMethodsEnum.cash, totalCOP)
@@ -178,7 +207,8 @@ export const AddPaymentMethods = () => {
             mode='multiple'
             placeholder='Métodos de pago seleccionados'
             value={selectedItems}
-            onChange={setSelectedItems}
+            onChange={selectPaymentMethod}
+            onDeselect={deselectPaymentMethod}
             style={{ width: requirePaymentTerminal ? '50%' : '100%' }}
             options={filteredOptions.map((item) => ({
               value: item,
@@ -189,7 +219,7 @@ export const AddPaymentMethods = () => {
             <Select
               style={{ width: '50%' }}
               placeholder='Selecciona un Datafono'
-              value={paymentTerminaID}
+              value={paymentTerminalID}
               onSelect={onSelectPaymentTerminal}
               options={[
                 {
