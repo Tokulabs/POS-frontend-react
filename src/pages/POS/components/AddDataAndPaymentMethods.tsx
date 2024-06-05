@@ -13,6 +13,9 @@ import { useCart } from '../../../store/useCartStoreZustand'
 import { getCustomers } from '../helpers/services'
 // Types
 import { ICustomerProps } from './types/CustomerTypes'
+import { UserRolesEnum } from '../../Users/types/UserTypes'
+// Hooks
+import { useRolePermissions } from '../../../hooks/useRolespermissions'
 
 export const AddDataAndPaymentMethods = () => {
   const [isLoadingSearch, setIsLoadingSearch] = useState(false)
@@ -78,6 +81,13 @@ export const AddDataAndPaymentMethods = () => {
       debouncedSearch.cancel()
     }
   }, [debouncedSearch])
+
+  const allowedRolesDownload = [
+    UserRolesEnum.admin,
+    UserRolesEnum.posAdmin,
+    UserRolesEnum.shopAdmin,
+  ]
+  const { hasPermission: hasPermissionToEditCustomer } = useRolePermissions(allowedRolesDownload)
 
   return (
     <section className='flex flex-col h-full gap-3 justify-start p-5 overflow-hidden overflow-y-scroll scrollbar-hide '>
@@ -150,13 +160,15 @@ export const AddDataAndPaymentMethods = () => {
             <>
               <div className='flex items-center gap-5'>
                 <span className='text-green-1 text-lg font-bold'>Datos del cliente</span>
-                <IconEdit
-                  onClick={() => {
-                    toggleModalAddCustomer(true, true)
-                  }}
-                  size={20}
-                  className='text-green-1 cursor-pointer hover:text-green-800'
-                />
+                {hasPermissionToEditCustomer && (
+                  <IconEdit
+                    onClick={() => {
+                      toggleModalAddCustomer(true, true)
+                    }}
+                    size={20}
+                    className='text-green-1 cursor-pointer hover:text-green-800'
+                  />
+                )}
               </div>
               <div className='flex flex-col gap-1 items-start'>
                 <div className='flex flex-col justify-between'>

@@ -1,6 +1,12 @@
 import { axiosRequest } from '../../../api/api'
 import { IQueryParams, IPaginationProps, DataPropsForm } from '../../../types/GlobalTypes'
-import { invoiceURL, overrideInvoiceURL, invoiceMinimalURL } from '../../../utils/network'
+import {
+  invoiceURL,
+  overrideInvoiceURL,
+  invoiceMinimalURL,
+  invoiceByCodeURL,
+  invoiceUpdatePaymentMethodsURL,
+} from '../../../utils/network'
 import { IInvoiceMinimalProps, IInvoiceProps } from '../types/InvoicesTypes'
 
 export interface IPurchaseProps {
@@ -59,11 +65,23 @@ export const patchOverrideInvoice = async (invoiceNumber: string) => {
 }
 
 export const getInvoiceByCode = async (invoiceNumber: string) => {
-  const finalURL = new URL(invoiceURL)
+  const finalURL = new URL(invoiceByCodeURL)
   finalURL.searchParams.set('invoice_number', invoiceNumber)
-  return await axiosRequest<IPaginationProps<IInvoiceProps>>({
+  const results = await axiosRequest<IInvoiceProps>({
     method: 'get',
     url: finalURL,
     hasAuth: true,
+  })
+  return results?.data
+}
+
+export const updatePaymentMethods = async (data: { invoiceID: string; values: DataPropsForm }) => {
+  const finalURL = new URL(invoiceUpdatePaymentMethodsURL)
+  finalURL.searchParams.set('invoice_id', data.invoiceID)
+  await axiosRequest({
+    method: 'post',
+    url: finalURL,
+    hasAuth: true,
+    payload: data.values,
   })
 }

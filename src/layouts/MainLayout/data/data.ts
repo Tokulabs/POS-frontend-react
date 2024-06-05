@@ -99,7 +99,7 @@ export const SideBarData: ISideBarData[] = [
     title: 'Usuarios',
     component: Users,
     path: '/users',
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
+    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
   },
   {
     icon: IconActivity,

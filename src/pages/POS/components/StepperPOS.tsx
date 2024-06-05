@@ -30,7 +30,7 @@ const steps = [
 
 export const POSStepper: FC = () => {
   const { cartItems, totalCOP } = useCart()
-  const { paymentMethods, totalValueToPay, clearPaymentMethods, paymentTerminaID } =
+  const { paymentMethods, totalValueToPay, clearPaymentMethods, paymentTerminalID } =
     usePaymentMethodsData()
   const { currentStep, updateCurrentStep } = usePOSStep()
   const { customer } = useCustomerData()
@@ -51,9 +51,9 @@ export const POSStepper: FC = () => {
       paymentMethods.some(
         (item) =>
           item.name === PaymentMethodsEnum.debitCard || item.name === PaymentMethodsEnum.creditCard,
-      ) && !paymentTerminaID
+      ) && !paymentTerminalID
     )
-  }, [paymentMethods, paymentTerminaID])
+  }, [paymentMethods, paymentTerminalID])
 
   const isDisabled = useCallback(() => {
     if (currentStep === 0) {
