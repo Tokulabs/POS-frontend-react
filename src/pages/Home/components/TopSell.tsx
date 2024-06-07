@@ -18,11 +18,7 @@ const TopSell = () => {
   })
   const { RangePicker } = DatePicker
 
-  const allowedRolesOverride = [
-    UserRolesEnum.admin,
-    UserRolesEnum.posAdmin,
-    UserRolesEnum.shopAdmin,
-  ]
+  const allowedRolesOverride = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
   const { hasPermission: hasPermissionToSeeData } = useRolePermissions(allowedRolesOverride)
 
   return (
