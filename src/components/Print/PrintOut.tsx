@@ -38,7 +38,7 @@ const PrintOut: FC<IPrintCOmponent> = ({ printDataComponent }) => {
       <h5 className='m-0'>NIT. 832004603-8</h5>
       <h5 className='m-0'>COMPLEJO TURISTICO CATEDRAL DE SAL</h5>
       <section className='flex flex-col justify-center items-center gap-1'>
-        <p className='m-0 text-sm'>Tel. (091) 851 0935/0654</p>
+        <p className='m-0 text-sm'>Tel. +57 3133779890</p>
         <p className='m-0 text-xs'>
           {`Documento oficial Nro, ${dianResolution?.document_number}\n del ${dianResolution?.from_date} Vigente hasta ${dianResolution?.to_date}`}
         </p>
