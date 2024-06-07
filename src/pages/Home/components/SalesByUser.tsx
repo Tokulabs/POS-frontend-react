@@ -3,19 +3,39 @@ import 'react-circular-progressbar/dist/styles.css'
 import { useSummaryByUser } from '../../../hooks/useSummaryData'
 import moment from 'moment'
 import { formatNumberToColombianPesos } from '../../../utils/helpers'
+import { DatePicker, DatePickerProps } from 'antd'
+import dayjs from 'dayjs'
+import { useState } from 'react'
+import { UserRolesEnum } from '../../Users/types/UserTypes'
+import { useRolePermissions } from '../../../hooks/useRolespermissions'
 
 const SalesByUser = () => {
   const dateFormat = 'YYYY-MM-DD'
   const today = moment().format(dateFormat)
+  const [date, setDate] = useState<string>(today)
 
   const { summaryByUser } = useSummaryByUser('summaryByUser', {
-    start_date: today,
-    end_date: today,
+    start_date: date,
+    end_date: date,
   })
+
+  const onChange: DatePickerProps['onChange'] = (date) => {
+    if (!date) return
+    setDate(date.format(dateFormat))
+  }
+
+  const allowedRolesOverride = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
+  const { hasPermission: hasPermissionToSeeData } = useRolePermissions(allowedRolesOverride)
+
   return (
     <section className='flex flex-col gap-7 w-full items-center'>
-      <span className='text-lg'>
-        Ventas por usuario hoy: <span className='font-bold text-xl'>{today}</span>
+      <span className='text-lg flex gap-3'>
+        Ventas por usuario hoy:
+        {hasPermissionToSeeData ? (
+          <DatePicker defaultValue={dayjs(today)} format={dateFormat} onChange={onChange} />
+        ) : (
+          <div className='font-bold text-xl'>{date}</div>
+        )}
       </span>
       <section className='w-full grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4'>
         {summaryByUser &&

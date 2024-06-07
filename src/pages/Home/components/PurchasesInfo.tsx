@@ -20,11 +20,7 @@ const PurchasesInfo = () => {
   })
   const showCurrency = false
 
-  const allowedRolesOverride = [
-    UserRolesEnum.admin,
-    UserRolesEnum.posAdmin,
-    UserRolesEnum.shopAdmin,
-  ]
+  const allowedRolesOverride = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
   const { hasPermission: hasPermissionToSeeData } = useRolePermissions(allowedRolesOverride)
 
   return (

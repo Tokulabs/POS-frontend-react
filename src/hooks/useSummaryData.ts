@@ -36,7 +36,7 @@ export const useSummmaryByKeyFrame = (queryKey: string, queryParamas?: IQueryPar
 }
 
 export const useSummaryByUser = (queryKey: string, payload: DataPropsForm) => {
-  const queryKeyToSend: QueryKey = [queryKey]
+  const queryKeyToSend: QueryKey = [queryKey, payload]
   const { isLoading, data: summaryByUser } = useQuery({
     queryKey: queryKeyToSend,
     queryFn: async () => await getSummarybyUser(payload),
