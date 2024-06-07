@@ -3,7 +3,7 @@ import 'react-circular-progressbar/dist/styles.css'
 import { useSummaryByUser } from '../../../hooks/useSummaryData'
 import moment from 'moment'
 import { formatNumberToColombianPesos } from '../../../utils/helpers'
-import { DatePicker, DatePickerProps } from 'antd'
+import { DatePicker, DatePickerProps, Spin } from 'antd'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { UserRolesEnum } from '../../Users/types/UserTypes'
@@ -14,7 +14,7 @@ const SalesByUser = () => {
   const today = moment().format(dateFormat)
   const [date, setDate] = useState<string>(today)
 
-  const { summaryByUser } = useSummaryByUser('summaryByUser', {
+  const { isLoading, summaryByUser } = useSummaryByUser('summaryByUser', {
     start_date: date,
     end_date: date,
   })
@@ -28,7 +28,7 @@ const SalesByUser = () => {
   const { hasPermission: hasPermissionToSeeData } = useRolePermissions(allowedRolesOverride)
 
   return (
-    <section className='flex flex-col gap-7 w-full items-center'>
+    <section className='flex flex-col gap-7 w-full items-center justify-center'>
       <span className='text-lg flex gap-3'>
         Ventas por usuario hoy:
         {hasPermissionToSeeData ? (
@@ -37,6 +37,7 @@ const SalesByUser = () => {
           <div className='font-bold text-xl'>{date}</div>
         )}
       </span>
+      {isLoading && <Spin size='large' />}
       <section className='w-full grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4'>
         {summaryByUser &&
           summaryByUser?.map((item) => {
