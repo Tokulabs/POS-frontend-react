@@ -19,10 +19,22 @@ const SalesByUser = () => {
   const containerSlider = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (containerSlider.current) {
-      setWidth(containerSlider.current.scrollWidth - containerSlider.current.offsetWidth)
+    const calculateWidth = () => {
+      if (containerSlider.current) {
+        setWidth(containerSlider.current.scrollWidth - containerSlider.current.offsetWidth)
+      }
     }
-  }, [containerSlider.current])
+    calculateWidth()
+    const resizeObserver = new ResizeObserver(() => calculateWidth())
+    if (containerSlider.current) {
+      resizeObserver.observe(containerSlider.current)
+    }
+    return () => {
+      if (containerSlider.current) {
+        resizeObserver.unobserve(containerSlider.current)
+      }
+    }
+  }, [])
 
   const { isLoading, summaryByUser } = useSummaryByUser('summaryByUser', {
     start_date: date,
