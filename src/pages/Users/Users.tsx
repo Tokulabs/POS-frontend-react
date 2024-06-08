@@ -92,7 +92,7 @@ const Users: FC = () => {
     <>
       <ContentLayout
         pageTitle='Usuarios'
-        buttonTitle='Agregar Usuario'
+        buttonTitle={hasPermissionsToEdit ? 'Agregar Usuario' : undefined}
         extraButton={
           <div className='flex flex-col items-center gap-2'>
             <span className='font-bold text-green-1'>Activos</span>

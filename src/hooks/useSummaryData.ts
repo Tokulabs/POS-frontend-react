@@ -7,6 +7,7 @@ import {
   postPurchaseSummary,
   postTopSeelingProducts,
 } from '../pages/Home/helpers/services'
+import { getGoalsData } from '../components/Goals/services'
 
 export const useSummaryByhour = (queryKey: string) => {
   const queryKeyToSend: QueryKey = [queryKey]
@@ -21,12 +22,12 @@ export const useSummaryByhour = (queryKey: string) => {
   }
 }
 
-export const useSummmaryByKeyFrame = (queryKey: string, queryParamas?: IQueryParams) => {
+export const useSummmaryByKeyFrame = <T>(queryKey: string, queryParamas?: IQueryParams) => {
   const queryKeyToSend: QueryKey = [queryKey, queryParamas]
   if (queryParamas?.type === '1') return { isLoading: false, summaryByKeyframe: null }
   const { isLoading, data: summaryByKeyframe } = useQuery({
     queryKey: queryKeyToSend,
-    queryFn: async () => await getSummaryByKeyFrame(queryParamas ?? {}),
+    queryFn: async () => await getSummaryByKeyFrame<T>(queryParamas ?? {}),
     refetchOnWindowFocus: false,
   })
   return {
@@ -71,5 +72,18 @@ export const useTopSellingProducts = (queryKey: string, payload: DataPropsForm) 
   return {
     isLoading,
     topSellingProducts,
+  }
+}
+
+export const useGetGoals = (queryKey: string) => {
+  const queryKeyToSend: QueryKey = [queryKey]
+  const { isLoading, data: goals } = useQuery({
+    queryKey: queryKeyToSend,
+    queryFn: async () => await getGoalsData(),
+    refetchOnWindowFocus: false,
+  })
+  return {
+    isLoading,
+    goals,
   }
 }

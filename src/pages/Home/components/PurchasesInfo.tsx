@@ -26,17 +26,17 @@ const PurchasesInfo = () => {
   return (
     <div className='bg-white h-full p-4 rounded-lg md:col-span-2 flex flex-col gap-4 shadow-md'>
       <div className='w-full flex flex-col gap-3'>
-        <p className='m-0 text-sm'>
-          Ventas del <span className='font-bold text-base'>{startDate}</span> al{' '}
-          <span className='font-bold text-base'>{endDate}</span>
+        <p className='m-0 font-bold'>
+          Ventas del <span className='text-green-1'>{startDate}</span> al{' '}
+          <span className='text-green-1'>{endDate}</span>
         </p>
         {hasPermissionToSeeData && (
           <RangePicker
             defaultValue={[dayjs(startDate), dayjs(endDate)]}
             onChange={(dates) => {
-              if (dates[0] && dates[1]) {
-                setStartDate(dates[0].format(dateFormat))
-                setEndDate(dates[1].format(dateFormat))
+              if (dates) {
+                setStartDate(dates[0] ? dates[0].format(dateFormat) : startDate)
+                setEndDate(dates[1] ? dates[1].format(dateFormat) : endDate)
               }
             }}
             format={dateFormat}
