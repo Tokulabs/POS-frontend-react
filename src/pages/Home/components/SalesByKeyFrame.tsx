@@ -2,13 +2,17 @@ import { SalesChart } from '../../../components/Charts/SalesChart'
 import { Spin } from 'antd'
 import { useSummmaryByKeyFrame } from '../../../hooks/useSummaryData'
 import { FC } from 'react'
+import { ISummaryByKeyframe } from '../types/DashboardTypes'
 
 interface ISalesByKeyframe {
   type: string
 }
 
 const SalesByKeyframe: FC<ISalesByKeyframe> = ({ type }) => {
-  const { isLoading, summaryByKeyframe } = useSummmaryByKeyFrame('summaryByKeyframe', { type })
+  const { isLoading, summaryByKeyframe } = useSummmaryByKeyFrame<ISummaryByKeyframe[]>(
+    'summaryByKeyframe',
+    { type },
+  )
 
   const xAxis = type === 'daily' ? 'day' : type === 'weekly' ? 'week_number' : 'month'
 

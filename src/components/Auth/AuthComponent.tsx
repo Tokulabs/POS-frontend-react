@@ -1,7 +1,8 @@
 import { FC } from 'react'
-import { Form, Input, Button } from 'antd'
+import { Form, Input, Button, Image } from 'antd'
 import { Link } from 'react-router-dom'
 import { DataPropsForm } from '../../types/GlobalTypes'
+import KiospotLogoLogin from '../../assets/logos/Kiospot_logo_vertical.webp'
 
 interface IAuthComponentProps {
   titleText?: string
@@ -25,11 +26,19 @@ const Authcomponent: FC<IAuthComponentProps> = ({
   isUpdatePassword = false,
 }) => {
   return (
-    <div className='w-100 min-h-[100vh] flex items-center justify-center'>
+    <div className='w-100 min-h-[100vh] flex flex-col items-center justify-center'>
+      <div className='w-96'>
+        <Image
+          style={{ width: '100%' }}
+          preview={false}
+          src={KiospotLogoLogin}
+          alt='Kiospot Login Logo'
+        />
+      </div>
       <div className='min-w-[400px]'>
         <div className='flex justify-between items-center border-0 border-b-[1px] border-solid border-gray-200 pb-3 mb-4'>
           <h3 className='text-base'>{titleText}</h3>
-          <h2 className='text-lg'>InV System POS</h2>
+          <h2 className='text-lg'>Kiospot POS</h2>
         </div>
         <Form layout='vertical' onFinish={onSubmit}>
           {!isUpdatePassword && (

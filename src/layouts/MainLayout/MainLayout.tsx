@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, useContext, useEffect, useState } from 'react'
 import UserAvatar from '../../assets/icons/user-avatar.svg'
-import { IconBookDownload, IconLogout } from '@tabler/icons-react'
+import { IconBookDownload, IconLogout, IconTargetArrow } from '@tabler/icons-react'
 import { logout } from '../../pages/Auth/helpers'
 import { SideBarData } from './data/data'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
@@ -11,13 +11,16 @@ import { useCart } from '../../store/useCartStoreZustand'
 import { useCustomerData } from '../../store/useCustomerStoreZustand'
 import { usePOSStep } from '../../store/usePOSSteps'
 import { usePaymentMethodsData } from '../../store/usePaymentMethodsZustand'
-import { Tooltip } from 'antd'
+import { Image, Tooltip } from 'antd'
 import { DownloadReports } from '../../components/DownloadReports/DownloadReports'
 import { ModalStateEnum } from '../../types/ModalTypes'
 import { UserRolesEnum } from '../../pages/Users/types/UserTypes'
+import KiospotLogoHorizontal from '../../assets/logos/Kiospot_logo_horizontal.webp'
+import { AddGoals } from '../../components/Goals/AddGoals'
 
 const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
+  const [modalStateGoals, setModalStateGoals] = useState<ModalStateEnum>(ModalStateEnum.off)
 
   const allowedRolesDownload = [
     UserRolesEnum.admin,
@@ -26,6 +29,9 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
     UserRolesEnum.sales,
   ]
   const { hasPermission: hasPermissionDownloads } = useRolePermissions(allowedRolesDownload)
+
+  const allowedRolesGoals = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
+  const { hasPermission: hasPermissionGoals } = useRolePermissions(allowedRolesGoals)
 
   const { state } = useContext(store)
   const location = useLocation()
@@ -47,6 +53,10 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
     setModalState(ModalStateEnum.addItem)
   }
 
+  const openGoalsModal = () => {
+    setModalStateGoals(ModalStateEnum.addItem)
+  }
+
   const logoutUser = () => {
     logout()
     navigate('/login')
@@ -55,19 +65,24 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <section className='h-screen max-h-screen w-full relative'>
       <nav className='bg-green-1 w-full h-16 flex justify-between items-center py-0 absolute top-0'>
-        <div className='flex flex-col justify-center items-start w-56 m-0 px-5'>
-          <h1 className='text-white m-0'>Kiospot V.1</h1>
-          <div className='flex'>
-            <span className='text-white font-semibold text-sm'>
-              ({UserRolesEnum[state.user?.role as keyof typeof UserRolesEnum]})
-            </span>
-          </div>
+        <div className='flex flex-col justify-center items-start w-48 h-16 object-cover'>
+          <Image
+            style={{ width: '100%', height: '100%' }}
+            src={KiospotLogoHorizontal}
+            alt='Kiospot Logo Horizontal'
+            preview={false}
+          />
         </div>
         <div className='flex items-center gap-6'>
           <div className='flex items-center gap-2'>
             <img className='w-8 h-8' src={UserAvatar} alt='user-avatar' />
-            <div className='flex flex-col'>
-              <span className='m-0 text-sm text-white'>{state.user?.email}</span>
+            <div className='flex flex-col items-start'>
+              <div className='flex gap-1'>
+                <span className='m-0 text-sm text-white'>{state.user?.fullname}</span>
+                <span className='font-bold text-white text-sm'>
+                  (Rol - {UserRolesEnum[state.user?.role as keyof typeof UserRolesEnum]})
+                </span>
+              </div>
               <div className='flex gap-1 justify-center sm-0 text-[10px] text-white'>
                 <span>Última conexión:</span>
                 <span>{formatDateTime(state.user?.last_login)}</span>
@@ -82,6 +97,16 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
                   onClick={openDownloadModal}
                 >
                   <IconBookDownload size={30} />
+                </span>
+              </Tooltip>
+            )}
+            {hasPermissionGoals && (
+              <Tooltip title='Metas Generales'>
+                <span
+                  className='text-white hover:text-gray-100 cursor-pointer flex flex-col items-center'
+                  onClick={openGoalsModal}
+                >
+                  <IconTargetArrow size={30} />
                 </span>
               </Tooltip>
             )}
@@ -126,11 +151,20 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
         </div>
         <div className='max-h-full w-full overflow-hidden p-5'>{children}</div>
       </div>
-      <DownloadReports
-        onSuccessCallback={() => setModalState(ModalStateEnum.off)}
-        isVisible={modalState === ModalStateEnum.addItem}
-        onCancelCallback={() => setModalState(ModalStateEnum.off)}
-      />
+      {modalState === ModalStateEnum.addItem && (
+        <DownloadReports
+          onSuccessCallback={() => setModalState(ModalStateEnum.off)}
+          isVisible={modalState === ModalStateEnum.addItem}
+          onCancelCallback={() => setModalState(ModalStateEnum.off)}
+        />
+      )}
+      {modalStateGoals === ModalStateEnum.addItem && (
+        <AddGoals
+          onSuccessCallback={() => setModalStateGoals(ModalStateEnum.off)}
+          isVisible={modalStateGoals === ModalStateEnum.addItem}
+          onCancelCallback={() => setModalStateGoals(ModalStateEnum.off)}
+        />
+      )}
     </section>
   )
 }

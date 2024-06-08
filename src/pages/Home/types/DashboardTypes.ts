@@ -43,6 +43,13 @@ export interface ISummaryByKeyframe {
   day?: string
 }
 
+export interface IGeneralGoals {
+  diary: number
+  weekly: number
+  monthly: number
+  annual: number
+}
+
 export interface ISalesByUser {
   sale_by__id: number
   sale_by__fullname: string

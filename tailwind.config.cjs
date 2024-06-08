@@ -19,7 +19,7 @@ module.exports = {
           main: '#E5E5E5',
         },
         red: {
-          1: '#FF0000',
+          1: '#E62C37',
         },
       },
     },

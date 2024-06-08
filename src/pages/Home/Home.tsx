@@ -7,6 +7,7 @@ import { SalesByHour } from './components/SalesByHour'
 import { SalesByKeyframe } from './components/SalesByKeyFrame'
 import { useQueryClient } from '@tanstack/react-query'
 import { SalesByUser } from './components/SalesByUser'
+import { GeneralGoals } from './components/GeneralGoals'
 
 const Home: FC = () => {
   const [dataType, setDataType] = useState('daily')
@@ -53,7 +54,10 @@ const Home: FC = () => {
           <PurchasesInfo />
         </div>
       </section>
-      <section className='bg-white shadow-md rounded-lg p-5'>
+      <section className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
+        <div className='flex flex-col gap-4'>
+          <GeneralGoals />
+        </div>
         <SalesByUser />
       </section>
       <section className='bg-white shadow-md rounded-lg p-5'>

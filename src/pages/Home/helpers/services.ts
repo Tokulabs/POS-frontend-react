@@ -11,7 +11,6 @@ import {
   IPurchaseSummaryProps,
   ISalesByUser,
   ISummaryByHour,
-  ISummaryByKeyframe,
   ITopSellingProps,
 } from '../types/DashboardTypes'
 
@@ -29,7 +28,7 @@ export const getSummaryByHour = async () => {
   }
 }
 
-export const getSummaryByKeyFrame = async (queryParams: IQueryParams) => {
+export const getSummaryByKeyFrame = async <T>(queryParams: IQueryParams) => {
   const finalURL = new URL(summaryByKeyframe)
   const searchParams = new URLSearchParams()
   if (queryParams) {
@@ -39,7 +38,7 @@ export const getSummaryByKeyFrame = async (queryParams: IQueryParams) => {
     })
   }
   finalURL.search = searchParams.toString()
-  const response = await axiosRequest<ISummaryByKeyframe[]>({
+  const response = await axiosRequest<T>({
     url: finalURL,
     hasAuth: true,
     showError: true,
