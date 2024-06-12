@@ -48,7 +48,10 @@ export const getInvoicesNew = async (queryParams: IQueryParams) => {
 }
 
 export const postInvoicesNew = async (values: DataPropsForm) => {
-  return await axiosRequest<IInvoiceProps>({
+  return await axiosRequest<{
+    message: string
+    data: IInvoiceProps
+  }>({
     method: 'post',
     url: invoiceURL,
     hasAuth: true,

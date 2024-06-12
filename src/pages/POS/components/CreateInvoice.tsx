@@ -75,7 +75,7 @@ export const CreateInvoice = () => {
     mutationFn: postInvoicesNew,
     onSuccess: async (response) => {
       const dataToPrintHelper = await buildPrintDataFromInvoiceProps(
-        response?.data ?? ({} as IInvoiceProps),
+        response?.data.data ?? ({} as IInvoiceProps),
       )
       setDataToPrint(dataToPrintHelper)
     },

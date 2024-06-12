@@ -19,6 +19,7 @@ export interface DataPropsForm {
     | null
     | Moment[]
     | IPaymentMethodToSend[]
+    | FormData
 }
 
 export interface IQueryParams {
