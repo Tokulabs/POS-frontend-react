@@ -1,7 +1,7 @@
 import { axiosRequest } from '../../../api/api'
 import { IQueryParams, IPaginationProps, DataPropsForm } from '../../../types/GlobalTypes'
-import { cloudinaryURL, inventoryURL } from '../../../utils/network'
-import { IInventoryProps } from '../types/InventoryTypes'
+import { inventoryURL, uploadImageAWSURL } from '../../../utils/network'
+import { IInventoryProps, ImageUploadAWSProps } from '../types/InventoryTypes'
 
 export const getInventoriesNew = async (queryParams: IQueryParams) => {
   try {
@@ -82,14 +82,24 @@ export const toogleInventories = async (id: number) => {
   })
 }
 
-export const postImageToCloudinary = async (file: FormData) => {
-  try {
-    return await axiosRequest<{ url: string }>({
-      method: 'post',
-      url: cloudinaryURL,
-      payload: file,
-    })
-  } catch (e: unknown) {
-    throw new Error(e as string)
-  }
+export const postUploadImageToAWS = async (formData: FormData) => {
+  return await axiosRequest<ImageUploadAWSProps>({
+    method: 'post',
+    url: uploadImageAWSURL,
+    hasAuth: true,
+    showError: true,
+    payload: formData,
+  })
+}
+
+export const awsPostImagetoS3 = async (data: { url: string; formData: FormData }) => {
+  const { url, formData } = data
+  await axiosRequest({
+    method: 'post',
+    url,
+    payload: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
 }

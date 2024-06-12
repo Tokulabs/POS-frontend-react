@@ -38,3 +38,21 @@ export interface IAddInventoryFormProps extends IModalFormProps {
   groups: IGroupsProps[]
   providers: IProvider[]
 }
+
+export interface ImageUploadAWSProps {
+  final_url: string
+  endpoint_data: EndpointData
+}
+
+export interface EndpointData {
+  url: string
+  fields: Fields
+}
+
+export interface Fields {
+  'Content-Type': string
+  key: string
+  AWSAccessKeyId: string
+  policy: string
+  signature: string
+}

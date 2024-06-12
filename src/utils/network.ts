@@ -27,5 +27,4 @@ export const summaryByKeyframe = baseURL + 'app/sales-by-timeframe'
 export const salesByUser = baseURL + 'app/sales-by-user'
 export const downloadReportURL = baseURL + 'app/'
 export const goalsURL = baseURL + 'app/goals'
-
-export const cloudinaryURL = 'https://api.cloudinary.com/v1_1/de4vbdzth/upload'
+export const uploadImageAWSURL = baseURL + 'app/upload-photo/'
