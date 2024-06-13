@@ -22,14 +22,9 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
   const [modalStateGoals, setModalStateGoals] = useState<ModalStateEnum>(ModalStateEnum.off)
 
-  const allowedRolesDownload = [
-    UserRolesEnum.admin,
-    UserRolesEnum.posAdmin,
-    UserRolesEnum.shopAdmin,
-    UserRolesEnum.sales,
-  ]
+  const notAllowedRolesDownload = [UserRolesEnum.supportSales]
   const { hasPermission: hasPermissionDownloads } = useRolePermissions({
-    allowedRoles: allowedRolesDownload,
+    notAllowedRoles: notAllowedRolesDownload,
   })
 
   const allowedRolesGoals = [UserRolesEnum.admin, UserRolesEnum.posAdmin]

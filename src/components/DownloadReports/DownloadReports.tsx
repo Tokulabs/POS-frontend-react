@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useContext, useMemo } from 'react'
 // Third Party
 import { Modal, Form, DatePicker, Button, Select, Spin } from 'antd'
 import { useForm } from 'antd/es/form/Form'
@@ -8,6 +8,7 @@ import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
 // Types
 import { DataPropsForm } from '../../types/GlobalTypes'
+import { UserRolesEnum } from '../../pages/Users/types/UserTypes'
 // Axios
 import { axiosRequest } from '../../api/api'
 // Utils
@@ -15,7 +16,8 @@ import { downloadReportURL } from '../../utils/network'
 // Helpers
 import { getArrayDatesOrDateWithHour } from '../../layouts/helpers/helpers'
 import { useRolePermissions } from '../../hooks/useRolespermissions'
-import { UserRolesEnum } from '../../pages/Users/types/UserTypes'
+// Store
+import { store } from '../../store'
 
 export const downloadReport = async (data: { payload: DataPropsForm | undefined; url: string }) => {
   const response = await axiosRequest({
@@ -61,22 +63,32 @@ const DownloadReports: FC<IModalDownloadReports> = ({
   onCancelCallback,
   onSuccessCallback,
 }) => {
+  const { state } = useContext(store)
   const [form] = useForm()
-  const initialValues = {
-    report_type: 'daily_report_export/',
-    document_dates: [],
-  }
+  const initialValues = useMemo(
+    () => ({
+      report_type:
+        state.user?.role === 'storageAdmin' ? 'inventories_report_export/' : 'daily_report_export/',
+      document_dates: [],
+    }),
+    [state.user?.role],
+  )
 
   const allowedRolesSales = [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin]
   const { hasPermission: hasPermissionSales } = useRolePermissions({
     allowedRoles: allowedRolesSales,
   })
 
+  const notAllowedRolesStorage = [UserRolesEnum.storageAdmin]
+  const { hasPermission: hasPermissionStorageAdmin } = useRolePermissions({
+    notAllowedRoles: notAllowedRolesStorage,
+  })
+
   const reportsToDownload: IReportToDownload[] = [
     {
       url: 'daily_report_export/',
       name: 'Reporte Diario',
-      show: true,
+      show: hasPermissionStorageAdmin,
     },
     {
       url: 'inventories_report_export/',
@@ -86,17 +98,17 @@ const DownloadReports: FC<IModalDownloadReports> = ({
     {
       url: 'product_sales_report_export/',
       name: 'Reporte Ventas de Productos',
-      show: true,
+      show: hasPermissionStorageAdmin,
     },
     {
       url: 'invoices_report_export/',
       name: 'Reporte de Facturas',
-      show: hasPermissionSales,
+      show: hasPermissionSales && hasPermissionStorageAdmin,
     },
     {
       url: 'electronic_invoice_export/',
       name: 'Reporte Facturación Electrónica',
-      show: hasPermissionSales,
+      show: hasPermissionSales && hasPermissionStorageAdmin,
     },
   ]
 
@@ -151,7 +163,7 @@ const DownloadReports: FC<IModalDownloadReports> = ({
         <Form layout='vertical' onFinish={onSubmit} form={form} initialValues={initialValues}>
           <Form.Item
             style={{ width: '100%' }}
-            label='Tipo de cuenta'
+            label='Tipo de Documento'
             name='report_type'
             rules={[{ required: true, message: 'Campo requerido' }]}
           >
