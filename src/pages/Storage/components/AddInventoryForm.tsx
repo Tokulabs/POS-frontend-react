@@ -20,16 +20,17 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
   initialData,
   providers,
 }) => {
-  const [form] = useForm()
-  const [formDataImage, setFormDataImage] = useState<FormData>(new FormData())
-  const [awsData, setAwsData] = useState<ImageUploadAWSProps | null>(null)
-
   const initialValues = {
     ...initialData,
     group_id: initialData.group?.id ?? '',
     provider_id: initialData.provider?.id ?? '',
     cost_center: initialData.cost_center ?? '',
   }
+
+  const [form] = useForm()
+  const [formDataImage, setFormDataImage] = useState<FormData>(new FormData())
+  const [awsData, setAwsData] = useState<ImageUploadAWSProps | null>(null)
+  const [imageURL, setImageURL] = useState(initialData.photo)
 
   const isEdit = !!initialData.id
 
@@ -64,6 +65,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
   })
 
   const handleImageChange = async (awsData: ImageUploadAWSProps | null, formData: FormData) => {
+    setImageURL(awsData?.final_url ?? '')
     setAwsData(awsData)
     setFormDataImage(formData)
   }
@@ -87,8 +89,10 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
         values = { ...values, photo: awsData.final_url }
       }
     }
-    if (awsData === null) {
+    if (awsData === null && !imageURL) {
       values = { ...values, photo: '' }
+    } else {
+      values = { ...values, photo: imageURL }
     }
     if ((isLoading || isLoadingEdit) && isLoadingImageToS3) return
     isEdit ? mutateEdit({ values, id: initialData.id }) : mutate(values, {})
@@ -116,7 +120,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
         ) : (
           <>
             <Form.Item name=''>
-              <ImageUpload onImageChange={handleImageChange} imageURL={initialData.photo} />
+              <ImageUpload onImageChange={handleImageChange} imageURL={imageURL} />
             </Form.Item>
             <div className='flex w-full gap-2'>
               <Form.Item

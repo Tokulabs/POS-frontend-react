@@ -28,10 +28,14 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
     UserRolesEnum.shopAdmin,
     UserRolesEnum.sales,
   ]
-  const { hasPermission: hasPermissionDownloads } = useRolePermissions(allowedRolesDownload)
+  const { hasPermission: hasPermissionDownloads } = useRolePermissions({
+    allowedRoles: allowedRolesDownload,
+  })
 
   const allowedRolesGoals = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
-  const { hasPermission: hasPermissionGoals } = useRolePermissions(allowedRolesGoals)
+  const { hasPermission: hasPermissionGoals } = useRolePermissions({
+    allowedRoles: allowedRolesGoals,
+  })
 
   const { state } = useContext(store)
   const location = useLocation()
@@ -127,7 +131,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
               const Icon = item.icon
               const active = location.pathname === item.path
               if (item.allowedRoles) {
-                const { hasPermission } = useRolePermissions(item.allowedRoles)
+                const { hasPermission } = useRolePermissions({ allowedRoles: item.allowedRoles })
 
                 if (!hasPermission) {
                   return null

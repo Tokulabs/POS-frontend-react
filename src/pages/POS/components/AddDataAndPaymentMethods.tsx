@@ -87,7 +87,9 @@ export const AddDataAndPaymentMethods = () => {
     UserRolesEnum.posAdmin,
     UserRolesEnum.shopAdmin,
   ]
-  const { hasPermission: hasPermissionToEditCustomer } = useRolePermissions(allowedRolesDownload)
+  const { hasPermission: hasPermissionToEditCustomer } = useRolePermissions({
+    allowedRoles: allowedRolesDownload,
+  })
 
   return (
     <section className='flex flex-col h-full gap-3 justify-start p-5 overflow-hidden overflow-y-scroll scrollbar-hide '>
