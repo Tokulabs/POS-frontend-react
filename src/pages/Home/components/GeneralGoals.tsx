@@ -48,7 +48,7 @@ const GeneralGoals = () => {
   }
 
   return (
-    <div className='bg-white h-full p-4 rounded-lg md:col-span-2 flex flex-col gap-4 shadow-md'>
+    <div className='bg-white h-full p-4 rounded-lg flex flex-col gap-4 shadow-md'>
       <span className='font-bold self-center'>Metas Generales</span>
       <section className='flex flex-col gap-4'>
         {progressItems ? (
