@@ -1,4 +1,4 @@
-import { IconPhoto, IconPlus } from '@tabler/icons-react'
+import { IconPhoto, IconPhotoX, IconPlus } from '@tabler/icons-react'
 import { useState, useRef, ChangeEvent, FC } from 'react'
 import { ImageUploadAWSProps } from '../../pages/Inventories/types/InventoryTypes'
 import { postUploadImageToAWS } from '../../pages/Inventories/helpers/services'
@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { Spin } from 'antd'
 
 interface ImageUploadProps {
-  onImageChange: (awsData: ImageUploadAWSProps, formData: FormData) => void
+  onImageChange: (awsData: ImageUploadAWSProps | null, formData: FormData) => void
   imageURL: string
 }
 
@@ -54,6 +54,14 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageChange, imageURL }) => {
     }
   }
 
+  const removeImage = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+    e.preventDefault()
+    setAvatarURL('')
+    setFormDataImage(new FormData())
+    onImageChange(null, new FormData())
+  }
+
   return (
     <div className='w-full flex justify-center text-white'>
       <div
@@ -64,10 +72,15 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageChange, imageURL }) => {
       >
         {isPending && <Spin size='large' />}
         {!isPending && avatarURL ? (
-          <img
-            className='w-40 object-contain overflow-hidden hover:scale-150 transition-all transform-cpu duration-300 ease-in-out rounded-full'
-            src={avatarURL}
-          />
+          <div className='w-40 h-full relative'>
+            <span
+              className='absolute bottom-0 right-0 z-10 bg-green-1 flex justify-center items-center p-1 text-white'
+              onClick={removeImage}
+            >
+              <IconPhotoX />
+            </span>
+            <img className='w-full h-full object-cover' src={avatarURL} />
+          </div>
         ) : (
           <div className='flex flex-col justify-center items-center'>
             <IconPhoto />

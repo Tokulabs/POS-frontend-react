@@ -1,4 +1,4 @@
-import { DatePicker, Spin } from 'antd'
+import { DatePicker, Image, Spin, Tooltip } from 'antd'
 import { useState } from 'react'
 import { IconCameraOff } from '@tabler/icons-react'
 import { useTopSellingProducts } from '../../../hooks/useSummaryData'
@@ -22,7 +22,7 @@ const TopSell = () => {
   const { hasPermission: hasPermissionToSeeData } = useRolePermissions(allowedRolesOverride)
 
   return (
-    <div className='bg-white p-4 rounded-lg md:col-span-2 flex flex-col gap-4 shadow-md'>
+    <div className='bg-white p-4 rounded-lg md:col-span-2 flex flex-col gap-8 shadow-md'>
       <div className='w-full flex flex-col gap-3'>
         <p className='m-0 font-bold'>
           Top Productos del <span className='text-green-1'>{startDate}</span> al{' '}
@@ -43,34 +43,50 @@ const TopSell = () => {
           />
         )}
       </div>
-      <div className='grid items-center grid-cols-1 md:grid-cols-2 lg:grid-cols-5 xl:grid-cols-7 gap-4'>
+      <div className='flex gap-6 flex-wrap'>
         {isLoading ? (
           <Spin />
         ) : (
           topSellingProducts?.map((item, index) => (
-            <article className='min-w-0 min-w-md bg-[#f3f5ff] rounded-md' key={index}>
-              {item.photo ? (
-                <img
-                  className='w-full h-40 lg:h-20 object-cover rounded-md'
-                  src={item.photo}
-                  alt='photo item'
-                />
-              ) : (
-                <span className='text-green-1'>
-                  <IconCameraOff
-                    style={{
-                      width: '100%',
-                      height: '5rem',
-                      objectFit: 'cover',
-                      borderRadius: '0.375rem',
-                    }}
-                  />
+            <article
+              key={index}
+              className='min-w-28 w-40 h-auto grow bg-white border border-gray-200 rounded-lg shadow-lg'
+            >
+              <div className='rounded-t-lg w-full h-40 relative'>
+                <span
+                  className={`absolute rounded-full -left-2 -top-3 shadow-md bg-green-1 h-8 w-8 flex justify-center items-center text-white font-bold z-10 ${index === 0 ? 'bg-[#BBA53D]' : index === 1 ? 'bg-[#A5A9B4]' : index === 2 ? 'bg-[#CD7F32]' : 'bg-green-1'}`}
+                >
+                  {item.sum_top_ten_items}
                 </span>
-              )}
-              <section className='px-2 py-3'>
-                <p className='m-0 text-xs text-[#262932] font-bold truncate'>{item.name}</p>
-                <p className='m-0 text-sm text-[#5f626e]'>{item.sum_top_ten_items}</p>
-              </section>
+                {!item.photo ? (
+                  <div className='w-full h-full rounded-t-lg flex justify-center items-center bg-background-main text-green-1'>
+                    <IconCameraOff
+                      style={{
+                        width: '100%',
+                        objectFit: 'cover',
+                        borderRadius: '0.5rem',
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <Image
+                    width={'100%'}
+                    height={'100%'}
+                    style={{
+                      objectFit: 'cover',
+                      borderTopLeftRadius: '0.5rem',
+                      borderTopRightRadius: '0.5rem',
+                    }}
+                    src={item.photo}
+                    alt={`Foto item ${item.name}`}
+                  />
+                )}
+              </div>
+              <div className='p-3 w-full bg-green-1 rounded-b-lg '>
+                <Tooltip title={item.name}>
+                  <p className='m-0 text-sm text-white font-semibold truncate'>{item.name}</p>
+                </Tooltip>
+              </div>
             </article>
           ))
         )}

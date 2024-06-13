@@ -83,23 +83,23 @@ const SalesByUser = () => {
                     key={item.sale_by__id}
                   >
                     <span
-                      className={`font-bold text-lg text-center ${percentage < 50 ? 'text-red-500' : percentage > 100 ? 'text-green-1' : 'text-[#007bff]'}`}
+                      className={`font-bold text-lg text-center ${percentage < 50 ? 'text-red-500' : percentage >= 100 ? 'text-green-1' : 'text-[#007bff]'}`}
                     >
                       {item.sale_by__fullname}
                     </span>
                     <div className='w-32 h-32'>
                       <CircularProgressbar
                         value={percentage}
-                        text={`${percentage.toFixed(0)}%`}
+                        text={`${percentage.toFixed(1)}%`}
                         circleRatio={0.75}
                         styles={buildStyles({
                           rotation: 1 / 2 + 1 / 8,
                           strokeLinecap: 'butt',
                           trailColor: '#eee',
                           pathColor:
-                            percentage < 50 ? '#E62C37' : percentage > 100 ? '#269962' : '#007bff',
+                            percentage < 50 ? '#E62C37' : percentage >= 100 ? '#269962' : '#007bff',
                           textColor:
-                            percentage < 50 ? '#E62C37' : percentage > 100 ? '#269962' : '#007bff',
+                            percentage < 50 ? '#E62C37' : percentage >= 100 ? '#269962' : '#007bff',
                         })}
                       />
                     </div>

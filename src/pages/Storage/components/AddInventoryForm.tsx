@@ -63,36 +63,35 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
     },
   })
 
-  const handleImageChange = async (awsData: ImageUploadAWSProps, formData: FormData) => {
+  const handleImageChange = async (awsData: ImageUploadAWSProps | null, formData: FormData) => {
     setAwsData(awsData)
     setFormDataImage(formData)
   }
 
   const onSubmit = async (values: DataPropsForm) => {
-    try {
-      if (awsData) {
-        const { AWSAccessKeyId, key, policy, signature } = awsData.endpoint_data.fields
-        const sentFormData = new FormData()
-        sentFormData.append('Content-Type', awsData.endpoint_data.fields['Content-Type'])
-        sentFormData.append('key', key)
-        sentFormData.append('AWSAccessKeyId', AWSAccessKeyId)
-        sentFormData.append('policy', policy)
-        sentFormData.append('signature', signature)
-        sentFormData.append('file', formDataImage.get('file') as Blob)
+    if (awsData) {
+      const { AWSAccessKeyId, key, policy, signature } = awsData.endpoint_data.fields
+      const sentFormData = new FormData()
+      sentFormData.append('Content-Type', awsData.endpoint_data.fields['Content-Type'])
+      sentFormData.append('key', key)
+      sentFormData.append('AWSAccessKeyId', AWSAccessKeyId)
+      sentFormData.append('policy', policy)
+      sentFormData.append('signature', signature)
+      sentFormData.append('file', formDataImage.get('file') as Blob)
 
-        await mutateUploadImagetoS3({
-          formData: sentFormData,
-          url: awsData.endpoint_data.url,
-        })
-        if (awsData.final_url && !isLoadingImageToS3) {
-          values = { ...values, photo: awsData.final_url }
-        }
-        if ((isLoading || isLoadingEdit) && isLoadingImageToS3) return
-        isEdit ? mutateEdit({ values, id: initialData.id }) : mutate(values, {})
+      await mutateUploadImagetoS3({
+        formData: sentFormData,
+        url: awsData.endpoint_data.url,
+      })
+      if (awsData.final_url && !isLoadingImageToS3) {
+        values = { ...values, photo: awsData.final_url }
       }
-    } catch (e: unknown) {
-      toast.error('Error crear producto')
     }
+    if (awsData === null) {
+      values = { ...values, photo: '' }
+    }
+    if ((isLoading || isLoadingEdit) && isLoadingImageToS3) return
+    isEdit ? mutateEdit({ values, id: initialData.id }) : mutate(values, {})
   }
 
   return (
@@ -103,6 +102,8 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
       onCancel={() => {
         onCancelCallback()
         form.resetFields()
+        setAwsData(null)
+        setFormDataImage(new FormData())
       }}
       footer={false}
       maskClosable={false}
