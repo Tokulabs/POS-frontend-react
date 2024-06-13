@@ -22,7 +22,7 @@ const TopSell = () => {
   const { hasPermission: hasPermissionToSeeData } = useRolePermissions(allowedRolesOverride)
 
   return (
-    <div className='bg-white p-4 rounded-lg md:col-span-2 flex flex-col gap-8 shadow-md'>
+    <div className='bg-white h-auto md:max-h-96 overflow-scroll scrollbar-hide p-4 rounded-lg lg:col-span-2 flex flex-col gap-8 shadow-md'>
       <div className='w-full flex flex-col gap-3'>
         <p className='m-0 font-bold'>
           Top Productos del <span className='text-green-1'>{startDate}</span> al{' '}

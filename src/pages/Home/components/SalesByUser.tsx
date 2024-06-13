@@ -50,7 +50,7 @@ const SalesByUser = () => {
   const { hasPermission: hasPermissionToSeeData } = useRolePermissions(allowedRolesOverride)
 
   return (
-    <section className='bg-white p-4 rounded-lg md:col-span-2 shadow-md flex flex-col gap-7 w-full items-center justify-start'>
+    <section className='bg-white p-4 rounded-lg lg:col-span-2 lg:col-start-2 shadow-md flex flex-col gap-7 w-full items-center justify-start'>
       <span className='flex gap-3 font-bold items-center'>
         Ventas por usuario del
         {hasPermissionToSeeData ? (
