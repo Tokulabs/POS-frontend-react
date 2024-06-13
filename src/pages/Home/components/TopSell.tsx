@@ -47,48 +47,59 @@ const TopSell = () => {
         {isLoading ? (
           <Spin />
         ) : (
-          topSellingProducts?.map((item, index) => (
-            <article
-              key={index}
-              className='min-w-28 w-40 h-auto grow bg-white border border-gray-200 rounded-lg shadow-lg'
-            >
-              <div className='rounded-t-lg w-full h-40 relative'>
-                <span
-                  className={`absolute rounded-full -left-2 -top-3 shadow-md bg-green-1 h-8 w-8 flex justify-center items-center text-white font-bold z-10 ${index === 0 ? 'bg-[#BBA53D]' : index === 1 ? 'bg-[#A5A9B4]' : index === 2 ? 'bg-[#CD7F32]' : 'bg-green-1'}`}
-                >
-                  {item.sum_top_ten_items}
-                </span>
-                {!item.photo ? (
-                  <div className='w-full h-full rounded-t-lg flex justify-center items-center bg-background-main text-green-1'>
-                    <IconCameraOff
+          topSellingProducts?.map((item, index) => {
+            console.log('Index:', index)
+            return (
+              <article
+                key={index}
+                className='min-w-28 w-40 h-auto grow bg-white border border-gray-200 rounded-lg shadow-lg'
+              >
+                <div className='rounded-t-lg w-full h-40 relative'>
+                  <span
+                    className={`absolute rounded-full -left-2 -top-3 shadow-md h-8 w-8 flex justify-center items-center text-white font-bold z-10 ${
+                      index === 0
+                        ? 'bg-[#BBA53D]'
+                        : index === 1
+                          ? 'bg-[#A5A9B4]'
+                          : index === 2
+                            ? 'bg-[#CD7F32]'
+                            : 'bg-green-1'
+                    }`}
+                  >
+                    {item.sum_top_ten_items}
+                  </span>
+                  {!item.photo ? (
+                    <div className='w-full h-full rounded-t-lg flex justify-center items-center bg-background-main text-green-1'>
+                      <IconCameraOff
+                        style={{
+                          width: '100%',
+                          objectFit: 'cover',
+                          borderRadius: '0.5rem',
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <Image
+                      width={'100%'}
+                      height={'100%'}
                       style={{
-                        width: '100%',
                         objectFit: 'cover',
-                        borderRadius: '0.5rem',
+                        borderTopLeftRadius: '0.5rem',
+                        borderTopRightRadius: '0.5rem',
                       }}
+                      src={item.photo}
+                      alt={`Foto item ${item.name}`}
                     />
-                  </div>
-                ) : (
-                  <Image
-                    width={'100%'}
-                    height={'100%'}
-                    style={{
-                      objectFit: 'cover',
-                      borderTopLeftRadius: '0.5rem',
-                      borderTopRightRadius: '0.5rem',
-                    }}
-                    src={item.photo}
-                    alt={`Foto item ${item.name}`}
-                  />
-                )}
-              </div>
-              <div className='p-3 w-full bg-green-1 rounded-b-lg '>
-                <Tooltip title={item.name}>
-                  <p className='m-0 text-sm text-white font-semibold truncate'>{item.name}</p>
-                </Tooltip>
-              </div>
-            </article>
-          ))
+                  )}
+                </div>
+                <div className='p-3 w-full bg-green-1 rounded-b-lg '>
+                  <Tooltip title={item.name}>
+                    <p className='m-0 text-sm text-white font-semibold truncate'>{item.name}</p>
+                  </Tooltip>
+                </div>
+              </article>
+            )
+          })
         )}
       </div>
     </div>
