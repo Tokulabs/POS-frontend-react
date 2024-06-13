@@ -69,7 +69,7 @@ const GeneralGoals = () => {
                   strokeColor={
                     Number(item.percent) < 50
                       ? '#E62C37'
-                      : Number(item.percent) === 100
+                      : Number(item.percent) >= 100
                         ? '#269962'
                         : '#007bff'
                   }
