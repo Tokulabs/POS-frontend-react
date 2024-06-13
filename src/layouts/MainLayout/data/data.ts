@@ -60,7 +60,6 @@ export const SideBarData: ISideBarData[] = [
       UserRolesEnum.posAdmin,
       UserRolesEnum.shopAdmin,
       UserRolesEnum.sales,
-      UserRolesEnum.storageAdmin,
     ],
   },
   {
