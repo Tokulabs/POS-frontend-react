@@ -48,7 +48,6 @@ const TopSell = () => {
           <Spin />
         ) : (
           topSellingProducts?.map((item, index) => {
-            console.log('Index:', index)
             return (
               <article
                 key={index}
