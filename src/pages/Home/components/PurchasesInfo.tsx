@@ -21,7 +21,9 @@ const PurchasesInfo = () => {
   const showCurrency = false
 
   const allowedRolesOverride = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
-  const { hasPermission: hasPermissionToSeeData } = useRolePermissions(allowedRolesOverride)
+  const { hasPermission: hasPermissionToSeeData } = useRolePermissions({
+    allowedRoles: allowedRolesOverride,
+  })
 
   return (
     <div className='bg-white w-full h-full p-4 rounded-lg lg:col-span-2 flex flex-col gap-4 shadow-md lg:col-start-3'>

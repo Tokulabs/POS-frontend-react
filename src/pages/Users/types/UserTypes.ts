@@ -32,4 +32,5 @@ export enum UserRolesEnum {
   shopAdmin = 'Administrador Tienda',
   sales = 'Vendedor Fijo',
   supportSales = 'Vendedor Apoyo',
+  storageAdmin = 'Administrador Bodega',
 }

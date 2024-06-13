@@ -16,7 +16,7 @@ const Router: FC = () => {
     {
       element: <AuthRoutes />,
       children: SideBarData.map((item) => {
-        const { hasPermission } = useRolePermissions(item.allowedRoles || [])
+        const { hasPermission } = useRolePermissions({ allowedRoles: item.allowedRoles || [] })
         const Component = item.component
         const routerData: RouteObject = {
           path: item.path,

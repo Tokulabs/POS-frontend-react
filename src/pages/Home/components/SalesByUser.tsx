@@ -47,7 +47,9 @@ const SalesByUser = () => {
   }
 
   const allowedRolesOverride = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
-  const { hasPermission: hasPermissionToSeeData } = useRolePermissions(allowedRolesOverride)
+  const { hasPermission: hasPermissionToSeeData } = useRolePermissions({
+    allowedRoles: allowedRolesOverride,
+  })
 
   return (
     <section className='bg-white p-4 rounded-lg lg:col-span-2 lg:col-start-2 shadow-md flex flex-col gap-7 w-full items-center justify-start'>

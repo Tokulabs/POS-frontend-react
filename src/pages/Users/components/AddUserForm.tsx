@@ -126,6 +126,7 @@ const AddUserForm: FC<IAddUser> = ({
               { value: 'shopAdmin', label: UserRolesEnum.shopAdmin },
               { value: 'sales', label: UserRolesEnum.sales },
               { value: 'supportSales', label: UserRolesEnum.supportSales },
+              { value: 'storageAdmin', label: UserRolesEnum.storageAdmin },
             ]}
           />
         </Form.Item>

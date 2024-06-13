@@ -22,7 +22,7 @@ const Dian: FC = () => {
   const [currentNumber, setCurrentNumber] = useState<number>(0)
   const [edit, setEdit] = useState(false)
   const allowedRolesOverride = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
-  const { hasPermission } = useRolePermissions(allowedRolesOverride)
+  const { hasPermission } = useRolePermissions({ allowedRoles: allowedRolesOverride })
 
   const { dianResolutionData, isPending } = useDianResolutions('allDianResolutions', {})
 

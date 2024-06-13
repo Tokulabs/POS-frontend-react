@@ -47,6 +47,7 @@ export const SideBarData: ISideBarData[] = [
       UserRolesEnum.sales,
       UserRolesEnum.shopAdmin,
       UserRolesEnum.supportSales,
+      UserRolesEnum.storageAdmin,
     ],
   },
   {
@@ -59,6 +60,7 @@ export const SideBarData: ISideBarData[] = [
       UserRolesEnum.posAdmin,
       UserRolesEnum.shopAdmin,
       UserRolesEnum.sales,
+      UserRolesEnum.storageAdmin,
     ],
   },
   {
@@ -92,7 +94,7 @@ export const SideBarData: ISideBarData[] = [
     title: 'Categorias',
     component: InventoryGroups,
     path: '/inventory-groups',
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
+    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
   },
   {
     icon: IconUsers,
@@ -120,7 +122,7 @@ export const SideBarData: ISideBarData[] = [
     title: 'Bodega',
     path: '/storage',
     component: Storage,
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
+    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
   },
   {
     icon: IconDeviceLandlinePhone,
@@ -134,6 +136,6 @@ export const SideBarData: ISideBarData[] = [
     title: 'Proveedores',
     path: '/providers',
     component: Providers,
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
+    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
   },
 ]

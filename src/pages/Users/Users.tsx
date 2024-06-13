@@ -45,7 +45,9 @@ const Users: FC = () => {
   }
 
   const allowedRolesDownload = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
-  const { hasPermission: hasPermissionsToEdit } = useRolePermissions(allowedRolesDownload)
+  const { hasPermission: hasPermissionsToEdit } = useRolePermissions({
+    allowedRoles: allowedRolesDownload,
+  })
 
   const formatEditAndDelete = (userData: IUserProps[]) => {
     return userData.map((item) => ({

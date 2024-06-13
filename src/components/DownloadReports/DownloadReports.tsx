@@ -68,7 +68,9 @@ const DownloadReports: FC<IModalDownloadReports> = ({
   }
 
   const allowedRolesSales = [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin]
-  const { hasPermission: hasPermissionSales } = useRolePermissions(allowedRolesSales)
+  const { hasPermission: hasPermissionSales } = useRolePermissions({
+    allowedRoles: allowedRolesSales,
+  })
 
   const reportsToDownload: IReportToDownload[] = [
     {

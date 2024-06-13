@@ -50,10 +50,10 @@ const Invoices: FC = () => {
     UserRolesEnum.shopAdmin,
   ]
   const allowedRolesEditPaymentMethods = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
-  const { hasPermission } = useRolePermissions(allowedRolesOverride)
-  const { hasPermission: hasPermissionEditPaymentMethods } = useRolePermissions(
-    allowedRolesEditPaymentMethods,
-  )
+  const { hasPermission } = useRolePermissions({ allowedRoles: allowedRolesOverride })
+  const { hasPermission: hasPermissionEditPaymentMethods } = useRolePermissions({
+    allowedRoles: allowedRolesEditPaymentMethods,
+  })
 
   const printOutRef = useRef<HTMLDivElement>(null)
 
