@@ -11,10 +11,12 @@ import { useDianResolutions } from '../../hooks/useDianResolution'
 // Third Party
 import { IconFileSad } from '@tabler/icons-react'
 import { Spin } from 'antd'
+import { useNavigate } from 'react-router-dom'
 
 const POS: FC = () => {
   const { openModalAddCustomer } = useCustomerData()
   const { currentStep } = usePOSStep()
+  const navigate = useNavigate()
 
   const { dianResolutionData, isPending } = useDianResolutions('getActiveDianResolution', {
     active: 'True',
@@ -37,7 +39,14 @@ const POS: FC = () => {
               <IconFileSad size={120} />
               <div className='flex flex-col items-center'>
                 <span className='font-bold text-2xl'>No hay resoluciones activas</span>
-                <a href='/dian-resolution'>Crear o activar resolución</a>
+                <span
+                  className='cursor-pointer text-blue-500 underline'
+                  onClick={() => {
+                    navigate('/dian-resolution')
+                  }}
+                >
+                  Crear o activar resolución
+                </span>
               </div>
             </section>
           )}

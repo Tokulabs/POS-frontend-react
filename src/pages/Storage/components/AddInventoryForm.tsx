@@ -165,7 +165,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
                 name='buying_price'
                 rules={[{ required: true, message: 'El precio de compra es un campo obligatorio' }]}
               >
-                <Input placeholder='Precio USD' type='number' min={1} />
+                <Input placeholder='Precio USD' type='number' min={0} />
               </Form.Item>
               <Form.Item
                 style={{ width: '100%' }}
@@ -173,7 +173,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
                 name='selling_price'
                 rules={[{ required: true, message: 'El precio unitario es un campo obligatorio' }]}
               >
-                <Input placeholder='Precio COP' type='number' min={1} />
+                <Input placeholder='Precio COP' type='number' min={0} />
               </Form.Item>
             </div>
             <div className='flex gap-2 w-full'>
@@ -251,7 +251,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
               </Form.Item>
               <Form.Item
                 style={{ width: '100%' }}
-                label='Cento de Costos'
+                label='Centro de Costos'
                 name='cost_center'
                 rules={[{ required: true, message: 'El centro de costos es requerido' }]}
               >
@@ -270,6 +270,10 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
                     {
                       value: 'CHOCOLATE',
                       label: 'CHOCOLATE',
+                    },
+                    {
+                      value: 'REALIDAD VIRTUAL',
+                      label: 'REALIDAD VIRTUAL',
                     },
                   ]}
                 />
