@@ -32,16 +32,12 @@ export const getPaymentTerminals = async (queryParams: IQueryParams) => {
 }
 
 export const postPaymentTerminals = async (values: DataPropsForm) => {
-  try {
-    await axiosRequest({
-      method: 'post',
-      url: paymentTerminalsURL,
-      hasAuth: true,
-      payload: values,
-    })
-  } catch (e) {
-    console.log(e)
-  }
+  await axiosRequest({
+    method: 'post',
+    url: paymentTerminalsURL,
+    hasAuth: true,
+    payload: values,
+  })
 }
 
 export const putPaymentTerminals = async (data: { values: DataPropsForm; id: number }) => {
