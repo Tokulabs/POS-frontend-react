@@ -5,4 +5,8 @@ export interface IUser {
   created_at: string
   role: string
   last_login: string
+  company: {
+    name: string
+    nit: string
+  }
 }
