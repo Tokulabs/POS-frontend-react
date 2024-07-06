@@ -1,16 +1,19 @@
-import { FC } from 'react'
+import { FC, useContext } from 'react'
 import { formatDateTime } from '../../layouts/helpers/helpers'
 import LogoSignos from './../../assets/logos/signos_logo.png'
 import { calcTotalPrices, formatNumberToColombianPesos } from '../../utils/helpers'
 import OverrideImage from '../../assets/logos/images.png'
 import { PaymentMethodsEnum } from '../../pages/POS/components/types/PaymentMethodsTypes'
 import { IPrintData } from '../../types/GlobalTypes'
+import { store } from '../../store'
 
 interface IPrintCOmponent {
   printDataComponent: IPrintData
 }
 
 const PrintOut: FC<IPrintCOmponent> = ({ printDataComponent }) => {
+  const { state } = useContext(store)
+
   const {
     customerData,
     dataItems,
@@ -34,8 +37,8 @@ const PrintOut: FC<IPrintCOmponent> = ({ printDataComponent }) => {
         />
       )}
       <img src={LogoSignos} alt='Logo signos' className='w-full h-20 object-cover' />
-      <h4 className='m-0'>Signos Studio SAS</h4>
-      <h5 className='m-0'>NIT. 832004603-8</h5>
+      <h4 className='m-0'>{state.user?.company.name}</h4>
+      <h5 className='m-0'>{`NIT. ${state.user?.company.nit}`}</h5>
       <h5 className='m-0'>COMPLEJO TURISTICO CATEDRAL DE SAL</h5>
       <section className='flex flex-col justify-center items-center gap-1'>
         <p className='m-0 text-sm'>Tel. +57 3133779890</p>
