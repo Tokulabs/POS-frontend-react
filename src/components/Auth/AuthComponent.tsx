@@ -1,8 +1,8 @@
 import { FC } from 'react'
 import { Form, Input, Button, Image } from 'antd'
 import { Link } from 'react-router-dom'
-import { DataPropsForm } from '../../types/GlobalTypes'
-import KiospotLogoLogin from '../../assets/logos/Kiospot_logo_vertical.webp'
+import { DataPropsForm } from '@/types/GlobalTypes'
+import KiospotLogoLogin from '@/assets/logos/Kiospot_logo_vertical.webp'
 
 interface IAuthComponentProps {
   titleText?: string

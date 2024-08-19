@@ -1,6 +1,6 @@
-import { IDianResolutionProps } from '../../Dian/types/DianResolutionTypes'
-import { ICustomerProps } from '../../POS/components/types/CustomerTypes'
-import { IPaymentMethodToSend } from '../../POS/components/types/PaymentMethodsTypes'
+import { IDianResolutionProps } from '@/pages/Dian/types/DianResolutionTypes'
+import { ICustomerProps } from '@/pages/POS/components/types/CustomerTypes'
+import { IPaymentMethodToSend } from '@/pages/POS/components/types/PaymentMethodsTypes'
 
 export interface IInvoiceProps {
   id: number

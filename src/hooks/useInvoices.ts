@@ -1,6 +1,6 @@
 import { QueryKey, useQuery } from '@tanstack/react-query'
-import { IQueryParams } from '../types/GlobalTypes'
-import { getInvoiceByCode, getInvoicesNew } from '../pages/Invoices/helpers/services'
+import { IQueryParams } from '@/types/GlobalTypes'
+import { getInvoiceByCode, getInvoicesNew } from '@/pages/Invoices/helpers/services'
 
 export const useInvoices = (queryKey: string, queryParamas?: IQueryParams) => {
   const queryKeyToSend: QueryKey = [queryKey, queryParamas]

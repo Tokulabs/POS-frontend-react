@@ -1,11 +1,11 @@
 import { FC, useContext } from 'react'
-import { formatDateTime } from '../../layouts/helpers/helpers'
-import LogoSignos from './../../assets/logos/signos_logo.png'
-import { calcTotalPrices, formatNumberToColombianPesos } from '../../utils/helpers'
-import OverrideImage from '../../assets/logos/images.png'
-import { PaymentMethodsEnum } from '../../pages/POS/components/types/PaymentMethodsTypes'
-import { IPrintData } from '../../types/GlobalTypes'
-import { store } from '../../store'
+import { formatDateTime } from '@/layouts/helpers/helpers'
+import LogoSignos from '@/assets/logos/signos_logo.png'
+import { calcTotalPrices, formatNumberToColombianPesos } from '@/utils/helpers'
+import OverrideImage from '@/assets/logos/images.png'
+import { PaymentMethodsEnum } from '@/pages/POS/components/types/PaymentMethodsTypes'
+import { IPrintData } from '@/types/GlobalTypes'
+import { store } from '@/store'
 
 interface IPrintCOmponent {
   printDataComponent: IPrintData

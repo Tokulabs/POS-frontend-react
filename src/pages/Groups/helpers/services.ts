@@ -1,7 +1,7 @@
-import { axiosRequest } from '../../../api/api'
-import { formatDateTime } from '../../../layouts/helpers/helpers'
-import { IQueryParams, IPaginationProps, DataPropsForm } from '../../../types/GlobalTypes'
-import { groupURL } from '../../../utils/network'
+import { axiosRequest } from '@/api/api'
+import { formatDateTime } from '@/layouts/helpers/helpers'
+import { IQueryParams, IPaginationProps, DataPropsForm } from '@/types/GlobalTypes'
+import { groupURL } from '@/utils/network'
 import { IGroupsProps } from '../types/GroupTypes'
 
 export const getGroupsNew = async (queryParams: IQueryParams) => {

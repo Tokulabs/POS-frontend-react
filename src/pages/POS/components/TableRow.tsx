@@ -1,13 +1,9 @@
 import { FC, useState } from 'react'
 import { ITableRowProps } from './types/TableTypes'
 import { IconMinus, IconPlus } from '@tabler/icons-react'
-import { useCart } from '../../../store/useCartStoreZustand'
+import { useCart } from '@/store/useCartStoreZustand'
 import { InputNumber, Image, Checkbox, CheckboxProps } from 'antd'
-import {
-  calcMetaDataProdudct,
-  formatNumberToColombianPesos,
-  formatToUsd,
-} from '../../../utils/helpers'
+import { calcMetaDataProdudct, formatNumberToColombianPesos, formatToUsd } from '@/utils/helpers'
 
 export const TableRow: FC<ITableRowProps> = ({ product }) => {
   const [visible, setVisible] = useState(false)

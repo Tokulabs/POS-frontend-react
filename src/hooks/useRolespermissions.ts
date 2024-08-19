@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react'
-import { store } from './../store/index'
-import { UserRolesEnum } from '../pages/Users/types/UserTypes'
+import { store } from '@/store/index'
+import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 
 interface IUseRolePermissions {
   allowedRoles?: string[]

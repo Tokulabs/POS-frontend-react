@@ -1,6 +1,6 @@
 import { FC, useState } from 'react'
-import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
-import { DataPropsForm } from '../../types/GlobalTypes'
+import ContentLayout from '@/layouts/ContentLayout/ContentLayout'
+import { DataPropsForm } from '@/types/GlobalTypes'
 import { columns } from './data/columnsData'
 import { getUserActivitiesNew } from './helpers/services'
 import { useQuery } from '@tanstack/react-query'

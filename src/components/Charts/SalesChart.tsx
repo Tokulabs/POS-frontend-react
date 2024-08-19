@@ -11,9 +11,9 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
-import { formatNumberToColombianPesos } from '../../utils/helpers'
-import { ISummaryByHour, ISummaryByKeyframe } from '../../pages/Home/types/DashboardTypes'
-import { dateFormater, convertToCurrentWeek } from '../../pages/Home/helpers/dateFormater'
+import { formatNumberToColombianPesos } from '@/utils/helpers'
+import { ISummaryByHour, ISummaryByKeyframe } from '@/pages/Home/types/DashboardTypes'
+import { dateFormater, convertToCurrentWeek } from '@/pages/Home/helpers/dateFormater'
 
 interface SalesChartProps {
   data: ISummaryByHour[] | ISummaryByKeyframe[]

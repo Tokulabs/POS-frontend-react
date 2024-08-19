@@ -7,17 +7,17 @@ import { Moment } from 'moment'
 import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
 // Types
-import { DataPropsForm } from '../../types/GlobalTypes'
-import { UserRolesEnum } from '../../pages/Users/types/UserTypes'
+import { DataPropsForm } from '@/types/GlobalTypes'
+import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 // Axios
-import { axiosRequest } from '../../api/api'
+import { axiosRequest } from '@/api/api'
 // Utils
-import { downloadReportURL } from '../../utils/network'
+import { downloadReportURL } from '@/utils/network'
 // Helpers
-import { getArrayDatesOrDateWithHour } from '../../layouts/helpers/helpers'
-import { useRolePermissions } from '../../hooks/useRolespermissions'
+import { getArrayDatesOrDateWithHour } from '@/layouts/helpers/helpers'
+import { useRolePermissions } from '@/hooks/useRolespermissions'
 // Store
-import { store } from '../../store'
+import { store } from '@/store'
 
 export const downloadReport = async (data: { payload: DataPropsForm | undefined; url: string }) => {
   const response = await axiosRequest({

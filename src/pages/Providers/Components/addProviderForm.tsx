@@ -1,7 +1,7 @@
 import { Modal, Input, Button, Form, Select } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { FC } from 'react'
-import { DataPropsForm } from '../../../types/GlobalTypes'
+import { DataPropsForm } from '@/types/GlobalTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { postProviders, putProviders } from '../helpers/services'
 import { IAddProvider } from '../types/ProviderTypes'

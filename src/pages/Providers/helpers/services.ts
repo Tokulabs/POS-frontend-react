@@ -1,6 +1,6 @@
-import { axiosRequest } from '../../../api/api'
-import { IQueryParams, IPaginationProps, DataPropsForm } from '../../../types/GlobalTypes'
-import { providersURL } from '../../../utils/network'
+import { axiosRequest } from '@/api/api'
+import { IQueryParams, IPaginationProps, DataPropsForm } from '@/types/GlobalTypes'
+import { providersURL } from '@/utils/network'
 import { IProvider } from '../types/ProviderTypes'
 
 export const getProviders = async (queryParams: IQueryParams) => {

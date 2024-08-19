@@ -1,4 +1,4 @@
-import { DataPropsForm } from '../../../types/GlobalTypes'
+import { DataPropsForm } from '@/types/GlobalTypes'
 
 export interface IActivitiesProps {
   id: number

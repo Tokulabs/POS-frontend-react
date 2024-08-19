@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import {
   IPaymentMethod,
   PaymentMethodsEnum,
-} from '../pages/POS/components/types/PaymentMethodsTypes'
+} from '@/pages/POS/components/types/PaymentMethodsTypes'
 
 interface IPaymentMethodStore {
   paymentMethods: IPaymentMethod[]

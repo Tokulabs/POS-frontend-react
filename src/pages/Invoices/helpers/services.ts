@@ -1,12 +1,12 @@
-import { axiosRequest } from '../../../api/api'
-import { IQueryParams, IPaginationProps, DataPropsForm } from '../../../types/GlobalTypes'
+import { axiosRequest } from '@/api/api'
+import { IQueryParams, IPaginationProps, DataPropsForm } from '@/types/GlobalTypes'
 import {
   invoiceURL,
   overrideInvoiceURL,
   invoiceMinimalURL,
   invoiceByCodeURL,
   invoiceUpdatePaymentMethodsURL,
-} from '../../../utils/network'
+} from '@/utils/network'
 import { IInvoiceMinimalProps, IInvoiceProps } from '../types/InvoicesTypes'
 
 export interface IPurchaseProps {

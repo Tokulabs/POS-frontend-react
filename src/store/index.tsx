@@ -1,6 +1,5 @@
+import { ActionProps, ActionTypes, IStoreProps, IStoreProviderProps } from '@/types/StoreTypes'
 import { createContext, FC, PropsWithChildren, useReducer } from 'react'
-import { ActionTypes, IStoreProps, IStoreProviderProps } from '../types/StoreTypes'
-import { ActionProps } from './../types/StoreTypes'
 
 const initialState: IStoreProps = {
   user: null,

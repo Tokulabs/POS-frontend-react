@@ -1,7 +1,7 @@
-import { tokenName } from '../../../utils/constants'
-import { meURL } from '../../../utils/network'
-import { IUser } from '../../../types/UserType'
-import { axiosRequest } from '../../../api/api'
+import { tokenName } from '@/utils/constants'
+import { meURL } from '@/utils/network'
+import { IUser } from '@/types/UserType'
+import { axiosRequest } from '@/api/api'
 
 export const logout = () => {
   localStorage.removeItem(tokenName)

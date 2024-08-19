@@ -1,6 +1,6 @@
-import { axiosRequest } from '../../api/api'
-import { DataPropsForm } from '../../types/GlobalTypes'
-import { goalsURL } from '../../utils/network'
+import { axiosRequest } from '@/api/api'
+import { DataPropsForm } from '@/types/GlobalTypes'
+import { goalsURL } from '@/utils/network'
 import { IGoals } from './types'
 
 export const getGoalsData = async () => {

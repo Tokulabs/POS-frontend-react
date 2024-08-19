@@ -6,10 +6,10 @@ import { CreateInvoice } from './CreateInvoice'
 // Third Party
 import { Button, Divider, Steps } from 'antd'
 // Store
-import { useCart } from '../../../store/useCartStoreZustand'
-import { usePaymentMethodsData } from '../../../store/usePaymentMethodsZustand'
-import { usePOSStep } from '../../../store/usePOSSteps'
-import { useCustomerData } from '../../../store/useCustomerStoreZustand'
+import { useCart } from '@/store/useCartStoreZustand'
+import { usePaymentMethodsData } from '@/store/usePaymentMethodsZustand'
+import { usePOSStep } from '@/store/usePOSSteps'
+import { useCustomerData } from '@/store/useCustomerStoreZustand'
 // Types
 import { PaymentMethodsEnum } from './types/PaymentMethodsTypes'
 

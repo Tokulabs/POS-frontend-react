@@ -1,7 +1,7 @@
-import { IInvoiceProps } from '../pages/Invoices/types/InvoicesTypes'
-import { ICustomerProps } from '../pages/POS/components/types/CustomerTypes'
-import { IPosData } from '../pages/POS/components/types/TableTypes'
-import { IPrintData } from '../types/GlobalTypes'
+import { IInvoiceProps } from '@/pages/Invoices/types/InvoicesTypes'
+import { ICustomerProps } from '@/pages/POS/components/types/CustomerTypes'
+import { IPosData } from '@/pages/POS/components/types/TableTypes'
+import { IPrintData } from '@/types/GlobalTypes'
 
 export const formatNumberToColombianPesos = (num: number, showCurrency = false): string => {
   const formatter = new Intl.NumberFormat('es-CO', {

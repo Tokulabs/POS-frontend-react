@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react'
-import { useDianResolutions } from '../../hooks/useDianResolution'
+import { useDianResolutions } from '@/hooks/useDianResolution'
 import AddDianResolutionForm from './components/AddDianResolutionForm'
 import {
   IconArticle,
@@ -13,7 +13,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { putDiaResolution, toggleDianResolution } from './helpers/services'
 import { Reorder } from 'framer-motion'
 import { UserRolesEnum } from '../Users/types/UserTypes'
-import { useRolePermissions } from '../../hooks/useRolespermissions'
+import { useRolePermissions } from '@/hooks/useRolespermissions'
 import { IDianResolutionProps } from './types/DianResolutionTypes'
 import { toast } from 'sonner'
 

@@ -1,7 +1,7 @@
 import { Progress, Spin } from 'antd'
-import { useGetGoals, useSummmaryByKeyFrame } from '../../../hooks/useSummaryData'
+import { useGetGoals, useSummmaryByKeyFrame } from '@/hooks/useSummaryData'
 import { IGeneralGoals } from '../types/DashboardTypes'
-import { formatNumberToColombianPesos } from '../../../utils/helpers'
+import { formatNumberToColombianPesos } from '@/utils/helpers'
 import { useMemo } from 'react'
 
 type GoalType = 'diary' | 'weekly' | 'monthly' | 'annual'

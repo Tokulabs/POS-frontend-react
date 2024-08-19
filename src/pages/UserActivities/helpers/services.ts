@@ -1,7 +1,7 @@
-import { axiosRequest } from '../../../api/api'
-import { formatDateTime } from '../../../layouts/helpers/helpers'
-import { IQueryParams, IPaginationProps } from '../../../types/GlobalTypes'
-import { activitiesURL } from '../../../utils/network'
+import { axiosRequest } from '@/api/api'
+import { formatDateTime } from '@/layouts/helpers/helpers'
+import { IQueryParams, IPaginationProps } from '@/types/GlobalTypes'
+import { activitiesURL } from '@/utils/network'
 import { IActivitiesProps } from '../types/UserActivities'
 
 export const getUserActivitiesNew = async (queryParams: IQueryParams) => {

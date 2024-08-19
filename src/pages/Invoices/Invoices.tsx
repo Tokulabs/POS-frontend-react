@@ -7,28 +7,28 @@ import { IconEdit, IconFileOff, IconPrinter, IconX } from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 // Custom Components and Layouts
-import PrintOut from '../../components/Print/PrintOut'
-import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
+import PrintOut from '@/components/Print/PrintOut'
+import ContentLayout from '@/layouts/ContentLayout/ContentLayout'
 import { ChangePaymentMethodsInvoice } from './Components/ChangePaymentMethodsInvoice'
 // Types
-import { DataPropsForm, IPrintData } from '../../types/GlobalTypes'
+import { DataPropsForm, IPrintData } from '@/types/GlobalTypes'
 import { IInvoiceMinimalProps, IInvoiceProps } from './types/InvoicesTypes'
-import { ModalStateEnum } from '../../types/ModalTypes'
+import { ModalStateEnum } from '@/types/ModalTypes'
 import { PaymentMethodsEnum } from '../POS/components/types/PaymentMethodsTypes'
 import { UserRolesEnum } from '../Users/types/UserTypes'
 // Data
 import { columns } from './data/columnsData'
 // Helpers and Utilities
-import { formatDateTime } from '../../layouts/helpers/helpers'
+import { formatDateTime } from '@/layouts/helpers/helpers'
 import {
   buildPrintDataFromInvoiceProps,
   formatNumberToColombianPesos,
   formatToUsd,
-} from '../../utils/helpers'
+} from '@/utils/helpers'
 import { getInvoiceByCode, patchOverrideInvoice } from './helpers/services'
 // Hooks
-import { useInvoices } from '../../hooks/useInvoices'
-import { useRolePermissions } from '../../hooks/useRolespermissions'
+import { useInvoices } from '@/hooks/useInvoices'
+import { useRolePermissions } from '@/hooks/useRolespermissions'
 
 const Invoices: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)

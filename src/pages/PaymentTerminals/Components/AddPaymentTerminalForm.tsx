@@ -1,7 +1,7 @@
 import { Modal, Input, Switch, Button, Form } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { FC } from 'react'
-import { DataPropsForm } from '../../../types/GlobalTypes'
+import { DataPropsForm } from '@/types/GlobalTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { postPaymentTerminals, putPaymentTerminals } from '../helpers/services'
 import { IAddPaymentTerminals } from '../types/PaymentTerminalTypes'

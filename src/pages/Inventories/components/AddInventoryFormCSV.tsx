@@ -1,9 +1,9 @@
 import { Form, Modal, Button } from 'antd'
 import { ChangeEvent, FC, useState } from 'react'
-import { inventoryCSVURL } from '../../../utils/network'
+import { inventoryCSVURL } from '@/utils/network'
 import { useForm } from 'antd/es/form/Form'
-import { axiosRequest } from '../../../api/api'
-import { IModalFormProps } from '../../../types/ModalTypes'
+import { axiosRequest } from '@/api/api'
+import { IModalFormProps } from '@/types/ModalTypes'
 import { toast } from 'sonner'
 
 const AddInventoryFormCSV: FC<IModalFormProps> = ({

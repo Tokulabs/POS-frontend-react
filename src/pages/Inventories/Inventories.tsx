@@ -1,9 +1,9 @@
 import { FC, useState } from 'react'
-import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
+import ContentLayout from '@/layouts/ContentLayout/ContentLayout'
 import { columns } from './data/columnsData'
 import { IInventoryProps } from './types/InventoryTypes'
-import { formatNumberToColombianPesos, formatToUsd } from '../../utils/helpers'
-import { useInventories } from '../../hooks/useInventories'
+import { formatNumberToColombianPesos, formatToUsd } from '@/utils/helpers'
+import { useInventories } from '@/hooks/useInventories'
 import { IconCircleCheck, IconCircleX } from '@tabler/icons-react'
 import { Switch } from 'antd'
 

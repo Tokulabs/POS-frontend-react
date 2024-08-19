@@ -6,18 +6,18 @@ import { useQueryClient } from '@tanstack/react-query'
 import { debounce } from 'lodash'
 import { IconTablePlus } from '@tabler/icons-react'
 // Types
-import { IInventoryProps } from '../../Inventories/types/InventoryTypes'
+import { IInventoryProps } from '@/pages/Inventories/types/InventoryTypes'
 import { IPosData } from './types/TableTypes'
 // Store
-import { useCart } from '../../../store/useCartStoreZustand'
+import { useCart } from '@/store/useCartStoreZustand'
 // Helpers
-import { getInventoriesNew } from '../../Inventories/helpers/services'
+import { getInventoriesNew } from '@/pages/Inventories/helpers/services'
 // Data
 import { TableData } from '../Data/TableData'
 // Components
 import { TableHeader } from './TableHeader'
 import { TableRow } from './TableRow'
-import { useKeyPress } from '../../../hooks/useKeyPress'
+import { useKeyPress } from '@/hooks/useKeyPress'
 
 export const AddItemsToPurchase = () => {
   const [value, setValue] = useState<string>()

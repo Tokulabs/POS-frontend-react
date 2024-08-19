@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from 'react'
-import { authHandler } from '../pages/Auth/helpers'
-import { IAuthProps } from '../types/AuthTypes'
-import { ActionTypes } from '../types/StoreTypes'
-import { IUser } from '../types/UserType'
-import { store } from './../store/index'
+import { authHandler } from '@/pages/Auth/helpers'
+import { IAuthProps } from '@/types/AuthTypes'
+import { ActionTypes } from '@/types/StoreTypes'
+import { IUser } from '@/types/UserType'
+import { store } from '@/store/index'
 
 export const useAuth = (AuthCallbacks: IAuthProps) => {
   const { dispatch } = useContext(store)

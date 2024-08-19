@@ -1,6 +1,6 @@
-import { SalesChart } from '../../../components/Charts/SalesChart'
+import { SalesChart } from '@/components/Charts/SalesChart'
 import { Spin } from 'antd'
-import { useSummmaryByKeyFrame } from '../../../hooks/useSummaryData'
+import { useSummmaryByKeyFrame } from '@/hooks/useSummaryData'
 import { FC } from 'react'
 import { ISummaryByKeyframe } from '../types/DashboardTypes'
 

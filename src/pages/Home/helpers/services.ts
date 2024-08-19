@@ -1,12 +1,12 @@
-import { axiosRequest } from '../../../api/api'
-import { DataPropsForm, IQueryParams } from '../../../types/GlobalTypes'
+import { axiosRequest } from '@/api/api'
+import { DataPropsForm, IQueryParams } from '@/types/GlobalTypes'
 import {
   summaryByHour,
   summaryByKeyframe,
   salesByUser,
   purchaseSummaryURL,
   topSellURL,
-} from '../../../utils/network'
+} from '@/utils/network'
 import {
   IPurchaseSummaryProps,
   ISalesByUser,

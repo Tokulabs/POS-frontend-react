@@ -1,11 +1,11 @@
 import { DatePicker, Image, Spin, Tooltip } from 'antd'
 import { useState } from 'react'
 import { IconCameraOff } from '@tabler/icons-react'
-import { useTopSellingProducts } from '../../../hooks/useSummaryData'
+import { useTopSellingProducts } from '@/hooks/useSummaryData'
 import moment from 'moment'
 import dayjs from 'dayjs'
 import { UserRolesEnum } from '../../Users/types/UserTypes'
-import { useRolePermissions } from '../../../hooks/useRolespermissions'
+import { useRolePermissions } from '@/hooks/useRolespermissions'
 
 const TopSell = () => {
   const dateFormat = 'YYYY-MM-DD'

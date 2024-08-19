@@ -1,22 +1,22 @@
 import { FC, PropsWithChildren, useContext, useEffect, useState } from 'react'
-import UserAvatar from '../../assets/icons/user-avatar.svg'
+import UserAvatar from '@/assets/icons/user-avatar.svg'
 import { IconBookDownload, IconLogout, IconTargetArrow } from '@tabler/icons-react'
-import { logout } from '../../pages/Auth/helpers'
+import { logout } from '@/pages/Auth/helpers'
 import { SideBarData } from './data/data'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { store } from '../../store'
+import { store } from '@/store'
 import { formatDateTime } from '../helpers/helpers'
-import { useRolePermissions } from '../../hooks/useRolespermissions'
-import { useCart } from '../../store/useCartStoreZustand'
-import { useCustomerData } from '../../store/useCustomerStoreZustand'
-import { usePOSStep } from '../../store/usePOSSteps'
-import { usePaymentMethodsData } from '../../store/usePaymentMethodsZustand'
+import { useRolePermissions } from '@/hooks/useRolespermissions'
+import { useCart } from '@/store/useCartStoreZustand'
+import { useCustomerData } from '@/store/useCustomerStoreZustand'
+import { usePOSStep } from '@/store/usePOSSteps'
+import { usePaymentMethodsData } from '@/store/usePaymentMethodsZustand'
 import { Image, Tooltip } from 'antd'
-import { DownloadReports } from '../../components/DownloadReports/DownloadReports'
-import { ModalStateEnum } from '../../types/ModalTypes'
-import { UserRolesEnum } from '../../pages/Users/types/UserTypes'
-import KiospotLogoHorizontal from '../../assets/logos/Kiospot_logo_horizontal.webp'
-import { AddGoals } from '../../components/Goals/AddGoals'
+import { DownloadReports } from '@/components/DownloadReports/DownloadReports'
+import { ModalStateEnum } from '@/types/ModalTypes'
+import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
+import KiospotLogoHorizontal from '@/assets/logos/Kiospot_logo_horizontal.webp'
+import { AddGoals } from '@/components/Goals/AddGoals'
 
 const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
@@ -85,6 +85,9 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
               <div className='flex gap-1 justify-center sm-0 text-[10px] text-white'>
                 <span>Última conexión:</span>
                 <span>{formatDateTime(state.user?.last_login)}</span>
+              </div>
+              <div className='flex gap-1 justify-center sm-0 text-[10px] text-white'>
+                <span>{state.user?.company.name}</span>
               </div>
             </div>
           </div>

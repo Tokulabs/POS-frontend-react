@@ -1,7 +1,7 @@
-import { axiosRequest } from '../../../api/api'
-import { formatDateTime } from '../../../layouts/helpers/helpers'
-import { IQueryParams, IPaginationProps, DataPropsForm } from '../../../types/GlobalTypes'
-import { createUserURL, usersURL } from '../../../utils/network'
+import { axiosRequest } from '@/api/api'
+import { formatDateTime } from '@/layouts/helpers/helpers'
+import { IQueryParams, IPaginationProps, DataPropsForm } from '@/types/GlobalTypes'
+import { createUserURL, usersURL } from '@/utils/network'
 import { IUserProps, UserRolesEnum } from '../types/UserTypes'
 
 export const getUsersNew = async (queryParams: IQueryParams) => {
