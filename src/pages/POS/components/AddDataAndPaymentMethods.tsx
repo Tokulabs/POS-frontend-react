@@ -6,16 +6,16 @@ import { useQueryClient } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 import { IconEdit, IconPlus } from '@tabler/icons-react'
 // Store
-import { useCustomerData } from '../../../store/useCustomerStoreZustand'
-import { useUsers } from '../../../hooks/useUsers'
-import { useCart } from '../../../store/useCartStoreZustand'
+import { useCustomerData } from '@/store/useCustomerStoreZustand'
+import { useUsers } from '@/hooks/useUsers'
+import { useCart } from '@/store/useCartStoreZustand'
 // Helpers
 import { getCustomers } from '../helpers/services'
 // Types
 import { ICustomerProps } from './types/CustomerTypes'
-import { UserRolesEnum } from '../../Users/types/UserTypes'
+import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 // Hooks
-import { useRolePermissions } from '../../../hooks/useRolespermissions'
+import { useRolePermissions } from '@/hooks/useRolespermissions'
 
 export const AddDataAndPaymentMethods = () => {
   const [isLoadingSearch, setIsLoadingSearch] = useState(false)

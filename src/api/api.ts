@@ -1,9 +1,10 @@
 import axios, { AxiosResponse } from 'axios'
-import { IAuthToken, ICustomAxiosError } from '../types/AuthTypes'
-import { DataPropsForm } from '../types/GlobalTypes'
-import { tokenName } from '../utils/constants'
+import { IAuthToken, ICustomAxiosError } from '@/types/AuthTypes'
+import { DataPropsForm } from '@/types/GlobalTypes'
+import { tokenName } from '@/utils/constants'
 import { toast } from 'sonner'
 import { isObject } from 'lodash'
+import { logout } from '@/pages/Auth/helpers'
 
 interface IAxiosRequestProps {
   method?: 'get' | 'post' | 'patch' | 'delete' | 'put'
@@ -50,6 +51,10 @@ export const axiosRequest = async <T>({
   } catch (e: unknown) {
     if (!showError) return null
     const err = e as ICustomAxiosError
+    if (err.status === 403) {
+      logout()
+      window.location.reload()
+    }
     const errorObjectDescription = errorObject?.description
     const errorMessage =
       err.response?.data?.error ??

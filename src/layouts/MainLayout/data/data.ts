@@ -13,19 +13,19 @@ import {
   IconProps,
   Icon,
 } from '@tabler/icons-react'
-import { UserRolesEnum } from '../../../pages/Users/types/UserTypes'
+import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 import { FC, ForwardRefExoticComponent, RefAttributes } from 'react'
-import { Home } from '../../../pages/Home/Home'
-import { Inventories } from '../../../pages/Inventories/Inventories'
-import { Invoices } from '../../../pages/Invoices/Invoices'
-import { POS } from '../../../pages/POS/POS'
-import { InventoryGroups } from '../../../pages/Groups/InventoryGroups'
-import { Users } from '../../../pages/Users/Users'
-import { UserActivities } from '../../../pages/UserActivities/UserActivities'
-import { Dian } from '../../../pages/Dian/Dian'
-import { Storage } from '../../../pages/Storage/Storage'
-import { PaymentTerminals } from '../../../pages/PaymentTerminals/PaymentTerminals'
-import { Providers } from '../../../pages/Providers/Providers'
+import { Home } from '@/pages/Home/Home'
+import { Inventories } from '@/pages/Inventories/Inventories'
+import { Invoices } from '@/pages/Invoices/Invoices'
+import { POS } from '@/pages/POS/POS'
+import { InventoryGroups } from '@/pages/Groups/InventoryGroups'
+import { Users } from '@/pages/Users/Users'
+import { UserActivities } from '@/pages/UserActivities/UserActivities'
+import { Dian } from '@/pages/Dian/Dian'
+import { Storage } from '@/pages/Storage/Storage'
+import { PaymentTerminals } from '@/pages/PaymentTerminals/PaymentTerminals'
+import { Providers } from '@/pages/Providers/Providers'
 
 interface ISideBarData {
   icon: ForwardRefExoticComponent<Omit<IconProps, 'ref'> & RefAttributes<Icon>>

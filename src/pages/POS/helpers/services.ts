@@ -1,6 +1,6 @@
-import { axiosRequest } from '../../../api/api'
-import { IQueryParams, IPaginationProps, DataPropsForm } from '../../../types/GlobalTypes'
-import { customerURL } from '../../../utils/network'
+import { axiosRequest } from '@/api/api'
+import { IQueryParams, IPaginationProps, DataPropsForm } from '@/types/GlobalTypes'
+import { customerURL } from '@/utils/network'
 import { ICustomerProps } from '../components/types/CustomerTypes'
 
 export const getCustomers = async (queryParams: IQueryParams) => {

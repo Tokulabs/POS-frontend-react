@@ -9,7 +9,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { SalesByUser } from './components/SalesByUser'
 import { GeneralGoals } from './components/GeneralGoals'
 import { UserRolesEnum } from '../Users/types/UserTypes'
-import { useRolePermissions } from '../../hooks/useRolespermissions'
+import { useRolePermissions } from '@/hooks/useRolespermissions'
 
 const Home: FC = () => {
   const [dataType, setDataType] = useState('daily')

@@ -1,9 +1,9 @@
 import { FC, PropsWithChildren, ReactNode } from 'react'
 import { Button, Table, Tooltip } from 'antd'
-import { DataPropsForm } from '../../types/GlobalTypes'
+import { DataPropsForm } from '@/types/GlobalTypes'
 import Search from 'antd/es/input/Search'
 import { IconCirclePlus, IconRefresh } from '@tabler/icons-react'
-import { useKeyPress } from '../../hooks/useKeyPress'
+import { useKeyPress } from '@/hooks/useKeyPress'
 
 interface IContentLayoutProps {
   pageTitle: string

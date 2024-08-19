@@ -5,12 +5,12 @@ import { useForm } from 'antd/es/form/Form'
 import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
 // Store
-import { useCustomerData } from '../../../store/useCustomerStoreZustand'
+import { useCustomerData } from '@/store/useCustomerStoreZustand'
 // Types
-import { DataPropsForm } from '../../../types/GlobalTypes'
+import { DataPropsForm } from '@/types/GlobalTypes'
 // Helpers
 import { postCustomers, putCustomersEdit } from '../helpers/services'
-import { UserDocumentTypeEnum } from '../../Users/types/UserTypes'
+import { UserDocumentTypeEnum } from '@/pages/Users/types/UserTypes'
 
 export const AddCustomerModal: FC = () => {
   const [form] = useForm()

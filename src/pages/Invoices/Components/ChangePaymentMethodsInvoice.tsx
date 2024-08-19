@@ -1,16 +1,16 @@
 import { Button, Modal, Spin } from 'antd'
 import { FC, useCallback, useMemo } from 'react'
-import { AddPaymentMethods } from '../../POS/components/AddPaymentMethods'
-import { useGetinvoiceByCode } from '../../../hooks/useInvoices'
-import { buildPrintDataFromInvoiceProps, calcTotalPrices } from '../../../utils/helpers'
+import { AddPaymentMethods } from '@/pages/POS/components/AddPaymentMethods'
+import { useGetinvoiceByCode } from '@/hooks/useInvoices'
+import { buildPrintDataFromInvoiceProps, calcTotalPrices } from '@/utils/helpers'
 import { IInvoiceProps } from '../types/InvoicesTypes'
-import { useCart } from '../../../store/useCartStoreZustand'
-import { usePaymentMethodsData } from '../../../store/usePaymentMethodsZustand'
+import { useCart } from '@/store/useCartStoreZustand'
+import { usePaymentMethodsData } from '@/store/usePaymentMethodsZustand'
 import {
   IPaymentMethod,
   IPaymentMethodToSend,
   PaymentMethodsEnum,
-} from '../../POS/components/types/PaymentMethodsTypes'
+} from '@/pages/POS/components/types/PaymentMethodsTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { updatePaymentMethods } from '../helpers/services'
 import { toast } from 'sonner'

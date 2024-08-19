@@ -1,6 +1,6 @@
-import { axiosRequest } from '../../../api/api'
-import { IQueryParams, IPaginationProps, DataPropsForm } from '../../../types/GlobalTypes'
-import { paymentTerminalsURL } from '../../../utils/network'
+import { axiosRequest } from '@/api/api'
+import { IQueryParams, IPaginationProps, DataPropsForm } from '@/types/GlobalTypes'
+import { paymentTerminalsURL } from '@/utils/network'
 import { IPaymentTerminal } from '../types/PaymentTerminalTypes'
 
 export const getPaymentTerminals = async (queryParams: IQueryParams) => {

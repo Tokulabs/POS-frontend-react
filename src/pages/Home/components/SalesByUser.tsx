@@ -1,13 +1,13 @@
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar'
 import 'react-circular-progressbar/dist/styles.css'
-import { useSummaryByUser } from '../../../hooks/useSummaryData'
+import { useSummaryByUser } from '@/hooks/useSummaryData'
 import moment from 'moment'
-import { formatNumberToColombianPesos } from '../../../utils/helpers'
+import { formatNumberToColombianPesos } from '@/utils/helpers'
 import { DatePicker, DatePickerProps, Spin } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useRef, useState } from 'react'
-import { UserRolesEnum } from '../../Users/types/UserTypes'
-import { useRolePermissions } from '../../../hooks/useRolespermissions'
+import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
+import { useRolePermissions } from '@/hooks/useRolespermissions'
 import { motion } from 'framer-motion'
 
 const SalesByUser = () => {

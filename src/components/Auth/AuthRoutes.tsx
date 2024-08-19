@@ -1,9 +1,9 @@
 import { FC, useState } from 'react'
-import { useAuth } from '../../hooks/useAuth'
-import { logout } from '../../pages/Auth/helpers'
-import { IAuthProps } from '../../types/AuthTypes'
-import Loading from '../Loading/Loading'
-import { MainLayout } from '../../layouts/MainLayout/MainLayout'
+import { useAuth } from '@/hooks/useAuth'
+import { logout } from '@/pages/Auth/helpers'
+import { IAuthProps } from '@/types/AuthTypes'
+import Loading from '@/components/Loading/Loading'
+import { MainLayout } from '@/layouts/MainLayout/MainLayout'
 import { Outlet, useNavigate } from 'react-router-dom'
 
 export const AuthRoutes: FC = () => {

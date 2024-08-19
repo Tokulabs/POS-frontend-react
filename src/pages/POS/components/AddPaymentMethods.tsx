@@ -5,12 +5,12 @@ import { IconPlus, IconTrash } from '@tabler/icons-react'
 // Types
 import { IPaymentMethod, PaymentMethodsEnum } from './types/PaymentMethodsTypes'
 // Store
-import { usePaymentMethodsData } from '../../../store/usePaymentMethodsZustand'
-import { useCart } from '../../../store/useCartStoreZustand'
+import { usePaymentMethodsData } from '@/store/usePaymentMethodsZustand'
+import { useCart } from '@/store/useCartStoreZustand'
 // Helpers
-import { formatNumberToColombianPesos, formatToUsd } from '../../../utils/helpers'
+import { formatNumberToColombianPesos, formatToUsd } from '@/utils/helpers'
 // Hooks
-import { usePaymentTerminals } from '../../../hooks/usePaymentTerminals'
+import { usePaymentTerminals } from '@/hooks/usePaymentTerminals'
 
 const OPTIONS = [
   PaymentMethodsEnum.cash,

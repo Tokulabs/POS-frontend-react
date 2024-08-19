@@ -1,6 +1,6 @@
-import { axiosRequest } from '../../../api/api'
-import { IQueryParams, IPaginationProps, DataPropsForm } from '../../../types/GlobalTypes'
-import { inventoryURL, uploadImageAWSURL } from '../../../utils/network'
+import { axiosRequest } from '@/api/api'
+import { IQueryParams, IPaginationProps, DataPropsForm } from '@/types/GlobalTypes'
+import { inventoryURL, uploadImageAWSURL } from '@/utils/network'
 import { IInventoryProps, ImageUploadAWSProps } from '../types/InventoryTypes'
 
 export const getInventoriesNew = async (queryParams: IQueryParams) => {

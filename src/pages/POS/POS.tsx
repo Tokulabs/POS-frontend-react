@@ -4,10 +4,10 @@ import { POSStepper } from './components/StepperPOS'
 import { AddCustomerModal } from './components/AddCustomerModal'
 import { SideBarDataPOS } from './components/SideBarDataPOS'
 // Store
-import { useCustomerData } from '../../store/useCustomerStoreZustand'
-import { usePOSStep } from '../../store/usePOSSteps'
+import { useCustomerData } from '@/store/useCustomerStoreZustand'
+import { usePOSStep } from '@/store/usePOSSteps'
 // Hooks
-import { useDianResolutions } from '../../hooks/useDianResolution'
+import { useDianResolutions } from '@/hooks/useDianResolution'
 // Third Party
 import { IconFileSad } from '@tabler/icons-react'
 import { Spin } from 'antd'

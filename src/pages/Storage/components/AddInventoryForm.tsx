@@ -1,16 +1,19 @@
 import { Form, Modal, Input, Select, Button, Spin } from 'antd'
 import { FC, useState } from 'react'
-import { DataPropsForm } from '../../../types/GlobalTypes'
+import { DataPropsForm } from '@/types/GlobalTypes'
 import { useForm } from 'antd/es/form/Form'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   awsPostImagetoS3,
   postInventoriesNew,
   putInventoriesEdit,
-} from '../../Inventories/helpers/services'
-import { IAddInventoryFormProps, ImageUploadAWSProps } from '../../Inventories/types/InventoryTypes'
+} from '@/pages/Inventories/helpers/services'
+import {
+  IAddInventoryFormProps,
+  ImageUploadAWSProps,
+} from '@/pages/Inventories/types/InventoryTypes'
 import { toast } from 'sonner'
-import { ImageUpload } from '../../../components/ImageUpload/ImageUpload'
+import { ImageUpload } from '@/components/ImageUpload/ImageUpload'
 
 const AddInventoryForm: FC<IAddInventoryFormProps> = ({
   isVisible = false,

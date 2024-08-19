@@ -1,12 +1,12 @@
 // Helpers
-import { formatNumberToColombianPesos, formatToUsd } from '../../../utils/helpers'
+import { formatNumberToColombianPesos, formatToUsd } from '@/utils/helpers'
 // Components
 import { AddDataAndPaymentMethods } from './AddDataAndPaymentMethods'
-import Clock from '../../../components/Clock/Clock'
+import Clock from '@/components/Clock/Clock'
 // Store
-import { useCart } from '../../../store/useCartStoreZustand'
+import { useCart } from '@/store/useCartStoreZustand'
 // Hooks
-import { useDianResolutions } from '../../../hooks/useDianResolution'
+import { useDianResolutions } from '@/hooks/useDianResolution'
 // Third party
 import { Spin } from 'antd'
 

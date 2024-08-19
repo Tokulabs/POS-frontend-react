@@ -1,16 +1,16 @@
 import { FC, useState } from 'react'
-import ContentLayout from '../../layouts/ContentLayout/ContentLayout'
+import ContentLayout from '@/layouts/ContentLayout/ContentLayout'
 import AddUserForm from './components/AddUserForm'
 import { columns } from './data/columsData'
-import { useUsers } from '../../hooks/useUsers'
+import { useUsers } from '@/hooks/useUsers'
 import { IUserProps, UserDocumentTypeEnum, UserRolesEnum } from './types/UserTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Button, Popconfirm, Switch, Tooltip } from 'antd'
 import { IconCircleCheck, IconCircleX, IconEdit, IconPower } from '@tabler/icons-react'
-import { ModalStateEnum } from '../../types/ModalTypes'
+import { ModalStateEnum } from '@/types/ModalTypes'
 import { toggleActiveUser } from './helpers/services'
 import { toast } from 'sonner'
-import { useRolePermissions } from '../../hooks/useRolespermissions'
+import { useRolePermissions } from '@/hooks/useRolespermissions'
 
 const Users: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)

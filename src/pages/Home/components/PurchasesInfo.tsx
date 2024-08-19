@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { Spin, DatePicker } from 'antd'
-import { formatNumberToColombianPesos, formatToUsd } from '../../../utils/helpers'
-import { usePurchaseSummary } from '../../../hooks/useSummaryData'
+import { formatNumberToColombianPesos, formatToUsd } from '@/utils/helpers'
+import { usePurchaseSummary } from '@/hooks/useSummaryData'
 import moment from 'moment'
 import dayjs from 'dayjs'
-import { useRolePermissions } from '../../../hooks/useRolespermissions'
-import { UserRolesEnum } from '../../Users/types/UserTypes'
+import { useRolePermissions } from '@/hooks/useRolespermissions'
+import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 
 const PurchasesInfo = () => {
   const dateFormat = 'YYYY-MM-DD'

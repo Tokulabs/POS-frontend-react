@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from 'react'
 import { Modal, Button, Space, InputNumber, Spin } from 'antd'
 import { IconDeviceFloppy } from '@tabler/icons-react'
 // Hooks
-import { useGetGoals } from '../../hooks/useSummaryData'
+import { useGetGoals } from '@/hooks/useSummaryData'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { postGoalsData, putGoalsData } from './services'
 import { toast } from 'sonner'

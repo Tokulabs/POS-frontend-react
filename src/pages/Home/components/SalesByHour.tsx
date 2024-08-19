@@ -1,6 +1,6 @@
-import { SalesChart } from '../../../components/Charts/SalesChart'
+import { SalesChart } from '@/components/Charts/SalesChart'
 import { Spin } from 'antd'
-import { useSummaryByhour } from '../../../hooks/useSummaryData'
+import { useSummaryByhour } from '@/hooks/useSummaryData'
 import { FC } from 'react'
 
 interface ISalesByHour {

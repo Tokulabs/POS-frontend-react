@@ -1,12 +1,12 @@
 import { FC, useState } from 'react'
-import Authcomponent from '../../components/Auth/AuthComponent'
-import { IAuthProps, ILoginResponseData } from '../../types/AuthTypes'
-import { loginURL } from '../../utils/network'
-import { tokenName } from '../../utils/constants'
+import Authcomponent from '@/components/Auth/AuthComponent'
+import { IAuthProps, ILoginResponseData } from '@/types/AuthTypes'
+import { loginURL } from '@/utils/network'
+import { tokenName } from '@/utils/constants'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../../hooks/useAuth'
-import { axiosRequest } from '../../api/api'
-import { DataPropsForm } from '../../types/GlobalTypes'
+import { useAuth } from '@/hooks/useAuth'
+import { axiosRequest } from '@/api/api'
+import { DataPropsForm } from '@/types/GlobalTypes'
 
 const Login: FC = () => {
   const navigate = useNavigate()

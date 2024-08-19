@@ -1,4 +1,4 @@
-import { IModalFormProps } from '../../../types/ModalTypes'
+import { IModalFormProps } from '@/types/ModalTypes'
 
 export interface IGroupsProps {
   id: number

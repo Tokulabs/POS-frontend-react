@@ -2,10 +2,10 @@ import { Moment } from 'moment'
 import {
   PaymentMethodsEnum,
   IPaymentMethodToSend,
-} from '../pages/POS/components/types/PaymentMethodsTypes'
-import { ICustomerProps } from '../pages/POS/components/types/CustomerTypes'
-import { IPosData } from '../pages/POS/components/types/TableTypes'
-import { IDianResolutionProps } from '../pages/Dian/types/DianResolutionTypes'
+} from '@/pages/POS/components/types/PaymentMethodsTypes'
+import { ICustomerProps } from '@/pages/POS/components/types/CustomerTypes'
+import { IPosData } from '@/pages/POS/components/types/TableTypes'
+import { IDianResolutionProps } from '@/pages/Dian/types/DianResolutionTypes'
 
 export interface DataPropsForm {
   [key: string]:

@@ -1,8 +1,8 @@
 import { Form, Modal, Input, Select, Button } from 'antd'
 import { FC } from 'react'
-import { DataPropsForm } from '../../../types/GlobalTypes'
+import { DataPropsForm } from '@/types/GlobalTypes'
 import { useForm } from 'antd/es/form/Form'
-import { useGroups } from '../../../hooks/useGroups'
+import { useGroups } from '@/hooks/useGroups'
 import { IAddGroups, IGroupsProps } from '../types/GroupTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { postGroupsNew, putGroupsNew } from '../helpers/services'
@@ -87,10 +87,12 @@ const AddGroupForm: FC<IAddGroups> = ({
                 .toLowerCase()
                 .localeCompare((optionB?.label ?? '').toLowerCase())
             }
-            options={allGroupsData?.results.map((item: IGroupsProps) => ({
-              value: item.id,
-              label: item.name,
-            }))}
+            options={allGroupsData?.results
+              .filter((e: IGroupsProps) => (isEdit ? e.name !== initialData.name : e))
+              .map((item: IGroupsProps) => ({
+                value: item.id,
+                label: item.name,
+              }))}
           />
         </Form.Item>
         <Form.Item>

@@ -1,13 +1,13 @@
 import { QueryKey, useQuery } from '@tanstack/react-query'
-import { DataPropsForm, IQueryParams } from '../types/GlobalTypes'
+import { DataPropsForm, IQueryParams } from '@/types/GlobalTypes'
 import {
   getSummaryByHour,
   getSummaryByKeyFrame,
   getSummarybyUser,
   postPurchaseSummary,
   postTopSeelingProducts,
-} from '../pages/Home/helpers/services'
-import { getGoalsData } from '../components/Goals/services'
+} from '@/pages/Home/helpers/services'
+import { getGoalsData } from '@/components/Goals/services'
 
 export const useSummaryByhour = (queryKey: string) => {
   const queryKeyToSend: QueryKey = [queryKey]

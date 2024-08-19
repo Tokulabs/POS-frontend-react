@@ -1,6 +1,6 @@
 import { create } from 'zustand'
-import { IPosData } from '../pages/POS/components/types/TableTypes'
-import { calcMetaDataProdudct, calcTotalPrices } from '../utils/helpers'
+import { IPosData } from '@/pages/POS/components/types/TableTypes'
+import { calcMetaDataProdudct, calcTotalPrices } from '@/utils/helpers'
 import { toast } from 'sonner'
 
 interface ICartStore {

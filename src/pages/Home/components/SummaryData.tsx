@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { axiosRequest } from '../../../api/api'
-import { summaryURL } from '../../../utils/network'
+import { axiosRequest } from '@/api/api'
+import { summaryURL } from '@/utils/network'
 import { dataSummary } from '../data/dataSummary'
 import { ISummaryDataProps } from '../types/DashboardTypes'
 import SummaryDataItem from './SummaryDataItem'
