@@ -75,12 +75,12 @@ export const AddPaymentMethods: FC<{
     name === PaymentMethodsEnum.nequi
 
   useEffect(() => {
-    if (isDollar) {
+    if (isDollar || totalCOP === 0) {
       setSelectedItems([PaymentMethodsEnum.cash])
       paymentMethods.map((item) => removePaymentMethod(item.name))
       addPaymentMethod(defaultPaymenthMethod)
     }
-  }, [isDollar])
+  }, [isDollar, totalCOP])
 
   useEffect(() => {
     updateTotalValues()
@@ -265,7 +265,7 @@ export const AddPaymentMethods: FC<{
                     controls={false}
                     autoComplete='off'
                     required={true}
-                    disabled={isDollar}
+                    disabled={isDollar || totalCOP === 0}
                   />
                 </div>
 
@@ -280,7 +280,7 @@ export const AddPaymentMethods: FC<{
                       controls={false}
                       autoComplete='off'
                       required={true}
-                      disabled={isDollar}
+                      disabled={isDollar || totalCOP === 0}
                     />
                   </div>
                 )}

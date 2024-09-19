@@ -51,7 +51,7 @@ export const CreateInvoice = () => {
   const payment_methods: IPaymentMethodToSend[] = []
   paymentMethods.forEach((item) => {
     item.paidAmount.map((paidAmount, index) => {
-      if (paidAmount > 0) {
+      if (paidAmount >= 0) {
         payment_methods.push({
           name: getKeyFromValue(item.name) || null,
           paid_amount: paidAmount,
