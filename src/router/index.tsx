@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { RouteObject, RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Login from '@/pages/Auth/Login'
-import CheckUser from '@/pages/Auth/CheckUser'
+import ForceUpdatePassword from '@/pages/Auth/ForceUpdatePassword'
 import UpdateUserPassword from '@/pages/Auth/UpdateUserPassword'
 import AuthRoutes from '@/components/Auth/AuthRoutes'
 import { useRolePermissions } from '@/hooks/useRolespermissions'
@@ -35,8 +35,8 @@ const Router: FC = () => {
       element: <Login />,
     },
     {
-      path: '/check-user',
-      element: <CheckUser />,
+      path: '/force-update-password',
+      element: <ForceUpdatePassword />,
     },
     {
       path: '/create-password',
