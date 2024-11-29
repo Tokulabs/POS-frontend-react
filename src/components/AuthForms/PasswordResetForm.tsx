@@ -20,7 +20,7 @@ export const PasswordResetForm: FC<IAuthForm> = ({ onSubmit, loading }) => {
       <Form.Item
         label='Codigo de confirmación'
         name='confirmation_code'
-        rules={[{ required: true, message: 'Debes ingresar una contraseña' }]}
+        rules={[{ required: true, message: 'Debes ingresar un código' }]}
       >
         <Input.OTP formatter={(str) => str.toUpperCase()} size='large' />
       </Form.Item>
