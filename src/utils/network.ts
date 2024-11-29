@@ -1,6 +1,9 @@
 const baseURL = import.meta.env.VITE_BASE_URL
 
 export const loginURL = baseURL + 'user/login'
+export const forceUpdatePasswordURL = baseURL + 'user/update-password-required'
+export const passwordRecoveryURL = baseURL + 'user/mail-password-reset'
+export const passswordResetURL = baseURL + 'user/password-reset'
 export const meURL = baseURL + 'user/me'
 export const createUserURL = baseURL + 'user/create-user'
 export const usersURL = baseURL + 'user/users'

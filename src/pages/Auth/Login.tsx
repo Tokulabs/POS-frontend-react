@@ -3,10 +3,11 @@ import Authcomponent from '@/components/Auth/AuthComponent'
 import { IAuthProps, ILoginResponseData } from '@/types/AuthTypes'
 import { loginURL } from '@/utils/network'
 import { tokenName } from '@/utils/constants'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, createSearchParams } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { axiosRequest } from '@/api/api'
 import { DataPropsForm } from '@/types/GlobalTypes'
+import { LoginForm } from '@/components/AuthForms/Login'
 
 const Login: FC = () => {
   const navigate = useNavigate()
@@ -31,8 +32,20 @@ const Login: FC = () => {
         },
       })
       if (response) {
-        localStorage.setItem(tokenName, response.data.access)
-        navigate('/')
+        const accessType = Object.keys(response.data)[0]
+        if (accessType === 'access') {
+          localStorage.setItem(tokenName, response.data.access ?? '')
+          navigate('/')
+          return
+        }
+        const { email } = values
+        navigate({
+          pathname: '/force-update-password',
+          search: createSearchParams({
+            email: email as string,
+            session: response.data.session ?? '',
+          }).toString(),
+        })
       }
     } catch (e) {
       console.log(e)
@@ -41,7 +54,11 @@ const Login: FC = () => {
     }
   }
 
-  return <Authcomponent onSubmit={onSubmit} loading={loading} />
+  return (
+    <Authcomponent>
+      <LoginForm onSubmit={onSubmit} loading={loading} />
+    </Authcomponent>
+  )
 }
 
 export default Login
