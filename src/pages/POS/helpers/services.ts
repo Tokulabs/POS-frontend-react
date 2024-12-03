@@ -70,27 +70,3 @@ export const putCustomersEdit = async (data: { values: DataPropsForm; id: number
     throw new Error(e as string)
   }
 }
-
-// export const deleteInventories = async (id: number) => {
-//   try {
-//     await axiosRequest({
-//       method: 'delete',
-//       url: `${inventoryURL}/${id}/`,
-//       hasAuth: true,
-//     })
-//   } catch (e: unknown) {
-//     throw new Error(e as string)
-//   }
-// }
-
-// export const postImageToCloudinary = async (file: FormData) => {
-//   try {
-//     return await axiosRequest<{ url: string }>({
-//       method: 'post',
-//       url: cloudinaryURL,
-//       payload: file,
-//     })
-//   } catch (e: unknown) {
-//     throw new Error(e as string)
-//   }
-// }

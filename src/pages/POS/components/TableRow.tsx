@@ -32,7 +32,7 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
   }
 
   const changeQuantity = (event: number | null) => {
-    if (!event || event < 0) event = 0
+    if (event === 0) removeFromCart(actualProduct)
     updateQuantity(code, event)
     updateTotalPrice()
   }
@@ -114,6 +114,7 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
           }
           value={quantity}
           controls={false}
+          parser={(value) => (value ? +value : 0)}
           onChange={(event) => changeQuantity(event)}
           autoComplete='off'
           disabled={is_gift}
