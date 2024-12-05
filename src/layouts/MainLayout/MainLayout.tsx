@@ -26,12 +26,14 @@ import { axiosRequest } from '@/api/api'
 import { requestVerificationEmailURL } from '@/utils/network'
 import { toast } from 'sonner'
 import { ConfirmEmailVerification } from '@/components/ConfirmEmailVerification/ConfirmEmailVerify'
+import { useCountDown } from '@/hooks/useCountDown'
 
 const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
   const [modalStateGoals, setModalStateGoals] = useState<ModalStateEnum>(ModalStateEnum.off)
   const [modalVerifyEmail, setModalVerifyEmail] = useState(false)
   const [loadingVerifyRequest, setLoadingVerifyRequest] = useState(false)
+  const [showClickVerify, setShowClickVerify] = useState(true)
 
   const notAllowedRolesDownload = [UserRolesEnum.supportSales]
   const { hasPermission: hasPermissionDownloads } = useRolePermissions({
@@ -46,6 +48,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const { state } = useContext(store)
   const location = useLocation()
   const navigate = useNavigate()
+  const { start, time } = useCountDown(3, () => setShowClickVerify(true))
 
   const { updateCurrentStep } = usePOSStep()
   const { clearPaymentMethods } = usePaymentMethodsData()
@@ -75,6 +78,8 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const verifyEmailRequest = async () => {
     try {
       setLoadingVerifyRequest(true)
+      start()
+      setShowClickVerify(false)
       const response = await axiosRequest<{ message: string }>({
         method: 'post',
         url: requestVerificationEmailURL,
@@ -188,13 +193,20 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
           {!state.user?.is_verified && (
             <div className='w-full z-50 p-5 flex justify-start items-center bg-red-300 text-white rounded-md gap-1'>
               {loadingVerifyRequest ? <Spin /> : <IconAlertTriangleFilled className='mr-2' />}
-              Por favor, verifica tu correo electrónico, haciendo
-              <span
-                className='font-bold hover:cursor-pointer hover:underline hover:text-blue-400'
-                onClick={verifyEmailRequest}
-              >
-                click aquí
-              </span>
+              {showClickVerify && (
+                <>
+                  Por favor, verifica tu correo electrónico, haciendo
+                  <span
+                    className='font-bold hover:cursor-pointer hover:underline hover:text-blue-400'
+                    onClick={verifyEmailRequest}
+                  >
+                    click aquí
+                  </span>
+                </>
+              )}
+              {!showClickVerify && (
+                <span className='font-bold'>Vuelve a intentarlo en: {time}</span>
+              )}
             </div>
           )}
           {children}
