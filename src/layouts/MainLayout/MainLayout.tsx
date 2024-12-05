@@ -1,6 +1,11 @@
 import { FC, PropsWithChildren, useContext, useEffect, useState } from 'react'
 import UserAvatar from '@/assets/icons/user-avatar.svg'
-import { IconBookDownload, IconLogout, IconTargetArrow } from '@tabler/icons-react'
+import {
+  IconBookDownload,
+  IconLogout,
+  IconTargetArrow,
+  IconAlertTriangleFilled,
+} from '@tabler/icons-react'
 import { logout } from '@/pages/Auth/helpers'
 import { SideBarData } from './data/data'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
@@ -11,16 +16,22 @@ import { useCart } from '@/store/useCartStoreZustand'
 import { useCustomerData } from '@/store/useCustomerStoreZustand'
 import { usePOSStep } from '@/store/usePOSSteps'
 import { usePaymentMethodsData } from '@/store/usePaymentMethodsZustand'
-import { Image, Tooltip } from 'antd'
+import { Image, Spin, Tooltip } from 'antd'
 import { DownloadReports } from '@/components/DownloadReports/DownloadReports'
 import { ModalStateEnum } from '@/types/ModalTypes'
 import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 import KiospotLogoHorizontal from '@/assets/logos/Kiospot_logo_horizontal.webp'
 import { AddGoals } from '@/components/Goals/AddGoals'
+import { axiosRequest } from '@/api/api'
+import { requestVerificationEmailURL } from '@/utils/network'
+import { toast } from 'sonner'
+import { ConfirmEmailVerification } from '@/components/ConfirmEmailVerification/ConfirmEmailVerify'
 
 const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
   const [modalStateGoals, setModalStateGoals] = useState<ModalStateEnum>(ModalStateEnum.off)
+  const [modalVerifyEmail, setModalVerifyEmail] = useState(false)
+  const [loadingVerifyRequest, setLoadingVerifyRequest] = useState(false)
 
   const notAllowedRolesDownload = [UserRolesEnum.supportSales]
   const { hasPermission: hasPermissionDownloads } = useRolePermissions({
@@ -59,6 +70,28 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const logoutUser = () => {
     logout()
     navigate('/login')
+  }
+
+  const verifyEmailRequest = async () => {
+    try {
+      setLoadingVerifyRequest(true)
+      const response = await axiosRequest<{ message: string }>({
+        method: 'post',
+        url: requestVerificationEmailURL,
+        errorObject: {
+          message: 'Error al enviar correo de verificación',
+        },
+        hasAuth: true,
+      })
+      if (response?.status === 200) {
+        toast.success(response.data.message)
+        setModalVerifyEmail(true)
+      }
+    } catch (e) {
+      console.log(e)
+    } finally {
+      setLoadingVerifyRequest(false)
+    }
   }
 
   return (
@@ -151,7 +184,21 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
             })}
           </ul>
         </div>
-        <div className='max-h-full w-full overflow-hidden p-5'>{children}</div>
+        <div className='h-full w-full overflow-hidden p-5 flex flex-col gap-4'>
+          {!state.user?.is_verified && (
+            <div className='w-full z-50 p-5 flex justify-start items-center bg-red-300 text-white rounded-md gap-1'>
+              {loadingVerifyRequest ? <Spin /> : <IconAlertTriangleFilled className='mr-2' />}
+              Por favor, verifica tu correo electrónico, haciendo
+              <span
+                className='font-bold hover:cursor-pointer hover:underline hover:text-blue-400'
+                onClick={verifyEmailRequest}
+              >
+                click aquí
+              </span>
+            </div>
+          )}
+          {children}
+        </div>
       </div>
       {modalState === ModalStateEnum.addItem && (
         <DownloadReports
@@ -165,6 +212,13 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
           onSuccessCallback={() => setModalStateGoals(ModalStateEnum.off)}
           isVisible={modalStateGoals === ModalStateEnum.addItem}
           onCancelCallback={() => setModalStateGoals(ModalStateEnum.off)}
+        />
+      )}
+      {modalVerifyEmail && (
+        <ConfirmEmailVerification
+          onSuccessCallback={() => setModalVerifyEmail(false)}
+          isVisible={modalVerifyEmail}
+          onCancelCallback={() => setModalVerifyEmail(false)}
         />
       )}
     </section>
