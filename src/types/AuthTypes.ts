@@ -14,7 +14,8 @@ export interface IAuthToken {
 }
 
 export interface ILoginResponseData {
-  access: string
+  access?: string
+  session?: string
 }
 
 export interface IAuthProps {

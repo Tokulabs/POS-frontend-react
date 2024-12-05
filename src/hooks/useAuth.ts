@@ -9,25 +9,25 @@ export const useAuth = (AuthCallbacks: IAuthProps) => {
   const { dispatch } = useContext(store)
   const [isLogged, setIsLogged] = useState(false)
 
-  useEffect(() => {
-    const checkUser = async () => {
-      const { errorCallback, successCallback } = AuthCallbacks
-      const user: IUser | null = await authHandler()
-      if (!user) {
-        setIsLogged(false)
-        if (errorCallback) {
-          errorCallback()
-        }
-        return
+  const checkUser = async () => {
+    const { errorCallback, successCallback } = AuthCallbacks
+    const user: IUser | null = await authHandler()
+    if (!user) {
+      setIsLogged(false)
+      if (errorCallback) {
+        errorCallback()
       }
-      setIsLogged(true)
-      if (successCallback) {
-        dispatch({ type: ActionTypes.UPDATE_USER_INFO, payload: user })
-        successCallback()
-      }
+      return
     }
+    setIsLogged(true)
+    if (successCallback) {
+      dispatch({ type: ActionTypes.UPDATE_USER_INFO, payload: user })
+      successCallback()
+    }
+  }
+  useEffect(() => {
     checkUser()
   }, [])
 
-  return { isLogged: isLogged }
+  return { isLogged: isLogged, checkUser }
 }

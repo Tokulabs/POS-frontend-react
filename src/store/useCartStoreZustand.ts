@@ -18,7 +18,7 @@ interface ICartStore {
   clearCart: () => void
   updateTotalPrice: () => void
   addDiscountToItem: (code: string, discount: number) => void
-  updateQuantity: (code: string, quantity: number) => void
+  updateQuantity: (code: string, quantity: number | null) => void
   updateIsGift: (code: string, isGift: boolean) => void
   updateSaleById: (id: number) => void
 }
@@ -130,12 +130,12 @@ export const useCart = create<ICartStore>((set, get) => ({
       })
     }
   },
-  updateQuantity: (code: string, quantity: number) => {
+  updateQuantity: (code: string, quantity: number | null) => {
     const { cartItems } = get()
     const productExist = cartItems.find((item) => item.code === code)
     if (productExist) {
       const originalQuantity = productExist.quantity
-      productExist.quantity = quantity
+      productExist.quantity = quantity ?? 0
       if (
         productExist.total_in_shops === 0 ||
         productExist.quantity > (productExist.total_in_shops || 0)

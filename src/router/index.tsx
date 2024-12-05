@@ -1,14 +1,15 @@
 import { FC } from 'react'
 import { RouteObject, RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Login from '@/pages/Auth/Login'
-import CheckUser from '@/pages/Auth/CheckUser'
-import UpdateUserPassword from '@/pages/Auth/UpdateUserPassword'
+import ForceUpdatePassword from '@/pages/Auth/ForceUpdatePassword'
 import AuthRoutes from '@/components/Auth/AuthRoutes'
 import { useRolePermissions } from '@/hooks/useRolespermissions'
 import Notfound from '@/pages/NotFound/404Notfound'
 import { useAuth } from '@/hooks/useAuth'
 import { MainLayout } from '@/layouts/MainLayout/MainLayout'
 import { SideBarData } from '@/layouts/MainLayout/data/data'
+import PasswordRecovery from '@/pages/Auth/PasswordRecovery'
+import PasswordReset from '@/pages/Auth/PasswordReset'
 
 const Router: FC = () => {
   const { isLogged } = useAuth({})
@@ -35,12 +36,16 @@ const Router: FC = () => {
       element: <Login />,
     },
     {
-      path: '/check-user',
-      element: <CheckUser />,
+      path: '/force-update-password',
+      element: <ForceUpdatePassword />,
     },
     {
-      path: '/create-password',
-      element: <UpdateUserPassword />,
+      path: '/password-recovery',
+      element: <PasswordRecovery />,
+    },
+    {
+      path: '/password-reset',
+      element: <PasswordReset />,
     },
     {
       path: '*',

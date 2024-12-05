@@ -5,6 +5,7 @@ export interface IUser {
   created_at: string
   role: string
   last_login: string
+  is_verified: boolean
   company: {
     name: string
     nit: string
