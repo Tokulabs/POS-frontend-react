@@ -34,7 +34,7 @@ const Router: FC = () => {
     {
       path: '/login',
       element: <Login />,
-    },
+    },    
     {
       path: '/force-update-password',
       element: <ForceUpdatePassword />,

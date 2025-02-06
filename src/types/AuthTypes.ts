@@ -22,3 +22,4 @@ export interface IAuthProps {
   errorCallback?: () => void
   successCallback?: () => void
 }
+

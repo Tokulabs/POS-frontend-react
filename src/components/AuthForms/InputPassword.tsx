@@ -65,7 +65,7 @@ const UpdatePasswordContainer: FC<{ handleAllValid: (value: boolean) => void }> 
       <div className='must-container cfb'>
         {mustContainData.map((data, index) => (
           <p className='flex gap-3' key={index}>
-            <span>{data[1] ? '✅' : '❌'}</span>
+            <span>{data[1] ? '✔' : '❌'}</span>
             <span>{data[0]}</span>
           </p>
         ))}

@@ -1,5 +1,5 @@
 import { FC, useState } from 'react'
-import Authcomponent from '@/components/Auth/AuthComponent'
+import ImageCarousel from '@/components/Carrousel/Carrousel'
 import { IAuthProps } from '@/types/AuthTypes'
 import { passswordResetURL } from '@/utils/network'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -51,9 +51,19 @@ const PasswordReset: FC = () => {
   }
 
   return (
-    <Authcomponent titleText='Recuperar contraseña'>
+    <div className="flex w-100 h-100">
+  <div className="md:w-[50%] min-h-[100vh] bg-gray-200 md:flex items-center justify-center hidden">
+    <ImageCarousel/>
+  </div>
+  <div className="w-[50%] min-h-[100vh] flex flex-col items-center justify-center">
+    <div className="w-[60%] h-[100%] translate-y-[-15px] scale-95">
       <PasswordResetForm onSubmit={onSubmit} loading={loading} />
-    </Authcomponent>
+    </div>
+    <p className="text-base font-semibold p-4 fixed bottom-9 text-center">
+      © 2024 Toku Softlabs S.A.S. Todos los derechos reservados
+    </p>
+  </div>
+</div>
   )
 }
 
