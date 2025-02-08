@@ -30,6 +30,11 @@ export const columns = [
     key: 'is_override',
   },
   {
+    title: 'Enviada DIAN',
+    dataIndex: 'is_electronic_invoiced',
+    key: 'is_electronic_invoiced',
+  },
+  {
     title: 'Metodos de pago',
     dataIndex: 'paid_by',
     key: 'paid_by',

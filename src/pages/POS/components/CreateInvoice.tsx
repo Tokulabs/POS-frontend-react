@@ -21,7 +21,7 @@ export const CreateInvoice = () => {
   const [dataToPrint, setDataToPrint] = useState<IPrintData>({} as IPrintData)
   const { cartItems, saleById, clearCart } = useCart()
   const { customer, clearCustomerData } = useCustomerData()
-  const { paymentTerminalID, paymentMethods, clearPaymentMethods, isDollar } =
+  const { paymentTerminalID, paymentMethods, clearPaymentMethods, isDollar, isElectronicInvoice } =
     usePaymentMethodsData()
   const { currentStep, updateCurrentStep } = usePOSStep()
 
@@ -88,6 +88,7 @@ export const CreateInvoice = () => {
     sale_by_id,
     payment_methods,
     is_dollar: isDollar,
+    send_electronic_invoice: isElectronicInvoice,
   }
 
   useEffect(() => {

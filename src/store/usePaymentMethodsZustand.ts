@@ -10,12 +10,14 @@ interface IPaymentMethodStore {
   totalValueReceived: number
   totalReturnedValue: number
   isDollar: boolean
+  isElectronicInvoice: boolean
   paymentTerminalID: number | null
   addPaymentMethod: (data: IPaymentMethod) => void
   removePaymentMethod: (name: string) => void
   clearPaymentMethods: () => void
   updateTotalValues: () => void
   toggleIsDollar: (value?: boolean) => void
+  toggleElectronicInvoice: (value?: boolean) => void
   updatePaidAmount: (name: PaymentMethodsEnum, value: number, index?: number) => void
   updateReceivedAmount: (name: PaymentMethodsEnum, value: number) => void
   updatePaymentTerminalID: (id: number | null) => void
@@ -30,6 +32,7 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
   totalValueReceived: 0,
   totalReturnedValue: 0,
   isDollar: false,
+  isElectronicInvoice: false,
   paymentTerminalID: null,
   updatePaymentTerminalID: (id) => {
     set({
@@ -62,6 +65,7 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
       paymentMethods: [],
       paymentTerminalID: null,
       isDollar: false,
+      isElectronicInvoice: false,
     })
     updateTotalValues()
   },
@@ -83,7 +87,7 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
     })
   },
   toggleIsDollar: (value?: boolean) => {
-    if (value) {
+    if (value !== undefined) {
       set({
         isDollar: value,
       })
@@ -93,6 +97,17 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
         isDollar: !state.isDollar,
       }))
     }
+  },
+  toggleElectronicInvoice: (value?: boolean) => {
+    if (value !== undefined) {
+      set({
+        isElectronicInvoice: value,
+      })
+      return
+    }
+    set((state) => ({
+      isElectronicInvoice: !state.isElectronicInvoice,
+    }))
   },
   updatePaidAmount: (name, value, index = 0) => {
     const { paymentMethods, updateTotalValues } = get()

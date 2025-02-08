@@ -1,10 +1,8 @@
 import { FC } from 'react'
 // Components
 import { POSStepper } from './components/StepperPOS'
-import { AddCustomerModal } from './components/AddCustomerModal'
 import { SideBarDataPOS } from './components/SideBarDataPOS'
 // Store
-import { useCustomerData } from '@/store/useCustomerStoreZustand'
 import { usePOSStep } from '@/store/usePOSSteps'
 // Hooks
 import { useDianResolutions } from '@/hooks/useDianResolution'
@@ -14,7 +12,6 @@ import { Spin } from 'antd'
 import { useNavigate } from 'react-router-dom'
 
 const POS: FC = () => {
-  const { openModalAddCustomer } = useCustomerData()
   const { currentStep } = usePOSStep()
   const navigate = useNavigate()
 
@@ -53,7 +50,6 @@ const POS: FC = () => {
         </section>
       )}
       {currentStep !== 2 && existsResolution ? <SideBarDataPOS /> : null}
-      {openModalAddCustomer && <AddCustomerModal />}
     </section>
   )
 }

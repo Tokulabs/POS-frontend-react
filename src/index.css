@@ -11,4 +11,7 @@
   body {
     font-family: 'Source Sans Pro', sans-serif;
   }
+  :root {
+    --radius: 0.5rem;
+  }
 }
