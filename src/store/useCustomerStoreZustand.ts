@@ -1,7 +1,6 @@
 import { create } from 'zustand'
 
 interface ICustomerDataStore {
-  openModalAddCustomer: boolean
   isEditUser: boolean
   customer: {
     id: number | null
@@ -11,15 +10,13 @@ interface ICustomerDataStore {
     email: string
     phone: string | null
     address: string | null
-    city: string | null
+    city: string
   }
   updateCustomerData: (data: ICustomerDataStore['customer']) => void
   clearCustomerData: () => void
-  toggleModalAddCustomer: (value: boolean, isEdit: boolean) => void
 }
 
 export const useCustomerData = create<ICustomerDataStore>((set) => ({
-  openModalAddCustomer: false,
   isEditUser: false,
   customer: {
     id: null,
@@ -48,12 +45,6 @@ export const useCustomerData = create<ICustomerDataStore>((set) => ({
         address: '',
         city: '',
       },
-    })
-  },
-  toggleModalAddCustomer: (value, isEdit) => {
-    set({
-      openModalAddCustomer: value,
-      isEditUser: isEdit,
     })
   },
 }))

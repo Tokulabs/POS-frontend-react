@@ -12,6 +12,7 @@ import {
   IconUsersGroup,
   IconProps,
   Icon,
+  IconShoppingBag,
 } from '@tabler/icons-react'
 import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 import { FC, ForwardRefExoticComponent, RefAttributes } from 'react'
@@ -26,6 +27,7 @@ import { Dian } from '@/pages/Dian/Dian'
 import { Storage } from '@/pages/Storage/Storage'
 import { PaymentTerminals } from '@/pages/PaymentTerminals/PaymentTerminals'
 import { Providers } from '@/pages/Providers/Providers'
+import { Purchase } from '@/pages/Purchase/Purchase'
 
 interface ISideBarData {
   icon: ForwardRefExoticComponent<Omit<IconProps, 'ref'> & RefAttributes<Icon>>
@@ -137,4 +139,11 @@ export const SideBarData: ISideBarData[] = [
     component: Providers,
     allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
   },
+  // {
+  //   icon: IconShoppingBag,
+  //   title: 'Compras',
+  //   path: '/purchases',
+  //   component: Purchase,
+  //   allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
+  // },
 ]

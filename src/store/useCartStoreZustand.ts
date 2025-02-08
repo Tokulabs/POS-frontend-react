@@ -14,7 +14,7 @@ interface ICartStore {
   totalUSD: number
   saleById: number | null
   addToCart: (IPosData: IPosData) => void
-  removeFromCart: (IPosData: IPosData) => void
+  removeFromCart: (IPosData: IPosData, hardRemove?: boolean) => void
   clearCart: () => void
   updateTotalPrice: () => void
   addDiscountToItem: (code: string, discount: number) => void
@@ -65,8 +65,14 @@ export const useCart = create<ICartStore>((set, get) => ({
       })
     }
   },
-  removeFromCart: (product: IPosData) => {
+  removeFromCart: (product: IPosData, hardRemove: boolean = false) => {
     const { cartItems, addDiscountToItem } = get()
+    if (hardRemove) {
+      set({
+        cartItems: cartItems.filter((item) => item.code !== product.code),
+      })
+      return
+    }
     const productExist = cartItems.find((item) => item.code === product.code)
     if (productExist) {
       const originalQuantity = productExist.quantity

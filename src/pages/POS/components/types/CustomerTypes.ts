@@ -6,5 +6,11 @@ export interface ICustomerProps {
   phone: string | null
   email: string
   address: string | null
-  city: string | null
+  city: City
+}
+
+export interface City {
+  id: number
+  name: string
+  dian_code: string
 }

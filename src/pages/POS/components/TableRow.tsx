@@ -32,7 +32,7 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
   }
 
   const changeQuantity = (event: number | null) => {
-    if (event === 0) removeFromCart(actualProduct)
+    if (event === 0) removeFromCart(actualProduct, true)
     updateQuantity(code, event)
     updateTotalPrice()
   }

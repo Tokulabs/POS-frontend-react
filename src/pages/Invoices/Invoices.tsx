@@ -3,7 +3,7 @@ import { FC, useEffect, useRef, useState } from 'react'
 // Third party
 import { useReactToPrint } from 'react-to-print'
 import { Button, Popconfirm, Spin, Tooltip } from 'antd'
-import { IconEdit, IconFileOff, IconPrinter, IconX } from '@tabler/icons-react'
+import { IconCheck, IconEdit, IconFileOff, IconPrinter, IconSend, IconX } from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 // Custom Components and Layouts
@@ -25,10 +25,15 @@ import {
   formatNumberToColombianPesos,
   formatToUsd,
 } from '@/utils/helpers'
-import { getInvoiceByCode, patchOverrideInvoice } from './helpers/services'
+import {
+  getInvoiceByCode,
+  patchOverrideInvoice,
+  postSendElectronicInvoice,
+} from './helpers/services'
 // Hooks
 import { useInvoices } from '@/hooks/useInvoices'
 import { useRolePermissions } from '@/hooks/useRolespermissions'
+import { Checkbox } from '@/components/ui/checkbox'
 
 const Invoices: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -37,11 +42,14 @@ const Invoices: FC = () => {
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
   const [invoiceIdToEdit, setInvoiceIdToEdit] = useState<number>(0)
   const [search, setSearch] = useState('')
+  const [showInvoicesToSend, setShowInvoicesToSend] = useState(false)
   const queryClient = useQueryClient()
 
   const { isLoading, invoicesData } = useInvoices('paginatedInvoices', {
     keyword: search,
     page: currentPage,
+    ...(showInvoicesToSend && { is_electronic_invoiced: 'False' }),
+    ...(showInvoicesToSend && { send_electronic_invoice: 'True' }),
   })
 
   const allowedRolesOverride = [
@@ -76,6 +84,14 @@ const Invoices: FC = () => {
     },
   })
 
+  const { mutate: mutateElectronicInvoice, isPending: isLoadingElectronicInvoice } = useMutation({
+    mutationFn: postSendElectronicInvoice,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['paginatedInvoices', { page: currentPage }] })
+      toast.info('Factura enivada!')
+    },
+  })
+
   useEffect(() => {
     if (isPrintReady && !isLoadingPrint) {
       handlePrint()
@@ -86,6 +102,10 @@ const Invoices: FC = () => {
   const confirmOverride = (id: string) => {
     if (isLoadingOverride) return
     mutate(id)
+  }
+
+  const sendElectronicInvoice = (id: number) => {
+    mutateElectronicInvoice(id)
   }
 
   const editPaymentInformation = (item: IInvoiceMinimalProps) => () => {
@@ -117,13 +137,18 @@ const Invoices: FC = () => {
         total: formatNumberToColombianPesos(item.total_sum),
         is_dollar: item.is_dollar ? `USD (${formatToUsd(item.total_sum_usd)})` : 'COP',
         is_override: item.is_override ? (
-          <div className='text-red-1'>
+          <div className='text-red-1 w-full flex justify-center items-center'>
             <IconX />
+          </div>
+        ) : null,
+        is_electronic_invoiced: item.is_electronic_invoiced ? (
+          <div className='text-green-1 w-full flex justify-center items-center'>
+            <IconCheck />
           </div>
         ) : null,
         paid_by: (
           <div className='flex justify-start items-center'>
-            {hasPermissionEditPaymentMethods && (
+            {hasPermissionEditPaymentMethods && !item.is_electronic_invoiced && (
               <Button
                 type='link'
                 className='p-0 m-0 flex justify-center items-center'
@@ -157,7 +182,7 @@ const Invoices: FC = () => {
         ),
         action: (
           <div className='flex text-3xl gap-3'>
-            <div className='text-green-1 cursor-pointer'>
+            <div className='text-green-1 cursor-pointer hover:text-green-800'>
               <Popconfirm
                 title='imprimir factua'
                 description='¿Estas seguro deseas imprimir esta factura?'
@@ -169,22 +194,42 @@ const Invoices: FC = () => {
                 <IconPrinter />
               </Popconfirm>
             </div>
-            {isLoadingOverride ? (
+            {isLoadingOverride || isLoadingElectronicInvoice ? (
               <Spin />
             ) : (
-              hasPermission && (
-                <div className='text-red-1 cursor-pointer'>
-                  <Popconfirm
-                    title='Anular factua'
-                    description='¿Estas seguro de anular esta factura?'
-                    onConfirm={() => confirmOverride(item.invoice_number)}
-                    okText='Si, Anular'
-                    cancelText='Cancelar'
-                  >
-                    <IconFileOff />
-                  </Popconfirm>
-                </div>
-              )
+              <>
+                {hasPermissionEditPaymentMethods &&
+                  !item.is_electronic_invoiced &&
+                  !item.is_override && (
+                    <div>
+                      <Tooltip title='Aun no puedes enviar esta factura electrónicamente'>
+                        <Popconfirm
+                          title='Enviar factura electrónica'
+                          description='¿Estas seguro de enviar esta factura?'
+                          onConfirm={() => sendElectronicInvoice(Number(item.id))}
+                          okText='Si, Enviar'
+                          cancelText='Cancelar'
+                          disabled
+                        >
+                          <IconSend className='text-blue-400 opacity-40 cursor-not-allowed' />
+                        </Popconfirm>
+                      </Tooltip>
+                    </div>
+                  )}
+                {hasPermission && !item.is_electronic_invoiced && !item.is_override && (
+                  <div className='text-red-1 cursor-pointer hover:text-red-800'>
+                    <Popconfirm
+                      title='Anular factua'
+                      description='¿Estas seguro de anular esta factura?'
+                      onConfirm={() => confirmOverride(item.invoice_number)}
+                      okText='Si, Anular'
+                      cancelText='Cancelar'
+                    >
+                      <IconFileOff />
+                    </Popconfirm>
+                  </div>
+                )}
+              </>
             )}
           </div>
         ),
@@ -223,6 +268,19 @@ const Invoices: FC = () => {
           setSearch(value)
           setCurrentPage(1)
         }}
+        leftButton={
+          <div className='flex items-center space-x-2'>
+            <Checkbox
+              id='showInvoicesToSend'
+              checked={showInvoicesToSend}
+              onClick={() => setShowInvoicesToSend(!showInvoicesToSend)}
+              className='border-solid border-green-1 rounded-sm data-[state=checked]:bg-green-1'
+            />
+            <label htmlFor='showInvoicesToSend' className='text-sm font-medium leading-none '>
+              Facturar electrónicamente
+            </label>
+          </div>
+        }
       />
       {modalState === ModalStateEnum.addItem && (
         <ChangePaymentMethodsInvoice

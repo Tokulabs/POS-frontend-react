@@ -6,6 +6,7 @@ import {
   invoiceMinimalURL,
   invoiceByCodeURL,
   invoiceUpdatePaymentMethodsURL,
+  eInvoiceDianURL,
 } from '@/utils/network'
 import { IInvoiceMinimalProps, IInvoiceProps } from '../types/InvoicesTypes'
 
@@ -86,5 +87,15 @@ export const updatePaymentMethods = async (data: { invoiceID: string; values: Da
     url: finalURL,
     hasAuth: true,
     payload: data.values,
+  })
+}
+
+export const postSendElectronicInvoice = async (invoiceID: number) => {
+  const finalURL = new URL(eInvoiceDianURL)
+  await axiosRequest<{ succes: boolean }>({
+    method: 'post',
+    url: finalURL,
+    hasAuth: true,
+    payload: { invoice_id: invoiceID },
   })
 }
