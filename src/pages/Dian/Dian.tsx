@@ -16,6 +16,7 @@ import { UserRolesEnum } from '../Users/types/UserTypes'
 import { useRolePermissions } from '@/hooks/useRolespermissions'
 import { IDianResolutionProps } from './types/DianResolutionTypes'
 import { toast } from 'sonner'
+import { ToggleSwitch } from '@/components/ToggleSwitch/ToggleSwitch'
 
 const Dian: FC = () => {
   const [modalState, setModalState] = useState(false)
@@ -23,8 +24,13 @@ const Dian: FC = () => {
   const [edit, setEdit] = useState(false)
   const allowedRolesOverride = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
   const { hasPermission } = useRolePermissions({ allowedRoles: allowedRolesOverride })
+  const [resolutionType, setResolutionType] = useState(0)
 
-  const { dianResolutionData, isPending } = useDianResolutions('allDianResolutions', {})
+  const options = [{ label: 'Resoluciones POS' }, { label: 'Resoluciones F.E.' }]
+
+  const { dianResolutionData, isPending } = useDianResolutions('allDianResolutions', {
+    type: !resolutionType ? 'POS' : 'ElectronicInvoice',
+  })
 
   const sortedDianDataResolution = dianResolutionData?.results.sort((a, b) => {
     if (a.active && !b.active) {
@@ -84,11 +90,18 @@ const Dian: FC = () => {
       ) : (
         <div className='h-full bg-white rounded p-4 flex flex-col justify-between gap-3'>
           <div className='w-full flex justify-between items-end gap-4 mx-auto bg-white'>
-            <div className='w-full flex gap-1 justify-center flex-col'>
+            <div className='w-full flex gap-4 justify-center flex-col'>
               <h4 className='font-bold text-green-1 text-3xl m-0'>Resoluciones DIAN</h4>
-              <span className='font-semibold text-sm'>
-                (Tenga en cuenta que solo puede tener una resolucion de la DIAN activa a la vez)
+              <span className='font-semibold text-xs text-gray-2'>
+                Solo puedes tener una resolución activa a la vez por tipo
               </span>
+              <div className='w-3/4 lg:w-1/2'>
+                <ToggleSwitch
+                  options={options}
+                  selectedIndex={resolutionType}
+                  onSelect={setResolutionType}
+                />
+              </div>
             </div>
             <Button
               className='flex justify-center items-center gap-1'
