@@ -149,7 +149,9 @@ export const AddPaymentMethods: FC<{
     if (paymentMethods.length > 0) {
       const hasCard = paymentMethods.some(
         (item) =>
-          item.name === PaymentMethodsEnum.debitCard || item.name === PaymentMethodsEnum.creditCard,
+          item.name === PaymentMethodsEnum.debitCard ||
+          item.name === PaymentMethodsEnum.creditCard ||
+          item.name === PaymentMethodsEnum.bankTransfer,
       )
       if (hasCard) {
         toggleElectronicInvoice(true)
