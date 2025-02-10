@@ -202,18 +202,15 @@ const Invoices: FC = () => {
                   !item.is_electronic_invoiced &&
                   !item.is_override && (
                     <div>
-                      <Tooltip title='Aun no puedes enviar esta factura electrónicamente'>
-                        <Popconfirm
-                          title='Enviar factura electrónica'
-                          description='¿Estas seguro de enviar esta factura?'
-                          onConfirm={() => sendElectronicInvoice(Number(item.id))}
-                          okText='Si, Enviar'
-                          cancelText='Cancelar'
-                          disabled
-                        >
-                          <IconSend className='text-blue-400 opacity-40 cursor-not-allowed' />
-                        </Popconfirm>
-                      </Tooltip>
+                      <Popconfirm
+                        title='Enviar factura electrónica'
+                        description='¿Estas seguro de enviar esta factura?'
+                        onConfirm={() => sendElectronicInvoice(Number(item.id))}
+                        okText='Si, Enviar'
+                        cancelText='Cancelar'
+                      >
+                        <IconSend className='text-blue-600 hover:text-blue-400 cursor-pointer' />
+                      </Popconfirm>
                     </div>
                   )}
                 {hasPermission && !item.is_electronic_invoiced && !item.is_override && (

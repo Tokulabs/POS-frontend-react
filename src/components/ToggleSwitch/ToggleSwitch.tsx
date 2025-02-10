@@ -2,7 +2,7 @@ import { FC, ReactNode } from 'react'
 
 interface ToggleOption {
   label: string
-  content: ReactNode
+  content?: ReactNode
 }
 
 interface ToggleSwitchProps {
@@ -35,7 +35,9 @@ const ToggleSwitch: FC<ToggleSwitchProps> = ({
           </div>
         ))}
       </header>
-      <div className='mt-4'>{options[selectedIndex].content}</div>
+      <div className={options[selectedIndex].content ? 'mt-4' : ''}>
+        {options[selectedIndex].content}
+      </div>
     </div>
   )
 }
