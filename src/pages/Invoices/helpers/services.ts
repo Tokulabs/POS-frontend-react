@@ -24,6 +24,12 @@ export interface IPurchaseProps {
   totalUSD?: number
 }
 
+export interface eInvoiceInterface {
+  data: {
+    success: boolean
+  }
+}
+
 export const getInvoicesNew = async (queryParams: IQueryParams) => {
   const finalURL = new URL(invoiceMinimalURL)
   const searchParams = new URLSearchParams()
@@ -92,7 +98,7 @@ export const updatePaymentMethods = async (data: { invoiceID: string; values: Da
 
 export const postSendElectronicInvoice = async (invoiceID: number) => {
   const finalURL = new URL(eInvoiceDianURL)
-  await axiosRequest<{ succes: boolean }>({
+  return await axiosRequest<{ success: boolean }>({
     method: 'post',
     url: finalURL,
     hasAuth: true,
