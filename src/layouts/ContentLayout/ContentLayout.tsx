@@ -1,8 +1,8 @@
 import { FC, PropsWithChildren, ReactNode } from 'react'
-import { Button, Table, Tooltip } from 'antd'
+import { Button, Dropdown, Table, Tooltip } from 'antd'
 import { DataPropsForm } from '@/types/GlobalTypes'
 import Search from 'antd/es/input/Search'
-import { IconCirclePlus, IconRefresh } from '@tabler/icons-react'
+import { IconAdjustmentsHorizontal, IconCirclePlus, IconRefresh } from '@tabler/icons-react'
 import { useKeyPress } from '@/hooks/useKeyPress'
 
 interface IContentLayoutProps {
@@ -16,6 +16,7 @@ interface IContentLayoutProps {
   currentPage: number
   extraButton?: ReactNode
   leftButton?: ReactNode
+  filterOptions?: { label: ReactNode; key: number }[]
   onChangePage?: (page: number) => void
   onSearch?: (value: string) => void
 }
@@ -30,6 +31,7 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
   children,
   leftButton,
   extraButton,
+  filterOptions,
   totalItems,
   currentPage,
   onChangePage = () => null,
@@ -55,7 +57,20 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
             )}
           </div>
           <div className='flex items-end gap-3'>
-            <div className='text-green-1 flex gap-4 items-center'>
+            <div className='text-green-1 flex gap-4 items-center justify-center'>
+              {filterOptions && (
+                <Tooltip title='Filtrar datos'>
+                  <Dropdown
+                    menu={{ items: filterOptions }}
+                    placement='bottomRight'
+                    className='cursor-pointer flex items-center justify-center'
+                  >
+                    <a onClick={(e) => e.preventDefault()}>
+                      <IconAdjustmentsHorizontal />
+                    </a>
+                  </Dropdown>
+                </Tooltip>
+              )}
               <Tooltip title='Refrescar datos'>
                 <IconRefresh className='cursor-pointer' onClick={() => onSearch('')} />
               </Tooltip>

@@ -3,7 +3,17 @@ import { FC, useEffect, useRef, useState } from 'react'
 // Third party
 import { useReactToPrint } from 'react-to-print'
 import { Button, Popconfirm, Spin, Tooltip } from 'antd'
-import { IconCheck, IconEdit, IconFileOff, IconPrinter, IconSend, IconX } from '@tabler/icons-react'
+import {
+  IconCheck,
+  IconFiles,
+  IconEdit,
+  IconFileCheck,
+  IconFileOff,
+  IconPrinter,
+  IconSend,
+  IconX,
+  IconFileAlert,
+} from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 // Custom Components and Layouts
@@ -33,7 +43,6 @@ import {
 // Hooks
 import { useInvoices } from '@/hooks/useInvoices'
 import { useRolePermissions } from '@/hooks/useRolespermissions'
-import { Checkbox } from '@/components/ui/checkbox'
 
 const Invoices: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -42,14 +51,21 @@ const Invoices: FC = () => {
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
   const [invoiceIdToEdit, setInvoiceIdToEdit] = useState<number>(0)
   const [search, setSearch] = useState('')
-  const [showInvoicesToSend, setShowInvoicesToSend] = useState(false)
+  const [invoiceStatus, setInvoiceStatus] = useState<'all' | 'sent' | 'notSent' | 'toSent'>('all')
+
   const queryClient = useQueryClient()
+
+  const statusDictionary = {
+    all: {},
+    sent: { is_electronic_invoiced: 'True' },
+    notSent: { is_electronic_invoiced: 'False' },
+    toSent: { send_electronic_invoice: 'True', is_electronic_invoiced: 'False' },
+  }
 
   const { isLoading, invoicesData } = useInvoices('paginatedInvoices', {
     keyword: search,
     page: currentPage,
-    ...(showInvoicesToSend && { is_electronic_invoiced: 'False' }),
-    ...(showInvoicesToSend && { send_electronic_invoice: 'True' }),
+    ...statusDictionary[invoiceStatus],
   })
 
   const allowedRolesOverride = [
@@ -86,11 +102,20 @@ const Invoices: FC = () => {
 
   const { mutate: mutateElectronicInvoice, isPending: isLoadingElectronicInvoice } = useMutation({
     mutationFn: postSendElectronicInvoice,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['paginatedInvoices', { page: currentPage }] })
-      toast.info('Factura enivada!')
+    onSuccess: (response) => {
+      if (response?.data.success) {
+        queryClient.invalidateQueries({ queryKey: ['paginatedInvoices', { page: currentPage }] })
+        toast.info('Factura enviada correctamente!')
+        setCurrentPage(1)
+      } else {
+        toast.error('Ha ocurrido un error al enviar la factura electrónica')
+      }
     },
   })
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [invoiceStatus])
 
   useEffect(() => {
     if (isPrintReady && !isLoadingPrint) {
@@ -265,19 +290,41 @@ const Invoices: FC = () => {
           setSearch(value)
           setCurrentPage(1)
         }}
-        leftButton={
-          <div className='flex items-center space-x-2'>
-            <Checkbox
-              id='showInvoicesToSend'
-              checked={showInvoicesToSend}
-              onClick={() => setShowInvoicesToSend(!showInvoicesToSend)}
-              className='border-solid border-green-1 rounded-sm data-[state=checked]:bg-green-1'
-            />
-            <label htmlFor='showInvoicesToSend' className='text-sm font-medium leading-none '>
-              Facturar electrónicamente
-            </label>
-          </div>
-        }
+        filterOptions={[
+          {
+            label: (
+              <span className='flex items-center gap-3' onClick={() => setInvoiceStatus('sent')}>
+                <IconFileCheck />
+                Enviadas
+              </span>
+            ),
+            key: 0,
+          },
+          {
+            label: (
+              <span className='flex items-center gap-3' onClick={() => setInvoiceStatus('notSent')}>
+                <IconFileAlert /> No enviadas
+              </span>
+            ),
+            key: 1,
+          },
+          {
+            label: (
+              <span className='flex items-center gap-3' onClick={() => setInvoiceStatus('all')}>
+                <IconFiles /> Todas
+              </span>
+            ),
+            key: 2,
+          },
+          {
+            label: (
+              <span className='flex items-center gap-3' onClick={() => setInvoiceStatus('toSent')}>
+                <IconSend /> Por Facturar
+              </span>
+            ),
+            key: 3,
+          },
+        ]}
       />
       {modalState === ModalStateEnum.addItem && (
         <ChangePaymentMethodsInvoice
