@@ -24,12 +24,6 @@ export interface IPurchaseProps {
   totalUSD?: number
 }
 
-export interface eInvoiceInterface {
-  data: {
-    success: boolean
-  }
-}
-
 export const getInvoicesNew = async (queryParams: IQueryParams) => {
   const finalURL = new URL(invoiceMinimalURL)
   const searchParams = new URLSearchParams()

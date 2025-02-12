@@ -12,7 +12,7 @@ import {
   IconPrinter,
   IconSend,
   IconX,
-  IconFileAlert,
+  IconFileDollar,
 } from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -293,33 +293,33 @@ const Invoices: FC = () => {
         filterOptions={[
           {
             label: (
-              <span className='flex items-center gap-3' onClick={() => setInvoiceStatus('sent')}>
-                <IconFileCheck />
-                Enviadas
+              <span className='flex items-center gap-3' onClick={() => setInvoiceStatus('toSent')}>
+                <IconSend /> Pendientes por facturar
               </span>
             ),
             key: 0,
           },
           {
             label: (
-              <span className='flex items-center gap-3' onClick={() => setInvoiceStatus('notSent')}>
-                <IconFileAlert /> No enviadas
+              <span className='flex items-center gap-3' onClick={() => setInvoiceStatus('sent')}>
+                <IconFileCheck />
+                Facturas Electrónicas
               </span>
             ),
             key: 1,
           },
           {
             label: (
-              <span className='flex items-center gap-3' onClick={() => setInvoiceStatus('all')}>
-                <IconFiles /> Todas
+              <span className='flex items-center gap-3' onClick={() => setInvoiceStatus('notSent')}>
+                <IconFileDollar /> Facturas de venta
               </span>
             ),
             key: 2,
           },
           {
             label: (
-              <span className='flex items-center gap-3' onClick={() => setInvoiceStatus('toSent')}>
-                <IconSend /> Por Facturar
+              <span className='flex items-center gap-3' onClick={() => setInvoiceStatus('all')}>
+                <IconFiles /> Todas
               </span>
             ),
             key: 3,
