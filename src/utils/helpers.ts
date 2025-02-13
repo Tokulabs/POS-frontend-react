@@ -1,3 +1,4 @@
+import { IInventoryProps } from '@/pages/Inventories/types/InventoryTypes'
 import { IInvoiceProps } from '@/pages/Invoices/types/InvoicesTypes'
 import { ICustomerProps } from '@/pages/POS/components/types/CustomerTypes'
 import { IPosData } from '@/pages/POS/components/types/TableTypes'
@@ -48,11 +49,14 @@ export const calcMetaDataProdudct = (product: IPosData) => {
   const itemDiscountCOP = itemWithNoTaxCOP * (product.discount / 100)
   const itemDiscountUSD = itemWithNoTaxUSD * (product.discount / 100)
 
-  const itemTaxesCOP = priceQuantityCOP - itemWithNoTaxCOP
-  const itemTaxesUSD = priceQuantityUSD - itemWithNoTaxUSD
+  const itemTaxableIncomeCOP = itemWithNoTaxCOP - itemDiscountCOP
+  const itemTaxableIncomeUSD = itemWithNoTaxUSD - itemDiscountUSD
 
-  const totalItemCOP = itemWithNoTaxCOP - itemDiscountCOP + itemTaxesCOP
-  const totalItemUSD = itemWithNoTaxUSD - itemDiscountUSD + itemTaxesUSD
+  const itemTaxesCOP = itemTaxableIncomeCOP * 0.19
+  const itemTaxesUSD = itemTaxableIncomeUSD * 0.19
+
+  const totalItemCOP = itemTaxableIncomeCOP + itemTaxesCOP
+  const totalItemUSD = itemTaxableIncomeUSD + itemTaxesUSD
 
   return {
     itemWithNoTaxCOP: Math.round(itemWithNoTaxCOP),
@@ -137,5 +141,22 @@ export const buildPrintDataFromInvoiceProps = (invoice: IInvoiceProps): IPrintDa
     paymentMethods: invoice.payment_methods,
     saleBy: invoice.sale_by,
     created_at: invoice.created_at,
+  }
+}
+
+export const formatDatatoIPOSData = (data: IInventoryProps): IPosData => {
+  return {
+    id: data.id,
+    code: data.code,
+    name: data.name,
+    selling_price: data.selling_price,
+    usd_price: data.usd_price,
+    discount: 0,
+    quantity: 1,
+    total: data.selling_price,
+    usd_total: data.usd_price,
+    photo: data.photo || '',
+    total_in_shops: data.total_in_shops,
+    is_gift: false,
   }
 }

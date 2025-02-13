@@ -35,12 +35,14 @@ export const AddPaymentMethods: FC<{
     paymentMethods,
     totalValueToPay,
     isDollar,
+    isElectronicInvoice,
     totalReturnedValue,
     paymentTerminalID,
     addPaymentMethod,
     updateTotalValues,
     removePaymentMethod,
     toggleIsDollar,
+    toggleElectronicInvoice,
     updatePaidAmount,
     updateReceivedAmount,
     updatePaymentTerminalID,
@@ -51,6 +53,7 @@ export const AddPaymentMethods: FC<{
 
   const [selectedItems, setSelectedItems] = useState<PaymentMethodsEnum[]>([])
   const [requirePaymentTerminal, setRequirePaymentTerminal] = useState(false)
+  const [disbaledElectronicSwitch, setDisbaledElectronicSwitch] = useState(false)
 
   const filteredOptions = OPTIONS.filter((o) => {
     if (isDollar) return o === PaymentMethodsEnum.cash
@@ -142,6 +145,24 @@ export const AddPaymentMethods: FC<{
     updatePaymentTerminalID(value)
   }
 
+  useEffect(() => {
+    if (paymentMethods.length > 0) {
+      const hasCard = paymentMethods.some(
+        (item) =>
+          item.name === PaymentMethodsEnum.debitCard ||
+          item.name === PaymentMethodsEnum.creditCard ||
+          item.name === PaymentMethodsEnum.bankTransfer,
+      )
+      if (hasCard) {
+        toggleElectronicInvoice(true)
+        setDisbaledElectronicSwitch(true)
+      } else {
+        toggleElectronicInvoice(false)
+        setDisbaledElectronicSwitch(false)
+      }
+    }
+  }, [paymentMethods])
+
   return (
     <section className='w-full h-full flex flex-col gap-4 relative'>
       <section className='flex flex-col gap-4 bg-white sticky w-full'>
@@ -200,6 +221,19 @@ export const AddPaymentMethods: FC<{
               />
             </span>
             <span className='text-gray-2 font-semibold text-sm'>Pago en USD?</span>
+          </div>
+          <div className='flex flex-col justify-end items-center'>
+            <span className='text-green-1 text-xl font-bold'>
+              <Switch
+                value={isElectronicInvoice}
+                onChange={() => {
+                  console.log('entro aqui onclick switch')
+                  toggleElectronicInvoice()
+                }}
+                disabled={disbaledElectronicSwitch}
+              />
+            </span>
+            <span className='text-gray-2 font-semibold text-sm'>Factura electrónica?</span>
           </div>
         </div>
         <div className='flex gap-4'>

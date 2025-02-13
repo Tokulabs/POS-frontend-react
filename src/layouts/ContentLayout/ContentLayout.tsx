@@ -1,8 +1,8 @@
 import { FC, PropsWithChildren, ReactNode } from 'react'
-import { Button, Table, Tooltip } from 'antd'
+import { Button, Dropdown, Table, Tooltip } from 'antd'
 import { DataPropsForm } from '@/types/GlobalTypes'
 import Search from 'antd/es/input/Search'
-import { IconCirclePlus, IconRefresh } from '@tabler/icons-react'
+import { IconAdjustmentsHorizontal, IconCirclePlus, IconRefresh } from '@tabler/icons-react'
 import { useKeyPress } from '@/hooks/useKeyPress'
 
 interface IContentLayoutProps {
@@ -15,6 +15,8 @@ interface IContentLayoutProps {
   totalItems: number
   currentPage: number
   extraButton?: ReactNode
+  leftButton?: ReactNode
+  filterOptions?: { label: ReactNode; key: number }[]
   onChangePage?: (page: number) => void
   onSearch?: (value: string) => void
 }
@@ -27,7 +29,9 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
   columns,
   fetching,
   children,
+  leftButton,
   extraButton,
+  filterOptions,
   totalItems,
   currentPage,
   onChangePage = () => null,
@@ -44,9 +48,29 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
     <>
       <div className='bg-white h-full rounded p-4 flex flex-col justify-top gap-6'>
         <div className='flex justify-between items-center'>
-          <h1 className='m-0 p-0 text-2xl text-green-1 font-semibold'>{pageTitle}</h1>
+          <div className='flex items-center gap-3'>
+            <h1 className='m-0 p-0 text-2xl text-green-1 font-semibold'>{pageTitle}</h1>
+            {leftButton && (
+              <div className='border-solid border-0 border-l-[1px] border-green-1 pl-3'>
+                {leftButton}
+              </div>
+            )}
+          </div>
           <div className='flex items-end gap-3'>
-            <div className='text-green-1 flex gap-4 items-center'>
+            <div className='text-green-1 flex gap-4 items-center justify-center'>
+              {filterOptions && (
+                <Tooltip title='Filtrar datos'>
+                  <Dropdown
+                    menu={{ items: filterOptions }}
+                    placement='bottomRight'
+                    className='cursor-pointer flex items-center justify-center'
+                  >
+                    <a onClick={(e) => e.preventDefault()}>
+                      <IconAdjustmentsHorizontal />
+                    </a>
+                  </Dropdown>
+                </Tooltip>
+              )}
               <Tooltip title='Refrescar datos'>
                 <IconRefresh className='cursor-pointer' onClick={() => onSearch('')} />
               </Tooltip>

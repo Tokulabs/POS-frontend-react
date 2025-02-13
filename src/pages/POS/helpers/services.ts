@@ -1,7 +1,7 @@
 import { axiosRequest } from '@/api/api'
 import { IQueryParams, IPaginationProps, DataPropsForm } from '@/types/GlobalTypes'
-import { customerURL } from '@/utils/network'
-import { ICustomerProps } from '../components/types/CustomerTypes'
+import { citiesURL, customerURL } from '@/utils/network'
+import { City, ICustomerProps } from '../components/types/CustomerTypes'
 
 export const getCustomers = async (queryParams: IQueryParams) => {
   try {
@@ -67,6 +67,30 @@ export const putCustomersEdit = async (data: { values: DataPropsForm; id: number
     })
     return response?.data
   } catch (e: unknown) {
+    throw new Error(e as string)
+  }
+}
+
+export const getCities = async (queryParams: IQueryParams) => {
+  try {
+    const finalURL = new URL(citiesURL)
+    const searchParams = new URLSearchParams()
+    if (queryParams) {
+      Object.entries(queryParams).forEach(([key, value]) => {
+        if (!value) return
+        searchParams.set(key, value.toString())
+      })
+    }
+    finalURL.search = searchParams.toString()
+    const response = await axiosRequest<IPaginationProps<City>>({
+      url: finalURL,
+      hasAuth: true,
+      showError: false,
+    })
+    if (response) {
+      return response.data.results
+    }
+  } catch (e) {
     throw new Error(e as string)
   }
 }

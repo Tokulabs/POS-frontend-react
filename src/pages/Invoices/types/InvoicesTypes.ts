@@ -24,12 +24,17 @@ export interface IInvoiceProps {
   invoice_number: number
   dian_resolution: IDianResolutionProps
   is_override: boolean
+  send_electronic_invoice: boolean
+  is_electronic_invoiced: boolean
   key?: number
 }
 
 export interface IInvoiceMinimalProps {
+  id: number
   invoice_number: string
   is_dollar: boolean
+  send_electronic_invoice: boolean
+  is_electronic_invoiced: boolean
   is_override: boolean
   created_at: string
   payment_terminal: {
