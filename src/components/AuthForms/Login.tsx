@@ -7,7 +7,7 @@ import { Eye, EyeOff } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Form, FormField, FormItem, FormControl } from '../ui/form'
+import { Form, FormField, FormItem, FormControl, FormMessage } from '../ui/form'
 
 interface IAuthForm {
   onSubmit: (values: { email: string; password: string }) => void
@@ -18,7 +18,7 @@ export const LoginForm: React.FC<IAuthForm> = ({ onSubmit, loading }) => {
   const [showPassword, setShowPassword] = useState(false)
 
   const formSchema = z.object({
-    email: z.string().nonempty('Campo requerido'),
+    email: z.string().email('Debe ser un correo electrónico').nonempty('Campo requerido'),
     password: z.string().nonempty('Campo requerido'),
   })
 
@@ -55,6 +55,7 @@ export const LoginForm: React.FC<IAuthForm> = ({ onSubmit, loading }) => {
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage />
                 </div>
               </FormItem>
             )}
@@ -77,6 +78,7 @@ export const LoginForm: React.FC<IAuthForm> = ({ onSubmit, loading }) => {
                         className='focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 shadow-none w-[400px] h-[40px]'
                       />
                     </FormControl>
+                    <FormMessage />
 
                     {field.value && (
                       <button
@@ -96,7 +98,7 @@ export const LoginForm: React.FC<IAuthForm> = ({ onSubmit, loading }) => {
           <FormItem>
             <Button
               type='submit'
-              className='w-[400px] bg-neutral-900 text-white border-0'
+              className='w-[400px] bg-neutral-900 text-white border-0 cursor-pointer'
               disabled={loading}
             >
               {loading ? 'loading' : 'Ingresar'}

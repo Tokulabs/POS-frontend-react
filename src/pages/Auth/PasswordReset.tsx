@@ -44,7 +44,7 @@ const PasswordReset: FC = () => {
       }
     } catch (e) {
       console.log(e)
-      navigate('/')
+      navigate(`/password-reset?email=${encodeURIComponent(email ?? '')}`)
     } finally {
       setLoading(false)
     }

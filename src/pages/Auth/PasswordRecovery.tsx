@@ -4,7 +4,6 @@ import { passwordRecoveryURL } from '@/utils/network'
 import { createSearchParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { axiosRequest } from '@/api/api'
-import { DataPropsForm } from '@/types/GlobalTypes'
 import { toast } from 'sonner'
 import Authcomponent from '@/components/Auth/AuthComponent'
 import { Button } from '@/components/ui/button'
@@ -13,14 +12,14 @@ import { Label } from '@/components/ui/label'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { Form, FormField, FormItem, FormControl } from '@/components/ui/form'
+import { Form, FormField, FormItem, FormControl, FormMessage } from '@/components/ui/form'
 
-const PasswordRecovery: React.FC = () => {
+const PasswordRecovery: FC = () => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
 
   const formSchema = z.object({
-    email: z.string().nonempty('Campo requerido'),
+    email: z.string().email('Debe ser un correo electrónico').nonempty('Campo requerido'),
   })
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -37,7 +36,7 @@ const PasswordRecovery: React.FC = () => {
   }
   useAuth(AuthProps)
 
-  const onSubmit = async (values: DataPropsForm) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true)
       const response = await axiosRequest<{ message: string }>({
@@ -68,20 +67,10 @@ const PasswordRecovery: React.FC = () => {
 
   return (
     <Authcomponent>
-      <div className='w-[50%] flex flex-col items-center justify-center p-6'>
+      <div className='flex flex-col items-center justify-center p-6'>
         <div className='min-w-[400px] w-full'>
           <Form {...form}>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                const formData = new FormData(e.target as HTMLFormElement)
-                const values: DataPropsForm = Object.fromEntries(
-                  formData.entries(),
-                ) as DataPropsForm
-                onSubmit(values)
-              }}
-              className='space-y-6'
-            >
+            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
               <FormField
                 control={form.control}
                 name='email'
@@ -100,6 +89,7 @@ const PasswordRecovery: React.FC = () => {
                         className='focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 shadow-none w-full h-10 px-4'
                       />
                     </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />

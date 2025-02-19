@@ -69,7 +69,7 @@ export const PasswordResetForm: FC<IAuthForm> = ({ onSubmit, loading }) => {
                     <InputOTP
                       maxLength={6}
                       pattern={REGEXP_ONLY_DIGITS}
-                      containerClassName='border-[0.5px] border-gray-100 w-[18%]'
+                      containerClassName='border-[0.5px] border-gray-100 w-[18%] active:border-primary-foreground focus-visible:outline-none focus-visible:ring-0'
                       {...field}
                     >
                       <InputOTPGroup className='flex w-full justify-between'>
@@ -79,7 +79,7 @@ export const PasswordResetForm: FC<IAuthForm> = ({ onSubmit, loading }) => {
                             index={index}
                             className={cn(
                               'border-solid border-[0.5px] w-[235px] h-[40px] border-gray-300 shadow-none border-l-primary-foreground focus-visible:outline-none focus-visible:ring-0',
-                              index === 5 && 'border-r-primary-foreground',                             
+                              index === 5 && 'border-r-primary-foreground',
                             )}
                           />
                         ))}
@@ -96,11 +96,11 @@ export const PasswordResetForm: FC<IAuthForm> = ({ onSubmit, loading }) => {
               </FormItem>
             )}
           />
-          <UpdatePasswordContainer isValidPassword={isValidPassword} />
+          <UpdatePasswordContainer />
           <FormItem className='flex justify-center mt-4'>
             <Button
               type='submit'
-              className='w-[382px] bg-neutral-900 text-white border-0 rounded-md -mt-5'
+              className='w-[382px] bg-neutral-900 text-white border-0 rounded-md -mt-5 cursor-pointer'
               disabled={!isValidForm}
             >
               {loading ? 'Cargando...' : 'Confirmar'}

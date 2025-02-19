@@ -1,17 +1,17 @@
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Eye, EyeOff } from 'lucide-react';
-import { FC, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { FormControl, FormItem } from '../ui/form';
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Eye, EyeOff } from 'lucide-react'
+import { FC, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
+import { FormControl, FormItem } from '../ui/form'
 
-const UpdatePasswordContainer: FC<{ isValidPassword: boolean }> = ({ isValidPassword }) => {
-  const { register, watch } = useFormContext();
-  const [showPasswordOne, setShowPasswordOne] = useState(false);
-  const [showPasswordTwo, setShowPasswordTwo] = useState(false);
+const UpdatePasswordContainer: FC = () => {
+  const { register, watch } = useFormContext()
+  const [showPasswordOne, setShowPasswordOne] = useState(false)
+  const [showPasswordTwo, setShowPasswordTwo] = useState(false)
 
-  const passwordOne = watch('passwordOne');
-  const passwordTwo = watch('passwordTwo');
+  const passwordOne = watch('passwordOne')
+  const passwordTwo = watch('passwordTwo')
 
   const mustContainData = [
     ['Al menos una letra mayúscula (A-Z)', /[A-Z]/.test(passwordOne)],
@@ -20,24 +20,26 @@ const UpdatePasswordContainer: FC<{ isValidPassword: boolean }> = ({ isValidPass
     ['Al menos un carácter especial', /\W|_/.test(passwordOne)],
     ['Al menos 8 caracteres', passwordOne?.length >= 8],
     ['Las contraseñas coinciden', passwordOne === passwordTwo && passwordOne !== ''],
-  ];
+  ]
 
   return (
-    <div className="flex flex-col items-center">
-      <FormItem className="mt-5 w-[340px]">
-        <Label htmlFor="password" className="font-semibold text-sm">Nueva Contraseña</Label>
+    <div className='flex flex-col items-center'>
+      <FormItem className='mt-5 w-[340px]'>
+        <Label htmlFor='password' className='font-semibold text-sm'>
+          Nueva Contraseña
+        </Label>
         <FormControl>
-          <div className="relative w-full">
+          <div className='relative w-full'>
             <Input
-              id="password"
+              id='password'
               type={showPasswordOne ? 'text' : 'password'}
               {...register('passwordOne')}
-              className="pr-10 focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 w-full h-[35px]"
+              className='pr-10 focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 w-full h-[35px]'
             />
             {passwordOne && (
               <button
-                type="button"
-                className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 cursor-pointer bg-transparent border-none"
+                type='button'
+                className='absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 cursor-pointer bg-transparent border-none'
                 onClick={() => setShowPasswordOne(!showPasswordOne)}
               >
                 {showPasswordOne ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -47,20 +49,22 @@ const UpdatePasswordContainer: FC<{ isValidPassword: boolean }> = ({ isValidPass
         </FormControl>
       </FormItem>
 
-      <FormItem className="mt-5 mb-1">
-        <Label htmlFor="confirm-password" className="font-semibold text-sm">Confirmar Contraseña</Label>
+      <FormItem className='mt-5 mb-1'>
+        <Label htmlFor='confirm-password' className='font-semibold text-sm'>
+          Confirmar Contraseña
+        </Label>
         <FormControl>
-          <div className="relative w-full">
+          <div className='relative w-full'>
             <Input
-              id="confirm-password"
+              id='confirm-password'
               type={showPasswordTwo ? 'text' : 'password'}
               {...register('passwordTwo')}
-              className="pr-10 focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 w-[340px] h-[35px]"
+              className='pr-10 focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 w-[340px] h-[35px]'
             />
             {passwordTwo && (
               <button
-                type="button"
-                className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 cursor-pointer bg-transparent border-none"
+                type='button'
+                className='absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 cursor-pointer bg-transparent border-none'
                 onClick={() => setShowPasswordTwo(!showPasswordTwo)}
               >
                 {showPasswordTwo ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -70,16 +74,16 @@ const UpdatePasswordContainer: FC<{ isValidPassword: boolean }> = ({ isValidPass
         </FormControl>
       </FormItem>
 
-      <div className="must-container text-sm font-semibold mt-2 mb-1">
+      <div className='must-container text-sm font-semibold mt-2 mb-1'>
         {mustContainData.map(([label, isValid], index) => (
-          <p className="flex gap-3" key={index}>
+          <p className='font-normal flex gap-3' key={index}>
             <span>{isValid ? '✅' : '❌'}</span>
             <span>{label}</span>
           </p>
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default UpdatePasswordContainer;
+export default UpdatePasswordContainer

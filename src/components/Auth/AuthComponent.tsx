@@ -14,30 +14,30 @@ interface IAuthComponentProps {
 const Authcomponent: FC<PropsWithChildren<IAuthComponentProps>> = ({ children }) => {
   return (
     <section className='flex min-h-screen'>
-      
       {/* Lado izquierdo con el carrusel */}
       <div className='md:w-[50%] min-h-[100vh] bg-gray-200 md:flex items-center justify-center hidden'>
         <ImageCarousel />
       </div>
 
-      {/* Lado derecho con el logo y el formulario */}
-      <div className='w-[50%] min-h-[100vh] flex flex-col items-center justify-center relative'>
-        <div className='w-96'>  
-          <img
-            src={KiospotLogoColor}
-            alt='Kiospot Logo Color'
-            className='object-cover w-full h-full scale-y-105'
-          />
+      <section className='w-full md:w-[50%] flex flex-col h-screen items-center justify-between'>
+        {/* Lado derecho con el logo y el formulario */}
+        <div></div>
+        <div className='flex flex-col justify-between items-center'>
+          <div className='w-96'>
+            <img
+              src={KiospotLogoColor}
+              alt='Kiospot Logo Color'
+              className='object-cover w-full h-full'
+            />
+          </div>
+
+          {children}
         </div>
-
-        {children}
-
         {/* Texto centrado en la parte inferior derecha */}
-        <p className='text-base text-right absolute bottom-7'>
+        <p className='text-base text-center'>
           © 2024 Toku Softlabs S.A.S. Todos los derechos reservados
         </p>
-      </div>
-      
+      </section>
     </section>
   )
 }
