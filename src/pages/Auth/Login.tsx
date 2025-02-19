@@ -9,6 +9,7 @@ import { axiosRequest } from '@/api/api'
 import { DataPropsForm } from '@/types/GlobalTypes'
 import { LoginForm } from '@/components/AuthForms/Login'
 
+
 const Login: FC = () => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
@@ -55,9 +56,11 @@ const Login: FC = () => {
   }
 
   return (
-    <Authcomponent>
-      <LoginForm onSubmit={onSubmit} loading={loading} />
-    </Authcomponent>
+        <section>
+          <Authcomponent>
+            <LoginForm onSubmit={onSubmit} loading={loading} />
+          </Authcomponent>
+        </section>
   )
 }
 

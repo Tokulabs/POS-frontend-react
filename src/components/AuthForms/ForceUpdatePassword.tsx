@@ -9,15 +9,11 @@ interface IAuthForm {
 }
 
 export const ForceUpdatePassword: FC<IAuthForm> = ({ onSubmit, loading }) => {
-  const [allValid, setAllValid] = useState(false)
-
-  const handleAllValid = (value: boolean) => {
-    setAllValid(value)
-  }
+  const [allValid] = useState(false)
 
   return (
     <Form layout='vertical' onFinish={onSubmit}>
-      <UpdatePasswordContainer handleAllValid={handleAllValid} />
+      <UpdatePasswordContainer isValidPassword/>
       <Form.Item>
         <Button htmlType='submit' type='primary' block loading={loading} disabled={!allValid}>
           Confirmar
