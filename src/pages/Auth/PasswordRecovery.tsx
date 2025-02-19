@@ -6,14 +6,29 @@ import { useAuth } from '@/hooks/useAuth'
 import { axiosRequest } from '@/api/api'
 import { DataPropsForm } from '@/types/GlobalTypes'
 import { toast } from 'sonner'
-import ImageCarousel from '@/components/Carrousel/Carrousel'
+import Authcomponent from '@/components/Auth/AuthComponent'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { Form, FormField, FormItem, FormControl } from '@/components/ui/form'
 
-const PasswordRecovery: FC = () => {
+const PasswordRecovery: React.FC = () => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+
+  const formSchema = z.object({
+    email: z.string().nonempty('Campo requerido'),
+  })
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: '',
+    },
+  })
 
   const AuthProps: IAuthProps = {
     successCallback: () => {
@@ -52,51 +67,57 @@ const PasswordRecovery: FC = () => {
   }
 
   return (
-    <div className='flex w-100'>
-      
-      <div className='md:w-[50%] min-h-[100vh] bg-gray-200 md:flex items-center justify-center hidden'>
-        <ImageCarousel />
-      </div>
-      
-      <div className='w-[50%] min-h-[100vh] flex flex-col items-center justify-center'>
-        <img 
-          src="src/assets/logos/Kiospot-Horizontal-Logo-color.webp" 
-          alt="Logo" 
-          className="h-[85px] md:h-[155px]" 
-        />
-        <p className="text-base ml-[0px] justify-center font-semibold items-center p-4 fixed bottom-9">
-          © 2024 Toku Softlabs S.A.S. Todos los derechos reservados
-         </p>
-        <div className='min-w-[400px]'>
-          <form onSubmit={(e) => {
-            e.preventDefault()
-            const formData = new FormData(e.target as HTMLFormElement)
-            const values: DataPropsForm = Object.fromEntries(formData.entries()) as DataPropsForm
-            onSubmit(values)
-          }}>
-            <Label htmlFor="email">Correo electrónico</Label>
-            <div className="mb-5 mt-5">
-              
-              <Input 
-                id="email"
-                name="email"
-                placeholder="Correo electrónico" 
-                type="email" 
-                required
-                className="w-full"
-              />
-            </div>
-            <Button 
-              type="submit" 
-              className={`w-full ${loading ? 'cursor-not-allowed opacity-50' : ''}`} 
-              disabled={loading}
+    <Authcomponent>
+      <div className='w-[50%] flex flex-col items-center justify-center p-6'>
+        <div className='min-w-[400px] w-full'>
+          <Form {...form}>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                const formData = new FormData(e.target as HTMLFormElement)
+                const values: DataPropsForm = Object.fromEntries(
+                  formData.entries(),
+                ) as DataPropsForm
+                onSubmit(values)
+              }}
+              className='space-y-6'
             >
-              {loading ? 'Cargando...' : 'Confirmar'}
-            </Button>
-          </form>
+              <FormField
+                control={form.control}
+                name='email'
+                render={({ field }) => (
+                  <FormItem className='w-full -mb-2'>
+                    <Label htmlFor='email' className='mb-4 text-left block'>
+                      Correo electrónico
+                    </Label>
+                    <FormControl>
+                      <Input
+                        id='email'
+                        placeholder='Correo'
+                        type='email'
+                        {...field}
+                        required
+                        className='focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 shadow-none w-full h-10 px-4'
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormItem className='w-full'>
+                <Button
+                  type='submit'
+                  className='w-full bg-neutral-900 text-white border-0 h-10'
+                  disabled={loading}
+                >
+                  {loading ? 'loading' : 'Ingresar'}
+                </Button>
+              </FormItem>
+            </form>
+          </Form>
         </div>
       </div>
-    </div>
-  ) 
+    </Authcomponent>
+  )
 }
 export default PasswordRecovery

@@ -1,77 +1,85 @@
-import { Form, Input } from 'antd'
-import { useState, FC, useEffect } from 'react'
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Eye, EyeOff } from 'lucide-react';
+import { FC, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { FormControl, FormItem } from '../ui/form';
 
-const UpdatePasswordContainer: FC<{ handleAllValid: (value: boolean) => void }> = ({
-  handleAllValid,
-}) => {
-  const [passwordOne, setPasswordOne] = useState('')
-  const [passwordTwo, setPasswordTwo] = useState('')
+const UpdatePasswordContainer: FC<{ isValidPassword: boolean }> = ({ isValidPassword }) => {
+  const { register, watch } = useFormContext();
+  const [showPasswordOne, setShowPasswordOne] = useState(false);
+  const [showPasswordTwo, setShowPasswordTwo] = useState(false);
 
-  const [validationState, setValidationState] = useState({
-    containsUL: false,
-    containsLL: false,
-    containsN: false,
-    containsSC: false,
-    contains8C: false,
-    passwordMatch: false,
-  })
-
-  const validatePassword = () => {
-    const containsUL = passwordOne.toLowerCase() !== passwordOne
-    const containsLL = passwordOne.toUpperCase() !== passwordOne
-    const containsN = /\d/.test(passwordOne)
-    const containsSC = /\W|_/g.test(passwordOne)
-    const contains8C = passwordOne.length >= 8
-    const passwordMatch = passwordOne !== '' && passwordOne === passwordTwo
-
-    const newValidationState = {
-      containsUL,
-      containsLL,
-      containsN,
-      containsSC,
-      contains8C,
-      passwordMatch,
-    }
-
-    setValidationState(newValidationState)
-
-    const allValid =
-      containsUL && containsLL && containsN && containsSC && contains8C && passwordMatch
-
-    handleAllValid(allValid)
-  }
-
-  useEffect(() => {
-    validatePassword()
-  }, [passwordOne, passwordTwo])
+  const passwordOne = watch('passwordOne');
+  const passwordTwo = watch('passwordTwo');
 
   const mustContainData = [
-    ['Al menos una letra mayúscula (A-Z)', validationState.containsUL],
-    ['Al menos una letra minúscula (a-z)', validationState.containsLL],
-    ['Al menos un número (0-9)', validationState.containsN],
-    ['Al menos un caracter especial', validationState.containsSC],
-    ['Al menos 8 caracteres', validationState.contains8C],
-    ['Las contraseñas coinciden', validationState.passwordMatch],
-  ]
+    ['Al menos una letra mayúscula (A-Z)', /[A-Z]/.test(passwordOne)],
+    ['Al menos una letra minúscula (a-z)', /[a-z]/.test(passwordOne)],
+    ['Al menos un número (0-9)', /\d/.test(passwordOne)],
+    ['Al menos un carácter especial', /\W|_/.test(passwordOne)],
+    ['Al menos 8 caracteres', passwordOne?.length >= 8],
+    ['Las contraseñas coinciden', passwordOne === passwordTwo && passwordOne !== ''],
+  ];
 
   return (
-    <>
-      <Form.Item name='password' label='Contraseña'>
-        <Input.Password value={passwordOne} onChange={(e) => setPasswordOne(e.target.value)} />
-      </Form.Item>
-      <Form.Item name='confirm' label='Confirmar Contraseña'>
-        <Input.Password value={passwordTwo} onChange={(e) => setPasswordTwo(e.target.value)} />
-      </Form.Item>
-      <div className='must-container cfb'>
-        {mustContainData.map((data, index) => (
-          <p className='flex gap-3' key={index}>
-            <span>{data[1] ? '✔' : '❌'}</span>
-            <span>{data[0]}</span>
+    <div className="flex flex-col items-center">
+      <FormItem className="mt-5 w-[340px]">
+        <Label htmlFor="password" className="font-semibold text-sm">Nueva Contraseña</Label>
+        <FormControl>
+          <div className="relative w-full">
+            <Input
+              id="password"
+              type={showPasswordOne ? 'text' : 'password'}
+              {...register('passwordOne')}
+              className="pr-10 focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 w-full h-[35px]"
+            />
+            {passwordOne && (
+              <button
+                type="button"
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 cursor-pointer bg-transparent border-none"
+                onClick={() => setShowPasswordOne(!showPasswordOne)}
+              >
+                {showPasswordOne ? <EyeOff size={15} /> : <Eye size={15} />}
+              </button>
+            )}
+          </div>
+        </FormControl>
+      </FormItem>
+
+      <FormItem className="mt-5 mb-1">
+        <Label htmlFor="confirm-password" className="font-semibold text-sm">Confirmar Contraseña</Label>
+        <FormControl>
+          <div className="relative w-full">
+            <Input
+              id="confirm-password"
+              type={showPasswordTwo ? 'text' : 'password'}
+              {...register('passwordTwo')}
+              className="pr-10 focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 w-[340px] h-[35px]"
+            />
+            {passwordTwo && (
+              <button
+                type="button"
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 cursor-pointer bg-transparent border-none"
+                onClick={() => setShowPasswordTwo(!showPasswordTwo)}
+              >
+                {showPasswordTwo ? <EyeOff size={15} /> : <Eye size={15} />}
+              </button>
+            )}
+          </div>
+        </FormControl>
+      </FormItem>
+
+      <div className="must-container text-sm font-semibold mt-2 mb-1">
+        {mustContainData.map(([label, isValid], index) => (
+          <p className="flex gap-3" key={index}>
+            <span>{isValid ? '✅' : '❌'}</span>
+            <span>{label}</span>
           </p>
         ))}
       </div>
-    </>
-  )
-}
+    </div>
+  );
+};
 
-export default UpdatePasswordContainer
+export default UpdatePasswordContainer;
