@@ -5,9 +5,10 @@ import { forceUpdatePasswordURL } from '@/utils/network'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { axiosRequest } from '@/api/api'
-import { DataPropsForm } from '@/types/GlobalTypes'
-import { ForceUpdatePassword } from '@/components/AuthForms/ForceUpdatePassword'
+import { ForceUpdatePassword, formSchema } from '@/components/AuthForms/ForceUpdatePassword'
 import { toast } from 'sonner'
+import { z } from 'zod'
+
 
 const ForceUpdatePasswordAuth: FC = () => {
   const navigate = useNavigate()
@@ -21,8 +22,8 @@ const ForceUpdatePasswordAuth: FC = () => {
   }
   useAuth(AuthProps)
 
-  const onSubmit = async (values: DataPropsForm) => {
-    const { password } = values
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const { passwordOne } = values
     const email = searchParams.get('email')
     const session = searchParams.get('session')
     try {
@@ -32,7 +33,7 @@ const ForceUpdatePasswordAuth: FC = () => {
         url: forceUpdatePasswordURL,
         payload: {
           email,
-          new_password: password,
+          new_password: passwordOne,
           session,
         },
         errorObject: {

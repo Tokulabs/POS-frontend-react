@@ -1,24 +1,61 @@
-import { DataPropsForm } from '@/types/GlobalTypes'
-import { Button, Form } from 'antd'
-import { FC, useState } from 'react'
+import { Button } from '../ui/button'
+import { FC } from 'react'
+import { Form, FormItem } from '../ui/form'
 import UpdatePasswordContainer from './InputPassword'
+import { z } from 'zod'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 interface IAuthForm {
-  onSubmit: (values: DataPropsForm) => void
+  onSubmit: (values: z.infer<typeof formSchema>) => void
   loading: boolean
 }
 
+export const formSchema = z
+  .object({
+    passwordOne: z.string().nonempty('Campo requerido'),
+    passwordTwo: z.string().nonempty('Campo requerido'),
+  })
+  .refine((data) => data.passwordOne === data.passwordTwo, {
+    message: 'Las contraseñas deben coincidir',
+    path: ['passwordTwo'],
+  })
+
 export const ForceUpdatePassword: FC<IAuthForm> = ({ onSubmit, loading }) => {
-  const [allValid] = useState(false)
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      passwordOne: '',
+      passwordTwo: '',
+    },
+  })
+
+  const { watch } = form
+  const passwordOne = watch('passwordOne')
+  const passwordTwo = watch('passwordTwo')
+
+  const isValidPassword =
+    /[A-Z]/.test(passwordOne) &&
+    /[a-z]/.test(passwordOne) &&
+    /\d/.test(passwordOne) &&
+    /\W|_/.test(passwordOne) &&
+    passwordOne.length >= 8 &&
+    passwordOne === passwordTwo
 
   return (
-    <Form layout='vertical' onFinish={onSubmit}>
-      <UpdatePasswordContainer isValidPassword/>
-      <Form.Item>
-        <Button htmlType='submit' type='primary' block loading={loading} disabled={!allValid}>
-          Confirmar
-        </Button>
-      </Form.Item>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <UpdatePasswordContainer />
+        <FormItem className='flex justify-center mt-4'>
+          <Button
+            type='submit'
+            className='w-[382px] bg-neutral-900 text-white border-0 rounded-md -mt-5 cursor-pointer'
+            disabled={!isValidPassword}
+          >
+            {loading ? 'Cargando...' : 'Confirmar'}
+          </Button>
+        </FormItem>
+      </form>
     </Form>
   )
 }
