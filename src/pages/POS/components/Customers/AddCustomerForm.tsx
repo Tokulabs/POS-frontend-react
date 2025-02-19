@@ -120,7 +120,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
       city: Number(0),
       address: '',
     },
-  })
+  })  
 
   const { mutate: mutatePost } = useMutation({
     mutationFn: postCustomers,

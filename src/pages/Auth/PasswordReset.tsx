@@ -5,9 +5,9 @@ import { passswordResetURL } from '@/utils/network'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { axiosRequest } from '@/api/api'
-import { DataPropsForm } from '@/types/GlobalTypes'
 import { toast } from 'sonner'
-import { PasswordResetForm } from '@/components/AuthForms/PasswordResetForm'
+import { PasswordResetForm, formSchema } from '@/components/AuthForms/PasswordResetForm'
+import { z } from 'zod'
 
 const PasswordReset: FC = () => {
   const navigate = useNavigate()
@@ -21,8 +21,8 @@ const PasswordReset: FC = () => {
   }
   useAuth(AuthProps)
 
-  const onSubmit = async (values: DataPropsForm) => {
-    const { confirmation_code, password } = values
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const { passwordOne, verificationCode } = values
     const email = searchParams.get('email')
     try {
       setLoading(true)
@@ -31,8 +31,8 @@ const PasswordReset: FC = () => {
         url: passswordResetURL,
         payload: {
           email,
-          confirmation_code,
-          new_password: password,
+          confirmation_code: verificationCode,
+          new_password: passwordOne,
         },
         errorObject: {
           message: 'Error en la solicitud',
@@ -44,16 +44,18 @@ const PasswordReset: FC = () => {
       }
     } catch (e) {
       console.log(e)
-      navigate('/')
+      navigate(`/password-reset?email=${encodeURIComponent(email ?? '')}`)
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <Authcomponent titleText='Recuperar contraseña'>
-      <PasswordResetForm onSubmit={onSubmit} loading={loading} />
-    </Authcomponent>
+    <section>
+      <Authcomponent>
+        <PasswordResetForm onSubmit={onSubmit} loading={loading} />
+      </Authcomponent>
+    </section>
   )
 }
 
