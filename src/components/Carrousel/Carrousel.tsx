@@ -1,5 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
+import LogoWhite from '@/assets/logos/Kiospot-Horizontal-Logo-white.webp'
 
 const ImageCarousel = () => {
   const imagesArray = [
@@ -40,11 +41,7 @@ const ImageCarousel = () => {
       </CarouselContent>
 
       {/* White logo on left top */}
-      <img
-        src='src/assets/logos/Kiospot-Horizontal-Logo-white.webp'
-        alt='Logo'
-        className='h-[85px] md:h-[155px] absolute top-4 left-4 p-2'
-      />
+      <img src={LogoWhite} alt='Logo' className='h-[85px] md:h-[155px] absolute top-4 left-4 p-2' />
     </Carousel>
   )
 }
