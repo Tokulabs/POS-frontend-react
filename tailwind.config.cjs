@@ -16,6 +16,12 @@ module.exports = {
           1: '#b2bec3',
           2: '#757575',
         },
+        background: {
+          main: '#E5E5E5',
+        },
+        red: {
+          1: '#E62C37',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',
