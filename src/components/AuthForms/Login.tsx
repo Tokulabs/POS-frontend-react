@@ -35,83 +35,84 @@ export const LoginForm: React.FC<IAuthForm> = ({ onSubmit, loading }) => {
   })
 
   return (
-    <section className='w-full max-w-sm mx-auto'>
-      <Form {...form}>
-        <form className='space-y-5 w-full max-w-2xl mx-auto' onSubmit={form.handleSubmit(onSubmit)}>
-          <FormField
-            control={form.control}
-            name='email'
-            render={({ field }) => (
-              <FormItem className='justify-items-center'>
-                <div className='grid gap-3 mx-auto w-[400px]'>
-                  <Label htmlFor='email'>Email</Label>
+    <Form {...form}>
+      <form
+        className='w-full flex flex-col items-center justify-center gap-4'
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
+        <FormField
+          control={form.control}
+          name='email'
+          render={({ field }) => (
+            <FormItem className='justify-items-center w-full'>
+              <div className='grid gap-3 mx-auto w-full'>
+                <Label htmlFor='email'>Email</Label>
+                <FormControl>
+                  <Input
+                    id='email'
+                    type='email'
+                    placeholder='Email'
+                    required
+                    className='focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 shadow-none w-full h-[40px]'
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </div>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name='password'
+          render={({ field }) => (
+            <FormItem className='justify-items-center w-full'>
+              <div className='grid gap-3 mx-auto w-full'>
+                <Label htmlFor='password'>Contraseña</Label>
+                <div className='relative '>
                   <FormControl>
                     <Input
-                      id='email'
-                      type='email'
-                      placeholder='Email'
-                      required
-                      className='focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 shadow-none w-[400px] h-[40px]'
+                      id='password'
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder='Contraseña'
                       {...field}
+                      className='focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 shadow-none w-full h-[40px]'
                     />
                   </FormControl>
                   <FormMessage />
+
+                  {field.value && (
+                    <button
+                      type='button'
+                      onClick={togglePasswordVisibility}
+                      className='absolute right-3 top-1/2 -translate-y-1/2 p-0 bg-transparent border-none text-gray-500 scale-75 cursor-pointer'
+                    >
+                      {showPassword ? <EyeOff /> : <Eye />}
+                    </button>
+                  )}
                 </div>
-              </FormItem>
-            )}
-          />
+              </div>
+            </FormItem>
+          )}
+        />
 
-          <FormField
-            control={form.control}
-            name='password'
-            render={({ field }) => (
-              <FormItem className='justify-items-center '>
-                <div className='grid gap-3 mx-auto w-[400px]'>
-                  <Label htmlFor='password'>Contraseña</Label>
-                  <div className='relative '>
-                    <FormControl>
-                      <Input
-                        id='password'
-                        type={showPassword ? 'text' : 'password'}
-                        placeholder='Contraseña'
-                        {...field}
-                        className='focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 shadow-none w-[400px] h-[40px]'
-                      />
-                    </FormControl>
-                    <FormMessage />
+        <FormItem className='w-full'>
+          <Button
+            type='submit'
+            className='w-full bg-neutral-900 text-white border-0 cursor-pointer'
+            disabled={loading}
+          >
+            {loading ? 'Cargando...' : 'Ingresar'}
+          </Button>
+        </FormItem>
 
-                    {field.value && (
-                      <button
-                        type='button'
-                        onClick={togglePasswordVisibility}
-                        className='absolute right-3 top-1/2 -translate-y-1/2 p-0 bg-transparent border-none text-gray-500 scale-75 cursor-pointer'
-                      >
-                        {showPassword ? <EyeOff /> : <Eye />}
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </FormItem>
-            )}
-          />
-
-          <FormItem>
-            <Button
-              type='submit'
-              className='w-[400px] bg-neutral-900 text-white border-0 cursor-pointer'
-              disabled={loading}
-            >
-              {loading ? 'loading' : 'Ingresar'}
-            </Button>
-          </FormItem>
-
-          <div className='w-[400px] mx-auto'>
-            <Link to='/password-recovery' className='text-sm text-black underline'>
-              ¿Olvidaste tu contraseña?
-            </Link>
-          </div>
-        </form>
-      </Form>
-    </section>
+        <div className='w-full mx-auto'>
+          <Link to='/password-recovery' className='text-sm text-black underline'>
+            ¿Olvidaste tu contraseña?
+          </Link>
+        </div>
+      </form>
+    </Form>
   )
 }

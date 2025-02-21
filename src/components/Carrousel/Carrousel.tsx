@@ -21,7 +21,11 @@ const ImageCarousel = () => {
     },
   ]
   return (
-    <Carousel className='w-full h-full m-0 p-0' autoplay={3000}>
+    <Carousel
+      className='w-full h-full m-0 p-0'
+      autoplay={3000}
+      opts={{ loop: true, watchDrag: false }}
+    >
       <CarouselContent className='w-full h-screen m-0 p-0'>
         {imagesArray.map((image) => (
           <CarouselItem key={image.id} className='w-full h-full m-0 p-0'>
@@ -31,7 +35,7 @@ const ImageCarousel = () => {
                   <img
                     src={image.src}
                     alt={image.alt}
-                    className='object-cover w-full h-full scale-y-105 brightness-[85%]'
+                    className='object-cover w-full h-full brightness-[85%]'
                   />
                 </CardContent>
               </Card>

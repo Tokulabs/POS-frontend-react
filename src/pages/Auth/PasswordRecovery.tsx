@@ -67,45 +67,43 @@ const PasswordRecovery: FC = () => {
 
   return (
     <Authcomponent>
-      <div className='flex flex-col items-center justify-center p-6'>
-        <div className='min-w-[400px] w-full'>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
-              <FormField
-                control={form.control}
-                name='email'
-                render={({ field }) => (
-                  <FormItem className='w-full -mb-2'>
-                    <Label htmlFor='email' className='mb-4 text-left block'>
-                      Correo electrónico
-                    </Label>
-                    <FormControl>
-                      <Input
-                        id='email'
-                        placeholder='Correo'
-                        type='email'
-                        {...field}
-                        required
-                        className='focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 shadow-none w-full h-10 px-4'
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+      <div className='flex flex-col items-center justify-center p-6 w-full'>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 w-full'>
+            <FormField
+              control={form.control}
+              name='email'
+              render={({ field }) => (
+                <FormItem className='w-full -mb-2'>
+                  <Label htmlFor='email' className='mb-4 text-left block'>
+                    Correo electrónico
+                  </Label>
+                  <FormControl>
+                    <Input
+                      id='email'
+                      placeholder='Correo'
+                      type='email'
+                      {...field}
+                      required
+                      className='focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 shadow-none w-full h-10 px-4'
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-              <FormItem className='w-full'>
-                <Button
-                  type='submit'
-                  className='w-full bg-neutral-900 text-white border-0 h-10'
-                  disabled={loading}
-                >
-                  {loading ? 'loading' : 'Ingresar'}
-                </Button>
-              </FormItem>
-            </form>
-          </Form>
-        </div>
+            <FormItem className='w-full'>
+              <Button
+                type='submit'
+                className='w-full bg-neutral-900 text-white border-0 h-10'
+                disabled={loading}
+              >
+                {loading ? 'Cargando...' : 'Enviar Código'}
+              </Button>
+            </FormItem>
+          </form>
+        </Form>
       </div>
     </Authcomponent>
   )

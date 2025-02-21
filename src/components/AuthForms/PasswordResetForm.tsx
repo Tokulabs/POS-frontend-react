@@ -57,19 +57,19 @@ export const PasswordResetForm: FC<IAuthForm> = ({ onSubmit, loading }) => {
   return (
     <section className='w-full max-w-sm mx-auto max-h-screen overflow-hidden flex flex-col items-center'>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='w-full'>
           <FormField
             control={form.control}
             name='verificationCode'
             render={({ field }) => (
-              <FormItem className='justify-items-center'>
+              <FormItem className='justify-items-center w-full'>
                 <h5 className='font-semibold text-sm -mb-1'>Código de verificación</h5>
                 <FormControl>
-                  <div className='flex justify-center'>
+                  <div className='flex justify-center w-full px-8'>
                     <InputOTP
                       maxLength={6}
                       pattern={REGEXP_ONLY_DIGITS}
-                      containerClassName='border-[0.5px] border-gray-100 w-[18%] active:border-primary-foreground focus-visible:outline-none focus-visible:ring-0'
+                      containerClassName='border-[0.5px] border-gray-100 w-full active:border-primary-foreground focus-visible:outline-none focus-visible:ring-0'
                       {...field}
                     >
                       <InputOTPGroup className='flex w-full justify-between'>
@@ -78,7 +78,7 @@ export const PasswordResetForm: FC<IAuthForm> = ({ onSubmit, loading }) => {
                             key={index}
                             index={index}
                             className={cn(
-                              'border-solid border-[0.5px] w-[235px] h-[40px] border-gray-300 shadow-none border-l-primary-foreground focus-visible:outline-none focus-visible:ring-0',
+                              'border-solid border-[0.5px] w-full h-[40px] border-gray-300 shadow-none border-l-primary-foreground focus-visible:outline-none focus-visible:ring-0',
                               index === 5 && 'border-r-primary-foreground',
                             )}
                           />
@@ -97,10 +97,10 @@ export const PasswordResetForm: FC<IAuthForm> = ({ onSubmit, loading }) => {
             )}
           />
           <UpdatePasswordContainer />
-          <FormItem className='flex justify-center mt-4'>
+          <FormItem className='flex justify-center mt-4 w-full'>
             <Button
               type='submit'
-              className='w-[382px] bg-neutral-900 text-white border-0 rounded-md -mt-5 cursor-pointer'
+              className='w-full bg-neutral-900 text-white border-0 rounded-md -mt-5 cursor-pointer'
               disabled={!isValidForm}
             >
               {loading ? 'Cargando...' : 'Confirmar'}
