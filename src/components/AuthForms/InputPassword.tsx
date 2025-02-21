@@ -23,8 +23,8 @@ const UpdatePasswordContainer: FC = () => {
   ]
 
   return (
-    <div className='flex flex-col items-center'>
-      <FormItem className='mt-5 w-[340px]'>
+    <div className='flex flex-col items-center w-full'>
+      <FormItem className='mt-5 w-full'>
         <Label htmlFor='password' className='font-semibold text-sm'>
           Nueva Contraseña
         </Label>
@@ -49,7 +49,7 @@ const UpdatePasswordContainer: FC = () => {
         </FormControl>
       </FormItem>
 
-      <FormItem className='mt-5 mb-1'>
+      <FormItem className='mt-5 mb-1 w-full'>
         <Label htmlFor='confirm-password' className='font-semibold text-sm'>
           Confirmar Contraseña
         </Label>
@@ -59,7 +59,7 @@ const UpdatePasswordContainer: FC = () => {
               id='confirm-password'
               type={showPasswordTwo ? 'text' : 'password'}
               {...register('passwordTwo')}
-              className='pr-10 focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 w-[340px] h-[35px]'
+              className='pr-10 focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 w-full h-[35px]'
             />
             {passwordTwo && (
               <button
@@ -74,7 +74,7 @@ const UpdatePasswordContainer: FC = () => {
         </FormControl>
       </FormItem>
 
-      <div className='must-container text-sm font-semibold mt-2 mb-1'>
+      <div className='must-container text-sm font-semibold mt-2 mb-1 w-full'>
         {mustContainData.map(([label, isValid], index) => (
           <p className='font-normal flex gap-3' key={index}>
             <span>{isValid ? '✅' : '❌'}</span>
