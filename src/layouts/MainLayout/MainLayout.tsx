@@ -1,14 +1,30 @@
 import { FC, PropsWithChildren, useContext, useEffect, useState } from 'react'
 import UserAvatar from '@/assets/icons/user-avatar.svg'
+import { Button } from '@/components/ui/button'
 import {
-  IconBookDownload,
-  IconLogout,
-  IconTargetArrow,
-  IconAlertTriangleFilled,
-} from '@tabler/icons-react'
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { IconLogout, IconAlertTriangleFilled } from '@tabler/icons-react'
+import * as React from 'react'
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from '@/components/ui/navigation-menu'
 import { logout } from '@/pages/Auth/helpers'
-import { SideBarData } from './data/data'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { SideBarData, navigationMenu } from './data/data'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { store } from '@/store'
 import { formatDateTime } from '../helpers/helpers'
 import { useRolePermissions } from '@/hooks/useRolespermissions'
@@ -16,11 +32,11 @@ import { useCart } from '@/store/useCartStoreZustand'
 import { useCustomerData } from '@/store/useCustomerStoreZustand'
 import { usePOSStep } from '@/store/usePOSSteps'
 import { usePaymentMethodsData } from '@/store/usePaymentMethodsZustand'
-import { Image, Spin, Tooltip } from 'antd'
+import { Spin } from 'antd'
 import { DownloadReports } from '@/components/DownloadReports/DownloadReports'
 import { ModalStateEnum } from '@/types/ModalTypes'
 import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
-import KiospotLogoHorizontal from '@/assets/logos/Kiospot_logo_horizontal.webp'
+import KiospotLogoHorizontal from '@/assets/logos/Kiospot-Horizontal-Logo-Color.webp'
 import { AddGoals } from '@/components/Goals/AddGoals'
 import { axiosRequest } from '@/api/api'
 import { requestVerificationEmailURL } from '@/utils/network'
@@ -34,16 +50,6 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const [modalVerifyEmail, setModalVerifyEmail] = useState(false)
   const [loadingVerifyRequest, setLoadingVerifyRequest] = useState(false)
   const [showClickVerify, setShowClickVerify] = useState(true)
-
-  const notAllowedRolesDownload = [UserRolesEnum.supportSales]
-  const { hasPermission: hasPermissionDownloads } = useRolePermissions({
-    notAllowedRoles: notAllowedRolesDownload,
-  })
-
-  const allowedRolesGoals = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
-  const { hasPermission: hasPermissionGoals } = useRolePermissions({
-    allowedRoles: allowedRolesGoals,
-  })
 
   const { state } = useContext(store)
   const location = useLocation()
@@ -101,94 +107,181 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <section className='h-screen max-h-screen w-full relative'>
-      <nav className='bg-green-1 w-full h-16 flex justify-between items-center py-0 absolute top-0'>
-        <div className='flex flex-col justify-center items-start w-48 h-16 object-cover'>
-          <Image
-            style={{ width: '100%', height: '100%' }}
-            src={KiospotLogoHorizontal}
-            alt='Kiospot Logo Horizontal'
-            preview={false}
-          />
+      <nav className='w-full h-16 flex justify-between items-center py-0 absolute top-0 bg-white'>
+        <div className='flex flex-col justify-center items-start w-56 h-16 object-cover mt-2'>
+          <a href='/'>
+            <img
+              className='ml-10 w-100% h-20'
+              src={KiospotLogoHorizontal}
+              alt='Kiospot Logo Horizontal'
+            />
+          </a>
         </div>
-        <div className='flex items-center gap-6'>
-          <div className='flex items-center gap-2'>
-            <img className='w-8 h-8' src={UserAvatar} alt='user-avatar' />
-            <div className='flex flex-col items-start'>
-              <div className='flex gap-1'>
-                <span className='m-0 text-sm text-white'>{state.user?.fullname}</span>
-                <span className='font-bold text-white text-sm'>
-                  (Rol - {UserRolesEnum[state.user?.role as keyof typeof UserRolesEnum]})
-                </span>
-              </div>
-              <div className='flex gap-1 justify-center sm-0 text-[10px] text-white'>
-                <span>Última conexión:</span>
-                <span>{formatDateTime(state.user?.last_login)}</span>
-              </div>
-              <div className='flex gap-1 justify-center sm-0 text-[10px] text-white'>
-                <span>{state.user?.company.name}</span>
-              </div>
-            </div>
-          </div>
-          <div className='flex items-center justify-between flex-1 px-5 gap-5'>
-            {hasPermissionDownloads && (
-              <Tooltip title='Descargar Reportes'>
-                <span
-                  className='text-white hover:text-gray-100 cursor-pointer flex flex-col items-center'
-                  onClick={openDownloadModal}
+
+        {/* Filtrar elementos del menú antes de renderizarlos */}
+        <div className='mt-4 -ml-[56%] flex'>
+          <NavigationMenu>
+            <NavigationMenuList className='gap-2'>
+              {navigationMenu
+                .map((item) => {
+                  if (item.allowedRoles) {
+                    const { hasPermission } = useRolePermissions({
+                      allowedRoles: item.allowedRoles,
+                    })
+                    if (!hasPermission) return null
+                  }
+
+                  // Filtrar los children según los permisos ANTES de calcular la longitud
+                  const filteredChildren =
+                    item.children?.filter((child) => {
+                      if (child.allowedRoles) {
+                        const { hasPermission } = useRolePermissions({
+                          allowedRoles: child.allowedRoles,
+                        })
+                        return hasPermission
+                      }
+                      return true
+                    }) ?? []
+
+                  return (
+                    <NavigationMenuItem key={item.label}>
+                      <NavigationMenuTrigger className='border-none bg-transparent font-semibold'>
+                        {item.label}
+                      </NavigationMenuTrigger>
+                      <NavigationMenuContent className='bg-white p-2 pt-4 cursor-pointer'>
+                        <div className='max-h-[550px]'>
+                          <ul
+                            className={`flex flex-wrap w-full list-none p-0 gap-2 ${
+                              filteredChildren.length > 1
+                                ? 'min-w-[480px]'
+                                : 'justify-center min-w-[250px]'
+                            }`}
+                          >
+                            {filteredChildren.map((child) => (
+                              <li key={child.label}>
+                                {child.link ? (
+                                  <NavigationMenuLink
+                                    className={`${navigationMenuTriggerStyle()} no-underline text-black text-lg w-full h-full block`}
+                                    href={child.link}
+                                  >
+                                    <div className='grid grid-cols-1 gap-0 w-full max-w-[200px]'>
+                                      <span className='text-base'>{child.label}</span>
+                                      <span className='text-gray-500 break-words whitespace-normal'>
+                                        {child.Description}
+                                      </span>
+                                    </div>
+                                  </NavigationMenuLink>
+                                ) : (
+                                  <span
+                                    className={`${navigationMenuTriggerStyle()} no-underline text-black text-lg w-full h-full block cursor-pointer`}
+                                    onClick={() => {
+                                      if (child.action === 'openGoalsModal') openGoalsModal()
+                                      if (child.action === 'openDownloadModal') openDownloadModal()
+                                    }}
+                                  >
+                                    <div className='grid grid-cols-1 gap-0 w-full max-w-[200px]'>
+                                      <span className='text-base'>{child.label}</span>
+                                      <span className='text-gray-500 break-words whitespace-normal'>
+                                        {child.Description}
+                                      </span>
+                                    </div>
+                                  </span>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </NavigationMenuContent>
+                    </NavigationMenuItem>
+                  )
+                })
+                .filter(Boolean)}
+
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  className={`${navigationMenuTriggerStyle()} font-semibold no-underline text-black text-lg w-full h-full block bg-transparent`}
+                  href='/pos'
                 >
-                  <IconBookDownload size={30} />
-                </span>
-              </Tooltip>
-            )}
-            {hasPermissionGoals && (
-              <Tooltip title='Metas Generales'>
-                <span
-                  className='text-white hover:text-gray-100 cursor-pointer flex flex-col items-center'
-                  onClick={openGoalsModal}
+                  POS
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+        </div>
+
+        <div className='mr-10'>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant='outline'
+                className='border-none bg-transparent shadow-none text-transparent hover:bg-transparent cursor-pointer'
+              >
+                <img className='w-8 h-8' src={UserAvatar} alt='user-avatar' />
+              </Button>
+            </DropdownMenuTrigger>
+            {(() => {
+              const hasUserActivityPermission = useRolePermissions({
+                allowedRoles:
+                  SideBarData.find((item) => item.path === '/user-activities')?.allowedRoles || [],
+              }).hasPermission
+
+              const dropdownHeight = hasUserActivityPermission ? 'h-[185px]' : 'h-[150px]'
+
+              return (
+                <DropdownMenuContent
+                  className={`w-[250px] ${dropdownHeight} justify-items-start mr-16 border-solid`}
                 >
-                  <IconTargetArrow size={30} />
-                </span>
-              </Tooltip>
-            )}
-            <button
-              onClick={logoutUser}
-              className='flex items-center gap-1 border-solid border-[1px] border-white py-2 px-4 rounded-lg bg-[#ffffff20] cursor-pointer'
-            >
-              <p className='text-white m-0 text-sm'>Cerrar Sesión</p>
-              <IconLogout size={15} color='#FFF' />
-            </button>
-          </div>
+                  <DropdownMenuLabel>
+                    <span className='text-lg text-black font-semibold'>{state.user?.fullname}</span>
+                    <br />
+                    <span className='text-xs font-normal text-black'>
+                      (Rol - {UserRolesEnum[state.user?.role as keyof typeof UserRolesEnum]})
+                    </span>
+                    <br />
+                    <span className='text-xs font-normal text-black'>
+                      {state.user?.company.name}
+                    </span>
+                    <br />
+                    <span className='text-xs font-normal text-black'>
+                      <span>Última conexión:</span> {formatDateTime(state.user?.last_login)}
+                    </span>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className='w-screen bg-gray-1' />
+
+                  <DropdownMenuGroup className='w-full justify-items-start'>
+                    {hasUserActivityPermission && (
+                      <DropdownMenuItem className='w-full flex items-center gap-2 pr-[35%]'>
+                        <DropdownMenuShortcut>
+                          <img
+                            src='https://cdn-icons-png.flaticon.com/512/3524/3524659.png'
+                            alt='settings-icon'
+                            className='size-3'
+                          />
+                        </DropdownMenuShortcut>
+                        <a href='/user-activities' className='font-bold text-black no-underline'>
+                          Actividad de Usuario
+                        </a>
+                      </DropdownMenuItem>
+                    )}
+
+                    <DropdownMenuItem
+                      className='w-full flex items-center gap-2 pr-[52%]'
+                      onClick={logoutUser}
+                    >
+                      <DropdownMenuShortcut>
+                        <IconLogout size={15} color='Black' />
+                      </DropdownMenuShortcut>
+                      <span className='font-bold cursor-pointer'>Cerrar Sesión</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              )
+            })()}
+          </DropdownMenu>
         </div>
       </nav>
-      <div className='w-100 h-screen pt-16 flex bg-background-main'>
-        <div className='w-56 bg-white'>
-          <ul className='list-none p-0 m-0 mt-12 ml-5'>
-            {SideBarData.map((item, index) => {
-              const Icon = item.icon
-              const active = location.pathname === item.path
-              if (item.allowedRoles) {
-                const { hasPermission } = useRolePermissions({ allowedRoles: item.allowedRoles })
 
-                if (!hasPermission) {
-                  return null
-                }
-              }
-              return (
-                <li key={index}>
-                  <Link
-                    to={item.path}
-                    className={`flex items-center mb-7 cursor-pointer gap-3 no-underline ${
-                      active ? 'text-green-1' : 'text-gray-1'
-                    } `}
-                  >
-                    <Icon />
-                    <span className='text-sm'>{item.title}</span>
-                  </Link>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
+      <div className='w-100 h-screen pt-16 flex bg-white'>
         <div className='h-full w-full overflow-hidden p-5 flex flex-col gap-4'>
           {!state.user?.is_verified && (
             <div className='w-full z-50 p-5 flex justify-start items-center bg-red-300 text-white rounded-md gap-1'>
