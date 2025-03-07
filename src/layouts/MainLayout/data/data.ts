@@ -12,7 +12,6 @@ import {
   IconUsersGroup,
   IconProps,
   Icon,
-  IconShoppingBag,
 } from '@tabler/icons-react'
 import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 import { FC, ForwardRefExoticComponent, RefAttributes } from 'react'
@@ -35,7 +34,162 @@ interface ISideBarData {
   path: string
   component: FC
   allowedRoles?: string[]
+  action?: string
 }
+
+export const navigationMenu = [
+  {
+    label: 'Inventario',
+    allowedRoles: [
+      UserRolesEnum.admin,
+      UserRolesEnum.posAdmin,
+      UserRolesEnum.sales,
+      UserRolesEnum.shopAdmin,
+      UserRolesEnum.storageAdmin,
+    ],
+    children: [
+      {
+        label: 'Bodega',
+        link: '/storage',
+        allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
+        Description: 'Gestione el inventario y controle el strock disponible',
+        action: '',
+      },
+      {
+        label: 'Categoría',
+        link: '/inventory-groups',
+        allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
+        Description: 'Clasifica y organiza los productos para una gestión más eficiente',
+        action: '',
+      },
+      {
+        label: 'Productos',
+        link: '/inventories',
+        allowedRoles: [      
+          UserRolesEnum.admin,
+          UserRolesEnum.posAdmin,
+          UserRolesEnum.shopAdmin,
+          UserRolesEnum.sales,
+        ],
+        action: '',
+        Description: 'Administra y visualiza todos los productos disponibles en la tienda',
+      },
+
+      {
+        label: 'Movimiento de Inventarios',
+        link: '**',
+        allowedRoles: [
+          UserRolesEnum.admin,
+          UserRolesEnum.posAdmin,
+          UserRolesEnum.shopAdmin,
+        ],
+        Description: 'Registra y gestiona las devoluciones de productos fácilmente',
+        action: '',
+      },
+    ],
+  },
+
+  {
+    label: 'Ventas',
+    children: [
+      {
+        label: 'Clientes',
+        link: '**',
+        allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
+        Description: 'Administra y consulta la información de tus clientes',
+      },
+      {
+        label: 'Facturas de Venta',
+        link: '/invoices',
+        allowedRoles: [
+          UserRolesEnum.admin,
+          UserRolesEnum.posAdmin,
+          UserRolesEnum.shopAdmin,
+          UserRolesEnum.sales,
+          UserRolesEnum.supportSales,
+        ],
+        Description: 'Genera, visualiza y administra facturas de ventas fácilmente',
+        action: '' ,
+      },
+
+      {
+        label: 'Datáfonos',
+        link: '/payment-terminals',
+        allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
+        Description: 'Gestiona los dispositivos de pago electrónico disponibles',
+        action: '',
+      },
+      {
+        label: 'Resoluciones DIAN',
+        link: '/dian-resolution',
+        acion: '',
+        allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
+        Description: 'Solo puedes tener una resolución activa a la vez por tipo',
+      },
+    ],
+  },
+
+  {
+    label: 'Compras',
+    allowedRoles: [
+      UserRolesEnum.admin,
+      UserRolesEnum.posAdmin,
+      UserRolesEnum.shopAdmin,
+    ],
+    children: [
+      {
+        label: 'Proveedores',
+        link: '/providers',
+        allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
+        Description: 'Administra y consulta la información de tus clientes',
+        action: '',
+      },
+      {
+        label: 'Compras',
+        link: '/purschases',
+        allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
+        Description: 'Registra y gestiona las compras realizadas a proveedores',
+        action: '',
+      },
+    ],
+  },
+
+  {
+    label: 'Tienda',
+    allowedRoles: [
+      UserRolesEnum.admin,
+      UserRolesEnum.posAdmin,
+      UserRolesEnum.shopAdmin,
+    ],
+    children: [
+      {
+        label: 'Reportes',
+        link: '',
+        allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
+        Description: 'Descarga y consulta reportes detallados de ventas y operaciones',
+        action: 'openDownloadModal',
+      },
+      {
+        label: 'Metas',
+        link: '',
+        action: 'openGoalsModal',
+        allowedRoles: [      
+          UserRolesEnum.admin,
+          UserRolesEnum.posAdmin,
+          UserRolesEnum.sales,
+          UserRolesEnum.shopAdmin,
+          UserRolesEnum.storageAdmin,],
+        Description: 'Crea y gestiona objetivos de ventas para tu negocio',
+      },  
+      {
+        label: 'Usuarios',
+        link: '/users',
+        allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
+        Description: 'Gestiona y agrega usuarios a tu negocio',
+      },  
+    ],
+  },
+]
 
 export const SideBarData: ISideBarData[] = [
   {
