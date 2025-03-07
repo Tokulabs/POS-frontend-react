@@ -10,7 +10,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 
 // Types
 import { z } from 'zod'
-import { DataPropsForm } from '@/types/GlobalTypes'
 import { IAuthProps } from '@/types/AuthTypes'
 import { cn } from '@/lib/utils'
 // Axios
@@ -39,7 +38,7 @@ const formSchema = z.object({
     .regex(/^\d{6}$/, 'El código de verificación debe contener exactamente 6 números'),
 })
 
-const confirmEmailVerify = async (payload: DataPropsForm) => {
+const confirmEmailVerify = async (payload: z.infer<typeof formSchema>) => {
   const response = await axiosRequest({
     url: confirmEmailCode,
     method: 'post',
@@ -88,10 +87,6 @@ export const ConfirmEmailVerification: FC<IModalDownloadReports> = ({
     mutate(values)
   }
 
-  const { watch } = form
-  const code = watch('code')
-  const isValidForm = code.length === 6
-
   return (
     <Dialog open={isVisible} onOpenChange={onCancelCallback}>
       <DialogContent>
@@ -104,12 +99,12 @@ export const ConfirmEmailVerification: FC<IModalDownloadReports> = ({
             <div className='flex justify-center items-center gap-2'>
               <Loader2 className='animate-spin' />
               <span>Verificando...</span>
-            </div>{' '}
+            </div>
           </div>
         ) : (
           <section>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className='w-full'>
+              <form onSubmit={form.handleSubmit(onSubmit)} className='w-full flex flex-col gap-4'>
                 <FormField
                   control={form.control}
                   name='code'
@@ -148,15 +143,12 @@ export const ConfirmEmailVerification: FC<IModalDownloadReports> = ({
                     </FormItem>
                   )}
                 />
-                <FormItem>
-                  <Button
-                    type='submit'
-                    className='w-full bg-neutral-900 text-white border-0 rounded-md -mt-5 cursor-pointer'
-                    disabled={!isValidForm}
-                  >
-                    Confirmar
-                  </Button>
-                </FormItem>
+                <Button
+                  type='submit'
+                  className='w-full bg-neutral-900 text-white border-0 rounded-md cursor-pointer'
+                >
+                  Confirmar
+                </Button>
               </form>
             </Form>
           </section>

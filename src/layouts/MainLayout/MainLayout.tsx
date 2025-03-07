@@ -12,7 +12,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { IconLogout, IconAlertTriangleFilled } from '@tabler/icons-react'
-import * as React from 'react'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -23,7 +22,7 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu'
 import { logout } from '@/pages/Auth/helpers'
-import { SideBarData, navigationMenu } from './data/data'
+import { navigationMenu } from './data/data'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { store } from '@/store'
 import { formatDateTime } from '../helpers/helpers'
@@ -60,6 +59,10 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const { clearPaymentMethods } = usePaymentMethodsData()
   const { clearCart } = useCart()
   const { clearCustomerData } = useCustomerData()
+
+  const { hasPermission: hasUserActivityPermission } = useRolePermissions({
+    allowedRoles: [UserRolesEnum.admin],
+  })
 
   useEffect(() => {
     updateCurrentStep(0)
@@ -107,95 +110,88 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <section className='h-screen max-h-screen w-full relative'>
-      <nav className='w-full h-16 flex justify-between items-center py-0 absolute top-0 bg-white'>
-        <div className='flex flex-col justify-center items-start w-56 h-16 object-cover mt-2'>
-          <a href='/'>
-            <img
-              className='ml-10 w-100% h-20'
-              src={KiospotLogoHorizontal}
-              alt='Kiospot Logo Horizontal'
-            />
-          </a>
-        </div>
+      <nav className='w-full h-16 flex justify-between items-center py-0 px-5 absolute top-0 bg-white'>
+        <div className='flex justify-start items-center w-full'>
+          <img
+            onClick={() => navigate('/')}
+            className='h-16 cursor-pointer'
+            src={KiospotLogoHorizontal}
+            alt='Kiospot Logo Horizontal'
+          />
 
-        {/* Filtrar elementos del menú antes de renderizarlos */}
-        <div className='mt-4 -ml-[56%] flex'>
+          {/* Filtrar elementos del menú antes de renderizarlos */}
           <NavigationMenu>
-            <NavigationMenuList className='gap-2'>
-              {navigationMenu
-                .map((item) => {
-                  if (item.allowedRoles) {
-                    const { hasPermission } = useRolePermissions({
-                      allowedRoles: item.allowedRoles,
-                    })
-                    if (!hasPermission) return null
-                  }
+            <NavigationMenuList className='gap-2 m-0 p-0'>
+              {navigationMenu.map((item, index) => {
+                if (item.allowedRoles) {
+                  const { hasPermission } = useRolePermissions({
+                    allowedRoles: item.allowedRoles,
+                  })
+                  if (!hasPermission) return null
+                }
 
-                  // Filtrar los children según los permisos ANTES de calcular la longitud
-                  const filteredChildren =
-                    item.children?.filter((child) => {
-                      if (child.allowedRoles) {
-                        const { hasPermission } = useRolePermissions({
-                          allowedRoles: child.allowedRoles,
-                        })
-                        return hasPermission
-                      }
-                      return true
-                    }) ?? []
+                // Filtrar los children según los permisos ANTES de calcular la longitud
+                const filteredChildren =
+                  item.children?.filter((child) => {
+                    if (child.allowedRoles) {
+                      const { hasPermission } = useRolePermissions({
+                        allowedRoles: child.allowedRoles,
+                      })
+                      return hasPermission
+                    }
+                    return true
+                  }) ?? []
 
-                  return (
-                    <NavigationMenuItem key={item.label}>
-                      <NavigationMenuTrigger className='border-none bg-transparent font-semibold'>
-                        {item.label}
-                      </NavigationMenuTrigger>
-                      <NavigationMenuContent className='bg-white p-2 pt-4 cursor-pointer'>
-                        <div className='max-h-[550px]'>
-                          <ul
-                            className={`flex flex-wrap w-full list-none p-0 gap-2 ${
-                              filteredChildren.length > 1
-                                ? 'min-w-[480px]'
-                                : 'justify-center min-w-[250px]'
-                            }`}
-                          >
-                            {filteredChildren.map((child) => (
-                              <li key={child.label}>
-                                {child.link ? (
-                                  <NavigationMenuLink
-                                    className={`${navigationMenuTriggerStyle()} no-underline text-black text-lg w-full h-full block`}
-                                    href={child.link}
-                                  >
-                                    <div className='grid grid-cols-1 gap-0 w-full max-w-[200px]'>
-                                      <span className='text-base'>{child.label}</span>
-                                      <span className='text-gray-500 break-words whitespace-normal'>
-                                        {child.Description}
-                                      </span>
-                                    </div>
-                                  </NavigationMenuLink>
-                                ) : (
-                                  <span
-                                    className={`${navigationMenuTriggerStyle()} no-underline text-black text-lg w-full h-full block cursor-pointer`}
-                                    onClick={() => {
-                                      if (child.action === 'openGoalsModal') openGoalsModal()
-                                      if (child.action === 'openDownloadModal') openDownloadModal()
-                                    }}
-                                  >
-                                    <div className='grid grid-cols-1 gap-0 w-full max-w-[200px]'>
-                                      <span className='text-base'>{child.label}</span>
-                                      <span className='text-gray-500 break-words whitespace-normal'>
-                                        {child.Description}
-                                      </span>
-                                    </div>
+                return (
+                  <NavigationMenuItem key={index}>
+                    <NavigationMenuTrigger className='border-none bg-transparent font-semibold'>
+                      {item.label}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent className='bg-white p-2 pt-4 cursor-pointer'>
+                      <ul
+                        className={`flex flex-wrap w-full list-none p-0 gap-2 ${
+                          filteredChildren.length > 1
+                            ? 'min-w-[480px]'
+                            : 'justify-center min-w-[250px]'
+                        }`}
+                      >
+                        {filteredChildren.map((child, index) => (
+                          <li key={index}>
+                            {child.link ? (
+                              <NavigationMenuLink
+                                className={`${navigationMenuTriggerStyle()} no-underline text-black text-lg w-full h-full block`}
+                                href={child.link}
+                              >
+                                <div className='grid grid-cols-1 gap-0 w-full max-w-[200px]'>
+                                  <span className='text-base'>{child.label}</span>
+                                  <span className='text-gray-500 break-words whitespace-normal'>
+                                    {child.Description}
                                   </span>
-                                )}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </NavigationMenuContent>
-                    </NavigationMenuItem>
-                  )
-                })
-                .filter(Boolean)}
+                                </div>
+                              </NavigationMenuLink>
+                            ) : (
+                              <span
+                                className={`${navigationMenuTriggerStyle()} no-underline text-black text-lg w-full h-full block cursor-pointer`}
+                                onClick={() => {
+                                  if (child.action === 'openGoalsModal') openGoalsModal()
+                                  if (child.action === 'openDownloadModal') openDownloadModal()
+                                }}
+                              >
+                                <div className='grid grid-cols-1 gap-0 w-full max-w-[200px]'>
+                                  <span className='text-base'>{child.label}</span>
+                                  <span className='text-gray-500 break-words whitespace-normal'>
+                                    {child.Description}
+                                  </span>
+                                </div>
+                              </span>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                )
+              })}
 
               <NavigationMenuItem>
                 <NavigationMenuLink
@@ -209,76 +205,60 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
           </NavigationMenu>
         </div>
 
-        <div className='mr-10'>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant='outline'
-                className='border-none bg-transparent shadow-none text-transparent hover:bg-transparent cursor-pointer'
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant='outline'
+              className='border-none bg-transparent shadow-none text-transparent hover:bg-transparent cursor-pointer'
+            >
+              <img className='w-8 h-8' src={UserAvatar} alt='user-avatar' />
+            </Button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent className='w-[250px] justify-items-start mr-16 border-solid'>
+            <DropdownMenuLabel>
+              <span className='text-lg text-black font-semibold'>{state.user?.fullname}</span>
+              <br />
+              <span className='text-xs font-normal text-black'>
+                (Rol - {UserRolesEnum[state.user?.role as keyof typeof UserRolesEnum]})
+              </span>
+              <br />
+              <span className='text-xs font-normal text-black'>{state.user?.company.name}</span>
+              <br />
+              <span className='text-xs font-normal text-black'>
+                <span>Última conexión:</span> {formatDateTime(state.user?.last_login)}
+              </span>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator className='w-screen bg-gray-1' />
+
+            <DropdownMenuGroup className='w-full justify-items-start'>
+              {hasUserActivityPermission && (
+                <DropdownMenuItem className='w-full flex items-center gap-2 pr-[35%]'>
+                  <DropdownMenuShortcut>
+                    <img
+                      src='https://cdn-icons-png.flaticon.com/512/3524/3524659.png'
+                      alt='settings-icon'
+                      className='size-3'
+                    />
+                  </DropdownMenuShortcut>
+                  <a href='/user-activities' className='font-bold text-black no-underline'>
+                    Actividad de Usuario
+                  </a>
+                </DropdownMenuItem>
+              )}
+
+              <DropdownMenuItem
+                className='w-full flex items-center gap-2 pr-[52%]'
+                onClick={logoutUser}
               >
-                <img className='w-8 h-8' src={UserAvatar} alt='user-avatar' />
-              </Button>
-            </DropdownMenuTrigger>
-            {(() => {
-              const hasUserActivityPermission = useRolePermissions({
-                allowedRoles:
-                  SideBarData.find((item) => item.path === '/user-activities')?.allowedRoles || [],
-              }).hasPermission
-
-              const dropdownHeight = hasUserActivityPermission ? 'h-[185px]' : 'h-[150px]'
-
-              return (
-                <DropdownMenuContent
-                  className={`w-[250px] ${dropdownHeight} justify-items-start mr-16 border-solid`}
-                >
-                  <DropdownMenuLabel>
-                    <span className='text-lg text-black font-semibold'>{state.user?.fullname}</span>
-                    <br />
-                    <span className='text-xs font-normal text-black'>
-                      (Rol - {UserRolesEnum[state.user?.role as keyof typeof UserRolesEnum]})
-                    </span>
-                    <br />
-                    <span className='text-xs font-normal text-black'>
-                      {state.user?.company.name}
-                    </span>
-                    <br />
-                    <span className='text-xs font-normal text-black'>
-                      <span>Última conexión:</span> {formatDateTime(state.user?.last_login)}
-                    </span>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator className='w-screen bg-gray-1' />
-
-                  <DropdownMenuGroup className='w-full justify-items-start'>
-                    {hasUserActivityPermission && (
-                      <DropdownMenuItem className='w-full flex items-center gap-2 pr-[35%]'>
-                        <DropdownMenuShortcut>
-                          <img
-                            src='https://cdn-icons-png.flaticon.com/512/3524/3524659.png'
-                            alt='settings-icon'
-                            className='size-3'
-                          />
-                        </DropdownMenuShortcut>
-                        <a href='/user-activities' className='font-bold text-black no-underline'>
-                          Actividad de Usuario
-                        </a>
-                      </DropdownMenuItem>
-                    )}
-
-                    <DropdownMenuItem
-                      className='w-full flex items-center gap-2 pr-[52%]'
-                      onClick={logoutUser}
-                    >
-                      <DropdownMenuShortcut>
-                        <IconLogout size={15} color='Black' />
-                      </DropdownMenuShortcut>
-                      <span className='font-bold cursor-pointer'>Cerrar Sesión</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              )
-            })()}
-          </DropdownMenu>
-        </div>
+                <DropdownMenuShortcut>
+                  <IconLogout size={15} color='Black' />
+                </DropdownMenuShortcut>
+                <span className='font-bold cursor-pointer'>Cerrar Sesión</span>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </nav>
 
       <div className='w-100 h-screen pt-16 flex bg-white'>
