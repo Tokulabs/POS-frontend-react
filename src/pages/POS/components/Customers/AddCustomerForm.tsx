@@ -120,7 +120,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
       city: Number(0),
       address: '',
     },
-  })  
+  })
 
   const { mutate: mutatePost } = useMutation({
     mutationFn: postCustomers,
@@ -183,7 +183,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
                         htmlFor='naturalPerson'
                         className='block w-full text-center cursor-pointer rounded-lg px-6 py-3 border border-gray-300 transition-all text-green-1
             bg-white font-medium shadow-sm hover:bg-gray-100 
-            peer-aria-checked:bg-primary peer-aria-checked:border-solid peer-aria-checked::border-1 peer-aria-checked:border-green-1 peer-aria-checked:shadow-lg'
+            peer-aria-checked:bg-green-1 peer-aria-checked:text-white  peer-aria-checked:border-solid peer-aria-checked::border-1 peer-aria-checked:border-green-1 peer-aria-checked:shadow-lg'
                       >
                         Persona Natural
                       </FormLabel>
@@ -200,7 +200,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
                         htmlFor='legalPerson'
                         className='block w-full text-center cursor-pointer rounded-lg px-6 py-3 border border-gray-300 transition-all text-green-1
             bg-white font-medium shadow-sm hover:bg-gray-100 
-            peer-aria-checked:bg-primary peer-aria-checked:border-solid peer-aria-checked::border-1 peer-aria-checked:border-green-1 peer-aria-checked:shadow-lg'
+            peer-aria-checked:bg-green-1 peer-aria-checked:text-white peer-aria-checked:border-solid peer-aria-checked::border-1 peer-aria-checked:border-green-1 peer-aria-checked:shadow-lg'
                       >
                         Persona Jurídica
                       </FormLabel>

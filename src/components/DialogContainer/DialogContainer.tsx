@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren } from 'react'
+import { FC, PropsWithChildren, ReactNode } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -8,10 +8,11 @@ import {
 } from '@/components/ui/dialog'
 
 interface DialogContainerProps {
-  onOpenChange: (value: boolean) => void
   title: string
-  triggerTitle: string
+  triggerTitle: ReactNode
   open: boolean
+  onOpenChange?: (value: boolean) => void
+  triggerClassName?: string
 }
 
 export const DialogContainer: FC<PropsWithChildren<DialogContainerProps>> = ({
@@ -19,11 +20,14 @@ export const DialogContainer: FC<PropsWithChildren<DialogContainerProps>> = ({
   onOpenChange,
   title,
   triggerTitle,
+  triggerClassName,
   open,
 }) => {
   return (
-    <Dialog open={open} onOpenChange={(value) => onOpenChange(value)}>
-      <DialogTrigger className='bg-green-1 flex w-full p-3 text-white border-1 border-solid border-green-1 justify-center items-center rounded-md cursor-pointer hover:bg-white hover:text-green-1 focus-visible:ring-0'>
+    <Dialog open={open} onOpenChange={(value) => onOpenChange && onOpenChange(value)}>
+      <DialogTrigger
+        className={`bg-green-1 flex p-3 text-white border-1 border-solid border-green-1 justify-center items-center rounded-md cursor-pointer hover:bg-white hover:text-green-1 focus-visible:ring-0 ${triggerClassName}`}
+      >
         {triggerTitle}
       </DialogTrigger>
       <DialogPortal>

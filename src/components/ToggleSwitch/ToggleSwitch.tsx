@@ -19,7 +19,7 @@ const ToggleSwitch: FC<ToggleSwitchProps> = ({
   className = '',
 }) => {
   return (
-    <div>
+    <div className='w-full'>
       <header
         className={`w-full flex justify-between rounded-md shadow-lg cursor-pointer ${className}`}
       >
@@ -27,7 +27,7 @@ const ToggleSwitch: FC<ToggleSwitchProps> = ({
           <div
             key={option.label}
             onClick={() => onSelect(index)}
-            className={`w-1/2 p-4 h-full flex justify-center items-center text-gray-1 rounded-md transition-all duration-200 
+            className={`w-1/2 p-3 h-full flex justify-center items-center text-gray-1 rounded-md transition-all duration-200 
               ${index === 0 ? 'rounded-l-md' : 'rounded-r-md'} 
               ${selectedIndex === index ? 'text-white bg-green-1 font-semibold shadow-inner' : ''}`}
           >
