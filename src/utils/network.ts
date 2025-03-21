@@ -19,6 +19,7 @@ export const inventoryURL = baseURL + 'app/inventory'
 export const inventoryCSVURL = baseURL + 'app/inventory-csv'
 // Inventory Movements
 export const inventoryMovementsURL = baseURL + 'app/inventory-movement'
+export const inventoryMovementsSimpleURL = baseURL + 'app/inventory-movement-simple-list'
 // Activities
 export const activitiesURL = baseURL + 'user/activities'
 export const invoiceMinimalURL = baseURL + 'app/invoice-simple-list'

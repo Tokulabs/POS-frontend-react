@@ -27,6 +27,7 @@ import { requestVerificationEmailURL } from '@/utils/network'
 import { toast } from 'sonner'
 import { ConfirmEmailVerification } from '@/components/ConfirmEmailVerification/ConfirmEmailVerify'
 import { useCountDown } from '@/hooks/useCountDown'
+import { useCartOrders } from '@/store/useCartStoreOrdersZustand'
 
 const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
@@ -53,6 +54,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const { updateCurrentStep } = usePOSStep()
   const { clearPaymentMethods } = usePaymentMethodsData()
   const { clearCart } = useCart()
+  const { clearCart: clearCartOrders } = useCartOrders()
   const { clearCustomerData } = useCustomerData()
 
   useEffect(() => {
@@ -60,6 +62,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
     clearCustomerData()
     clearCart()
     clearPaymentMethods()
+    clearCartOrders()
   }, [location])
 
   const openDownloadModal = () => {
@@ -164,7 +167,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
         <div className='w-56 bg-white'>
           <ul className='list-none p-0 m-0 mt-12 ml-5'>
             {SideBarData.map((item, index) => {
-              const Icon = item.icon
+              if (item.showInSideBar === false) return null
               const active = location.pathname === item.path
               if (item.allowedRoles) {
                 const { hasPermission } = useRolePermissions({ allowedRoles: item.allowedRoles })
@@ -173,6 +176,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
                   return null
                 }
               }
+              const Icon = item.icon
               return (
                 <li key={index}>
                   <Link
@@ -181,7 +185,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
                       active ? 'text-green-1' : 'text-gray-1'
                     } `}
                   >
-                    <Icon />
+                    {Icon && <Icon />}
                     <span className='text-sm'>{item.title}</span>
                   </Link>
                 </li>
