@@ -1,46 +1,18 @@
 import { ITableTitles } from '@/pages/POS/components/types/TableTypes'
+import { TableColumnsType } from 'antd'
 
-export const TableData: ITableTitles[] = [
-  {
-    tableTitle: 'Codigo',
-    tableStyles: 'w-full',
-  },
-  {
-    tableTitle: 'Nombre',
-    tableStyles: 'w-full col-span-2',
-  },
-  {
-    tableTitle: 'Precio COP',
-    tableStyles: 'w-full col-span-2',
-  },
-  {
-    tableTitle: 'Precio USD',
-    tableStyles: 'w-full col-span-2',
-  },
-  {
-    tableTitle: 'Cantidad',
-    tableStyles: 'w-full col-span-2',
-  },
-  {
-    tableTitle: 'Total USD',
-    tableStyles: 'w-full col-span-2',
-  },
-  {
-    tableTitle: 'Total COP',
-    tableStyles: 'w-full col-span-2',
-  },
-]
-
-export const columnsDataInventoryMovemenets = [
+export const columnsDataPurchase: TableColumnsType = [
   {
     title: 'ID',
     dataIndex: 'key',
     key: 'key',
+    fixed: 'left',
   },
   {
     title: 'Proveedor',
     dataIndex: 'provider_name',
     key: 'provider_name',
+    fixed: 'left',
   },
   {
     title: 'Estado',
@@ -53,18 +25,44 @@ export const columnsDataInventoryMovemenets = [
     key: 'created_at',
   },
   {
-    title: 'Fecha de entrega',
-    dataIndex: 'event_date',
-    key: 'event_date',
+    title: 'Notas',
+    dataIndex: 'delivery_notes',
+    key: 'delivery_notes',
   },
   {
-    title: 'Destino',
-    dataIndex: 'destination',
-    key: 'destination',
+    title: 'Fecha de revisión',
+    dataIndex: 'state_reviewed_at',
+    key: 'state_reviewed_at',
+  },
+]
+
+export const createPurchaseTableTitles: ITableTitles[] = [
+  {
+    tableTitle: 'Codigo',
+    tableStyles: 'w-full',
   },
   {
-    title: '',
-    dataIndex: 'action',
-    key: 'action',
+    tableTitle: 'Nombre',
+    tableStyles: 'col-span-3 w-full',
+  },
+  {
+    tableTitle: 'Precio COP',
+    tableStyles: 'col-span-2 col-start-5 w-full',
+  },
+  {
+    tableTitle: 'Precio USD',
+    tableStyles: 'col-start-7 w-full',
+  },
+  {
+    tableTitle: 'Cantidad',
+    tableStyles: 'col-start-8 col-span-3 w-full',
+  },
+  {
+    tableTitle: 'Total COP',
+    tableStyles: 'col-start-11 col-span-2 w-full',
+  },
+  {
+    tableTitle: 'Total USD',
+    tableStyles: 'col-start-13 w-full',
   },
 ]
