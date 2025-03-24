@@ -97,7 +97,7 @@ const documentTypesOptions = [
 
 export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
   const [citySearch, setCitySearch] = useState('')
-  const { isLoading, citiesData } = useCities('citiesBySearch', { keyword: citySearch, page: 1 })
+  const { isLoading, citiesData } = useCities('citiesBySearch')
   const { updateCustomerData } = useCustomerData()
 
   const queryClient = useQueryClient()
@@ -221,7 +221,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
                   <FormLabel>
                     Tipo de doc. <span className='text-red-1'>*</span>
                   </FormLabel>
-                  <Popover>
+                  <Popover modal={true}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -365,7 +365,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
                   <FormLabel>
                     Ciudad <span className='text-red-1'>*</span>
                   </FormLabel>
-                  <Popover>
+                  <Popover modal={true}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -386,7 +386,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className='w-[300px] p-0'>
+                    <PopoverContent className='w-[300px] p-0' asChild>
                       <Command>
                         <CommandInput
                           placeholder='Buscar ciudad'
