@@ -6,31 +6,21 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { cn } from '@/lib/utils'
-import { Check, ChevronsUpDown } from 'lucide-react'
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
 import { useCities } from '@/hooks/useCities'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { postCustomers } from '../../helpers/services'
 import { useCustomerData } from '@/store/useCustomerStoreZustand'
 import { toast } from 'sonner'
 import { UserDocumentTypeEnum } from '@/pages/Users/types/UserTypes'
 import { IconCheck } from '@tabler/icons-react'
+import { OptionSelect, SearchInputSelect } from '@/components/FormComponents/SearchInputSelect'
 
 interface AddCustomerProps {
   setOpen: (value: boolean) => void
@@ -96,17 +86,8 @@ const documentTypesOptions = [
 ] as const
 
 export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
-  const [citySearch, setCitySearch] = useState('')
-  const { isLoading, citiesData } = useCities('citiesBySearch')
+  const { isLoading, citiesData = [] } = useCities('citiesBySearch')
   const { updateCustomerData } = useCustomerData()
-
-  const queryClient = useQueryClient()
-
-  useEffect(() => {
-    if (citySearch) {
-      queryClient.invalidateQueries({ queryKey: ['citiesBySearch'] })
-    }
-  }, [citySearch])
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -217,71 +198,25 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
               control={form.control}
               name='documentType'
               render={({ field }) => (
-                <FormItem className='w-1/4 space-y-2'>
-                  <FormLabel>
-                    Tipo de doc. <span className='text-red-1'>*</span>
-                  </FormLabel>
-                  <Popover modal={true}>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant='outline'
-                          role='combobox'
-                          className={cn(
-                            'w-full justify-between',
-                            !field.value && 'text-muted-foreground',
-                            'border-gray-1 border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0',
-                          )}
-                        >
-                          <span className='truncate'>
-                            {field.value
-                              ? documentTypesOptions.find((doc) => doc.value === field.value)?.label
-                              : 'Seleccionar'}
-                          </span>
-                          <ChevronsUpDown className='opacity-50' />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className='w-[200px] p-0'>
-                      <Command>
-                        <CommandInput
-                          placeholder='Buscar tipo'
-                          className='h-9 border-gray-1 border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0'
-                        />
-                        <CommandList>
-                          <CommandEmpty>No encontrado</CommandEmpty>
-                          <CommandGroup>
-                            {documentTypesOptions.map((doc) => (
-                              <CommandItem
-                                value={doc.label}
-                                key={doc.value}
-                                onSelect={() => {
-                                  form.setValue('documentType', doc.value)
-                                }}
-                              >
-                                {doc.label}
-                                <Check
-                                  className={cn(
-                                    'ml-auto',
-                                    doc.value === field.value ? 'opacity-100' : 'opacity-0',
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
+                <SearchInputSelect
+                  label='Documento'
+                  className='flex flex-col w-1/2 justify-start'
+                  options={documentTypesOptions.map((item) => {
+                    const option: OptionSelect = {
+                      label: item.label,
+                      value: item.value,
+                    }
+                    return option
+                  })}
+                  field={field}
+                />
               )}
             />
             <FormField
               control={form.control}
               name='idNumber'
               render={({ field }) => (
-                <FormItem className='w-3/4'>
+                <FormItem className='w-1/2'>
                   <FormLabel>
                     Número de documento <span className='text-red-1'>*</span>
                   </FormLabel>
@@ -327,7 +262,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder='Correo Electornico'
+                      placeholder='Correo Electrónico'
                       {...field}
                       className='border-gray-1  border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0'
                     />
@@ -361,74 +296,19 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
               control={form.control}
               name='city'
               render={({ field }) => (
-                <FormItem className='w-1/2 space-y-2'>
-                  <FormLabel>
-                    Ciudad <span className='text-red-1'>*</span>
-                  </FormLabel>
-                  <Popover modal={true}>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant='outline'
-                          role='combobox'
-                          className={cn(
-                            'w-full justify-between',
-                            !field.value && 'text-muted-foreground',
-                            'border-gray-1 border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0',
-                          )}
-                        >
-                          <span className='truncate'>
-                            {field.value
-                              ? citiesData?.find((city) => city.id === field.value)?.name
-                              : 'Seleccionar'}
-                          </span>
-                          <ChevronsUpDown className='opacity-50' />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className='w-[300px] p-0' asChild>
-                      <Command>
-                        <CommandInput
-                          placeholder='Buscar ciudad'
-                          className='h-9 border-gray-1 border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0'
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              e.preventDefault()
-                              const query = (e.target as HTMLInputElement).value.trim()
-                              if (query) setCitySearch(query)
-                            }
-                          }}
-                        />
-                        <CommandList>
-                          {isLoading ? (
-                            <CommandEmpty>Cargando...</CommandEmpty>
-                          ) : citiesData?.length === 0 ? (
-                            <CommandEmpty>No encontrado</CommandEmpty>
-                          ) : (
-                            <CommandGroup>
-                              {citiesData?.map((city) => (
-                                <CommandItem
-                                  value={city.name}
-                                  key={city.name}
-                                  onSelect={() => form.setValue('city', city.id)}
-                                >
-                                  {city.name}
-                                  <Check
-                                    className={cn(
-                                      'ml-auto',
-                                      city.id === field.value ? 'opacity-100' : 'opacity-0',
-                                    )}
-                                  />
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          )}
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
+                <SearchInputSelect
+                  label='Ciudad'
+                  className='w-1/2'
+                  options={citiesData.map((item) => {
+                    const option: OptionSelect = {
+                      label: item.name,
+                      value: item.id,
+                    }
+                    return option
+                  })}
+                  isLoading={isLoading}
+                  field={field}
+                />
               )}
             />
             <FormField

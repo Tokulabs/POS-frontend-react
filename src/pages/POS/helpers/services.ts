@@ -87,9 +87,9 @@ export const getCities = async (queryParams: IQueryParams) => {
       hasAuth: true,
       showError: false,
     })
-    if (response) {
-      return response.data.results
-    }
+
+    if (!response?.data.results) return [] as City[]
+    return response.data.results
   } catch (e) {
     throw new Error(e as string)
   }
