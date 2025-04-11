@@ -106,7 +106,7 @@ export const POSStepper: FC = () => {
           <Steps current={currentStep} items={items} />
           <Divider />
         </div>
-        <div className='w-full flex flex-col border-t-2 gap-4'>
+        <div className='w-full flex flex-col gap-4'>
           <div className='flex justify-between items-end'>
             <h1 className='text-2xl font-semibold text-green-1 m-0'>Crear Venta</h1>
           </div>
