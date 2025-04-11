@@ -141,7 +141,7 @@ const InventoryMovementItem: FC = () => {
         {movementIdData?.state === 'pending' && (
           <>
             <Popover>
-              <PopoverTrigger>
+              <PopoverTrigger asChild>
                 <Button className='text-white bg-green-1' variant='default'>
                   Aprobar
                 </Button>
@@ -151,7 +151,7 @@ const InventoryMovementItem: FC = () => {
                   <span className='text-center'>Estás seguro de aprobar esta compra?</span>
                   <div className='flex items-center justify-between gap-4'>
                     <Button onClick={() => updateMovement('approve')}>Sí, aprobar</Button>
-                    <PopoverClose>
+                    <PopoverClose asChild>
                       <Button variant='ghost'>Cancelar</Button>
                     </PopoverClose>
                   </div>
@@ -160,7 +160,7 @@ const InventoryMovementItem: FC = () => {
             </Popover>
 
             <Popover>
-              <PopoverTrigger>
+              <PopoverTrigger asChild>
                 <Button variant='ghost'>Rechazar</Button>
               </PopoverTrigger>
               <PopoverContent side='top' align='end' sideOffset={15}>
@@ -168,7 +168,7 @@ const InventoryMovementItem: FC = () => {
                   <span className='text-center'>Estás seguro de rechazar esta compra?</span>
                   <div className='flex items-center justify-between gap-4'>
                     <Button onClick={() => updateMovement('reject')}>Sí, rechazar</Button>
-                    <PopoverClose>
+                    <PopoverClose asChild>
                       <Button variant='ghost'>Cancelar</Button>
                     </PopoverClose>
                   </div>

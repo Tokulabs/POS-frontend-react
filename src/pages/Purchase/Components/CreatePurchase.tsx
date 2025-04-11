@@ -167,6 +167,8 @@ const CreatePurchase: FC<CreatePurchaseInterface> = ({ setCreatePurchase }) => {
               />
               {providerID && (
                 <div className='grid grid-cols-2 gap-y-2'>
+                  <span className='font-bold'>Nombre</span>
+                  <span>{currentProvider?.name ?? 'N/A'}</span>
                   <span className='font-bold'>Nit:</span>
                   <span>{currentProvider?.nit ?? 'N/A'}</span>
                   <span className='font-bold'>Telefono:</span>
