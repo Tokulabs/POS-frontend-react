@@ -198,7 +198,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
               control={form.control}
               name='documentType'
               render={({ field }) => (
-                <SearchInputSelect
+                <SearchInputSelect<z.infer<typeof formSchema>, 'documentType'>
                   label='Documento'
                   className='flex flex-col w-1/2 justify-start'
                   options={documentTypesOptions.map((item) => {
@@ -296,7 +296,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
               control={form.control}
               name='city'
               render={({ field }) => (
-                <SearchInputSelect
+                <SearchInputSelect<z.infer<typeof formSchema>, 'city'>
                   label='Ciudad'
                   className='w-1/2'
                   options={citiesData.map((item) => {
