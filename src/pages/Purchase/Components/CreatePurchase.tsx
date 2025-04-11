@@ -18,6 +18,7 @@ import { getNextPurchaseNumber, postPurchaseNew } from '../helpers/services'
 import { ICreatePurchase } from '../types/PurchaseTypes'
 import { DataPropsForm } from '@/types/GlobalTypes'
 import { toast } from 'sonner'
+import { useKeyPress } from '@/hooks/useKeyPress'
 
 interface CreatePurchaseInterface {
   setCreatePurchase: (value: boolean) => void
@@ -30,6 +31,15 @@ const CreatePurchase: FC<CreatePurchaseInterface> = ({ setCreatePurchase }) => {
   const [value, setValue] = useState<string>()
   const [isLoadingSearch, setIsLoadingSearch] = useState(false)
   const [data, setData] = useState<IInventoryProps[]>([])
+
+  const moveToInput = () => {
+    const input = document.getElementById('searchBar')
+    input?.focus()
+  }
+
+  useKeyPress('F3', () => {
+    moveToInput()
+  })
 
   const queryClient = useQueryClient()
 
