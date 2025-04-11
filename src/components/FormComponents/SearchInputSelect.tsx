@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Check, ChevronsUpDown } from 'lucide-react'
-import { ControllerRenderProps, FieldValues } from 'react-hook-form'
+import { ControllerRenderProps, FieldValues, Path } from 'react-hook-form'
 
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -17,20 +17,20 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 
 export type OptionSelect = {
   label: string
-  value: number | string
+  value: string | number
 }
 
-interface SearchInputSelectProps<T extends FieldValues> {
+interface SearchInputSelectProps<T extends FieldValues, K extends Path<T>> {
   label: string
   placeholder?: string
   options: OptionSelect[]
-  field: ControllerRenderProps<T>
+  field: ControllerRenderProps<T, K>
   className?: string
   onkeydown?: (e: React.KeyboardEvent) => void
   isLoading?: boolean
 }
 
-export function SearchInputSelect<T extends FieldValues>({
+export const SearchInputSelect = <T extends FieldValues, K extends Path<T>>({
   label,
   placeholder = 'Seleccionar opción',
   options,
@@ -38,7 +38,7 @@ export function SearchInputSelect<T extends FieldValues>({
   className,
   onkeydown,
   isLoading,
-}: SearchInputSelectProps<T>) {
+}: SearchInputSelectProps<T, K>) => {
   const [open, setOpen] = useState(false)
 
   return (
