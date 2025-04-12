@@ -12,9 +12,13 @@ import {
   IconUsersGroup,
   IconProps,
   Icon,
+  IconPackage,
+  IconShoppingCart,
+  IconBuildingStore,
+  IconCash,
 } from '@tabler/icons-react'
 import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
-import { FC, ForwardRefExoticComponent, RefAttributes } from 'react'
+import { FC, ForwardRefExoticComponent, RefAttributes, ReactNode } from 'react'
 import { Home } from '@/pages/Home/Home'
 import { Inventories } from '@/pages/Inventories/Inventories'
 import { Invoices } from '@/pages/Invoices/Invoices'
@@ -28,6 +32,7 @@ import { PaymentTerminals } from '@/pages/PaymentTerminals/PaymentTerminals'
 import { Providers } from '@/pages/Providers/Providers'
 import { Purchase } from '@/pages/Purchase/Purchase'
 
+
 interface ISideBarData {
   icon: ForwardRefExoticComponent<Omit<IconProps, 'ref'> & RefAttributes<Icon>>
   title: string
@@ -37,9 +42,20 @@ interface ISideBarData {
   action?: string
 }
 
-export const navigationMenu = [
+interface NavigationMenuItem {
+  label: string
+  link?: string
+  allowedRoles: string[]
+  description?: string
+  action?: string
+  children?: NavigationMenuItem[]
+  icon?: ForwardRefExoticComponent<Omit<IconProps, 'ref'> & RefAttributes<Icon>>
+}
+
+export const navigationMenu: NavigationMenuItem[] = [
   {
     label: 'Inventario',
+    icon: IconPackage,
     allowedRoles: [
       UserRolesEnum.admin,
       UserRolesEnum.posAdmin,
@@ -52,14 +68,14 @@ export const navigationMenu = [
         label: 'Bodega',
         link: '/storage',
         allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
-        Description: 'Gestione el inventario y controle el strock disponible',
+        description: 'Gestione el inventario y controle el stock disponible',
         action: '',
       },
       {
         label: 'Categoría',
         link: '/inventory-groups',
         allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
-        Description: 'Clasifica y organiza los productos para una gestión más eficiente',
+        description: 'Clasifica y organiza los productos para una gestión más eficiente',
         action: '',
       },
       {
@@ -72,9 +88,8 @@ export const navigationMenu = [
           UserRolesEnum.sales,
         ],
         action: '',
-        Description: 'Administra y visualiza todos los productos disponibles en la tienda',
+        description: 'Administra y visualiza todos los productos disponibles en la tienda',
       },
-
       {
         label: 'Movimiento de Inventarios',
         link: '**',
@@ -83,20 +98,28 @@ export const navigationMenu = [
           UserRolesEnum.posAdmin,
           UserRolesEnum.shopAdmin,
         ],
-        Description: 'Registra y gestiona las devoluciones de productos fácilmente',
+        description: 'Registra y gestiona las devoluciones de productos fácilmente',
         action: '',
       },
     ],
   },
-
   {
     label: 'Ventas',
+    icon: IconShoppingCart,
+    allowedRoles: [      
+      UserRolesEnum.admin,
+      UserRolesEnum.posAdmin,
+      UserRolesEnum.sales,
+      UserRolesEnum.shopAdmin,
+      UserRolesEnum.storageAdmin,
+      UserRolesEnum.supportSales,
+    ],
     children: [
       {
         label: 'Clientes',
         link: '**',
         allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
-        Description: 'Administra y consulta la información de tus clientes',
+        description: 'Administra y consulta la información de tus clientes',
       },
       {
         label: 'Facturas de Venta',
@@ -108,29 +131,28 @@ export const navigationMenu = [
           UserRolesEnum.sales,
           UserRolesEnum.supportSales,
         ],
-        Description: 'Genera, visualiza y administra facturas de ventas fácilmente',
+        description: 'Genera, visualiza y administra facturas de ventas fácilmente',
         action: '' ,
       },
-
       {
         label: 'Datáfonos',
         link: '/payment-terminals',
         allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
-        Description: 'Gestiona los dispositivos de pago electrónico disponibles',
+        description: 'Gestiona los dispositivos de pago electrónico disponibles',
         action: '',
       },
       {
         label: 'Resoluciones DIAN',
         link: '/dian-resolution',
-        acion: '',
+        action: '', 
         allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
-        Description: 'Solo puedes tener una resolución activa a la vez por tipo',
+        description: 'Solo puedes tener una resolución activa a la vez por tipo',
       },
     ],
   },
-
   {
     label: 'Compras',
+    icon: IconCash,
     allowedRoles: [
       UserRolesEnum.admin,
       UserRolesEnum.posAdmin,
@@ -141,21 +163,21 @@ export const navigationMenu = [
         label: 'Proveedores',
         link: '/providers',
         allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
-        Description: 'Administra y consulta la información de tus clientes',
+        description: 'Administra y consulta la información de tus proveedores',
         action: '',
       },
       {
         label: 'Compras',
-        link: '/purschases',
+        link: '/purchases',
         allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
-        Description: 'Registra y gestiona las compras realizadas a proveedores',
+        description: 'Registra y gestiona las compras realizadas a proveedores',
         action: '',
       },
     ],
   },
-
   {
     label: 'Tienda',
+    icon: IconBuildingStore,
     allowedRoles: [
       UserRolesEnum.admin,
       UserRolesEnum.posAdmin,
@@ -166,7 +188,7 @@ export const navigationMenu = [
         label: 'Reportes',
         link: '',
         allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
-        Description: 'Descarga y consulta reportes detallados de ventas y operaciones',
+        description: 'Descarga y consulta reportes detallados de ventas y operaciones',
         action: 'openDownloadModal',
       },
       {
@@ -179,17 +201,17 @@ export const navigationMenu = [
           UserRolesEnum.sales,
           UserRolesEnum.shopAdmin,
           UserRolesEnum.storageAdmin,],
-        Description: 'Crea y gestiona objetivos de ventas para tu negocio',
+        description: 'Crea y gestiona objetivos de ventas para tu negocio',
       },  
       {
         label: 'Usuarios',
         link: '/users',
         allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
-        Description: 'Gestiona y agrega usuarios a tu negocio',
+        description: 'Gestiona y agrega usuarios a tu negocio',
       },  
     ],
   },
-]
+];
 
 export const SideBarData: ISideBarData[] = [
   {
@@ -263,7 +285,7 @@ export const SideBarData: ISideBarData[] = [
     title: 'Actividad de Usuarios',
     path: '/user-activities',
     component: UserActivities,
-    allowedRoles: [UserRolesEnum.admin],
+    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
   },
   {
     icon: IconKey,

@@ -88,6 +88,7 @@ export const ConfirmEmailVerification: FC<IModalDownloadReports> = ({
   }
 
   return (
+    <div className='relative z-40'>
     <Dialog open={isVisible} onOpenChange={onCancelCallback}>
       <DialogContent>
         <DialogHeader>
@@ -155,5 +156,6 @@ export const ConfirmEmailVerification: FC<IModalDownloadReports> = ({
         )}
       </DialogContent>
     </Dialog>
+    </div>
   )
 }

@@ -21,7 +21,7 @@ const Router: FC = () => {
         const Component = item.component
         const routerData: RouteObject = {
           path: item.path,
-          element: <Component />,
+          element: <Component/>,
         }
         return hasPermission
           ? routerData
