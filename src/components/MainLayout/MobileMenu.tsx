@@ -14,11 +14,7 @@ import { IconMenu2, IconCash, type IconProps, type Icon } from '@tabler/icons-re
 import { useRolePermissions } from '@/hooks/useRolespermissions'
 import { navigationMenu } from '@/layouts/MainLayout/data/data'
 import { useNavigate } from 'react-router-dom'
-import {
-  type ForwardRefExoticComponent,
-  type RefAttributes,
-  useState,
-} from 'react'
+import { type ForwardRefExoticComponent, type RefAttributes, useState } from 'react'
 
 const MobileNavigationMenu = ({
   openGoalsModal,
@@ -32,7 +28,7 @@ const MobileNavigationMenu = ({
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger className='flex cursor-pointer bg-none sm:hidden bg-transparent border-none'>
+      <DropdownMenuTrigger className='flex cursor-pointer bg-none md:hidden bg-transparent border-none'>
         <IconMenu2 className='h-6 w-6' />
       </DropdownMenuTrigger>
 

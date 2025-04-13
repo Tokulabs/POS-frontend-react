@@ -21,7 +21,7 @@ const NavigationMenuComponent: FC<NavigationMenuComponentProps> = ({
   openDownloadModal,
 }) => {
   return (
-    <NavigationMenu className='relative z-100000'>
+    <NavigationMenu className='relative z-50'>
       <NavigationMenuList className='gap-2 m-0 p-0'>
         {navigationMenu.map((item, index) => {
           if (item.allowedRoles) {
@@ -57,12 +57,12 @@ const NavigationMenuComponent: FC<NavigationMenuComponentProps> = ({
                     <li key={childIndex}>
                       {child.link ? (
                         <NavigationMenuLink
-                          className={`${navigationMenuTriggerStyle()} hover:bg-gray-200 no-underline text-black text-lg w-full h-full block`}
+                          className={`${navigationMenuTriggerStyle()} hover:bg-gray-200 no-underline text-black text-lg w-full h-full block ${child.disabled ? 'cursor-not-allowed opacity-50' : ''}`}
                           href={child.link}
                         >
                           <div className='grid grid-cols-1 gap-0 w-[228px]'>
-                            <span className='text-base'>{child.label}</span>
-                            <span className='text-gray-500 break-words whitespace-normal'>
+                            <span className='text-base font-semibold'>{child.label}</span>
+                            <span className='text-gray-500 break-words whitespace-normal text-xs'>
                               {child.description}
                             </span>
                           </div>
@@ -76,8 +76,8 @@ const NavigationMenuComponent: FC<NavigationMenuComponentProps> = ({
                           }}
                         >
                           <div className='grid grid-cols-1 gap-0 w-full max-w-[228px]'>
-                            <span className='text-base'>{child.label}</span>
-                            <span className='text-gray-500 break-words whitespace-normal'>
+                            <span className='text-base font-semibold'>{child.label}</span>
+                            <span className='text-gray-500 break-words whitespace-normal text-xs'>
                               {child.description}
                             </span>
                           </div>
