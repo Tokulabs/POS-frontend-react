@@ -1,14 +1,7 @@
 import { FC, useEffect, useState } from 'react'
 import { useDianResolutions } from '@/hooks/useDianResolution'
-import AddDianResolutionForm from './components/AddDianResolutionForm'
-import {
-  IconArticle,
-  IconArticleOff,
-  IconCirclePlus,
-  IconDeviceFloppy,
-  IconEdit,
-} from '@tabler/icons-react'
-import { Button, InputNumber, Spin, Switch } from 'antd'
+import { IconArticle, IconArticleOff, IconDeviceFloppy, IconEdit } from '@tabler/icons-react'
+import { InputNumber, Spin, Switch } from 'antd'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { putDiaResolution, toggleDianResolution } from './helpers/services'
 import { Reorder } from 'framer-motion'
@@ -17,6 +10,7 @@ import { useRolePermissions } from '@/hooks/useRolespermissions'
 import { IDianResolutionProps } from './types/DianResolutionTypes'
 import { toast } from 'sonner'
 import { ToggleSwitch } from '@/components/ToggleSwitch/ToggleSwitch'
+import { CreateResolutionForm } from './components/CreateResolutionForm'
 
 const Dian: FC = () => {
   const [modalState, setModalState] = useState(false)
@@ -95,21 +89,14 @@ const Dian: FC = () => {
               <span className='font-semibold text-xs text-gray-2'>
                 Solo puedes tener una resolución activa a la vez por tipo
               </span>
-              <div className='w-3/4 lg:w-1/2'>
-                <ToggleSwitch
-                  options={options}
-                  selectedIndex={resolutionType}
-                  onSelect={setResolutionType}
-                />
-              </div>
+              <CreateResolutionForm isVisible={modalState} onOpenChange={setModalState} />
+
+              <ToggleSwitch
+                options={options}
+                selectedIndex={resolutionType}
+                onSelect={setResolutionType}
+              />
             </div>
-            <Button
-              className='flex justify-center items-center gap-1'
-              type='primary'
-              onClick={() => setModalState(true)}
-            >
-              <IconCirclePlus /> <span>Resolución de la DIAN</span>
-            </Button>
           </div>
           <div className='h-full overflow-hidden overflow-y-auto scrollbar-hide'>
             <Reorder.Group
@@ -148,7 +135,7 @@ const Dian: FC = () => {
                           item.active ? 'text-green-500' : 'text-red-500'
                         }`}
                       >
-                        {item.document_number}
+                        {item.prefix} - {item.document_number}
                       </h1>
                       <div className='flex gap-10 items-top'>
                         <div className='flex flex-col gap-2 justify-between'>
@@ -214,11 +201,6 @@ const Dian: FC = () => {
           </div>
         </div>
       )}
-      <AddDianResolutionForm
-        onSuccessCallback={() => setModalState(false)}
-        isVisible={modalState}
-        onCancelCallback={() => setModalState(false)}
-      />
     </section>
   )
 }

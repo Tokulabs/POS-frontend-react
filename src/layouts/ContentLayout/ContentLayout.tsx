@@ -1,16 +1,17 @@
-import { FC, PropsWithChildren, ReactNode } from 'react'
-import { Button, Dropdown, Table, Tooltip } from 'antd'
+import { FC, PropsWithChildren, ReactNode, useRef } from 'react'
+import { Button, Dropdown, Table, TableColumnsType, Tooltip } from 'antd'
 import { DataPropsForm } from '@/types/GlobalTypes'
 import Search from 'antd/es/input/Search'
 import { IconAdjustmentsHorizontal, IconCirclePlus, IconRefresh } from '@tabler/icons-react'
 import { useKeyPress } from '@/hooks/useKeyPress'
+import { useTableHeight } from '@/hooks/useTableHeader'
 
 interface IContentLayoutProps {
   pageTitle: string
   setModalState?: (value: boolean) => void
   buttonTitle?: string
   dataSource: DataPropsForm[] | undefined
-  columns: DataPropsForm[]
+  columns: TableColumnsType
   fetching: boolean
   totalItems: number
   currentPage: number
@@ -19,6 +20,7 @@ interface IContentLayoutProps {
   filterOptions?: { label: ReactNode; key: number }[]
   onChangePage?: (page: number) => void
   onSearch?: (value: string) => void
+  onRowClick?: (record: DataPropsForm, index: number) => void
 }
 
 const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
@@ -36,7 +38,11 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
   currentPage,
   onChangePage = () => null,
   onSearch = () => null,
+  onRowClick = () => null,
 }) => {
+  const contentRef = useRef<HTMLDivElement>(null)
+  const tableHeight = useTableHeight(contentRef)
+
   const moveToInput = () => {
     const input = document.getElementById('searchBarLayout')
     input?.focus()
@@ -94,7 +100,7 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
             {extraButton}
           </div>
         </div>
-        <div className='h-full overflow-hidden overflow-y-auto scrollbar-hide'>
+        <div className='h-full overflow-hidden overflow-y-auto scrollbar-hide' ref={contentRef}>
           <Table
             dataSource={dataSource}
             columns={columns}
@@ -107,6 +113,11 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
               onChange: (page) => onChangePage(page),
               showSizeChanger: false,
             }}
+            scroll={{ y: tableHeight }}
+            onRow={(record, rowIndex) => ({
+              onClick: () => onRowClick(record, rowIndex ?? 0),
+            })}
+            rowClassName={() => 'cursor-pointer'}
           />
         </div>
       </div>

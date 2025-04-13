@@ -1,7 +1,7 @@
 import { FC, PropsWithChildren, useContext, useEffect, useState } from 'react'
 import { IconAlertTriangleFilled } from '@tabler/icons-react'
 import NavigationMenuComponent from '@/components/MainLayout/NavigationMenu'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { store } from '@/store'
 import { useCart } from '@/store/useCartStoreZustand'
 import { useCustomerData } from '@/store/useCustomerStoreZustand'
@@ -19,6 +19,9 @@ import { ConfirmEmailVerification } from '@/components/ConfirmEmailVerification/
 import { useCountDown } from '@/hooks/useCountDown'
 import { UserDropdownMenu } from '@/components/MainLayout/DropDownMenu'
 import { MobileNavigationMenu } from '@/components/MainLayout/MobileMenu'
+import { useCartOrders } from '@/store/useCartStoreOrdersZustand'
+import { SideBarData } from './data/data'
+import { useRolePermissions } from '@/hooks/useRolespermissions'
 
 const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
@@ -35,6 +38,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const { updateCurrentStep } = usePOSStep()
   const { clearPaymentMethods } = usePaymentMethodsData()
   const { clearCart } = useCart()
+  const { clearCart: clearCartOrders } = useCartOrders()
   const { clearCustomerData } = useCustomerData()
 
   useEffect(() => {
@@ -42,6 +46,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
     clearCustomerData()
     clearCart()
     clearPaymentMethods()
+    clearCartOrders()
   }, [location])
 
   const openDownloadModal = () => {
@@ -79,10 +84,10 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <section className='h-screen max-h-screen w-full relative'>
       <nav className='w-full h-16 flex justify-between items-center py-0 px-5 absolute top-0 bg-white'>
-      <MobileNavigationMenu 
-        openGoalsModal={openGoalsModal}
-        openDownloadModal={openDownloadModal}
-      />
+        <MobileNavigationMenu
+          openGoalsModal={openGoalsModal}
+          openDownloadModal={openDownloadModal}
+        />
         <div className='flex justify-start items-center w-full'>
           <img
             onClick={() => navigate('/')}
@@ -96,11 +101,39 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
               openDownloadModal={openDownloadModal}
             />
           </div>
-        </div> 
-      <UserDropdownMenu />
+        </div>
+        <UserDropdownMenu />
       </nav>
+      <div className='w-100 h-screen pt-16 flex bg-background-main'>
+        <div className='w-56 bg-white'>
+          <ul className='list-none p-0 m-0 mt-12 ml-5'>
+            {SideBarData.map((item, index) => {
+              if (item.showInSideBar === false) return null
+              const active = location.pathname === item.path
+              if (item.allowedRoles) {
+                const { hasPermission } = useRolePermissions({ allowedRoles: item.allowedRoles })
 
-      <div className='w-100 h-screen pt-16 flex bg-gray-200'>
+                if (!hasPermission) {
+                  return null
+                }
+              }
+              const Icon = item.icon
+              return (
+                <li key={index}>
+                  <Link
+                    to={item.path}
+                    className={`flex items-center mb-7 cursor-pointer gap-3 no-underline ${
+                      active ? 'text-green-1' : 'text-gray-1'
+                    } `}
+                  >
+                    {Icon && <Icon />}
+                    <span className='text-sm'>{item.title}</span>
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
         <div className='h-full w-full overflow-hidden p-5 flex flex-col gap-4'>
           {!state.user?.is_verified && (
             <div className='w-full z-1 p-5 flex justify-start items-center bg-red-300 text-white rounded-md gap-1'>

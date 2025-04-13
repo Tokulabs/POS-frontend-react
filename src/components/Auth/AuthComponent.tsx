@@ -19,7 +19,7 @@ const Authcomponent: FC<PropsWithChildren<IAuthComponentProps>> = ({ children })
         <ImageCarousel />
       </div>
 
-      <section className='w-full md:w-[50%] flex flex-col h-screen items-center justify-between px-4 sm:px-10 md:px-14 lg:px-28 xl:px-40'>
+      <section className='w-full py-4 md:w-[50%] flex flex-col h-screen items-center justify-between px-4 sm:px-10 md:px-14 lg:px-28 xl:px-40'>
         {/* Lado derecho con el logo y el formulario */}
         <div></div>
         <div className='flex w-full flex-col justify-between items-center '>

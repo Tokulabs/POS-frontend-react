@@ -7,4 +7,6 @@ export interface IDianResolutionProps {
   to_number: number
   current_number: number
   active: boolean
+  prefix: string
+  type: string
 }

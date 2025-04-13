@@ -1,11 +1,11 @@
 import { axiosRequest } from '@/api/api'
 import { IQueryParams, IPaginationProps, DataPropsForm } from '@/types/GlobalTypes'
-import { inventoryMovementsURL } from '@/utils/network'
-import { IPurchaseSimple } from '../types/PurchaseTypes'
+import { inventoryMovementsSimpleURL, inventoryMovementsURL } from '@/utils/network'
+import { IPurchase, IPurchaseSimple } from '../types/PurchaseTypes'
 
 export const getinventoryMovements = async (queryParams: IQueryParams) => {
   try {
-    const finalURL = new URL(inventoryMovementsURL)
+    const finalURL = new URL(inventoryMovementsSimpleURL)
     const searchParams = new URLSearchParams()
     if (queryParams) {
       Object.entries(queryParams).forEach(([key, value]) => {
@@ -31,36 +31,33 @@ export const getinventoryMovements = async (queryParams: IQueryParams) => {
   }
 }
 
-export const postProviders = async (values: DataPropsForm) => {
-  try {
-    await axiosRequest({
-      method: 'post',
-      url: inventoryMovementsURL,
-      hasAuth: true,
-      payload: values,
-    })
-  } catch (e) {
-    throw new Error(e as string)
-  }
-}
-
-export const putProviders = async (data: { values: DataPropsForm; id: number }) => {
-  try {
-    await axiosRequest({
-      method: 'put',
-      url: `${inventoryMovementsURL}/${data.id}/`,
-      hasAuth: true,
-      payload: data.values,
-    })
-  } catch (e: unknown) {
-    throw new Error(e as string)
-  }
-}
-
-export const toggleActiveProvider = async (id: number) => {
-  return await axiosRequest<IPurchaseSimple>({
-    method: 'post',
-    url: `${inventoryMovementsURL}/${id}/toggle-active/`,
+export const getMovementById = async (id: string): Promise<IPurchase> => {
+  const finalURL = new URL(inventoryMovementsURL)
+  finalURL.searchParams.set('id', id)
+  const response = await axiosRequest<IPaginationProps<IPurchase>>({
+    url: `${finalURL}`,
     hasAuth: true,
+    showError: true,
+  })
+  return response?.data.results[0] ?? ({} as IPurchase)
+}
+
+export const getNextPurchaseNumber = async () => {
+  return await axiosRequest<{ next_id: string }>({
+    url: `${inventoryMovementsURL}/next_id/`,
+    hasAuth: true,
+  })
+}
+
+export const postPurchaseNew = async (values: DataPropsForm) => {
+  return await axiosRequest<{
+    message: string
+    data: IPurchaseSimple
+  }>({
+    method: 'post',
+    url: inventoryMovementsURL,
+    hasAuth: true,
+    payload: values,
+    showError: true,
   })
 }

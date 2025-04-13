@@ -16,6 +16,7 @@ import {
   IconShoppingCart,
   IconBuildingStore,
   IconCash,
+  IconShoppingBag,
 } from '@tabler/icons-react'
 import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 import { FC, ForwardRefExoticComponent, RefAttributes, ReactNode } from 'react'
@@ -31,15 +32,16 @@ import { Storage } from '@/pages/Storage/Storage'
 import { PaymentTerminals } from '@/pages/PaymentTerminals/PaymentTerminals'
 import { Providers } from '@/pages/Providers/Providers'
 import { Purchase } from '@/pages/Purchase/Purchase'
-
+import { InventoryMovementItem } from '@/pages/InventoryMovementItem/InventoryMovements'
 
 interface ISideBarData {
-  icon: ForwardRefExoticComponent<Omit<IconProps, 'ref'> & RefAttributes<Icon>>
+  icon?: ForwardRefExoticComponent<Omit<IconProps, 'ref'> & RefAttributes<Icon>>
   title: string
   path: string
   component: FC
   allowedRoles?: string[]
   action?: string
+  showInSideBar?: boolean
 }
 
 interface NavigationMenuItem {
@@ -81,7 +83,7 @@ export const navigationMenu: NavigationMenuItem[] = [
       {
         label: 'Productos',
         link: '/inventories',
-        allowedRoles: [      
+        allowedRoles: [
           UserRolesEnum.admin,
           UserRolesEnum.posAdmin,
           UserRolesEnum.shopAdmin,
@@ -93,11 +95,7 @@ export const navigationMenu: NavigationMenuItem[] = [
       {
         label: 'Movimiento de Inventarios',
         link: '**',
-        allowedRoles: [
-          UserRolesEnum.admin,
-          UserRolesEnum.posAdmin,
-          UserRolesEnum.shopAdmin,
-        ],
+        allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
         description: 'Registra y gestiona las devoluciones de productos fácilmente',
         action: '',
       },
@@ -106,7 +104,7 @@ export const navigationMenu: NavigationMenuItem[] = [
   {
     label: 'Ventas',
     icon: IconShoppingCart,
-    allowedRoles: [      
+    allowedRoles: [
       UserRolesEnum.admin,
       UserRolesEnum.posAdmin,
       UserRolesEnum.sales,
@@ -132,7 +130,7 @@ export const navigationMenu: NavigationMenuItem[] = [
           UserRolesEnum.supportSales,
         ],
         description: 'Genera, visualiza y administra facturas de ventas fácilmente',
-        action: '' ,
+        action: '',
       },
       {
         label: 'Datáfonos',
@@ -144,7 +142,7 @@ export const navigationMenu: NavigationMenuItem[] = [
       {
         label: 'Resoluciones DIAN',
         link: '/dian-resolution',
-        action: '', 
+        action: '',
         allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
         description: 'Solo puedes tener una resolución activa a la vez por tipo',
       },
@@ -153,11 +151,7 @@ export const navigationMenu: NavigationMenuItem[] = [
   {
     label: 'Compras',
     icon: IconCash,
-    allowedRoles: [
-      UserRolesEnum.admin,
-      UserRolesEnum.posAdmin,
-      UserRolesEnum.shopAdmin,
-    ],
+    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
     children: [
       {
         label: 'Proveedores',
@@ -178,11 +172,7 @@ export const navigationMenu: NavigationMenuItem[] = [
   {
     label: 'Tienda',
     icon: IconBuildingStore,
-    allowedRoles: [
-      UserRolesEnum.admin,
-      UserRolesEnum.posAdmin,
-      UserRolesEnum.shopAdmin,
-    ],
+    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
     children: [
       {
         label: 'Reportes',
@@ -195,23 +185,24 @@ export const navigationMenu: NavigationMenuItem[] = [
         label: 'Metas',
         link: '',
         action: 'openGoalsModal',
-        allowedRoles: [      
+        allowedRoles: [
           UserRolesEnum.admin,
           UserRolesEnum.posAdmin,
           UserRolesEnum.sales,
           UserRolesEnum.shopAdmin,
-          UserRolesEnum.storageAdmin,],
+          UserRolesEnum.storageAdmin,
+        ],
         description: 'Crea y gestiona objetivos de ventas para tu negocio',
-      },  
+      },
       {
         label: 'Usuarios',
         link: '/users',
         allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
         description: 'Gestiona y agrega usuarios a tu negocio',
-      },  
+      },
     ],
   },
-];
+]
 
 export const SideBarData: ISideBarData[] = [
   {
@@ -227,6 +218,7 @@ export const SideBarData: ISideBarData[] = [
       UserRolesEnum.supportSales,
       UserRolesEnum.storageAdmin,
     ],
+    showInSideBar: true,
   },
   {
     icon: IconPackages,
@@ -239,6 +231,7 @@ export const SideBarData: ISideBarData[] = [
       UserRolesEnum.shopAdmin,
       UserRolesEnum.sales,
     ],
+    showInSideBar: true,
   },
   {
     icon: IconFileInvoice,
@@ -252,6 +245,7 @@ export const SideBarData: ISideBarData[] = [
       UserRolesEnum.sales,
       UserRolesEnum.supportSales,
     ],
+    showInSideBar: true,
   },
   {
     icon: IconReceipt,
@@ -265,6 +259,7 @@ export const SideBarData: ISideBarData[] = [
       UserRolesEnum.shopAdmin,
       UserRolesEnum.supportSales,
     ],
+    showInSideBar: true,
   },
   {
     icon: IconBoxMultiple,
@@ -272,6 +267,7 @@ export const SideBarData: ISideBarData[] = [
     component: InventoryGroups,
     path: '/inventory-groups',
     allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
+    showInSideBar: true,
   },
   {
     icon: IconUsers,
@@ -279,13 +275,15 @@ export const SideBarData: ISideBarData[] = [
     component: Users,
     path: '/users',
     allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
+    showInSideBar: true,
   },
   {
     icon: IconActivity,
     title: 'Actividad de Usuarios',
     path: '/user-activities',
     component: UserActivities,
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
+    allowedRoles: [UserRolesEnum.admin],
+    showInSideBar: true,
   },
   {
     icon: IconKey,
@@ -293,6 +291,7 @@ export const SideBarData: ISideBarData[] = [
     path: '/dian-resolution',
     component: Dian,
     allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
+    showInSideBar: true,
   },
   {
     icon: IconDatabase,
@@ -300,6 +299,7 @@ export const SideBarData: ISideBarData[] = [
     path: '/storage',
     component: Storage,
     allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
+    showInSideBar: true,
   },
   {
     icon: IconDeviceLandlinePhone,
@@ -307,6 +307,7 @@ export const SideBarData: ISideBarData[] = [
     path: '/payment-terminals',
     component: PaymentTerminals,
     allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
+    showInSideBar: true,
   },
   {
     icon: IconUsersGroup,
@@ -314,12 +315,22 @@ export const SideBarData: ISideBarData[] = [
     path: '/providers',
     component: Providers,
     allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
+    showInSideBar: true,
   },
-  // {
-  //   icon: IconShoppingBag,
-  //   title: 'Compras',
-  //   path: '/purchases',
-  //   component: Purchase,
-  //   allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
-  // },
+  {
+    icon: IconShoppingBag,
+    title: 'Compras',
+    path: '/purchases',
+    component: Purchase,
+    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
+    showInSideBar: true,
+  },
+  {
+    icon: undefined,
+    path: 'inventory-movement/:id',
+    component: InventoryMovementItem,
+    title: 'Detalle de movimiento',
+    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
+    showInSideBar: false,
+  },
 ]

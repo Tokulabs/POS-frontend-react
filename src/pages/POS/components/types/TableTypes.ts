@@ -1,6 +1,6 @@
 export type ITableTitles = {
   tableTitle: string
-  tableStyles: string
+  tableStyles?: string
 }
 
 export interface ITableHeaderProps {
