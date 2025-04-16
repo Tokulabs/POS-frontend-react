@@ -47,7 +47,7 @@ const NavigationMenuComponent: FC<NavigationMenuComponentProps> = ({
               <NavigationMenuTrigger className='border-none bg-transparent font-semibold'>
                 {item.label}
               </NavigationMenuTrigger>
-              <NavigationMenuContent className='bg-white cursor-pointer pt-2 p-1 max-h-[170px]'>
+              <NavigationMenuContent className='bg-white pt-2 p-1 max-h-[170px]'>
                 <ul
                   className={`flex flex-wrap w-full list-none p-0 justify-between gap-0 ${
                     filteredChildren.length > 1 ? 'min-w-[520px]' : 'justify-center min-w-[250px]'
@@ -57,7 +57,11 @@ const NavigationMenuComponent: FC<NavigationMenuComponentProps> = ({
                     <li key={childIndex}>
                       {child.link ? (
                         <NavigationMenuLink
-                          className={`${navigationMenuTriggerStyle()} hover:bg-gray-200 no-underline text-black text-lg w-full h-full block ${child.disabled ? 'cursor-not-allowed opacity-50' : ''}`}
+                          className={`${navigationMenuTriggerStyle()}hover:bg-gray-200 no-underline text-black text-lg w-full h-full block ${
+                            child.disabled
+                              ? 'cursor-not-allowed opacity-50 pointer-events-none'
+                              : 'cursor-pointer'
+                          }`}
                           href={child.link}
                         >
                           <div className='grid grid-cols-1 gap-0 w-[228px]'>
@@ -69,8 +73,13 @@ const NavigationMenuComponent: FC<NavigationMenuComponentProps> = ({
                         </NavigationMenuLink>
                       ) : (
                         <div
-                          className={`${navigationMenuTriggerStyle()} hover:bg-gray-200 no-underline text-black text-lg h-full block cursor-pointer`}
+                          className={`${navigationMenuTriggerStyle()} hover:bg-gray-200 no-underline text-black text-lg h-full block ${
+                            child.disabled
+                              ? 'cursor-not-allowed opacity-50 pointer-events-none'
+                              : 'cursor-pointer'
+                          }`}
                           onClick={() => {
+                            if (child.disabled) return
                             if (child.action === 'openGoalsModal') openGoalsModal()
                             if (child.action === 'openDownloadModal') openDownloadModal()
                           }}

@@ -42,7 +42,7 @@ const UserDropdownMenu: FC = () => {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className='w-[250px] justify-items-start mr-16 border-solid'>
+      <DropdownMenuContent className='w-[250px] justify-items-start mr-[2vw] border-solid'>
         <DropdownMenuLabel>
           <span className='text-lg text-black font-semibold'>{state.user?.fullname}</span>
           <br />

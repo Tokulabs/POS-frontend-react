@@ -28,11 +28,11 @@ const MobileNavigationMenu = ({
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger className='flex cursor-pointer bg-none md:hidden bg-transparent border-none'>
-        <IconMenu2 className='h-6 w-6' />
+      <DropdownMenuTrigger className='flex cursor-pointer bg-none md:hidden bg-transparent border-none active:translate-x-full'>
+        <IconMenu2 className={`h-6 w-6 transition-transform duration-300 ${open ? 'rotate-90' : ''}`} />
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className='w-[80vw] sm:w-[40vw] bg-gray-100 mr-3 rounded-lg shadow-lg px-3 py-2'>
+      <DropdownMenuContent className='md:hidden w-[80vw] sm:w-[80vw] mt-[1.9vh] bg-white rounded-none border-none px-3 py-2'>
         <Accordion type='single' collapsible className='w-full'>
           {navigationMenu.map((item, index) => {
             if (item.allowedRoles) {
@@ -70,13 +70,13 @@ const MobileNavigationMenu = ({
             )
           })}
 
-          <div className='grid gap-1 mt-[-3.5%] justify-items-start px-3 pb-3'>
+          <div className='justify-items-start px-3'>
             <Button
               onClick={() => {
                 navigate('/pos')
                 setOpen(false)
               }}
-              className='bg-transparent border-none shadow-none text-black hover:bg-transparent active:bg-transparent px-0 justify-start mt-3 scale-[120%]'
+              className='items-center w-full bg-transparent border-none shadow-none text-black hover:bg-transparent hover:underline active:bg-transparent px-[8.5%] justify-start mt-3 scale-[120%] font-semibold'
             >
               <IconCash size={18} className='mr-2' />
               POS
@@ -105,6 +105,7 @@ const Section = ({
     action?: string
     description?: string
     allowedRoles?: string[]
+    disabled?: boolean
   }[]
   navigate: ReturnType<typeof useNavigate>
   setOpen: (value: boolean) => void
@@ -113,16 +114,17 @@ const Section = ({
 }) => (
   <AccordionItem value={label.toLowerCase()}>
     <AccordionTrigger className='justify-between bg-transparent shadow-none text-black border-none text-base px-3'>
-      <div className='flex items-center gap-2'>
+      <div className='flex items-center gap-5'>
         {Icon && <Icon className='h-4 w-4' />}
-        {label}
+        <span className='font-semibold'>{label}</span>
       </div>
     </AccordionTrigger>
-    <AccordionContent className='grid gap-1 mt-[-3.5%] justify-items-start text-blue-700 px-3 pb-3'>
+    <AccordionContent className='grid gap-1 justify-items-start text-black px-6 pb-3'>
       {items.map((item, i) => (
         <Button
           key={i}
           onClick={() => {
+            if (item.disabled) return
             if (item.link) {
               navigate(item.link)
               setOpen(false)
@@ -136,7 +138,10 @@ const Section = ({
               setOpen(false)
             }
           }}
-          className='bg-transparent border-none shadow-none text-blue-700 hover:bg-transparent active:bg-transparent px-0 justify-start'
+          disabled={item.disabled}
+          className={`bg-transparent w-full shadow-none text-black rounded-none hover:bg-transparent hover:underline active:bg-transparent px-0 justify-start ${
+            item.disabled ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
         >
           {item.label}
         </Button>
