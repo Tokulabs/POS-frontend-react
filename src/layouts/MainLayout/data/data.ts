@@ -140,12 +140,22 @@ export const navigationMenu: NavigationMenuItem[] = [
   {
     label: 'Tienda',
     icon: IconBuildingStore,
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
+    allowedRoles: [
+      UserRolesEnum.admin,
+      UserRolesEnum.posAdmin,
+      UserRolesEnum.shopAdmin,
+      UserRolesEnum.sales,
+    ],
     children: [
       {
         label: 'Reportes',
         link: '',
-        allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
+        allowedRoles: [
+          UserRolesEnum.admin,
+          UserRolesEnum.posAdmin,
+          UserRolesEnum.shopAdmin,
+          UserRolesEnum.sales,
+        ],
         description: 'Descarga y consulta reportes detallados de ventas y operaciones',
         action: 'openDownloadModal',
       },
