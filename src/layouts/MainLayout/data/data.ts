@@ -119,12 +119,12 @@ export const navigationMenu: NavigationMenuItem[] = [
   {
     label: 'Compras',
     icon: IconCash,
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
+    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
     children: [
       {
         label: 'Proveedores',
         link: '/providers',
-        allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
+        allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
         description: 'Administra y consulta la información de tus proveedores',
         action: '',
       },
@@ -153,13 +153,7 @@ export const navigationMenu: NavigationMenuItem[] = [
         label: 'Metas',
         link: '',
         action: 'openGoalsModal',
-        allowedRoles: [
-          UserRolesEnum.admin,
-          UserRolesEnum.posAdmin,
-          UserRolesEnum.sales,
-          UserRolesEnum.shopAdmin,
-          UserRolesEnum.storageAdmin,
-        ],
+        allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
         description: 'Crea y gestiona objetivos de ventas para tu negocio',
       },
       {
