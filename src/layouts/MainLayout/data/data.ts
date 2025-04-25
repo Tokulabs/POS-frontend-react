@@ -42,7 +42,7 @@ export const navigationMenu: NavigationMenuItem[] = [
       {
         label: 'Categoría',
         link: '/inventory-groups',
-        allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
+        allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
         description: 'Clasifica y organiza los productos para una gestión más eficiente',
         action: '',
       },
@@ -119,19 +119,19 @@ export const navigationMenu: NavigationMenuItem[] = [
   {
     label: 'Compras',
     icon: IconCash,
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
+    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
     children: [
       {
         label: 'Proveedores',
         link: '/providers',
-        allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
+        allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
         description: 'Administra y consulta la información de tus proveedores',
         action: '',
       },
       {
         label: 'Compras',
         link: '/purchases',
-        allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
+        allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
         description: 'Registra y gestiona las compras realizadas a proveedores',
         action: '',
       },
