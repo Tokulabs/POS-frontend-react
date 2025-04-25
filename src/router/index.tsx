@@ -80,7 +80,7 @@ const authRoutes: ISideBarData[] = [
   {
     component: InventoryGroups,
     path: '/inventory-groups',
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
+    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
   },
   {
     component: Users,
