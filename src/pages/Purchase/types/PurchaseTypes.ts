@@ -1,4 +1,4 @@
-export interface IPurchaseCart {
+export interface IMovementCart {
   inventory_id: number
   quantity: number
   state: string
@@ -38,11 +38,25 @@ export interface Provider {
 
 export type stateType = 'pending' | 'approved' | 'rejected' | 'overrided'
 
+export const movementStates: Record<stateType, string> = {
+  pending: 'Pendiente',
+  approved: 'Aprobado',
+  rejected: 'Rechazado',
+  overrided: 'Anulado',
+}
+
+export const storageTypes = {
+  warehouse: 'Bodega',
+  store: 'Tienda',
+}
+
+export type MovementEventType = 'shipment' | 'purchase' | 'return'
+
 export interface IPurchase {
   id: number
   provider: Provider
   inventory_movement_items: InventoryMovementItem[]
-  event_type: string
+  event_type: MovementEventType
   created_at: string
   origin: string
   destination: string
@@ -61,14 +75,15 @@ export interface IPurchaseSimple {
   state: string
   created_at: string
   destination: string
+  origin: string
   state_reviewed_at: string
 }
 
-export interface ICreatePurchase {
-  inventory_movement_items: IPurchaseCart[]
+export interface ICreateMovement {
+  inventory_movement_items: IMovementCart[]
   event_type: string
   event_date: string
-  provider_id: number
   origin: string | null
   destination: string
+  provider_id?: number
 }

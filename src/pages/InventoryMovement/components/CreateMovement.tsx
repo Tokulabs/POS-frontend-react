@@ -1,33 +1,38 @@
+import { FC, useState } from 'react'
+// External Libraries
 import { Divider, InputNumber, Select } from 'antd'
-import { FC, useEffect, useState } from 'react'
-import { IProvider } from '../../Providers/types/ProviderTypes'
-import { useProviders } from '@/hooks/useProviders'
-import Clock from '@/components/Clock/Clock'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { getInventoriesNew } from '../../Inventories/helpers/services'
-import { IInventoryProps } from '../../Inventories/types/InventoryTypes'
-import { AxiosError } from 'axios'
-import { TableHeader } from '../../POS/components/TableHeader'
-import { createPurchaseTableTitles } from '../data/TableTitles'
-import { useCartMovements } from '@/store/useCartStoreMovementsZustand'
-import { formatDatatoIPOSData, formatNumberToColombianPesos, formatToUsd } from '@/utils/helpers'
 import { IconArrowLeft, IconMinus, IconPlus } from '@tabler/icons-react'
-import { Button } from '@/components/ui/button'
-import { getNextPurchaseNumber, postNewMovement } from '../helpers/services'
-import { ICreateMovement } from '../types/PurchaseTypes'
-import { DataPropsForm } from '@/types/GlobalTypes'
 import { toast } from 'sonner'
+import { AxiosError } from 'axios'
+// Components
+import Clock from '@/components/Clock/Clock'
+import { Button } from '@/components/ui/button'
+import { TableHeader } from '../../POS/components/TableHeader'
+// Helpers
+import { getNextPurchaseNumber, postNewMovement } from '@/pages/Purchase/helpers/services'
+import { getInventoriesNew } from '../../Inventories/helpers/services'
+import { formatDatatoIPOSData, formatNumberToColombianPesos, formatToUsd } from '@/utils/helpers'
+// Types
+import { IInventoryProps } from '../../Inventories/types/InventoryTypes'
+import { DataPropsForm } from '@/types/GlobalTypes'
+import { movementEventsDictionary } from '@/pages/InventoryMovementItem/types/InventoryMovementsTypes'
+import { ICreateMovement, MovementEventType } from '@/pages/Purchase/types/PurchaseTypes'
+// Store
+import { useCartMovements } from '@/store/useCartStoreMovementsZustand'
+// Hooks
 import { useKeyPress } from '@/hooks/useKeyPress'
 import { useDebouncedCallback } from '@/hooks/useDebounceCallback'
+// Data
+import { createPurchaseTableTitles } from '@/pages/Purchase/data/TableTitles'
 
 interface CreatePurchaseInterface {
-  setCreatePurchase: (value: boolean) => void
+  setCreateMovement: (value: boolean) => void
+  currentSearch: Exclude<MovementEventType, 'purchase'>
 }
 
-const CreatePurchase: FC<CreatePurchaseInterface> = ({ setCreatePurchase }) => {
-  const [providerID, setProviderID] = useState()
-  const { providersData } = useProviders('allProviders', { active: 'True' })
-  const [currentProvider, setCurrentProvider] = useState<IProvider>()
+const CreateMovement: FC<CreatePurchaseInterface> = ({ setCreateMovement, currentSearch }) => {
+  const [eventType, setEventType] = useState<'shipment' | 'return'>('shipment')
   const [value, setValue] = useState<string>()
   const [isLoadingSearch, setIsLoadingSearch] = useState(false)
   const [data, setData] = useState<IInventoryProps[]>([])
@@ -54,13 +59,12 @@ const CreatePurchase: FC<CreatePurchaseInterface> = ({ setCreatePurchase }) => {
     refetchOnMount: true,
   })
 
-  const fetchInventoriesByKeyword = async (keyword: string, providerId: string) => {
+  const fetchInventoriesByKeyword = async (keyword: string) => {
     try {
       setIsLoadingSearch(true)
       const data = await queryClient.fetchQuery({
-        queryKey: ['inventoriesByProvider'],
-        queryFn: async () =>
-          getInventoriesNew({ keyword, active: 'True', page: 1, provider_id: providerId }),
+        queryKey: ['inventories'],
+        queryFn: async () => getInventoriesNew({ keyword, active: 'True', page: 1 }),
       })
       setData(data?.results || [])
     } catch (error) {
@@ -71,13 +75,23 @@ const CreatePurchase: FC<CreatePurchaseInterface> = ({ setCreatePurchase }) => {
     }
   }
 
-  const { mutate: mutatePurchase, isPending } = useMutation({
+  const { mutate: mutateMovementCreation, isPending } = useMutation({
     mutationFn: postNewMovement,
     onSuccess: () => {
-      setCreatePurchase(false)
+      setCreateMovement(false)
       clearCart()
-      toast.success('Compra creada correctamente')
-      queryClient.invalidateQueries({ queryKey: ['paginatedInventoryMovements', { page: 1 }] })
+      toast.success('Movimiento creado correctamente')
+      queryClient.invalidateQueries({
+        queryKey: [
+          'paginatedInventoryMovements',
+          {
+            page: 1,
+            event_type: 'shipment',
+            origin: movementEventsDictionary[currentSearch].origin,
+            destination: movementEventsDictionary[currentSearch].destination,
+          },
+        ],
+      })
     },
   })
 
@@ -88,44 +102,34 @@ const CreatePurchase: FC<CreatePurchaseInterface> = ({ setCreatePurchase }) => {
     setValue(null as unknown as string)
   }
 
-  const debouncedSearch = useDebouncedCallback<[string, string]>((criteria, providerId) => {
-    fetchInventoriesByKeyword(criteria, providerId)
+  const debouncedSearch = useDebouncedCallback<[string]>((criteria) => {
+    fetchInventoriesByKeyword(criteria)
   }, 500)
 
   const handleSearch = (newValue: string) => {
-    if (!providerID) return
-    debouncedSearch(newValue, providerID)
+    debouncedSearch(newValue)
   }
 
-  useEffect(() => {
-    setData([])
-    if (providerID) {
-      setCurrentProvider(providers.find((item) => item.id === providerID))
-    }
-  }, [providerID])
-
   const clearPurchaseData = () => {
-    setCreatePurchase(false)
+    setCreateMovement(false)
     clearCart()
   }
 
-  const createPurchase = () => {
+  const createMovementPost = () => {
     const dataCreatePurchase: ICreateMovement = {
       inventory_movement_items: cartItemsOrders.map((item) => ({
         inventory_id: item.id,
         quantity: item.quantity,
         state: 'pending',
       })),
-      event_type: 'purchase',
+      event_type: 'shipment',
       event_date: new Date().toISOString(),
-      provider_id: providerID ?? 0,
-      origin: null,
-      destination: 'warehouse',
+      origin: movementEventsDictionary[eventType].origin,
+      destination: movementEventsDictionary[eventType].destination,
     }
-    mutatePurchase(dataCreatePurchase as unknown as DataPropsForm)
+    mutateMovementCreation(dataCreatePurchase as unknown as DataPropsForm)
   }
 
-  const providers: IProvider[] = providersData?.results ?? ([] as IProvider[])
   return (
     <section className='w-full bg-white rounded-md p-5 grid h-full grid-rows-[auto_1fr_auto]'>
       <header className='flex flex-col gap-3'>
@@ -136,17 +140,18 @@ const CreatePurchase: FC<CreatePurchaseInterface> = ({ setCreatePurchase }) => {
           <IconArrowLeft />
           <span className='text-sm'>Volver</span>
         </div>
-        <p className='text-2xl font-bold'>Crear compra</p>
+        <p className='text-2xl font-bold'>Crear Movimiento</p>
         <div className='flex justify-between w-full'>
           <div className='flex flex-col gap-2'>
-            <div>Para continuar debes seleccionar el proveedor.</div>
+            <div>Para continuar debes seleccionar el tipo de movimiento.</div>
             <div className='flex flex-col w-56 gap-4'>
               <Select
                 disabled={cartItemsOrders.length > 0}
                 style={{ width: '100%' }}
-                placeholder='Selecciona un proveedor'
-                onChange={(item) => setProviderID(item)}
-                value={providerID}
+                placeholder='Selecciona un tipo de movimiento'
+                size='large'
+                onChange={(item) => setEventType(item)}
+                value={eventType}
                 listHeight={200}
                 showSearch
                 optionFilterProp='children'
@@ -160,27 +165,15 @@ const CreatePurchase: FC<CreatePurchaseInterface> = ({ setCreatePurchase }) => {
                 }
                 options={[
                   {
-                    value: '',
-                    label: 'Selecciona un proveedor',
+                    value: 'shipment',
+                    label: 'Remisión',
                   },
-                  ...providers.map((item) => ({
-                    value: item.id,
-                    label: item.legal_name,
-                  })),
+                  {
+                    value: 'return',
+                    label: 'Devolución',
+                  },
                 ]}
               />
-              {providerID && (
-                <div className='grid grid-cols-2 gap-y-2'>
-                  <span className='font-bold'>Nombre</span>
-                  <span>{currentProvider?.name ?? 'N/A'}</span>
-                  <span className='font-bold'>Nit:</span>
-                  <span>{currentProvider?.nit ?? 'N/A'}</span>
-                  <span className='font-bold'>Telefono:</span>
-                  <span>{currentProvider?.phone ?? 'N/A'}</span>
-                  <span className='font-bold'>Correo:</span>
-                  <span>{currentProvider?.email ?? 'N/A'}</span>
-                </div>
-              )}
             </div>
           </div>
           <div className='flex flex-col items-end gap-4'>
@@ -188,7 +181,7 @@ const CreatePurchase: FC<CreatePurchaseInterface> = ({ setCreatePurchase }) => {
               {isLoading ? (
                 <span>Cargando...</span>
               ) : (
-                <span>Compra # {String(lastIdData?.data.next_id).padStart(4, '0')}</span>
+                <span>Movimiento # {String(lastIdData?.data.next_id).padStart(4, '0')}</span>
               )}
             </div>
             <div className='grid grid-cols-2 gap-3'>
@@ -215,7 +208,6 @@ const CreatePurchase: FC<CreatePurchaseInterface> = ({ setCreatePurchase }) => {
             onSearch={handleSearch}
             onChange={handleChange}
             notFoundContent={null}
-            disabled={!providerID}
           >
             {data?.map((item) => (
               <Select.Option key={item.code} value={item.code}>
@@ -294,12 +286,12 @@ const CreatePurchase: FC<CreatePurchaseInterface> = ({ setCreatePurchase }) => {
         <Button variant='secondary' onClick={clearPurchaseData}>
           Cancelar
         </Button>
-        <Button disabled={cartItemsOrders.length === 0 || isPending} onClick={createPurchase}>
-          {isPending ? 'Cargando...' : 'Crear compra'}
+        <Button disabled={cartItemsOrders.length === 0 || isPending} onClick={createMovementPost}>
+          {isPending ? 'Cargando...' : 'Crear Movimiento'}
         </Button>
       </footer>
     </section>
   )
 }
 
-export { CreatePurchase }
+export { CreateMovement }
