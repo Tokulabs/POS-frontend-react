@@ -157,6 +157,7 @@ export const formatDatatoIPOSData = (data: IInventoryProps): IPosData => {
     usd_total: data.usd_price,
     photo: data.photo || '',
     total_in_shops: data.total_in_shops,
+    total_in_storage: data.total_in_storage,
     is_gift: false,
   }
 }
