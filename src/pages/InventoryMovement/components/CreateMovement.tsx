@@ -308,8 +308,8 @@ const CreateMovement: FC<CreatePurchaseInterface> = ({ setCreateMovement, curren
                       autoComplete='off'
                     />
                   </span>
-                  <span className='w-full col-span-2 col-start-8'>{item.total_in_shops}</span>
-                  <span className='w-full col-span-2 col-start-10'>{item.total_in_storage}</span>
+                  <span className='w-full col-span-2 col-start-8'>{item.total_in_storage}</span>
+                  <span className='w-full col-span-2 col-start-10'>{item.total_in_shops}</span>
                   <span className='w-full col-span-2 col-start-12'>
                     {formatNumberToColombianPesos(item.total)}
                   </span>
