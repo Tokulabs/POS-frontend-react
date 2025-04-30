@@ -5,6 +5,7 @@ import { useinventoryMovements } from '@/hooks/useInventoryMovements'
 import { formatDateTime } from '@/layouts/helpers/helpers'
 import { useNavigate } from 'react-router-dom'
 import { CreatePurchase } from './Components/CreatePurchase'
+import { movementStates } from './types/PurchaseTypes'
 
 const Purchase: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -21,13 +22,6 @@ const Purchase: FC = () => {
       event_type: 'purchase',
     },
   )
-
-  const movementStates = {
-    pending: 'Pendiente',
-    approved: 'Aprobado',
-    rejected: 'Rechazado',
-    overrided: 'Anulado',
-  }
 
   const dataPurchaseModified = inventoryMovementsData?.results.map((item) => ({
     ...item,
@@ -58,7 +52,7 @@ const Purchase: FC = () => {
         setCurrentPage(1)
       }}
       onRowClick={(record) => {
-        navigate(`/inventory-movement/${record.id}`)
+        navigate(`/inventory-movement/${btoa(String(record.id))}`)
       }}
     />
   )

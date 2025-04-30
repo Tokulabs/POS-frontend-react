@@ -25,6 +25,7 @@ import { Purchase } from '@/pages/Purchase/Purchase'
 import { InventoryMovementItem } from '@/pages/InventoryMovementItem/InventoryMovements'
 // Types
 import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
+import { InventoryMovement } from '@/pages/InventoryMovement/InventoryMovement'
 
 interface ISideBarData {
   path: string
@@ -118,7 +119,12 @@ const authRoutes: ISideBarData[] = [
     allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
   },
   {
-    path: 'inventory-movement/:id',
+    path: '/inventory-movements',
+    component: InventoryMovement,
+    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
+  },
+  {
+    path: '/inventory-movement/:id',
     component: InventoryMovementItem,
     allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
   },

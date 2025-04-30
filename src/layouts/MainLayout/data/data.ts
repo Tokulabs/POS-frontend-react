@@ -60,11 +60,10 @@ export const navigationMenu: NavigationMenuItem[] = [
       },
       {
         label: 'Movimiento de Inventarios',
-        link: '**',
+        link: '/inventory-movements',
         allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
         description: 'Registra y gestiona las devoluciones de productos fácilmente',
         action: '',
-        disabled: true,
       },
     ],
   },

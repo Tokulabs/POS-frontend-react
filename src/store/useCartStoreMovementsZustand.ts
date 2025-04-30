@@ -10,7 +10,7 @@ interface ICartOrdersStore {
   updateQuantity: (code: string, quantity: number | null) => void
 }
 
-export const useCartOrders = create<ICartOrdersStore>((set, get) => ({
+export const useCartMovements = create<ICartOrdersStore>((set, get) => ({
   cartItemsOrders: [],
   saleById: null,
   addToCart: (product: IPosData) => {

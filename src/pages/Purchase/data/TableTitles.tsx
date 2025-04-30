@@ -9,12 +9,6 @@ export const columnsDataPurchase: TableColumnsType = [
     fixed: 'left',
   },
   {
-    title: 'Proveedor',
-    dataIndex: 'provider_name',
-    key: 'provider_name',
-    fixed: 'left',
-  },
-  {
     title: 'Estado',
     dataIndex: 'state',
     key: 'state',

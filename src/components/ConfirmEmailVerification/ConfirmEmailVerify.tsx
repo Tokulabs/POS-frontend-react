@@ -89,73 +89,73 @@ export const ConfirmEmailVerification: FC<IModalDownloadReports> = ({
 
   return (
     <div className='relative z-40'>
-    <Dialog open={isVisible} onOpenChange={onCancelCallback}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Verifica tu correo</DialogTitle>
-        </DialogHeader>
+      <Dialog open={isVisible} onOpenChange={onCancelCallback}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Verifica tu correo</DialogTitle>
+          </DialogHeader>
 
-        {isLoading ? (
-          <div className='flex justify-center items-center gap-2'>
+          {isLoading ? (
             <div className='flex justify-center items-center gap-2'>
-              <Loader2 className='animate-spin' />
-              <span>Verificando...</span>
+              <div className='flex justify-center items-center gap-2'>
+                <Loader2 className='animate-spin' />
+                <span>Verificando...</span>
+              </div>
             </div>
-          </div>
-        ) : (
-          <section>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className='w-full flex flex-col gap-4'>
-                <FormField
-                  control={form.control}
-                  name='code'
-                  render={({ field }) => (
-                    <FormItem className='justify-items-center w-full'>
-                      <h5 className='font-semibold text-sm -mt-6'>Código de verificación</h5>
-                      <FormControl>
-                        <div className='flex justify-center w-full px-8'>
-                          <InputOTP
-                            maxLength={6}
-                            pattern={REGEXP_ONLY_DIGITS}
-                            containerClassName='border-[0.5px] border-gray-100 w-full active:border-primary-foreground focus-visible:outline-none focus-visible:ring-0'
-                            {...field}
-                          >
-                            <InputOTPGroup className='flex w-full justify-between'>
-                              {new Array(6).fill(null).map((_, index) => (
-                                <InputOTPSlot
-                                  key={index}
-                                  index={index}
-                                  className={cn(
-                                    'border-solid border-[0.5px] w-full h-[40px] border-gray-300 shadow-none border-l-primary-foreground focus-visible:outline-none focus-visible:ring-0',
-                                    index === 5 && 'border-r-primary-foreground',
-                                  )}
-                                />
-                              ))}
-                            </InputOTPGroup>
-                          </InputOTP>
-                        </div>
-                      </FormControl>
-                      <FormDescription className='text-center text-md w-full block'>
-                        <h5 className='font-normal text-sm mt-1 mb-4'>
-                          Por favor ingresa el código que enviamos a tu correo
-                        </h5>
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button
-                  type='submit'
-                  className='w-full bg-neutral-900 text-white border-0 rounded-md cursor-pointer'
-                >
-                  Confirmar
-                </Button>
-              </form>
-            </Form>
-          </section>
-        )}
-      </DialogContent>
-    </Dialog>
+          ) : (
+            <section>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className='w-full flex flex-col gap-4'>
+                  <FormField
+                    control={form.control}
+                    name='code'
+                    render={({ field }) => (
+                      <FormItem className='justify-items-center w-full'>
+                        <span className='font-semibold text-sm -mt-6'>Código de verificación</span>
+                        <FormControl>
+                          <div className='flex justify-center w-full px-8'>
+                            <InputOTP
+                              maxLength={6}
+                              pattern={REGEXP_ONLY_DIGITS}
+                              containerClassName='border-[0.5px] border-gray-100 w-full active:border-primary-foreground focus-visible:outline-none focus-visible:ring-0'
+                              {...field}
+                            >
+                              <InputOTPGroup className='flex w-full justify-between'>
+                                {new Array(6).fill(null).map((_, index) => (
+                                  <InputOTPSlot
+                                    key={index}
+                                    index={index}
+                                    className={cn(
+                                      'border-solid border-[0.5px] w-full h-[40px] border-gray-300 shadow-none border-l-primary-foreground focus-visible:outline-none focus-visible:ring-0',
+                                      index === 5 && 'border-r-primary-foreground',
+                                    )}
+                                  />
+                                ))}
+                              </InputOTPGroup>
+                            </InputOTP>
+                          </div>
+                        </FormControl>
+                        <FormDescription className='text-center text-md w-full block'>
+                          <span className='font-normal text-sm mt-1 mb-4'>
+                            Por favor ingresa el código que enviamos a tu correo
+                          </span>
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button
+                    type='submit'
+                    className='w-full bg-neutral-900 text-white border-0 rounded-md cursor-pointer'
+                  >
+                    Confirmar
+                  </Button>
+                </form>
+              </Form>
+            </section>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
