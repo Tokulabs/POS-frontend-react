@@ -19,7 +19,7 @@ import { ConfirmEmailVerification } from '@/components/ConfirmEmailVerification/
 import { useCountDown } from '@/hooks/useCountDown'
 import { UserDropdownMenu } from '@/components/MainLayout/DropDownMenu'
 import { MobileNavigationMenu } from '@/components/MainLayout/MobileMenu'
-import { useCartOrders } from '@/store/useCartStoreOrdersZustand'
+import { useCartMovements } from '@/store/useCartStoreMovementsZustand'
 
 const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
@@ -36,7 +36,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const { updateCurrentStep } = usePOSStep()
   const { clearPaymentMethods } = usePaymentMethodsData()
   const { clearCart } = useCart()
-  const { clearCart: clearCartOrders } = useCartOrders()
+  const { clearCart: clearCartOrders } = useCartMovements()
   const { clearCustomerData } = useCustomerData()
 
   useEffect(() => {

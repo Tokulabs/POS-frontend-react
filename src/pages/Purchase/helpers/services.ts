@@ -49,7 +49,7 @@ export const getNextPurchaseNumber = async () => {
   })
 }
 
-export const postPurchaseNew = async (values: DataPropsForm) => {
+export const postNewMovement = async (values: DataPropsForm) => {
   return await axiosRequest<{
     message: string
     data: IPurchaseSimple

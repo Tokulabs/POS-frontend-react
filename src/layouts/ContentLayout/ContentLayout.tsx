@@ -66,15 +66,17 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
             <div className='text-green-1 flex gap-4 items-center justify-center'>
               {filterOptions && (
                 <Tooltip title='Filtrar datos'>
-                  <Dropdown
-                    menu={{ items: filterOptions }}
-                    placement='bottomRight'
-                    className='cursor-pointer flex items-center justify-center'
-                  >
-                    <a onClick={(e) => e.preventDefault()}>
-                      <IconAdjustmentsHorizontal />
-                    </a>
-                  </Dropdown>
+                  <>
+                    <Dropdown
+                      menu={{ items: filterOptions }}
+                      placement='bottomRight'
+                      className='cursor-pointer flex items-center justify-center'
+                    >
+                      <a onClick={(e) => e.preventDefault()}>
+                        <IconAdjustmentsHorizontal />
+                      </a>
+                    </Dropdown>
+                  </>
                 </Tooltip>
               )}
               <Tooltip title='Refrescar datos'>
