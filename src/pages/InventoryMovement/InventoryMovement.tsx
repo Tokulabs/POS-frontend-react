@@ -3,10 +3,10 @@ import ContentLayout from '@/layouts/ContentLayout/ContentLayout'
 import { FC, useState } from 'react'
 import { MovementEventType, movementStates, storageTypes } from '../Purchase/types/PurchaseTypes'
 import { formatDateTime } from '@/layouts/helpers/helpers'
-import { columnsDataPurchase } from '../Purchase/data/TableTitles'
 import { CreateMovement } from './components/CreateMovement'
 import { useNavigate } from 'react-router-dom'
 import { movementEventsDictionary } from '../InventoryMovementItem/types/InventoryMovementsTypes'
+import { columnsDataMovement } from './data/TableData'
 
 const movementEventType: Record<MovementEventType, string> = {
   purchase: 'Compras',
@@ -44,20 +44,6 @@ export const InventoryMovement: FC = () => {
     destination: storageTypes[item.destination as keyof typeof storageTypes],
   }))
 
-  const newColums = [
-    ...columnsDataPurchase,
-    {
-      title: 'Origen',
-      dataIndex: 'origin',
-      key: 'origin',
-    },
-    {
-      title: 'Destino',
-      dataIndex: 'destination',
-      key: 'destination',
-    },
-  ]
-
   return createMovement ? (
     <CreateMovement setCreateMovement={setCreateMovement} currentSearch={eventTypeSearch} />
   ) : (
@@ -68,7 +54,7 @@ export const InventoryMovement: FC = () => {
         setCreateMovement(true)
       }}
       dataSource={dataPurchaseModified ?? []}
-      columns={newColums}
+      columns={columnsDataMovement}
       totalItems={inventoryMovementsData?.count ?? 0}
       onChangePage={(page) => setCurrentPage(page)}
       fetching={isLoading}
