@@ -121,12 +121,22 @@ const authRoutes: ISideBarData[] = [
   {
     path: '/inventory-movements',
     component: InventoryMovement,
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
+    allowedRoles: [
+      UserRolesEnum.admin,
+      UserRolesEnum.posAdmin,
+      UserRolesEnum.storageAdmin,
+      UserRolesEnum.shopAdmin,
+    ],
   },
   {
     path: '/inventory-movement/:id',
     component: InventoryMovementItem,
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
+    allowedRoles: [
+      UserRolesEnum.admin,
+      UserRolesEnum.posAdmin,
+      UserRolesEnum.storageAdmin,
+      UserRolesEnum.shopAdmin,
+    ],
   },
 ]
 
