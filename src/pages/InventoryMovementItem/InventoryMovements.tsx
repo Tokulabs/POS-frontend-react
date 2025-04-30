@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { FC, useState } from 'react'
+import { FC, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getMovementById } from '../Purchase/helpers/services'
 import { MovementItem } from './components/MovementItem'
@@ -63,8 +63,18 @@ const InventoryMovementItem: FC = () => {
 
   const provider = movementIdData?.provider ?? ({} as Provider)
 
-  const movementTypeCalc = movementIdData?.origin === 'warehouse' ? 'shipment' : 'return'
-  const movementTypeText = movementEventType[movementTypeCalc]
+  const calcEventTypeName = useMemo(() => {
+    const eventType = movementIdData?.event_type
+    const origin = movementIdData?.origin
+    if (!eventType) return 'shipment'
+    if (eventType === 'purchase') return 'purchase'
+    if (eventType === 'shipment') {
+      return origin === 'warehouse' ? 'shipment' : 'return'
+    }
+    return 'shipment'
+  }, [movementIdData?.event_type, movementIdData?.origin])
+
+  const movementTypeText = movementEventType[calcEventTypeName]
 
   const { mutate: mutateUpdateMovement, isPending } = useMutation({
     mutationFn: postInventoryMovementState,

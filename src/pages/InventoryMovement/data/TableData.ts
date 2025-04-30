@@ -1,4 +1,44 @@
 import { ITableTitles } from '@/pages/POS/components/types/TableTypes'
+import { TableColumnsType } from 'antd'
+
+export const columnsDataMovement: TableColumnsType = [
+  {
+    title: 'ID',
+    dataIndex: 'key',
+    key: 'key',
+    fixed: 'left',
+  },
+  {
+    title: 'Estado',
+    dataIndex: 'state',
+    key: 'state',
+  },
+  {
+    title: 'Fecha de creación',
+    dataIndex: 'created_at',
+    key: 'created_at',
+  },
+  {
+    title: 'Notas',
+    dataIndex: 'delivery_notes',
+    key: 'delivery_notes',
+  },
+  {
+    title: 'Fecha de revisión',
+    dataIndex: 'state_reviewed_at',
+    key: 'state_reviewed_at',
+  },
+  {
+    title: 'Origen',
+    dataIndex: 'origin',
+    key: 'origin',
+  },
+  {
+    title: 'Destino',
+    dataIndex: 'destination',
+    key: 'destination',
+  },
+]
 
 export const createMovementData: ITableTitles[] = [
   {
