@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useState, useContext } from 'react'
 // External Libraries
 import { Divider, InputNumber, Select } from 'antd'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -18,13 +18,17 @@ import { IInventoryProps } from '../../Inventories/types/InventoryTypes'
 import { DataPropsForm } from '@/types/GlobalTypes'
 import { movementEventsDictionary } from '@/pages/InventoryMovementItem/types/InventoryMovementsTypes'
 import { ICreateMovement, MovementEventType } from '@/pages/Purchase/types/PurchaseTypes'
+import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 // Store
 import { useCartMovements } from '@/store/useCartStoreMovementsZustand'
 // Hooks
 import { useKeyPress } from '@/hooks/useKeyPress'
 import { useDebouncedCallback } from '@/hooks/useDebounceCallback'
+import { useRolePermissions } from '@/hooks/useRolespermissions'
 // Data
 import { createMovementData } from '../data/TableData'
+// Store
+import { store } from '@/store'
 
 interface CreatePurchaseInterface {
   setCreateMovement: (value: boolean) => void
@@ -32,10 +36,50 @@ interface CreatePurchaseInterface {
 }
 
 const CreateMovement: FC<CreatePurchaseInterface> = ({ setCreateMovement, currentSearch }) => {
-  const [eventType, setEventType] = useState<'shipment' | 'return'>('shipment')
+  const {
+    state: { user },
+  } = useContext(store)
+
   const [value, setValue] = useState<string>()
   const [isLoadingSearch, setIsLoadingSearch] = useState(false)
   const [data, setData] = useState<IInventoryProps[]>([])
+
+  const userRoleEventTypeDefault = user?.role === UserRolesEnum.storageAdmin ? 'shipment' : 'return'
+  const [eventType, setEventType] = useState<'shipment' | 'return'>(userRoleEventTypeDefault)
+
+  const allowedRolesShipment = [
+    UserRolesEnum.admin,
+    UserRolesEnum.posAdmin,
+    UserRolesEnum.storageAdmin,
+  ]
+  const allowedRolesReturn = [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin]
+
+  const { hasPermission: hasPermissionShipment } = useRolePermissions({
+    allowedRoles: allowedRolesShipment,
+  })
+
+  const { hasPermission: hasPermissionReturn } = useRolePermissions({
+    allowedRoles: allowedRolesReturn,
+  })
+
+  const optionsEventType = [
+    ...(hasPermissionReturn
+      ? [
+          {
+            value: 'return',
+            label: 'Devolución',
+          },
+        ]
+      : []),
+    ...(hasPermissionShipment
+      ? [
+          {
+            value: 'shipment',
+            label: 'Remisión',
+          },
+        ]
+      : []),
+  ]
 
   const moveToInput = () => {
     const input = document.getElementById('searchBar')
@@ -163,16 +207,7 @@ const CreateMovement: FC<CreatePurchaseInterface> = ({ setCreateMovement, curren
                     .toLowerCase()
                     .localeCompare((optionB?.label ?? '').toLowerCase())
                 }
-                options={[
-                  {
-                    value: 'shipment',
-                    label: 'Remisión',
-                  },
-                  {
-                    value: 'return',
-                    label: 'Devolución',
-                  },
-                ]}
+                options={optionsEventType}
               />
             </div>
           </div>
