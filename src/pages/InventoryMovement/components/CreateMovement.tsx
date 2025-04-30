@@ -44,7 +44,10 @@ const CreateMovement: FC<CreatePurchaseInterface> = ({ setCreateMovement, curren
   const [isLoadingSearch, setIsLoadingSearch] = useState(false)
   const [data, setData] = useState<IInventoryProps[]>([])
 
-  const userRoleEventTypeDefault = user?.role === UserRolesEnum.storageAdmin ? 'shipment' : 'return'
+  const userRoleEventTypeDefault =
+    UserRolesEnum[user?.role as keyof typeof UserRolesEnum] === UserRolesEnum.storageAdmin
+      ? 'shipment'
+      : 'return'
   const [eventType, setEventType] = useState<'shipment' | 'return'>(userRoleEventTypeDefault)
 
   const allowedRolesShipment = [
