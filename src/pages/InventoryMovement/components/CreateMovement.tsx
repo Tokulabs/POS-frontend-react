@@ -12,7 +12,7 @@ import { TableHeader } from '../../POS/components/TableHeader'
 // Helpers
 import { getNextPurchaseNumber, postNewMovement } from '@/pages/Purchase/helpers/services'
 import { getInventoriesNew } from '../../Inventories/helpers/services'
-import { formatDatatoIPOSData, formatNumberToColombianPesos, formatToUsd } from '@/utils/helpers'
+import { formatDatatoIPOSData, formatNumberToColombianPesos } from '@/utils/helpers'
 // Types
 import { IInventoryProps } from '../../Inventories/types/InventoryTypes'
 import { DataPropsForm } from '@/types/GlobalTypes'
@@ -24,7 +24,7 @@ import { useCartMovements } from '@/store/useCartStoreMovementsZustand'
 import { useKeyPress } from '@/hooks/useKeyPress'
 import { useDebouncedCallback } from '@/hooks/useDebounceCallback'
 // Data
-import { createPurchaseTableTitles } from '@/pages/Purchase/data/TableTitles'
+import { createMovementData } from '../data/TableData'
 
 interface CreatePurchaseInterface {
   setCreateMovement: (value: boolean) => void
@@ -229,7 +229,7 @@ const CreateMovement: FC<CreatePurchaseInterface> = ({ setCreateMovement, curren
         </section>
         {cartItemsOrders.length > 0 && (
           <section className='h-full overflow-hidden overflow-y-auto scrollbar-hide'>
-            <TableHeader tableColumnsData={createPurchaseTableTitles} />
+            <TableHeader tableColumnsData={createMovementData} />
             <ul className='p-0 overflow-hidden overflow-y-auto divide-y divide-solid divide-gray-1 scrollbar-hide'>
               {cartItemsOrders.map((item) => (
                 <li
@@ -243,14 +243,13 @@ const CreateMovement: FC<CreatePurchaseInterface> = ({ setCreateMovement, curren
                   <span className='w-full col-span-2 col-start-5'>
                     {formatNumberToColombianPesos(item.selling_price)}
                   </span>
-                  <span className='w-full col-start-7'>{formatToUsd(item.usd_price)}</span>
-                  <span className='w-full col-span-3 col-start-8'>
+                  <span className='w-full col-start-7'>
                     <InputNumber
-                      style={{ width: '7.5rem' }}
+                      style={{ width: '100%', minWidth: '3rem', padding: '0' }}
                       size='middle'
                       addonBefore={
                         <IconMinus
-                          className='w-3 h-3 cursor-pointer'
+                          className='h-3 cursor-pointer max-w-3'
                           onClick={() => {
                             removeFromCart(item)
                           }}
@@ -258,7 +257,7 @@ const CreateMovement: FC<CreatePurchaseInterface> = ({ setCreateMovement, curren
                       }
                       addonAfter={
                         <IconPlus
-                          className='w-3 h-3 cursor-pointer'
+                          className='h-3 cursor-pointer max-w-3'
                           onClick={() => {
                             addToCart(item)
                           }}
@@ -271,10 +270,11 @@ const CreateMovement: FC<CreatePurchaseInterface> = ({ setCreateMovement, curren
                       autoComplete='off'
                     />
                   </span>
-                  <span className='col-span-2 col-start-11 w-ful'>
+                  <span className='w-full col-span-2 col-start-8'>{item.total_in_shops}</span>
+                  <span className='w-full col-span-2 col-start-10'>{item.total_in_storage}</span>
+                  <span className='w-full col-span-2 col-start-12'>
                     {formatNumberToColombianPesos(item.total)}
                   </span>
-                  <span className='w-full col-start-13'>{formatToUsd(item.usd_total)}</span>
                 </li>
               ))}
             </ul>

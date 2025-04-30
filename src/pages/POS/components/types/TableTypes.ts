@@ -19,6 +19,7 @@ export interface IPosData {
   is_gift: boolean
   id: number
   total_in_shops?: number
+  total_in_storage?: number
   photo?: string
 }
 
