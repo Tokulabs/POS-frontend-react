@@ -48,8 +48,14 @@ const ChangePaymentMethodsInvoice: FC<{
   onCancelCallback: () => void
 }> = ({ isVisible = false, invoiceId, onSuccessCallback, onCancelCallback }) => {
   const { clearCart } = useCart()
-  const { clearPaymentMethods, paymentMethods, paymentTerminalID, isDollar, totalValueToPay } =
-    usePaymentMethodsData()
+  const {
+    clearPaymentMethods,
+    paymentMethods,
+    paymentTerminalID,
+    isDollar,
+    totalValueToPay,
+    isElectronicInvoice,
+  } = usePaymentMethodsData()
   const { isPending, invoicesByCodeData } = useGetinvoiceByCode('invoiceByCode', String(invoiceId))
   const queryClient = useQueryClient()
 
@@ -96,6 +102,7 @@ const ChangePaymentMethodsInvoice: FC<{
         payment_methods,
         payment_terminal_id: paymentTerminalID,
         is_dollar: isDollar,
+        send_electronic_invoice: isElectronicInvoice,
       },
     })
   }
@@ -142,8 +149,6 @@ const ChangePaymentMethodsInvoice: FC<{
 
   const dataFormated = buildPrintDataFromInvoiceProps(invoicesByCodeData as IInvoiceProps)
   const { totalCOP, totalUSD } = calcTotalPrices(dataFormated ? dataFormated.dataItems : [])
-  const paymentTerminalIDNew = invoicesByCodeData.payment_terminal?.id || undefined
-  const isDollarNew = invoicesByCodeData.is_dollar
 
   return (
     <Modal
@@ -165,8 +170,9 @@ const ChangePaymentMethodsInvoice: FC<{
           TotalUSDProp={totalUSD}
           totalCOPProp={totalCOP}
           paymentMethodsProp={NewArrayPaymenths}
-          paymentTerminalIDProp={paymentTerminalIDNew}
-          isDollarProp={isDollarNew}
+          paymentTerminalIDProp={invoicesByCodeData.payment_terminal?.id || undefined}
+          isDollarProp={invoicesByCodeData.is_dollar}
+          isElectornicInvoicedProp={invoicesByCodeData.send_electronic_invoice}
         />
         <Button
           type='primary'
