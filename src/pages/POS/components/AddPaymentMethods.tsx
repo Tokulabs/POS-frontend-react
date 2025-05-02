@@ -26,7 +26,15 @@ export const AddPaymentMethods: FC<{
   paymentMethodsProp?: IPaymentMethod[]
   paymentTerminalIDProp?: number | null
   isDollarProp?: boolean
-}> = ({ TotalUSDProp, totalCOPProp, paymentMethodsProp, paymentTerminalIDProp, isDollarProp }) => {
+  isElectornicInvoicedProp?: boolean
+}> = ({
+  TotalUSDProp,
+  totalCOPProp,
+  paymentMethodsProp,
+  paymentTerminalIDProp,
+  isDollarProp,
+  isElectornicInvoicedProp,
+}) => {
   const { totalCOP: totalCOPState, totalUSD: totalUSDState } = useCart()
   const totalCOP = totalCOPProp || totalCOPState
   const totalUSD = TotalUSDProp || totalUSDState
@@ -88,6 +96,7 @@ export const AddPaymentMethods: FC<{
   useEffect(() => {
     updateTotalValues()
     if (isDollarProp) toggleIsDollar(isDollarProp)
+    toggleElectronicInvoice(isElectornicInvoicedProp)
 
     if (paymentMethodsProp) {
       const newSelectedItems: PaymentMethodsEnum[] = []
@@ -154,41 +163,41 @@ export const AddPaymentMethods: FC<{
           item.name === PaymentMethodsEnum.bankTransfer,
       )
       if (hasCard) {
-        toggleElectronicInvoice(true)
         setDisbaledElectronicSwitch(true)
+        toggleElectronicInvoice(true)
       } else {
-        toggleElectronicInvoice(false)
         setDisbaledElectronicSwitch(false)
+        toggleElectronicInvoice(isElectornicInvoicedProp)
       }
     }
   }, [paymentMethods])
 
   return (
-    <section className='w-full h-full flex flex-col gap-4 relative'>
-      <section className='flex flex-col gap-4 bg-white sticky w-full'>
+    <section className='relative flex flex-col w-full h-full gap-4'>
+      <section className='sticky flex flex-col w-full gap-4 bg-white'>
         <div className='flex justify-between'>
-          <div className='flex justify-start gap-5 items-end'>
-            <div className='flex flex-col justify-end items-center'>
-              <span className='text-green-1 text-xl font-bold'>
+          <div className='flex items-end justify-start gap-5'>
+            <div className='flex flex-col items-center justify-end'>
+              <span className='text-xl font-bold text-green-1'>
                 {isDollar
                   ? formatToUsd(totalUSD, true)
                   : formatNumberToColombianPesos(totalValueToPay, true)}
               </span>
-              <span className='text-gray-2 font-semibold text-sm'>Valor a Pagar</span>
+              <span className='text-sm font-semibold text-gray-2'>Valor a Pagar</span>
             </div>
             {!isDollar && <Divider type='vertical' className='h-full' />}
             {!isDollar && (
-              <div className='flex flex-col justify-end items-center'>
+              <div className='flex flex-col items-center justify-end'>
                 <span
                   className={`${totalCOP - totalValueToPay < 0 ? 'text-red-1' : 'text-green-1'} text-xl font-bold `}
                 >
                   {formatNumberToColombianPesos(totalCOP - totalValueToPay, true)}
                 </span>
-                <span className='text-gray-2 font-semibold text-sm'>Diferencia</span>
+                <span className='text-sm font-semibold text-gray-2'>Diferencia</span>
               </div>
             )}
             <Divider type='vertical' className='h-full' />
-            <div className='flex flex-col justify-end items-center'>
+            <div className='flex flex-col items-center justify-end'>
               <span
                 className={`${totalValueReceived < totalCOP ? 'text-red-1' : 'text-green-1'} text-xl font-bold`}
               >
@@ -196,21 +205,21 @@ export const AddPaymentMethods: FC<{
                   ? formatToUsd(totalUSD, true)
                   : formatNumberToColombianPesos(totalValueReceived, true)}
               </span>
-              <span className='text-gray-2 font-semibold text-sm'>Valor Total Recibido</span>
+              <span className='text-sm font-semibold text-gray-2'>Valor Total Recibido</span>
             </div>
             <Divider type='vertical' className='h-full' />
-            <div className='flex flex-col justify-end items-center'>
-              <span className='text-red-1 text-xl font-bold'>
+            <div className='flex flex-col items-center justify-end'>
+              <span className='text-xl font-bold text-red-1'>
                 {totalReturnedValue > 0
                   ? formatNumberToColombianPesos(totalReturnedValue, true)
                   : formatNumberToColombianPesos(0, true)}
               </span>
-              <span className='text-gray-2 font-semibold text-sm'>Cambio</span>
+              <span className='text-sm font-semibold text-gray-2'>Cambio</span>
             </div>
             <Divider type='vertical' className='h-full' />
           </div>
-          <div className='flex flex-col justify-end items-center'>
-            <span className='text-green-1 text-xl font-bold'>
+          <div className='flex flex-col items-center justify-end'>
+            <span className='text-xl font-bold text-green-1'>
               <Switch
                 value={isDollar}
                 onChange={() => {
@@ -220,20 +229,19 @@ export const AddPaymentMethods: FC<{
                 }}
               />
             </span>
-            <span className='text-gray-2 font-semibold text-sm'>Pago en USD?</span>
+            <span className='text-sm font-semibold text-gray-2'>Pago en USD?</span>
           </div>
-          <div className='flex flex-col justify-end items-center'>
-            <span className='text-green-1 text-xl font-bold'>
+          <div className='flex flex-col items-center justify-end'>
+            <span className='text-xl font-bold text-green-1'>
               <Switch
                 value={isElectronicInvoice}
                 onChange={() => {
-                  console.log('entro aqui onclick switch')
                   toggleElectronicInvoice()
                 }}
                 disabled={disbaledElectronicSwitch}
               />
             </span>
-            <span className='text-gray-2 font-semibold text-sm'>Factura electrónica?</span>
+            <span className='text-sm font-semibold text-gray-2'>Factura electrónica?</span>
           </div>
         </div>
         <div className='flex gap-4'>
@@ -273,14 +281,14 @@ export const AddPaymentMethods: FC<{
         {paymentMethods.map((item, index) => (
           <div
             key={index}
-            className='border-solid border bg-white border-green-1 rounded-md shadow-md p-4 flex flex-col gap-4 w-full'
+            className='flex flex-col w-full gap-4 p-4 bg-white border border-solid rounded-md shadow-md border-green-1'
           >
-            <div className='flex justify-between items-center'>
+            <div className='flex items-center justify-between'>
               <span className='font-bold'>{item.name}</span>
               {(item.name === PaymentMethodsEnum.debitCard ||
                 item.name === PaymentMethodsEnum.creditCard) && (
                 <div
-                  className='flex gap-1 items-center cursor-pointer text-green-1 underline'
+                  className='flex items-center gap-1 underline cursor-pointer text-green-1'
                   onClick={() => addPaidAmountToPaymentMethod(item.name)}
                 >
                   <IconPlus /> <span>Agregar nueva tarjeta</span>
@@ -288,8 +296,8 @@ export const AddPaymentMethods: FC<{
               )}
             </div>
             {item.paidAmount.map((amount, index) => (
-              <section key={index} className='flex gap-4 w-full justify-between items-center'>
-                <div className='flex gap-3 w-1/2 items-center'>
+              <section key={index} className='flex items-center justify-between w-full gap-4'>
+                <div className='flex items-center w-1/2 gap-3'>
                   <span className='w-1/4'>Valor a pagar</span>
                   <InputNumber
                     style={{ width: '75%' }}
@@ -304,7 +312,7 @@ export const AddPaymentMethods: FC<{
                 </div>
 
                 {!requireTransactionNumber(item.name) && (
-                  <div className='flex gap-3 w-1/2 items-center'>
+                  <div className='flex items-center w-1/2 gap-3'>
                     <span className='w-1/4'>Valor recibido</span>
                     <InputNumber
                       style={{ width: '75%' }}
@@ -319,7 +327,7 @@ export const AddPaymentMethods: FC<{
                   </div>
                 )}
                 {requireTransactionNumber(item.name) && (
-                  <div className='flex gap-3 w-1/2 items-center'>
+                  <div className='flex items-center w-1/2 gap-3'>
                     <span className='w-1/4'>Número de transacción</span>
                     <Input
                       style={{ width: '75%' }}
@@ -337,7 +345,7 @@ export const AddPaymentMethods: FC<{
                   item.name === PaymentMethodsEnum.creditCard) &&
                   item.paidAmount.length > 1 && (
                     <div
-                      className='flex gap-1 items-center cursor-pointer text-green-1 underline'
+                      className='flex items-center gap-1 underline cursor-pointer text-green-1'
                       onClick={() => {
                         removePaidAmountFromPaymentMethod(item.name, index)
                       }}

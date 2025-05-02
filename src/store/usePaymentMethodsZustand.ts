@@ -104,10 +104,11 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
         isElectronicInvoice: value,
       })
       return
+    } else {
+      set((state) => ({
+        isElectronicInvoice: !state.isElectronicInvoice,
+      }))
     }
-    set((state) => ({
-      isElectronicInvoice: !state.isElectronicInvoice,
-    }))
   },
   updatePaidAmount: (name, value, index = 0) => {
     const { paymentMethods, updateTotalValues } = get()
