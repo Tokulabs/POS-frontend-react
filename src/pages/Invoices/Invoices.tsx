@@ -13,6 +13,7 @@ import {
   IconSend,
   IconX,
   IconFileDollar,
+  IconClipboardOff,
 } from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -51,7 +52,9 @@ const Invoices: FC = () => {
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
   const [invoiceIdToEdit, setInvoiceIdToEdit] = useState<number>(0)
   const [search, setSearch] = useState('')
-  const [invoiceStatus, setInvoiceStatus] = useState<'all' | 'sent' | 'notSent' | 'toSent'>('all')
+  const [invoiceStatus, setInvoiceStatus] = useState<
+    'all' | 'sent' | 'notSent' | 'toSent' | 'override'
+  >('all')
 
   const queryClient = useQueryClient()
 
@@ -60,6 +63,7 @@ const Invoices: FC = () => {
     sent: { is_electronic_invoiced: 'True' },
     notSent: { is_electronic_invoiced: 'False' },
     toSent: { send_electronic_invoice: 'True', is_electronic_invoiced: 'False' },
+    override: { is_override: 'True' },
   }
 
   const { isLoading, invoicesData } = useInvoices('paginatedInvoices', {
@@ -162,21 +166,21 @@ const Invoices: FC = () => {
         total: formatNumberToColombianPesos(item.total_sum),
         is_dollar: item.is_dollar ? `USD (${formatToUsd(item.total_sum_usd)})` : 'COP',
         is_override: item.is_override ? (
-          <div className='text-red-1 w-full flex justify-center items-center'>
+          <div className='flex items-center justify-center w-full text-red-1'>
             <IconX />
           </div>
         ) : null,
         is_electronic_invoiced: item.is_electronic_invoiced ? (
-          <div className='text-green-1 w-full flex justify-center items-center'>
+          <div className='flex items-center justify-center w-full text-green-1'>
             <IconCheck />
           </div>
         ) : null,
         paid_by: (
-          <div className='flex justify-start items-center'>
+          <div className='flex items-center justify-start'>
             {hasPermissionEditPaymentMethods && !item.is_electronic_invoiced && (
               <Button
                 type='link'
-                className='p-0 m-0 flex justify-center items-center'
+                className='flex items-center justify-center p-0 m-0'
                 onClick={editPaymentInformation(item)}
               >
                 <IconEdit />
@@ -206,8 +210,8 @@ const Invoices: FC = () => {
           </div>
         ),
         action: (
-          <div className='flex text-3xl gap-3'>
-            <div className='text-green-1 cursor-pointer hover:text-green-800'>
+          <div className='flex gap-3 text-3xl'>
+            <div className='cursor-pointer text-green-1 hover:text-green-800'>
               <Popconfirm
                 title='imprimir factua'
                 description='¿Estas seguro deseas imprimir esta factura?'
@@ -234,12 +238,12 @@ const Invoices: FC = () => {
                         okText='Si, Enviar'
                         cancelText='Cancelar'
                       >
-                        <IconSend className='text-blue-600 hover:text-blue-400 cursor-pointer' />
+                        <IconSend className='text-blue-600 cursor-pointer hover:text-blue-400' />
                       </Popconfirm>
                     </div>
                   )}
                 {hasPermission && !item.is_electronic_invoiced && !item.is_override && (
-                  <div className='text-red-1 cursor-pointer hover:text-red-800'>
+                  <div className='cursor-pointer text-red-1 hover:text-red-800'>
                     <Popconfirm
                       title='Anular factua'
                       description='¿Estas seguro de anular esta factura?'
@@ -324,6 +328,17 @@ const Invoices: FC = () => {
             ),
             key: 3,
           },
+          {
+            label: (
+              <span
+                className='flex items-center gap-3'
+                onClick={() => setInvoiceStatus('override')}
+              >
+                <IconClipboardOff /> Anuladas
+              </span>
+            ),
+            key: 4,
+          },
         ]}
       />
       {modalState === ModalStateEnum.addItem && (
@@ -335,7 +350,7 @@ const Invoices: FC = () => {
         />
       )}
       {printData?.dataItems?.length > 0 && (
-        <div ref={printOutRef} className='flex absolute -z-10'>
+        <div ref={printOutRef} className='absolute flex -z-10'>
           <PrintOut printDataComponent={printData} />
         </div>
       )}
