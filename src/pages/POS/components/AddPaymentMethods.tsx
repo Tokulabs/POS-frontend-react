@@ -62,6 +62,7 @@ export const AddPaymentMethods: FC<{
   const [selectedItems, setSelectedItems] = useState<PaymentMethodsEnum[]>([])
   const [requirePaymentTerminal, setRequirePaymentTerminal] = useState(false)
   const [disbaledElectronicSwitch, setDisbaledElectronicSwitch] = useState(false)
+  const [sendElectronicInvoice, setSendElectronicInvoice] = useState(false)
 
   const filteredOptions = OPTIONS.filter((o) => {
     if (isDollar) return o === PaymentMethodsEnum.cash
@@ -96,7 +97,6 @@ export const AddPaymentMethods: FC<{
   useEffect(() => {
     updateTotalValues()
     if (isDollarProp) toggleIsDollar(isDollarProp)
-    toggleElectronicInvoice(isElectornicInvoicedProp)
 
     if (paymentMethodsProp) {
       const newSelectedItems: PaymentMethodsEnum[] = []
@@ -109,7 +109,12 @@ export const AddPaymentMethods: FC<{
       addPaymentMethod(defaultPaymenthMethod)
       selectPaymentMethod([PaymentMethodsEnum.cash])
     }
+    if (isElectornicInvoicedProp) setSendElectronicInvoice(isElectornicInvoicedProp)
   }, [])
+
+  useEffect(() => {
+    if (isElectornicInvoicedProp) toggleElectronicInvoice(sendElectronicInvoice)
+  }, [sendElectronicInvoice])
 
   const checkIfRequirePaymentTerminal = (items: PaymentMethodsEnum[]) => {
     const requirePaymentTerminal = items.some(
@@ -167,7 +172,7 @@ export const AddPaymentMethods: FC<{
         toggleElectronicInvoice(true)
       } else {
         setDisbaledElectronicSwitch(false)
-        toggleElectronicInvoice(isElectornicInvoicedProp)
+        toggleElectronicInvoice(false)
       }
     }
   }, [paymentMethods])
