@@ -58,7 +58,16 @@ const UserDropdownMenu: FC = () => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator className='w-screen bg-gray-1' />
 
-        <DropdownMenuGroup className='w-full justify-items-start'>
+        <DropdownMenuGroup className='w-full cursor-pointer'>
+          <DropdownMenuItem
+            className='w-full flex items-center gap-2 pr-[73%]'
+            onClick={() => navigate('/profile')}
+            >
+            <DropdownMenuShortcut>
+              <IconLogout size={15} color='Black' />
+            </DropdownMenuShortcut>
+            <span className='font-bold cursor-pointer'>Perfil</span>
+          </DropdownMenuItem>
           {hasUserActivityPermission && (
             <DropdownMenuItem className='w-full flex items-center gap-2 pr-[35%]'>
               <DropdownMenuShortcut>

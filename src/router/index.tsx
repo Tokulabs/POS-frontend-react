@@ -10,6 +10,7 @@ import { MainLayout } from '@/layouts/MainLayout/MainLayout'
 import PasswordRecovery from '@/pages/Auth/PasswordRecovery'
 import PasswordReset from '@/pages/Auth/PasswordReset'
 // Pages
+
 import { Home } from '@/pages/Home/Home'
 import { Inventories } from '@/pages/Inventories/Inventories'
 import { Invoices } from '@/pages/Invoices/Invoices'
@@ -26,6 +27,7 @@ import { InventoryMovementItem } from '@/pages/InventoryMovementItem/InventoryMo
 // Types
 import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 import { InventoryMovement } from '@/pages/InventoryMovement/InventoryMovement'
+import { Profile } from '@/pages/settings/Settings'
 
 interface ISideBarData {
   path: string
@@ -137,6 +139,11 @@ const authRoutes: ISideBarData[] = [
       UserRolesEnum.storageAdmin,
       UserRolesEnum.shopAdmin,
     ],
+  },
+  {
+    path: '/profile',
+    component: Profile,
+    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
   },
 ]
 
