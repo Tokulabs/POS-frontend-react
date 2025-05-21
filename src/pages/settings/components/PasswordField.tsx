@@ -8,11 +8,11 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Form, FormField, FormItem, FormControl, FormMessage } from '@/components/ui/form'
 
-const passwordSchema = z.object({
-  password: z.string().nonempty('Campo requerido'),
-})
+  const formSchema = z.object({
+    password: z.string().nonempty('Campo requerido'),
+  })
 
-type PasswordFormValues = z.infer<typeof passwordSchema>
+type PasswordFormValues = z.infer<typeof formSchema>
 
 interface PasswordInputProps {
   onSubmit: (values: PasswordFormValues) => void
@@ -22,8 +22,8 @@ interface PasswordInputProps {
 export function PasswordField({ onSubmit, loading = false }: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false)
 
-  const form = useForm<PasswordFormValues>({
-    resolver: zodResolver(passwordSchema),
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       password: '',
     },
