@@ -11,7 +11,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { IconLogout } from '@tabler/icons-react'
+import { IconLogout, IconSettings, IconUser } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
 import { store } from '@/store'
 import { formatDateTime } from '@/layouts/helpers/helpers'
@@ -36,7 +36,7 @@ const UserDropdownMenu: FC = () => {
       <DropdownMenuTrigger asChild>
         <Button
           variant='outline'
-          className='border-none bg-transparent shadow-none text-transparent hover:bg-transparent cursor-pointer'
+          className='text-transparent bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent'
         >
           <img className='w-8 h-8' src={UserAvatar} alt='user-avatar' />
         </Button>
@@ -44,7 +44,7 @@ const UserDropdownMenu: FC = () => {
 
       <DropdownMenuContent className='w-[250px] justify-items-start mr-[2vw] border-solid'>
         <DropdownMenuLabel>
-          <span className='text-lg text-black font-semibold'>{state.user?.fullname}</span>
+          <span className='text-lg font-semibold text-black'>{state.user?.fullname}</span>
           <br />
           <span className='text-xs font-normal text-black'>
             (Rol - {UserRolesEnum[state.user?.role as keyof typeof UserRolesEnum]})
@@ -62,9 +62,9 @@ const UserDropdownMenu: FC = () => {
           <DropdownMenuItem
             className='w-full flex items-center gap-2 pr-[73%]'
             onClick={() => navigate('/profile')}
-            >
+          >
             <DropdownMenuShortcut>
-              <IconLogout size={15} color='Black' />
+              <IconUser size={15} color='Black' />
             </DropdownMenuShortcut>
             <span className='font-bold cursor-pointer'>Perfil</span>
           </DropdownMenuItem>
