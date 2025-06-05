@@ -60,7 +60,7 @@ const UserDropdownMenu: FC = () => {
         <DropdownMenuGroup className='w-full'>
           <DropdownMenuItem
             className='flex items-center self-start w-full gap-2 cursor-pointer'
-            onClick={() => navigate('/profile')}
+            onClick={() => navigate('/settings')}
           >
             <IconUser size={15} color='Black' className='m-0' />
             <span className='font-bold'>Perfil</span>
