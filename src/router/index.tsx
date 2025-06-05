@@ -24,10 +24,10 @@ import { PaymentTerminals } from '@/pages/PaymentTerminals/PaymentTerminals'
 import { Providers } from '@/pages/Providers/Providers'
 import { Purchase } from '@/pages/Purchase/Purchase'
 import { InventoryMovementItem } from '@/pages/InventoryMovementItem/InventoryMovements'
+import { Profile } from '@/pages/Profile/Profile'
 // Types
 import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 import { InventoryMovement } from '@/pages/InventoryMovement/InventoryMovement'
-import Settings from '@/pages/Settings/Settings'
 
 interface ISideBarData {
   path: string
@@ -142,7 +142,7 @@ const authRoutes: ISideBarData[] = [
   },
   {
     path: '/settings',
-    component: Settings,
+    component: Profile,
     allowedRoles: [
       UserRolesEnum.admin,
       UserRolesEnum.posAdmin,
