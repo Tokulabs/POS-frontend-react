@@ -14,12 +14,12 @@ import { toast } from 'sonner'
 import { ActionTypes } from '@/types/StoreTypes'
 
 const avatarOptions = [
-  'https://img.freepik.com/vector-gratis/avatar-personaje-empresario-aislado_24877-60111.jpg?semt=ais_hybrid&w=740',
-  'https://img.freepik.com/psd-gratis/3d-ilustracion-persona-gafas-sol_23-2149436188.jpg?semt=ais_hybrid&w=740',
-  'https://img.freepik.com/free-psd/3d-rendering-avatar_23-2150833560.jpg',
-  'https://img.freepik.com/free-psd/3d-render-avatar-character_23-2150611740.jpg',
-  'https://img.freepik.com/psd-gratuitas/ilustracao-3d-de-avatar-ou-perfil-humano_23-2150671126.jpg',
-  'https://img.freepik.com/psd-gratuitas/ilustracao-3d-com-avatar-on-line_23-2151303069.jpg?semt=ais_hybrid&w=740',
+  'https://img.freepik.com/psd-gratis/3d-ilustracion-persona-gafas-sol_23-2149436188.jpg',
+  'https://img.freepik.com/psd-gratis/ilustracion-3d-persona-camiseta-mangas_23-2149436202.jpg ',
+  'https://img.freepik.com/psd-gratis/ilustracion-3d-persona-pelo-punk-chaqueta_23-2149436198.jpg',
+  'https://img.freepik.com/psd-gratis/3d-ilustracion-persona_23-2149436182.jpg',
+  'https://img.freepik.com/psd-gratis/3d-ilustracion-persona-gafas-sol_23-2149436178.jpg',
+  'https://img.freepik.com/psd-gratis/ilustracion-3d-persona-gafas-sol-cabello-verde_23-2149436201.jpg ',
 ]
 
 const profileSchema = z.object({
