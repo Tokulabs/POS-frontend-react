@@ -23,11 +23,11 @@ import { Storage } from '@/pages/Storage/Storage'
 import { PaymentTerminals } from '@/pages/PaymentTerminals/PaymentTerminals'
 import { Providers } from '@/pages/Providers/Providers'
 import { Purchase } from '@/pages/Purchase/Purchase'
-import { Settings } from '@/pages/Settings/Settings'
 import { InventoryMovementItem } from '@/pages/InventoryMovementItem/InventoryMovements'
 // Types
 import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 import { InventoryMovement } from '@/pages/InventoryMovement/InventoryMovement'
+import { Settings } from '@/pages/Settings/Settings'
 
 interface ISideBarData {
   path: string
