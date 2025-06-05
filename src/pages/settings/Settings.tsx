@@ -2,7 +2,8 @@ import { FC, ReactNode } from 'react'
 // import { UserPassword } from '@/pages/Settings/Components/password'
 // import Company from '@/pages/Settings/Components/company'
 import { SettingsLayout } from '@/layouts/ContentLayout/SettingsLayout'
-import { ProfileSettings } from './Components/ProfileSettings'
+import ProfileSettings from './Components/ProfileSettings'
+
 interface ProfileProps {
   children?: ReactNode
 }
@@ -45,4 +46,4 @@ const Settings: FC<ProfileProps> = () => {
   return <SettingsLayout tabs={tabsData} />
 }
 
-export { Settings }
+export default Settings

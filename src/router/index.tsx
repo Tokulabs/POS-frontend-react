@@ -27,7 +27,7 @@ import { InventoryMovementItem } from '@/pages/InventoryMovementItem/InventoryMo
 // Types
 import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 import { InventoryMovement } from '@/pages/InventoryMovement/InventoryMovement'
-import { Settings } from '@/pages/Settings/Settings'
+import Settings from '@/pages/Settings/Settings'
 
 interface ISideBarData {
   path: string
