@@ -1,6 +1,5 @@
 import { FC, useContext } from 'react'
 import UserAvatar from '@/assets/icons/user-avatar.svg'
-import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,7 +7,6 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { IconLogout, IconSettings, IconUser } from '@tabler/icons-react'
@@ -34,12 +32,13 @@ const UserDropdownMenu: FC = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant='outline'
-          className='text-transparent bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent'
-        >
-          <img className='w-8 h-8' src={UserAvatar} alt='user-avatar' />
-        </Button>
+        <div className='w-8 h-8 cursor-pointer hover:bg-transparent'>
+          <img
+            className='object-cover w-full h-full rounded-full'
+            src={state.user?.photo ?? UserAvatar}
+            alt='user-avatar'
+          />
+        </div>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className='w-[250px] justify-items-start mr-[2vw] border-solid'>
@@ -58,42 +57,30 @@ const UserDropdownMenu: FC = () => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator className='w-screen bg-gray-1' />
 
-        <DropdownMenuGroup className='w-full cursor-pointer'>
+        <DropdownMenuGroup className='w-full'>
           <DropdownMenuItem
-            className='w-full flex items-center gap-2 pr-[73%]'
+            className='flex items-center self-start w-full gap-2 cursor-pointer'
             onClick={() => navigate('/profile')}
           >
-            <DropdownMenuShortcut>
-              <IconUser size={15} color='Black' />
-            </DropdownMenuShortcut>
-            <span className='font-bold cursor-pointer'>Perfil</span>
+            <IconUser size={15} color='Black' className='m-0' />
+            <span className='font-bold'>Perfil</span>
           </DropdownMenuItem>
           {hasUserActivityPermission && (
-            <DropdownMenuItem className='w-full flex items-center gap-2 pr-[35%]'>
-              <DropdownMenuShortcut>
-                <img
-                  src='https://cdn-icons-png.flaticon.com/512/3524/3524659.png'
-                  alt='settings-icon'
-                  className='size-3'
-                />
-              </DropdownMenuShortcut>
-              <span
-                onClick={() => navigate('/user-activities')}
-                className='font-bold text-black no-underline cursor-pointer'
-              >
-                Actividad de Usuario
-              </span>
+            <DropdownMenuItem
+              className='flex items-center self-start w-full gap-2 cursor-pointer'
+              onClick={() => navigate('/user-activities')}
+            >
+              <IconSettings size={15} color='Black' />
+              <span className='font-bold text-black no-underline'>Actividad de Usuario</span>
             </DropdownMenuItem>
           )}
 
           <DropdownMenuItem
-            className='w-full flex items-center gap-2 pr-[52%]'
+            className='flex items-center self-start w-full gap-2 cursor-pointer'
             onClick={logoutUser}
           >
-            <DropdownMenuShortcut>
-              <IconLogout size={15} color='Black' />
-            </DropdownMenuShortcut>
-            <span className='font-bold cursor-pointer'>Cerrar Sesión</span>
+            <IconLogout size={15} color='Black' />
+            <span className='font-bold'>Cerrar Sesión</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>

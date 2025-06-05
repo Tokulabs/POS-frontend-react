@@ -143,7 +143,14 @@ const authRoutes: ISideBarData[] = [
   {
     path: '/profile',
     component: Profile,
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
+    allowedRoles: [
+      UserRolesEnum.admin,
+      UserRolesEnum.posAdmin,
+      UserRolesEnum.sales,
+      UserRolesEnum.shopAdmin,
+      UserRolesEnum.supportSales,
+      UserRolesEnum.storageAdmin,
+    ],
   },
 ]
 

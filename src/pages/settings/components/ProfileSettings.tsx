@@ -1,18 +1,17 @@
 import React, { useContext } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { store } from '@/store'
 import { Form, FormField, FormItem, FormControl, FormMessage } from '@/components/ui/form'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { OptionSelect, SearchInputSelect } from '@/components/FormComponents/SearchInputSelect'
+import { Button } from '@/components/ui/button'
+import { putUsers } from '@/pages/Users/helpers/services'
+import { useMutation } from '@tanstack/react-query'
+import { toast } from 'sonner'
+import { ActionTypes } from '@/types/StoreTypes'
 
 const avatarOptions = [
   'https://img.freepik.com/vector-gratis/avatar-personaje-empresario-aislado_24877-60111.jpg?semt=ais_hybrid&w=740',
@@ -24,48 +23,77 @@ const avatarOptions = [
 ]
 
 const profileSchema = z.object({
-  avatar: z.string().url(),
-  fullName: z.string().min(2, 'Nombre requerido'),
+  photo: z.string().url(),
+  fullname: z.string().min(2, 'Nombre requerido'),
   email: z.string().email('Correo inválido'),
   documentType: z.string().nonempty('Tipo requerido'),
   documentId: z.string().nonempty('Documento requerido'),
-  role: z.string().nonempty('Rol requerido'),
 })
+
+const documentTypesOptions = [
+  { label: 'Cédula de ciudadania', value: 'CC' },
+  { label: 'Cédula de extranjería', value: 'CE' },
+  { label: 'NIT', value: 'NIT' },
+  { label: 'Tarjeta de identidad', value: 'TI' },
+  { label: 'Pasaporte', value: 'PA' },
+  { label: 'Documento de identificación extranjero', value: 'DIE' },
+] as const
 
 type ProfileFormValues = z.infer<typeof profileSchema>
 
-const ProfileView: React.FC = () => {
-  const { state } = useContext(store)
+const ProfileSettings: React.FC = () => {
+  const { state, dispatch } = useContext(store)
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      avatar: avatarOptions[0],
-      fullName: state.user?.fullname || '',
+      photo: state.user?.photo || avatarOptions[0],
+      fullname: state.user?.fullname || '',
       email: state.user?.email || '',
-      documentType: state.user?.id || '',
-      documentId: state.user?.id || '',
-      role: state.user?.role || '',
+      documentType: state.user?.document_type || '',
+      documentId: state.user?.document_id || '',
     },
   })
 
-  const selectedAvatar = form.watch('avatar')
+  const selectedAvatar = form.watch('photo')
 
   const handleAvatarSelect = (src: string) => {
-    form.setValue('avatar', src)
+    form.setValue('photo', src)
   }
 
+  const { mutate, isPending } = useMutation({
+    mutationFn: putUsers,
+    onSuccess: (item) => {
+      if (item?.data) {
+        dispatch({ type: ActionTypes.UPDATE_USER_INFO, payload: item?.data })
+        toast.success('Información actualizada correctamente')
+      }
+    },
+  })
+
   const onSubmit = (values: ProfileFormValues) => {
-    console.log('Datos actualizados:', values)
+    if (isPending) return
+    if (!state.user?.id) {
+      toast.error('Usuario no encontrado')
+      return
+    }
+    const { documentType, documentId, ...rest } = values
+    const formattedValues = {
+      ...rest,
+      document_type: documentType,
+      document_id: documentId,
+      role: state.user?.role || '',
+    }
+    mutate({ values: formattedValues, id: state.user?.id || '' })
   }
 
   return (
-    <div className='w-full flex flex-col items-center'>
-      <div className='pb-5 flex flex-col items-center'>
-        <div className='relative w-32 h-32 rounded-full overflow-hidden shadow-md mb-4 flex items-center justify-center'>
+    <div className='flex flex-col items-center w-full'>
+      <div className='flex flex-col items-center pb-5'>
+        <div className='relative flex items-center justify-center w-32 h-32 mb-4 overflow-hidden rounded-full shadow-md'>
           <img src={selectedAvatar} alt='Avatar Principal' className='object-cover w-full h-full' />
         </div>
-        <div className='flex gap-3 justify-center'>
+        <div className='flex justify-center gap-3'>
           {avatarOptions.map((src, index) => (
             <button
               type='button'
@@ -82,20 +110,26 @@ const ProfileView: React.FC = () => {
         </div>
       </div>
 
-      <div className='w-full'>
+      <div className='w-full md:px-10 lg:px-32'>
         <Form {...form}>
           <form
-            className='grid grid-cols-1 md:grid-cols-2 gap-6'
+            className='grid grid-cols-1 gap-6 md:grid-cols-2'
             onSubmit={form.handleSubmit(onSubmit)}
           >
             <FormField
               control={form.control}
-              name='fullName'
+              name='fullname'
               render={({ field }) => (
                 <FormItem className='flex flex-col gap-1'>
-                  <Label htmlFor='fullName'>Nombre completo</Label>
+                  <Label htmlFor='fullname'>
+                    Nombre completo <span className='text-red-1'>*</span>
+                  </Label>
                   <FormControl>
-                    <Input id='fullName' {...field} />
+                    <Input
+                      id='fullname'
+                      {...field}
+                      className='border-gray-1  border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0'
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -114,7 +148,7 @@ const ProfileView: React.FC = () => {
                       type='email'
                       {...field}
                       disabled
-                      className='bg-zinc-300'
+                      className='disabled:bg-zinc-300'
                     />
                   </FormControl>
                   <FormMessage />
@@ -126,23 +160,18 @@ const ProfileView: React.FC = () => {
               control={form.control}
               name='documentType'
               render={({ field }) => (
-                <FormItem className='flex flex-col gap-1'>
-                  <Label htmlFor='documentType'>Tipo de documento</Label>
-                  <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger id='documentType'>
-                        <SelectValue placeholder='Selecciona un tipo' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value='cc'>CC</SelectItem>
-                        <SelectItem value='ce'>CE</SelectItem>
-                        <SelectItem value='ti'>TI</SelectItem>
-                        <SelectItem value='passport'>Pasaporte</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+                <SearchInputSelect<z.infer<typeof profileSchema>, 'documentType'>
+                  label='Documento'
+                  className='flex flex-col justify-start '
+                  options={documentTypesOptions.map((item) => {
+                    const option: OptionSelect = {
+                      label: item.label,
+                      value: item.value,
+                    }
+                    return option
+                  })}
+                  field={field}
+                />
               )}
             />
 
@@ -151,34 +180,16 @@ const ProfileView: React.FC = () => {
               name='documentId'
               render={({ field }) => (
                 <FormItem className='flex flex-col gap-1'>
-                  <Label htmlFor='documentId'>Documento de identidad</Label>
+                  <Label htmlFor='documentId'>
+                    Documento de identidad <span className='text-red-1'>*</span>
+                  </Label>
                   <FormControl>
-                    <Input id='documentId' placeholder='Número de documento' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name='role'
-              render={({ field }) => (
-                <FormItem className='flex flex-col gap-1'>
-                  <Label htmlFor='role'>Rol</Label>
-                  <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger id='role'>
-                        <SelectValue placeholder='Selecciona un rol' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value='admin'>Administrador</SelectItem>
-                        <SelectItem value='user'>POS Admin</SelectItem>
-                        <SelectItem value='vendedor_fijo'>Vendedor fijo</SelectItem>
-                        <SelectItem value='vendedor_apoyo'>Vendedor apoyo</SelectItem>
-                        <SelectItem value='visualizador'>Visualizador</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Input
+                      id='documentId'
+                      placeholder='Número de documento'
+                      {...field}
+                      className='border-gray-1  border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0'
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -186,12 +197,13 @@ const ProfileView: React.FC = () => {
             />
 
             <div className='col-span-2'>
-              <button
+              <Button
                 type='submit'
-                className='bg-black text-white text-sm p-3 rounded-lg w-[20%]'
+                className='p-3 text-sm text-white bg-black rounded-lg w-fit'
+                disabled={isPending}
               >
                 Actualizar Información
-              </button>
+              </Button>
             </div>
           </form>
         </Form>
@@ -200,4 +212,4 @@ const ProfileView: React.FC = () => {
   )
 }
 
-export default ProfileView
+export { ProfileSettings }

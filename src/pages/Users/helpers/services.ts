@@ -3,6 +3,7 @@ import { formatDateTime } from '@/layouts/helpers/helpers'
 import { IQueryParams, IPaginationProps, DataPropsForm } from '@/types/GlobalTypes'
 import { createUserURL, usersURL } from '@/utils/network'
 import { IUserProps, UserRolesEnum } from '../types/UserTypes'
+import { IUser } from '@/types/UserType'
 
 export const getUsersNew = async (queryParams: IQueryParams) => {
   try {
@@ -45,8 +46,8 @@ export const postUsersNew = async (values: DataPropsForm) => {
   })
 }
 
-export const putUsers = async (data: { values: DataPropsForm; id: number }) => {
-  await axiosRequest({
+export const putUsers = async (data: { values: DataPropsForm; id: number | string }) => {
+  return await axiosRequest<IUser>({
     method: 'put',
     url: `${usersURL}/${data.id}/`,
     hasAuth: true,

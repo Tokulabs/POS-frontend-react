@@ -1,7 +1,7 @@
 import { FC, ReactNode, useState } from 'react'
-import { UserPassword } from '@/components/MainLayout/profileComponents/password'
-import ProfileView from '@/components/MainLayout/profileComponents/profileView'
-import Company from '@/components/MainLayout/profileComponents/company'
+import { UserPassword } from '@/pages/Settings/Components/password'
+import { ProfileSettings } from '@/pages/Settings/Components/ProfileSettings'
+import Company from '@/pages/Settings/Components/company'
 import { SettingsLayout } from '@/layouts/ContentLayout/SettingsLayout'
 interface ProfileProps {
   children?: ReactNode
@@ -28,18 +28,18 @@ const Profile: FC<ProfileProps> = () => {
     {
       title: 'Perfil',
       value: 'profile',
-      content: <ProfileView />,
+      content: <ProfileSettings />,
     },
-    {
-      title: 'Contraseña',
-      value: 'password',
-      content: <UserPassword onSubmit={handlePasswordSubmit} loading={loading} />,
-    },
-    {
-      title: 'Empresa',
-      value: 'company',
-      content: <Company />,
-    },
+    // {
+    //   title: 'Contraseña',
+    //   value: 'password',
+    //   content: <UserPassword onSubmit={handlePasswordSubmit} loading={loading} />,
+    // },
+    // {
+    //   title: 'Empresa',
+    //   value: 'company',
+    //   content: <Company />,
+    // },
   ]
 
   return <SettingsLayout tabs={tabsData} />
