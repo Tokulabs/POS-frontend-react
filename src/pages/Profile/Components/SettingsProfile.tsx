@@ -41,7 +41,7 @@ const documentTypesOptions = [
 
 type ProfileFormValues = z.infer<typeof profileSchema>
 
-const ProfileSettings: React.FC = () => {
+const SettingsProfile: React.FC = () => {
   const { state, dispatch } = useContext(store)
 
   const form = useForm<ProfileFormValues>({
@@ -212,4 +212,4 @@ const ProfileSettings: React.FC = () => {
   )
 }
 
-export default ProfileSettings
+export { SettingsProfile }

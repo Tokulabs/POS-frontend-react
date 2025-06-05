@@ -2,13 +2,13 @@ import { FC, ReactNode } from 'react'
 // import { UserPassword } from '@/pages/Settings/Components/password'
 // import Company from '@/pages/Settings/Components/company'
 import { SettingsLayout } from '@/layouts/ContentLayout/SettingsLayout'
-import ProfileSettings from './Components/ProfileSettings'
+import { SettingsProfile } from './Components/SettingsProfile'
 
 interface ProfileProps {
   children?: ReactNode
 }
 
-const Settings: FC<ProfileProps> = () => {
+const Profile: FC<ProfileProps> = () => {
   // const [loading, setLoading] = useState(false)
 
   // const handlePasswordSubmit = async (values: { password: string }) => {
@@ -29,7 +29,7 @@ const Settings: FC<ProfileProps> = () => {
     {
       title: 'Perfil',
       value: 'profile',
-      content: <ProfileSettings />,
+      content: <SettingsProfile />,
     },
     // {
     //   title: 'Contraseña',
@@ -46,4 +46,4 @@ const Settings: FC<ProfileProps> = () => {
   return <SettingsLayout tabs={tabsData} />
 }
 
-export default Settings
+export { Profile }
