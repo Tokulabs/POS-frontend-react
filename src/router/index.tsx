@@ -23,7 +23,7 @@ import { Storage } from '@/pages/Storage/Storage'
 import { PaymentTerminals } from '@/pages/PaymentTerminals/PaymentTerminals'
 import { Providers } from '@/pages/Providers/Providers'
 import { Purchase } from '@/pages/Purchase/Purchase'
-import { Profile } from '@/pages/Settings/Settings'
+import { Settings } from '@/pages/Settings/Settings'
 import { InventoryMovementItem } from '@/pages/InventoryMovementItem/InventoryMovements'
 // Types
 import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
@@ -141,8 +141,8 @@ const authRoutes: ISideBarData[] = [
     ],
   },
   {
-    path: '/profile',
-    component: Profile,
+    path: '/settings',
+    component: Settings,
     allowedRoles: [
       UserRolesEnum.admin,
       UserRolesEnum.posAdmin,
