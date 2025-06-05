@@ -1,6 +1,5 @@
 import { FC, useContext } from 'react'
 import { formatDateTime } from '@/layouts/helpers/helpers'
-import LogoSignos from '@/assets/logos/signos_logo.png'
 import { calcTotalPrices, formatNumberToColombianPesos } from '@/utils/helpers'
 import OverrideImage from '@/assets/logos/images.png'
 import { PaymentMethodsEnum } from '@/pages/POS/components/types/PaymentMethodsTypes'
@@ -33,15 +32,21 @@ const PrintOut: FC<IPrintCOmponent> = ({ printDataComponent }) => {
         <img
           className='absolute left-0 top-24 -z-10 opacity-40 w-72 h-96'
           src={OverrideImage}
-          alt=''
+          alt='override_logo'
         />
       )}
-      <img src={LogoSignos} alt='Logo signos' className='object-cover w-full h-20' />
+      {state.user?.company.logo && (
+        <img
+          src={state.user?.company.logo}
+          alt='logo_company'
+          className='object-contain w-full h-32'
+        />
+      )}
       <h4 className='m-0'>{state.user?.company.name}</h4>
       <h5 className='m-0'>{`NIT. ${state.user?.company.nit}`}</h5>
       <h5 className='m-0'>COMPLEJO TURISTICO CATEDRAL DE SAL</h5>
       <section className='flex flex-col items-center justify-center gap-1'>
-        <p className='m-0 text-sm'>Tel. +57 3133779890</p>
+        <p className='m-0 text-sm'>Tel. +57 {state.user?.company.phone}</p>
         <p className='m-0 text-xs'>
           {`Documento informativo, pendiente expedición FE, ${dianResolution?.document_number}`}
         </p>
@@ -53,9 +58,7 @@ const PrintOut: FC<IPrintCOmponent> = ({ printDataComponent }) => {
           Nombre: {customerData.name} ID: {customerData.document_id}
         </p>
         <section className='flex items-center justify-between w-full'>
-          <p className='m-0 text-xs text-start'>
-            D. E ./P. O. S {dianResolution.prefix}-{invoiceNumber}
-          </p>
+          <p className='m-0 text-xs text-start'>D. E ./P. O. S GUA-{invoiceNumber}</p>
           <p className='m-0 text-xs text-start'>
             Fec.{' '}
             {created_at ? formatDateTime(created_at, true, false) : formatDateTime(undefined, true)}
