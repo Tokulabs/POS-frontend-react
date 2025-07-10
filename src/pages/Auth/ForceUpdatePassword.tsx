@@ -1,19 +1,18 @@
 import { FC, useState } from 'react'
 import Authcomponent from '@/components/Auth/AuthComponent'
-import { IAuthProps } from '@/types/AuthTypes'
-import { forceUpdatePasswordURL } from '@/utils/network'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { useAuth } from '@/hooks/useAuth'
-import { axiosRequest } from '@/api/api'
 import { ForceUpdatePassword, formSchema } from '@/components/AuthForms/ForceUpdatePassword'
+import { useAuth } from '@/hooks/useAuth'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { IAuthProps } from '@/types/AuthTypes'
 import { toast } from 'sonner'
+import { forceUpdatePasswordURL } from '@/utils/network'
+import { axiosRequest } from '@/api/api'
 import { z } from 'zod'
 
-
 const ForceUpdatePasswordAuth: FC = () => {
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const [loading, setLoading] = useState(false)
 
   const AuthProps: IAuthProps = {
     successCallback: () => {
@@ -23,11 +22,11 @@ const ForceUpdatePasswordAuth: FC = () => {
   useAuth(AuthProps)
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const { passwordOne } = values
-    const email = searchParams.get('email')
-    const session = searchParams.get('session')
     try {
       setLoading(true)
+      const { passwordOne } = values
+      const email = searchParams.get('email')
+      const session = searchParams.get('session')
       const response = await axiosRequest<{ message: string }>({
         method: 'post',
         url: forceUpdatePasswordURL,
@@ -44,14 +43,12 @@ const ForceUpdatePasswordAuth: FC = () => {
         navigate('/')
         toast.error(response.data.message)
       }
-    } catch (e) {
-      console.log(e)
-      navigate('/')
+    } catch (error) {
+      console.error('Error al enviar la contraseña:', error)
     } finally {
       setLoading(false)
     }
   }
-
   return (
     <Authcomponent titleText='Cambio de contraseña'>
       <ForceUpdatePassword onSubmit={onSubmit} loading={loading} />
