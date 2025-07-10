@@ -1,41 +1,24 @@
 import { FC, ReactNode } from 'react'
-// import { UserPassword } from '@/pages/Settings/Components/password'
-// import Company from '@/pages/Settings/Components/company'
 import { SettingsLayout } from '@/layouts/ContentLayout/SettingsLayout'
 import { SettingsProfile } from './Components/SettingsProfile'
+import { UpdatePasswordSettings } from './Components/UpdatePassword'
 
 interface ProfileProps {
   children?: ReactNode
 }
 
 const Profile: FC<ProfileProps> = () => {
-  // const [loading, setLoading] = useState(false)
-
-  // const handlePasswordSubmit = async (values: { password: string }) => {
-  //   setLoading(true)
-  //   try {
-  //     console.log('Contraseña enviada:', values.password)
-  //     await new Promise((resolve) => setTimeout(resolve, 1500))
-  //     return true
-  //   } catch (error) {
-  //     console.error('Error al enviar la contraseña:', error)
-  //     return false
-  //   } finally {
-  //     setLoading(false)
-  //   }
-  // }
-
   const tabsData = [
     {
       title: 'Perfil',
       value: 'profile',
       content: <SettingsProfile />,
     },
-    // {
-    //   title: 'Contraseña',
-    //   value: 'password',
-    //   content: <UserPassword onSubmit={handlePasswordSubmit} loading={loading} />,
-    // },
+    {
+      title: 'Contraseña',
+      value: 'password',
+      content: <UpdatePasswordSettings />,
+    },
     // {
     //   title: 'Empresa',
     //   value: 'company',

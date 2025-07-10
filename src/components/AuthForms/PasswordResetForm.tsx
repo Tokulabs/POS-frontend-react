@@ -56,15 +56,15 @@ export const PasswordResetForm: FC<IAuthForm> = ({ onSubmit, loading }) => {
   const isValidForm = isValidPassword && verificationCode.length === 6
 
   return (
-    <section className='w-full max-w-sm mx-auto max-h-screen overflow-hidden flex flex-col items-center'>
+    <section className='flex flex-col items-center w-full max-w-sm max-h-screen mx-auto overflow-hidden'>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='w-full'>
           <FormField
             control={form.control}
             name='verificationCode'
             render={({ field }) => (
-              <FormItem className='justify-items-center w-full'>
-                <h5 className='font-semibold text-sm -mb-1'>Código de verificación</h5>
+              <FormItem className='w-full justify-items-center'>
+                <h5 className='-mb-1 text-sm font-semibold'>Código de verificación</h5>
                 <FormControl>
                   <div className='flex justify-center w-full px-8'>
                     <InputOTP
@@ -73,7 +73,7 @@ export const PasswordResetForm: FC<IAuthForm> = ({ onSubmit, loading }) => {
                       containerClassName='border-[0.5px] border-gray-100 w-full active:border-primary-foreground focus-visible:outline-none focus-visible:ring-0'
                       {...field}
                     >
-                      <InputOTPGroup className='flex w-full justify-between'>
+                      <InputOTPGroup className='flex justify-between w-full'>
                         {new Array(6).fill(null).map((_, index) => (
                           <InputOTPSlot
                             key={index}
@@ -88,8 +88,8 @@ export const PasswordResetForm: FC<IAuthForm> = ({ onSubmit, loading }) => {
                     </InputOTP>
                   </div>
                 </FormControl>
-                <FormDescription className='text-center text-md w-full block'>
-                  <h5 className='font-normal text-sm mb-0 -mt-1'>
+                <FormDescription className='block w-full text-center text-md'>
+                  <h5 className='mb-0 -mt-1 text-sm font-normal'>
                     Por favor ingresa el código que enviamos a tu correo
                   </h5>
                 </FormDescription>
@@ -98,11 +98,11 @@ export const PasswordResetForm: FC<IAuthForm> = ({ onSubmit, loading }) => {
             )}
           />
           <UpdatePasswordContainer />
-          <FormItem className='flex justify-center mt-4 w-full'>
+          <FormItem className='flex justify-center w-full mt-4'>
             <Button
               type='submit'
-              className='w-full bg-neutral-900 text-white border-0 rounded-md -mt-5 cursor-pointer'
-              disabled={!isValidForm}
+              className='w-full -mt-5 text-white border-0 rounded-md cursor-pointer bg-neutral-900'
+              disabled={!isValidForm || loading}
             >
               {loading ? 'Cargando...' : 'Confirmar'}
             </Button>

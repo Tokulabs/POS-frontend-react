@@ -43,7 +43,7 @@ const SettingsLayout: FC<SettingsLayoutProps> = ({ tabs }) => {
         </TabsList>
 
         {/* Content Area */}
-        <div className='flex flex-col items-center justify-center flex-1 h-full p-10 overflow-hidden overflow-y-auto scrollbar-hide'>
+        <div className='flex flex-col items-center justify-center flex-1 w-full h-full p-10 overflow-hidden overflow-y-auto scrollbar-hide'>
           {activeContent}
         </div>
       </Tabs>
