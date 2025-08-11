@@ -1,7 +1,6 @@
 // React
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 // Third party
-import { useReactToPrint } from 'react-to-print'
 import { Button, Popconfirm, Spin, Tooltip } from 'antd'
 import {
   IconCheck,
@@ -18,12 +17,11 @@ import {
 import { toast } from 'sonner'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 // Custom Components and Layouts
-import PrintOut from '@/components/Print/PrintOut'
 import ContentLayout from '@/layouts/ContentLayout/ContentLayout'
 import { ChangePaymentMethodsInvoice } from './Components/ChangePaymentMethodsInvoice'
 // Types
-import { DataPropsForm, IPrintData } from '@/types/GlobalTypes'
-import { IInvoiceMinimalProps, IInvoiceProps } from './types/InvoicesTypes'
+import { DataPropsForm } from '@/types/GlobalTypes'
+import { IInvoiceMinimalProps } from './types/InvoicesTypes'
 import { ModalStateEnum } from '@/types/ModalTypes'
 import { PaymentMethodsEnum } from '../POS/components/types/PaymentMethodsTypes'
 import { UserRolesEnum } from '../Users/types/UserTypes'
@@ -31,30 +29,23 @@ import { UserRolesEnum } from '../Users/types/UserTypes'
 import { columns } from './data/columnsData'
 // Helpers and Utilities
 import { formatDateTime } from '@/layouts/helpers/helpers'
-import {
-  buildPrintDataFromInvoiceProps,
-  formatNumberToColombianPesos,
-  formatToUsd,
-} from '@/utils/helpers'
-import {
-  getInvoiceByCode,
-  patchOverrideInvoice,
-  postSendElectronicInvoice,
-} from './helpers/services'
+import { formatNumberToColombianPesos, formatToUsd } from '@/utils/helpers'
+import { patchOverrideInvoice, postSendElectronicInvoice } from './helpers/services'
 // Hooks
 import { useInvoices } from '@/hooks/useInvoices'
 import { useRolePermissions } from '@/hooks/useRolespermissions'
+import { createPortal } from 'react-dom'
+import PrintOut from '@/components/Print/PrintInvoice'
 
 const Invoices: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
-  const [printData, setPrintData] = useState<IPrintData>({} as IPrintData)
-  const [isPrintReady, setIsPrintReady] = useState(false)
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
   const [invoiceIdToEdit, setInvoiceIdToEdit] = useState<number>(0)
   const [search, setSearch] = useState('')
   const [invoiceStatus, setInvoiceStatus] = useState<
     'all' | 'sent' | 'notSent' | 'toSent' | 'override'
   >('all')
+  const [invoiceToPrint, setInvoiceToPrint] = useState<string | null>(null)
 
   const queryClient = useQueryClient()
 
@@ -83,24 +74,11 @@ const Invoices: FC = () => {
     allowedRoles: allowedRolesEditPaymentMethods,
   })
 
-  const printOutRef = useRef<HTMLDivElement>(null)
-
-  const { mutate, isPending: isLoadingOverride } = useMutation({
+  const { mutate: mutateOverride, isPending: isLoadingOverride } = useMutation({
     mutationFn: patchOverrideInvoice,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['paginatedInvoices', { page: currentPage }] })
       toast.info('Factura anulada!')
-    },
-  })
-
-  const { mutate: mutatePrint, isPending: isLoadingPrint } = useMutation({
-    mutationFn: getInvoiceByCode,
-    onSuccess: (invoiceData) => {
-      const printData = buildPrintDataFromInvoiceProps(invoiceData as IInvoiceProps)
-      setPrintData(printData)
-      if (printData.invoiceNumber) {
-        setIsPrintReady(true)
-      }
     },
   })
 
@@ -121,16 +99,9 @@ const Invoices: FC = () => {
     setCurrentPage(1)
   }, [invoiceStatus])
 
-  useEffect(() => {
-    if (isPrintReady && !isLoadingPrint) {
-      handlePrint()
-      setIsPrintReady(false) // Reset the flag after printing
-    }
-  }, [isPrintReady, isLoadingPrint])
-
   const confirmOverride = (id: string) => {
     if (isLoadingOverride) return
-    mutate(id)
+    mutateOverride(id)
   }
 
   const sendElectronicInvoice = (id: number) => {
@@ -148,15 +119,15 @@ const Invoices: FC = () => {
 
     return invoiceData.map((item) => {
       const isDebitOrCredit = item.payment_methods.some(
-        (item) =>
-          PaymentMethodsEnum[item.name as unknown as keyof typeof PaymentMethodsEnum] ===
+        (pm) =>
+          PaymentMethodsEnum[pm.name as keyof typeof PaymentMethodsEnum] ===
             PaymentMethodsEnum.debitCard ||
-          PaymentMethodsEnum[item.name as unknown as keyof typeof PaymentMethodsEnum] ===
+          PaymentMethodsEnum[pm.name as keyof typeof PaymentMethodsEnum] ===
             PaymentMethodsEnum.creditCard,
       )
 
       const methodsStrings = item.payment_methods
-        .map((item) => PaymentMethodsEnum[item.name as unknown as keyof typeof PaymentMethodsEnum])
+        .map((pm) => PaymentMethodsEnum[pm.name as keyof typeof PaymentMethodsEnum])
         .join(', ')
 
       return {
@@ -189,7 +160,7 @@ const Invoices: FC = () => {
             {isDebitOrCredit ? (
               <Tooltip
                 mouseLeaveDelay={0.3}
-                destroyTooltipOnHide={true}
+                destroyTooltipOnHide
                 title={
                   <div>
                     <span>
@@ -213,11 +184,10 @@ const Invoices: FC = () => {
           <div className='flex gap-3 text-3xl'>
             <div className='cursor-pointer text-green-1 hover:text-green-800'>
               <Popconfirm
-                title='imprimir factua'
-                description='¿Estas seguro deseas imprimir esta factura?'
-                onConfirm={() => setDataToprint(item.invoice_number)}
-                okText='Si, imprimir'
-                okButtonProps={{ disabled: isLoadingPrint }}
+                title='Imprimir factura'
+                description='¿Estás seguro de que deseas imprimir esta factura?'
+                onConfirm={() => setInvoiceToPrint(item.invoice_number)}
+                okText='Sí, imprimir'
                 cancelText='Cancelar'
               >
                 <IconPrinter />
@@ -233,9 +203,9 @@ const Invoices: FC = () => {
                     <div>
                       <Popconfirm
                         title='Enviar factura electrónica'
-                        description='¿Estas seguro de enviar esta factura?'
+                        description='¿Estás seguro de enviar esta factura?'
                         onConfirm={() => sendElectronicInvoice(Number(item.id))}
-                        okText='Si, Enviar'
+                        okText='Sí, enviar'
                         cancelText='Cancelar'
                       >
                         <IconSend className='text-blue-600 cursor-pointer hover:text-blue-400' />
@@ -245,10 +215,10 @@ const Invoices: FC = () => {
                 {hasPermission && !item.is_electronic_invoiced && !item.is_override && (
                   <div className='cursor-pointer text-red-1 hover:text-red-800'>
                     <Popconfirm
-                      title='Anular factua'
-                      description='¿Estas seguro de anular esta factura?'
+                      title='Anular factura'
+                      description='¿Estás seguro de anular esta factura?'
                       onConfirm={() => confirmOverride(item.invoice_number)}
-                      okText='Si, Anular'
+                      okText='Sí, anular'
                       cancelText='Cancelar'
                     >
                       <IconFileOff />
@@ -261,23 +231,6 @@ const Invoices: FC = () => {
         ),
       }
     })
-  }
-
-  const handlePrint = useReactToPrint({
-    content: () => printOutRef.current,
-    onAfterPrint: () => {
-      toast.success('La factura se ha impreso correctamente')
-      setPrintData({} as IPrintData)
-    },
-    onPrintError: () => {
-      toast.error('Ha ocurrido un error al imprimir la factura')
-      setPrintData({} as IPrintData)
-    },
-    removeAfterPrint: true,
-  })
-
-  const setDataToprint = (invoiceNumber: string) => {
-    mutatePrint(invoiceNumber)
   }
 
   return (
@@ -306,8 +259,7 @@ const Invoices: FC = () => {
           {
             label: (
               <span className='flex items-center gap-3' onClick={() => setInvoiceStatus('sent')}>
-                <IconFileCheck />
-                Facturas Electrónicas
+                <IconFileCheck /> Facturas Electrónicas
               </span>
             ),
             key: 1,
@@ -341,6 +293,7 @@ const Invoices: FC = () => {
           },
         ]}
       />
+
       {modalState === ModalStateEnum.addItem && (
         <ChangePaymentMethodsInvoice
           invoiceId={invoiceIdToEdit}
@@ -349,12 +302,19 @@ const Invoices: FC = () => {
           onCancelCallback={() => setModalState(ModalStateEnum.off)}
         />
       )}
-      {printData?.dataItems?.length > 0 && (
-        <div ref={printOutRef} className='absolute flex -z-10'>
-          <PrintOut printDataComponent={printData} />
-        </div>
-      )}
+
+      {invoiceToPrint &&
+        createPortal(
+          <div
+            className='fixed w-0 h-0 overflow-hidden pointer-events-none opacity-0'
+            aria-hidden='true'
+          >
+            <PrintOut id={invoiceToPrint} onAfterPrint={() => setInvoiceToPrint(null)} />
+          </div>,
+          document.getElementById('root')!,
+        )}
     </section>
   )
 }
+
 export { Invoices }

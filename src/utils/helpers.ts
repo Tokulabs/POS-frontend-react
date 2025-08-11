@@ -161,3 +161,10 @@ export const formatDatatoIPOSData = (data: IInventoryProps): IPosData => {
     is_gift: false,
   }
 }
+
+  export const safeValue = (value: unknown): string => {
+    if (value === null || value === undefined || value === '') {
+      return 'N/A'
+    }
+    return String(value)
+  }

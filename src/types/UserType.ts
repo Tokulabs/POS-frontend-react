@@ -14,5 +14,6 @@ export interface IUser {
     nit: string
     logo: string
     phone: string
+    email?: string
   }
 }
