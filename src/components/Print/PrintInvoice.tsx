@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect } from 'react'
+import React, { FC, useContext, useLayoutEffect } from 'react'
 import { formatDateTime } from '@/layouts/helpers/helpers'
 import { calcTotalPrices, formatNumberToColombianPesos, safeValue } from '@/utils/helpers'
 import OverrideImage from '@/assets/logos/images.png'
@@ -15,7 +15,6 @@ interface PrintInvoiceProps {
 }
 
 const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint }) => {
-  const { printContentRef, triggerPrint } = usePrintInfo()
   const { state } = useContext(store)
 
   const { data: invoice } = useQuery({
@@ -27,12 +26,16 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint }) => {
     refetchOnMount: true,
   })
 
-  useEffect(() => {
+  const { printContentRef, triggerPrint } = usePrintInfo({
+    documentTitle: 'Factura',
+    onAfterPrint,
+  })
+
+  useLayoutEffect(() => {
     if (invoice) {
       triggerPrint()
-      if (onAfterPrint) onAfterPrint()
     }
-  }, [invoice, onAfterPrint, triggerPrint])
+  }, [invoice, triggerPrint])
 
   if (!invoice) return null
 

@@ -306,12 +306,12 @@ const Invoices: FC = () => {
       {invoiceToPrint &&
         createPortal(
           <div
-            className='fixed w-0 h-0 overflow-hidden pointer-events-none opacity-0'
+            className='fixed w-0 h-0 overflow-hidden opacity-0 pointer-events-none'
             aria-hidden='true'
           >
             <PrintOut id={invoiceToPrint} onAfterPrint={() => setInvoiceToPrint(null)} />
           </div>,
-          document.getElementById('root')!,
+          document.body,
         )}
     </section>
   )

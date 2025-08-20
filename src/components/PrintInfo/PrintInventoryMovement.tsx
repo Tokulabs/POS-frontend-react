@@ -26,7 +26,10 @@ interface InventoryMovementItem {
 }
 
 const PrintInventoryMovement: React.FC<PrintInventoryMovementProps> = ({ id, onAfterPrint }) => {
-  const { printContentRef, triggerPrint } = usePrintInfo()
+  const { printContentRef, triggerPrint } = usePrintInfo({
+    documentTitle: 'Movimiento de Inventario',
+    onAfterPrint,
+  })
   const { state } = useContext(store)
 
   const { data: movement, isLoading } = useQuery({
@@ -41,7 +44,6 @@ const PrintInventoryMovement: React.FC<PrintInventoryMovementProps> = ({ id, onA
   useEffect(() => {
     if (!movement?.id) return
     triggerPrint()
-    onAfterPrint?.()
   }, [movement])
 
   if (isLoading || !movement?.id) return null
@@ -71,23 +73,23 @@ const PrintInventoryMovement: React.FC<PrintInventoryMovementProps> = ({ id, onA
   return (
     <div ref={printContentRef} className='p-20'>
       {/* Encabezado */}
-      <div className='flex justify-between items-start mb-6'>
+      <div className='flex items-start justify-between mb-6'>
         <div>
-          <div className='text-3xl font-bold mb-2'>
+          <div className='mb-2 text-3xl font-bold'>
             {safeValue(movementTypeText)} #{safeValue(movement.id)}
           </div>
           <strong>Estado</strong>
           <span className='pl-[35%]'>
             {movement.state === 'approved' ? (
-              <span className='inline-flex items-center justify-center ml-2 mr-1 rounded-full bg-green-500'>
+              <span className='inline-flex items-center justify-center ml-2 mr-1 bg-green-500 rounded-full'>
                 <IconCircleCheck size={20} color='white' />
               </span>
             ) : movement.state === 'pending' ? (
-              <span className='inline-flex items-center justify-center ml-2 mr-1 rounded-full bg-yellow-400'>
+              <span className='inline-flex items-center justify-center ml-2 mr-1 bg-yellow-400 rounded-full'>
                 <IconClock size={20} color='white' />
               </span>
             ) : (
-              <span className='inline-flex items-center justify-center ml-2 mr-1 rounded-full bg-red-500'>
+              <span className='inline-flex items-center justify-center ml-2 mr-1 bg-red-500 rounded-full'>
                 <IconCircleX size={20} color='white' />
               </span>
             )}
@@ -97,7 +99,7 @@ const PrintInventoryMovement: React.FC<PrintInventoryMovementProps> = ({ id, onA
                 pending: 'Pendiente',
                 rejected: 'Rechazado',
                 overrided: 'Anulado',
-              }[movement.state] || movement.state
+              }[movement.state] || movement.state,
             )}
           </span>
           <br />
@@ -117,7 +119,7 @@ const PrintInventoryMovement: React.FC<PrintInventoryMovementProps> = ({ id, onA
                     {
                       warehouse: 'Bodega',
                       store: 'Tienda',
-                    }[movement.origin] || movement.origin
+                    }[movement.origin] || movement.origin,
                   )}
                 </span>
               </div>
@@ -128,31 +130,31 @@ const PrintInventoryMovement: React.FC<PrintInventoryMovementProps> = ({ id, onA
                     {
                       warehouse: 'Bodega',
                       store: 'Tienda',
-                    }[movement.destination] || movement.destination
+                    }[movement.destination] || movement.destination,
                   )}
                 </span>
               </div>
             </>
           )}
         </div>
-        <div className='justify-self-end text-right'>
-          <span className='text-xl font-semibold mb-1'>{safeValue(company?.name)}</span>
+        <div className='text-right justify-self-end'>
+          <span className='mb-1 text-xl font-semibold'>{safeValue(company?.name)}</span>
           <br />
-          <span className='text-sm mb-1'>{safeValue(company?.nit)}</span>
+          <span className='mb-1 text-sm'>{safeValue(company?.nit)}</span>
           <br />
-          <span className='text-xs mb-1'>Tel: {safeValue(company?.phone)}</span>
+          <span className='mb-1 text-xs'>Tel: {safeValue(company?.phone)}</span>
           <br />
-          <span className='text-xs mb-1 text-cyan-600 underline'>{safeValue(company?.email)}</span>
+          <span className='mb-1 text-xs underline text-cyan-600'>{safeValue(company?.email)}</span>
         </div>
       </div>
 
       {/* Proveedor */}
       {movementTypeText === 'Orden de Compra' && movement.provider && (
         <div className='mb-8 w-[50%]'>
-          <div className='font-bold text-2xl mb-2' style={{ lineHeight: 1 }}>
+          <div className='mb-2 text-2xl font-bold' style={{ lineHeight: 1 }}>
             Proveedor
           </div>
-          <div className='border-b border-black mb-2' />
+          <div className='mb-2 border-b border-black' />
           <div className='flex flex-col gap-1 text-base'>
             <div className='flex'>
               <strong className='w-[170px]'>Nombre:</strong>
@@ -168,7 +170,7 @@ const PrintInventoryMovement: React.FC<PrintInventoryMovementProps> = ({ id, onA
             </div>
             <div className='flex'>
               <strong className='w-[170px]'>Correo electrónico:</strong>
-              <a href={`mailto:${movement.provider.email}`} className='text-cyan-600 underline'>
+              <a href={`mailto:${movement.provider.email}`} className='underline text-cyan-600'>
                 {safeValue(movement.provider.email)}
               </a>
             </div>
@@ -181,32 +183,32 @@ const PrintInventoryMovement: React.FC<PrintInventoryMovementProps> = ({ id, onA
       )}
 
       {/* Tabla */}
-      <table className='w-full border-t border-black mt-8 text-sm'>
+      <table className='w-full mt-8 text-sm border-t border-black'>
         <thead className='border-b border-black'>
           <tr className='text-left'>
-            <th className='py-2 px-2 font-semibold'>Producto</th>
-            <th className='py-2 px-2 font-semibold'>Código</th>
-            <th className='py-2 px-2 font-semibold w-1/10'>Cantidad Solicitada</th>
-            <th className='py-2 px-2 font-semibold w-1/10'>Cantidad Recibida</th>
-            <th className='py-2 px-2 font-semibold w-2/5 text-center'>Notas</th>
-            <th className='py-2 px-2 font-semibold'>Estado</th>
+            <th className='px-2 py-2 font-semibold'>Producto</th>
+            <th className='px-2 py-2 font-semibold'>Código</th>
+            <th className='px-2 py-2 font-semibold w-1/10'>Cantidad Solicitada</th>
+            <th className='px-2 py-2 font-semibold w-1/10'>Cantidad Recibida</th>
+            <th className='w-2/5 px-2 py-2 font-semibold text-center'>Notas</th>
+            <th className='px-2 py-2 font-semibold'>Estado</th>
           </tr>
         </thead>
         <tbody>
           {itemsToPrint.map((item) => (
             <tr key={item.id} className='align-top'>
-              <td className='py-1 px-2'>{safeValue(item.inventory.name) || 'Sin descripción'}</td>
-              <td className='py-1 px-2'>{safeValue(item.inventory.code)}</td>
-              <td className='py-1 px-2 w-1/12'>{safeValue(item.quantity)}</td>
-              <td className='py-1 px-2 w-1/12'>{safeValue(item.quantity)}</td>
-              <td className='py-1 px-2 w-2/5'>{safeValue(item.delivery_notes)}</td>
-              <td className='py-1 px-2'>
+              <td className='px-2 py-1'>{safeValue(item.inventory.name) || 'Sin descripción'}</td>
+              <td className='px-2 py-1'>{safeValue(item.inventory.code)}</td>
+              <td className='w-1/12 px-2 py-1'>{safeValue(item.quantity)}</td>
+              <td className='w-1/12 px-2 py-1'>{safeValue(item.quantity)}</td>
+              <td className='w-2/5 px-2 py-1'>{safeValue(item.delivery_notes)}</td>
+              <td className='px-2 py-1'>
                 {safeValue(
                   {
                     approved: 'Aprobado',
                     pending: 'Pendiente',
                     rejected: 'Rechazado',
-                  }[item.state || '']
+                  }[item.state || ''],
                 )}
               </td>
             </tr>
