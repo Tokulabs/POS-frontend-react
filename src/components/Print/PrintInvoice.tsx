@@ -122,7 +122,7 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint }) => {
         <section className='border-0 border-b-[1px] border-black border-solid p-1'>
           {dataItems.map((item, index) => (
             <div key={index} className='grid w-full grid-cols-4 gap-2'>
-              <p className='m-0 text-xs text-left truncate'>{safeValue(item.id)}</p>
+              <p className='m-0 text-xs text-left truncate'>{safeValue(item.item_code)}</p>
               <p className='m-0 text-xs text-left uppercase'>{safeValue(item.item_name)}</p>
               <p className='m-0 text-xs text-right'>{safeValue(item.quantity)}</p>
               <p className='m-0 text-xs text-right'>
