@@ -1,3 +1,4 @@
+import { IconPrinter } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { FC, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -10,6 +11,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { postInventoryMovementState } from './helpers/services'
 import { toast } from 'sonner'
 import { PopoverConfirmation } from '@/components/PopoverConfirmation/PopoverConfirmation'
+import InventoryMovementPrint from '@/components/PrintInfo/PrintInventoryMovement'
+import { createPortal } from 'react-dom'
 
 type Action = 'approve' | 'reject' | 'override'
 
@@ -47,6 +50,7 @@ const InventoryMovementItem: FC = () => {
   const { id } = useParams<{ id: string }>()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
+  const [isPrinting, setIsPrinting] = useState(false)
 
   const decodedID = id ? atob(id) : ''
 
@@ -109,11 +113,19 @@ const InventoryMovementItem: FC = () => {
             <h2 className='text-2xl font-bold text-center text-gray-900 '>
               {movementTypeText} #{String(movementIdData?.id).padStart(4, '0')}
             </h2>
-            <h4
-              className={`${stateColors[movementIdData?.state || 'pending']} text-white rounded-xl px-4 text-sm`}
-            >
-              {stateRename[movementIdData?.state || 'pending']}
-            </h4>
+            <div className='flex items-center gap-2'>
+              <h4
+                className={`${stateColors[movementIdData?.state || 'pending']} text-white rounded-xl px-4 text-sm`}
+              >
+                {stateRename[movementIdData?.state || 'pending']}
+              </h4>
+              <button
+                onClick={() => setIsPrinting(true)}
+                className='p-2 text-blue-500 hover:text-blue-600 rounded-full hover:bg-blue-50 transition-colors'
+              >
+                <IconPrinter size={20} stroke={1.5} />
+              </button>
+            </div>
           </div>
           {movementIdData?.event_type === 'purchase' && (
             <div className='grid grid-cols-1 gap-4 text-gray-700 sm:grid-cols-3 lg:grid-cols-5'>
@@ -185,6 +197,20 @@ const InventoryMovementItem: FC = () => {
           />
         )}
       </footer>
+      {isPrinting && movementIdData &&
+        createPortal(
+          <div
+          className='fixed w-0 h-0 overflow-hidden pointer-none opacity-0'
+            aria-hidden="true"
+          >
+            <InventoryMovementPrint
+              id={String(movementIdData.id)}
+              onAfterPrint={() => setIsPrinting(false)}
+            />
+          </div>,
+          document.body
+        )
+      }
     </section>
   )
 }
