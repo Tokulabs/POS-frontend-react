@@ -1,6 +1,11 @@
 import React, { FC, useContext, useLayoutEffect } from 'react'
 import { formatDateTime } from '@/layouts/helpers/helpers'
-import { calcTotalPrices, formatNumberToColombianPesos, safeValue } from '@/utils/helpers'
+import {
+  buildPrintDataFromInvoiceProps,
+  calcTotalPrices,
+  formatNumberToColombianPesos,
+  safeValue,
+} from '@/utils/helpers'
 import OverrideImage from '@/assets/logos/images.png'
 import { PaymentMethodsEnum } from '@/pages/POS/components/types/PaymentMethodsTypes'
 import { store } from '@/store'
@@ -50,20 +55,11 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint }) => {
     created_at,
   } = invoice
 
-  const items: IPosData[] = invoice.invoice_items.map((item) => ({
-    id: item.id,
-    code: item.item_code,
-    name: item.item_name,
-    selling_price: item.original_amount,
-    usd_price: 0,
-    discount: item.discount,
-    quantity: item.quantity,
-    total: item.original_amount * item.quantity,
-    usd_total: 0,
-    is_gift: item.is_gift,
-  }))
+  const showDataitems = buildPrintDataFromInvoiceProps(invoice)
 
-  const { discountCOP, taxesIVACOP, totalCOP, subtotalCOP } = calcTotalPrices(items)
+  const { discountCOP, taxesIVACOP, totalCOP, subtotalCOP } = calcTotalPrices(
+    showDataitems.dataItems,
+  )
 
   return (
     <article
