@@ -60,7 +60,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
     },
   })
 
-  const { mutateAsync: mutateUploadImagetoS3, isPending: isLoadingImageToS3 } = useMutation({
+  const { mutate: mutateUploadImagetoS3, isPending: isLoadingImageToS3 } = useMutation({
     mutationFn: awsPostImagetoS3,
     onSuccess: () => {
       toast.success('Imagen subida con éxito')
@@ -84,7 +84,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
       sentFormData.append('signature', signature)
       sentFormData.append('file', formDataImage.get('file') as Blob)
 
-      await mutateUploadImagetoS3({
+      mutateUploadImagetoS3({
         formData: sentFormData,
         url: awsData.endpoint_data.url,
       })
@@ -143,7 +143,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
                 <Input placeholder='Nombre del producto' type='text' />
               </Form.Item>
             </div>
-            <div className='flex gap-2 w-full'>
+            <div className='flex w-full gap-2'>
               <Form.Item
                 style={{ width: '100%' }}
                 label='Cantidad En bodéga'
@@ -161,7 +161,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
                 <Input placeholder='Cantidad' type='number' min={0} />
               </Form.Item>
             </div>
-            <div className='flex gap-2 w-full'>
+            <div className='flex w-full gap-2'>
               <Form.Item
                 style={{ width: '100%' }}
                 label='Precio de compra (COP)'
@@ -179,7 +179,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
                 <Input placeholder='Precio COP' type='number' min={0} />
               </Form.Item>
             </div>
-            <div className='flex gap-2 w-full'>
+            <div className='flex w-full gap-2'>
               <Form.Item
                 style={{ width: '100%' }}
                 label='Precio (USD)'
@@ -220,7 +220,7 @@ const AddInventoryForm: FC<IAddInventoryFormProps> = ({
                 />
               </Form.Item>
             </div>
-            <div className='flex gap-2 w-full'>
+            <div className='flex w-full gap-2'>
               <Form.Item
                 style={{ width: '100%' }}
                 label='Proveedor'
