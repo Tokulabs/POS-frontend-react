@@ -98,6 +98,7 @@ export const awsPostImagetoS3 = async (data: { url: string; formData: FormData }
     method: 'post',
     url,
     payload: formData,
+    showError: true,
     headers: {
       'Content-Type': 'multipart/form-data',
     },
