@@ -165,7 +165,8 @@ export const AddPaymentMethods: FC<{
         (item) =>
           item.name === PaymentMethodsEnum.debitCard ||
           item.name === PaymentMethodsEnum.creditCard ||
-          item.name === PaymentMethodsEnum.bankTransfer,
+          item.name === PaymentMethodsEnum.bankTransfer ||
+          item.name === PaymentMethodsEnum.nequi,
       )
       if (hasCard) {
         setDisbaledElectronicSwitch(true)
