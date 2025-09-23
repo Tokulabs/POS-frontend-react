@@ -27,16 +27,36 @@ export default function FileUploadForm({
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) {
       const selectedFile = e.target.files[0]
-      if (selectedFile.size > 1 * 1024 * 1024 || selectedFile.type !== 'text/csv') {
-        // 1 MB & CSV
-        setFileError(
-          'Hemos detectado errores en tu archivo, por favor carga la información nuevamente',
-        )
+
+      if (selectedFile.size > 1 * 1024 * 1024) {
+        setFileError('El archivo es demasiado grande. El tamaño máximo es 1MB.')
         onFileChange(null)
-      } else {
-        setFileError(null)
-        onFileChange(selectedFile)
+        return
+      } else if (selectedFile.type !== 'text/csv') {
+        setFileError('El archivo debe ser un CSV.')
+        onFileChange(null)
+        return
       }
+
+      // Leer primeras líneas para validar delimitador
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        const text = event.target?.result as string
+        const firstLine = text.split('\n')[0]
+
+        // Contamos separadores
+        const commas = (firstLine.match(/,/g) || []).length
+        const semicolons = (firstLine.match(/;/g) || []).length
+
+        if (semicolons > commas) {
+          setFileError('El archivo usa ";" como separador. Por favor expórtelo con comas ",".')
+          onFileChange(null)
+        } else {
+          setFileError(null)
+          onFileChange(selectedFile)
+        }
+      }
+      reader.readAsText(selectedFile)
     }
   }
 
@@ -58,7 +78,7 @@ export default function FileUploadForm({
 
       {(fileError || showErrorBanner) && (
         <div className='px-8 p-1 mt-3 bg-[#F6B5B5] text-[#C41B1B] rounded-lg w-[80%]'>
-          Hemos detectado errores en tu archivo, por favor carga la información nuevamente
+          {fileError ?? 'Hubo errores en la importación, por favor corrija y vuelva a cargar el archivo.'}
         </div>
       )}
 

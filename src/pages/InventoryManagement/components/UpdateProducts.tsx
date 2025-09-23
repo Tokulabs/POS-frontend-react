@@ -8,6 +8,8 @@ import { inventoryCsvRequest } from '../helpers/InventoryApi'
 interface UpdateResponse {
   updated: string[]
   errors: string[]
+  error?: string | string[]
+  details?: string[]
 }
 
 interface UpdateProductsProps {
@@ -18,20 +20,66 @@ export default function UpdateProducts({ onBack }: UpdateProductsProps) {
   const [file, setFile] = useState<File | null>(null)
   const [showResults, setShowResults] = useState(false)
   const [errorData, setErrorData] = useState<UpdateResponse | null>(null)
+  const [showErrorBanner, setShowErrorBanner] = useState(false)
 
   const updateMutation = useMutation<UpdateResponse, Error, File>({
     mutationFn: (file) => inventoryCsvRequest<UpdateResponse>(file, 'put'),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      const errorCount = data.errors?.length ?? data.details?.length ?? 0
+      const updatedCount = data.updated?.length ?? 0
+      const hasGlobalError = !!data.error
+
+      if ((errorCount > 0 && updatedCount === 0) || hasGlobalError) {
+        const message = hasGlobalError
+          ? Array.isArray(data.error)
+            ? data.error.join(', ')
+            : data.error
+          : `Se encontraron ${errorCount} errores en la actualización`
+
+        setErrorData({
+          updated: data.updated ?? [],
+          errors: [
+            ...(data.errors ?? []),
+            ...(data.details ?? []),
+            ...(data.error
+              ? Array.isArray(data.error)
+                ? data.error
+                : [data.error]
+              : []),
+          ],
+        })
+
+        toast.error(message)
+        setShowResults(true)
+        return
+      }
+
       toast.success('Productos actualizados correctamente')
       setShowResults(true)
     },
     onError: (e) => {
+      let parsedData: UpdateResponse
       try {
-        setErrorData(JSON.parse(e.message))
+        parsedData = JSON.parse(e.message)
       } catch {
-        setErrorData({ updated: [], errors: ['Error desconocido'] })
+        parsedData = { updated: [], errors: ['Error desconocido'] }
       }
-      toast.error('Error al actualizar cierto(s) producto(s)')
+
+      setErrorData(parsedData)
+
+      const errorCount = parsedData.errors?.length ?? parsedData.details?.length ?? 0
+      const updatedCount = parsedData.updated?.length ?? 0
+
+      if (updatedCount === 0 && errorCount > 0) {
+        toast.error(parsedData.error || 'Error en la actualización')
+      } else {
+        toast.error(
+          errorCount > 0
+            ? `Se encontraron ${errorCount} errores en la actualización`
+            : 'Ocurrió un error'
+        )
+      }
+
       setShowResults(true)
     },
   })
@@ -50,21 +98,23 @@ export default function UpdateProducts({ onBack }: UpdateProductsProps) {
         onFixErrors={() => {
           setShowResults(false)
           setErrorData(null)
+          setShowErrorBanner(true)
         }}
-        type='update'
+        type="update"
       />
     )
   }
 
   return (
     <FileUploadForm
-      title='Actualizar Productos'
-      description='Edite la información de múltiples productos utilizando un archivo CSV'
+      title="Actualizar Productos"
+      description="Edite la información de múltiples productos utilizando un archivo CSV"
       onFileChange={setFile}
       file={file}
       onUpload={handleUpload}
       isLoading={updateMutation.isPending}
       onBack={onBack}
+      showErrorBanner={showErrorBanner}
     />
   )
 }

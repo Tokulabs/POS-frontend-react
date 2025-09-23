@@ -4,6 +4,7 @@ import UploadResults from './UploadResults'
 import FileUploadForm from './FileUpdateForm'
 import { toast } from 'sonner'
 import { inventoryCsvRequest } from '../helpers/InventoryApi'
+import { set } from 'lodash'
 
 interface ImportResponse {
   created_items: string[]
@@ -23,7 +24,38 @@ export default function ImportProducts({ onBack }: ImportProductsProps) {
 
   const importMutation = useMutation<ImportResponse, Error, File>({
     mutationFn: (file) => inventoryCsvRequest<ImportResponse>(file, 'post'),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      const errorCount = data.error_list?.length ?? 0
+      const createdCount = data.created_items?.length ?? 0
+      const hasGlobalError = !!data.error
+
+      if (errorCount > 0 && createdCount === 0) {
+        // Errores en los items (toast con error global)
+        setErrorData({
+          created_items: data.created_items ?? [],
+          error_list: [
+            ...(data.error_list ?? []),
+            ...(data.error ? (Array.isArray(data.error) ? data.error : [data.error]) : []),
+          ],
+        })
+
+        const message = `Se encontraron ${errorCount} errores en la importación`
+        toast.error(message)
+        setShowResults(true)
+        return
+      } else if (hasGlobalError) {
+        // Solo error global (NO mostrar toast)
+        setErrorData({
+          created_items: data.created_items ?? [],
+          error_list: [
+            ...(data.error_list ?? []),
+            ...(data.error ? (Array.isArray(data.error) ? data.error : [data.error]) : []),
+          ],
+        })
+        setShowResults(true)
+        return
+      }
+
       toast.success('Productos importados correctamente')
       setShowResults(true)
     },
@@ -37,7 +69,18 @@ export default function ImportProducts({ onBack }: ImportProductsProps) {
 
       setErrorData(parsedData)
 
-      toast.error(parsedData.error)
+      const errorCount = parsedData.error_list?.length ?? 0
+      const createdCount = parsedData.created_items?.length ?? 0
+
+      if (createdCount === 0 && errorCount > 0) {
+        toast.error(parsedData.error)
+      } else {
+        toast.error(
+          errorCount > 0
+            ? `Se encontraron ${errorCount} errores en la importación`
+            : 'Ocurrió un error',
+        )
+      }
 
       setShowResults(true)
     },
