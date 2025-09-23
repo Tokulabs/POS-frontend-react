@@ -47,7 +47,7 @@ const NavigationMenuComponent: FC<NavigationMenuComponentProps> = ({
               <NavigationMenuTrigger className='border-none bg-transparent font-semibold'>
                 {item.label}
               </NavigationMenuTrigger>
-              <NavigationMenuContent className='bg-white p-3 max-h-[170px]'>
+              <NavigationMenuContent className='bg-white p-3 max-h-screen'>
                 <ul
                   className={`flex flex-wrap w-full list-none p-0 justify-between gap-0 ${
                     filteredChildren.length > 1 ? 'min-w-[520px]' : 'justify-center min-w-[250px]'

@@ -28,6 +28,7 @@ import { Profile } from '@/pages/Profile/Profile'
 // Types
 import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 import { InventoryMovement } from '@/pages/InventoryMovement/InventoryMovement'
+import { InventoryManagement } from '@/pages/InventoryManagement/InventoryMangament'
 
 interface ISideBarData {
   path: string
@@ -138,6 +139,14 @@ const authRoutes: ISideBarData[] = [
       UserRolesEnum.posAdmin,
       UserRolesEnum.storageAdmin,
       UserRolesEnum.shopAdmin,
+    ],
+  },
+  {
+    path: '/inventory-management',
+    component: InventoryManagement,
+    allowedRoles: [
+      UserRolesEnum.admin,
+      UserRolesEnum.posAdmin,
     ],
   },
   {
