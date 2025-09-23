@@ -55,18 +55,18 @@ export default function FileUploadForm({
         <h1 className='text-3xl font-semibold'>{title}</h1>
         <p className='text-gray-500 text-2xl'>{description}</p>
       </header>
+
       {(fileError || showErrorBanner) && (
         <div className='px-8 p-1 mt-3 bg-[#F6B5B5] text-[#C41B1B] rounded-lg w-[80%]'>
           Hemos detectado errores en tu archivo, por favor carga la información nuevamente
         </div>
       )}
+
       <div className='w-[85%] mt-7 justify-self-center relative'>
         {/* Overlay gris con loading */}
         {isLoading && (
-          <div className='absolute bg-gray-100 opacity-60 flex items-center justify-center z-10 pointer-events-none'>
-            <div className='flex items-center gap-2 font-extrabold'>
-              <IconLoader2 className='animate-spin' size={100} />
-            </div>
+          <div className='absolute inset-0 bg-gray-100/70 flex items-center justify-center z-10'>
+            <IconLoader2 className='animate-spin' size={100} />
           </div>
         )}
 
@@ -83,6 +83,7 @@ export default function FileUploadForm({
               <li>Recuerde incluir el código de producto y el precio</li>
             </ul>
           </div>
+
           <div className='flex-1 space-y-8'>
             <h3 className='text-2xl font-semibold mb-2'>1. Descargar Plantilla</h3>
             <button
@@ -92,17 +93,18 @@ export default function FileUploadForm({
               <IconDownload size={18} />
               Descargar
             </button>
+
             <h3 className='text-2xl font-semibold mb-2'>2. Subir Plantilla</h3>
             <label
               className={`border-2 border-dashed rounded-md p-10 flex flex-col items-center justify-center cursor-pointer transition-colors
-          ${
-            isLoading
-              ? 'border-gray-300 text-gray-400 bg-gray-100 cursor-not-allowed opacity-60'
-              : file
-                ? 'border-green-1 text-green-1 bg-green-200'
-                : 'border-gray-300 text-gray-400 hover:border-green-1 hover:text-green-1'
-          }
-        `}
+                ${
+                  isLoading
+                    ? 'border-gray-300 text-gray-400 bg-gray-100 cursor-not-allowed opacity-60'
+                    : file
+                      ? 'border-green-1 text-green-1 bg-green-100'
+                      : 'border-gray-300 text-gray-400 hover:border-green-1 hover:text-green-1'
+                }
+              `}
             >
               <IconUpload size={36} className={`${file && !isLoading ? 'text-green-600' : ''}`} />
               <span className={`font-semibold ${file && !isLoading ? 'text-green-700' : ''}`}>
