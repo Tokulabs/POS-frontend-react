@@ -45,8 +45,8 @@ export default function UpdateProducts({ onBack }: UpdateProductsProps) {
     const data = errorData || updateMutation.data!
     return (
       <UploadResults
-        productos={Array.isArray(data?.updated) ? data.updated : []}
-        errores={Array.isArray(data?.errors) ? data.errors : []}
+        products={Array.isArray(data?.updated) ? data.updated : []}
+        errors={Array.isArray(data?.errors) ? data.errors : []}
         onFixErrors={() => {
           setShowResults(false)
           setErrorData(null)

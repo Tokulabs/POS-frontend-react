@@ -9,6 +9,7 @@ interface FileUploadFormProps {
   onUpload: () => void
   isLoading: boolean
   onBack?: () => void
+  showErrorBanner?: boolean
 }
 
 export default function FileUploadForm({
@@ -19,6 +20,7 @@ export default function FileUploadForm({
   onUpload,
   isLoading,
   onBack,
+  showErrorBanner = false,
 }: FileUploadFormProps) {
   const [fileError, setFileError] = useState<string | null>(null)
 
@@ -53,13 +55,15 @@ export default function FileUploadForm({
         <h1 className='text-3xl font-semibold'>{title}</h1>
         <p className='text-gray-500 text-2xl'>{description}</p>
       </header>
-      {fileError && (
-        <div className='px-8 p-1 bg-[#F6B5B5] text-[#C41B1B] rounded-lg w-[80%] '>{fileError}</div>
+      {(fileError || showErrorBanner) && (
+        <div className='px-8 p-1 mt-3 bg-[#F6B5B5] text-[#C41B1B] rounded-lg w-[80%]'>
+          Hemos detectado errores en tu archivo, por favor carga la información nuevamente
+        </div>
       )}
-      <div className='w-[85%] justify-self-center relative'>
+      <div className='w-[85%] mt-7 justify-self-center relative'>
         {/* Overlay gris con loading */}
         {isLoading && (
-          <div className='absolute inset-0 bg-gray-100 opacity-60 flex items-center justify-center z-10 pointer-events-none'>
+          <div className='absolute bg-gray-100 opacity-60 flex items-center justify-center z-10 pointer-events-none'>
             <div className='flex items-center gap-2 font-extrabold'>
               <IconLoader2 className='animate-spin' size={100} />
             </div>
@@ -67,7 +71,7 @@ export default function FileUploadForm({
         )}
 
         <section
-          className={`bg-white shadow-lg rounded-xl flex gap-16 p-16 transition-colors ${
+          className={`shadow-lg rounded-xl flex gap-16 p-16 transition-colors ${
             isLoading ? 'pointer-events-none' : ''
           }`}
         >
@@ -95,7 +99,7 @@ export default function FileUploadForm({
             isLoading
               ? 'border-gray-300 text-gray-400 bg-gray-100 cursor-not-allowed opacity-60'
               : file
-                ? 'border-green-1 text-green-1 bg-green-50'
+                ? 'border-green-1 text-green-1 bg-green-200'
                 : 'border-gray-300 text-gray-400 hover:border-green-1 hover:text-green-1'
           }
         `}

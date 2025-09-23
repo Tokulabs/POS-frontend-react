@@ -2,26 +2,26 @@ import { IconCircleCheckFilled, IconAlertCircleFilled } from '@tabler/icons-reac
 import { useNavigate } from 'react-router-dom'
 
 interface UploadResultsProps {
-  productos: string[]
-  errores: string[]
-  mensajeError?: string
+  products: string[]
+  errors: string[]
+  errorMessage?: string
   onFixErrors?: () => void
   type?: 'import' | 'update'
 }
 
 export default function UploadResults({
-  productos = [],
-  errores = [],
-  mensajeError,
+  products = [],
+  errors = [],
+  errorMessage,
   onFixErrors,
   type = 'import',
 }: UploadResultsProps) {
-  const tituloProductos = type === 'update' ? 'Productos actualizados' : 'Nuevos Productos'
-  console.log('Productos:', productos)
-  console.log('Errores:', errores)
+  const productsTitle = type === 'update' ? 'Productos actualizados' : 'Nuevos Productos'
+  console.log('Productos:', products)
+  console.log('Errores:', errors)
 
-  const hayProductos = productos.length > 0
-  const hayErrores = errores.length > 0
+  const hasProducts = products.length > 0
+  const hasErrors = errors.length > 0
 
   const navigate = useNavigate()
 
@@ -37,17 +37,17 @@ export default function UploadResults({
       <div className='flex justify-center py-12'>
         <div
           className={`flex gap-8 w-full max-w-5xl ${
-            hayProductos && hayErrores ? 'justify-between' : 'justify-center'
+            hasProducts && hasErrors ? 'justify-between' : 'justify-center'
           }`}
         >
-          {hayProductos && (
-            <div className='bg-gray-50 rounded-lg shadow-sm border p-4 w-full max-w-md'>
+          {hasProducts && (
+            <div className='bg-gray-50 rounded-lg shadow-lg border p-4 w-full max-w-md'>
               <div className='flex items-center gap-2 mb-4'>
                 <IconCircleCheckFilled className='text-green-600' size={22} />
-                <span className='font-semibold text-green-700'>{tituloProductos}</span>
+                <span className='font-semibold text-green-700'>{productsTitle}</span>
               </div>
               <ul className='divide-y text-gray-800 text-sm max-h-80 overflow-y-auto'>
-                {productos.map((code, i) => (
+                {products.map((code, i) => (
                   <li key={i} className='py-1'>
                     {code}
                   </li>
@@ -56,15 +56,15 @@ export default function UploadResults({
             </div>
           )}
 
-          {hayErrores && (
-            <div className='bg-gray-50 rounded-lg shadow-sm border p-4 w-full max-w-md'>
+          {hasErrors && (
+            <div className='bg-gray-50 rounded-lg shadow-lg border p-4 w-full max-w-md'>
               <div className='flex items-center gap-2 mb-2 font-semibold'>
                 <IconAlertCircleFilled className='text-red-600' size={28} />
                 Errores
               </div>
-              {mensajeError && <p className='text-red-600 text-sm mb-2'>{mensajeError}</p>}
+              {errorMessage && <p className='text-red-600 text-sm mb-2'>{errorMessage}</p>}
               <ul className='divide-y text-gray-800 text-sm max-h-80 overflow-y-auto'>
-                {errores.map((err, i) => (
+                {errors.map((err, i) => (
                   <li key={i} className='py-1'>
                     {err}
                   </li>
@@ -78,28 +78,28 @@ export default function UploadResults({
       <div className='flex justify-end px-8 py-4 w-[80%]'>
         <button
           className={`w-48 py-2 rounded-md ${
-            hayErrores && !hayProductos
+            hasErrors && !hasProducts
               ? 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-              : hayProductos && !hayErrores
+              : hasProducts && !hasErrors
                 ? 'bg-green-600 text-white hover:bg-green-700'
-                : hayProductos && hayErrores
+                : hasProducts && hasErrors
                   ? 'bg-gray-200 text-gray-800 hover:bg-gray-300'
                   : 'bg-gray-200 text-gray-500 cursor-not-allowed'
           }`}
           onClick={() => {
-            if (hayErrores) {
+            if (hasErrors) {
               onFixErrors?.()
-            } else if (hayProductos && !hayErrores) {
+            } else if (hasProducts && !hasErrors) {
               navigate('/')
             }
           }}
-          disabled={!hayProductos && !hayErrores}
+          disabled={!hasProducts && !hasErrors}
         >
-          {hayErrores && !hayProductos
+          {hasErrors && !hasProducts
             ? 'Solucionar errores'
-            : hayProductos && !hayErrores
+            : hasProducts && !hasErrors
               ? 'Finalizar'
-              : hayProductos && hayErrores
+              : hasProducts && hasErrors
                 ? 'Solucionar errores'
                 : 'Sin resultados'}
         </button>
