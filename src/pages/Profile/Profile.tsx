@@ -1,8 +1,8 @@
 import { FC, ReactNode } from 'react'
 import { SettingsLayout } from '@/layouts/ContentLayout/SettingsLayout'
-import { SettingsProfile } from './components/SettingsProfile'
-import { UpdatePasswordSettings } from './components/UpdatePassword'
-import Company from './components/Company'
+import { SettingsProfile } from './Components/SettingsProfile'
+import { UpdatePasswordSettings } from './Components/UpdatePassword'
+import Company from './Components/Company'
 
 interface ProfileProps {
   children?: ReactNode
