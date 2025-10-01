@@ -12,6 +12,7 @@ export const meURL = baseURL + 'user/me'
 export const createUserURL = baseURL + 'user/create-user'
 export const usersURL = baseURL + 'user/users'
 export const updatePasswordURL = baseURL + 'user/update-password'
+export const companyURL = baseURL + 'user/company'
 // Groups
 export const groupURL = baseURL + 'app/group'
 // Inventory

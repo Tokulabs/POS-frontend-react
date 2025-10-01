@@ -12,7 +12,7 @@ export const formatinventoryPhoto = (inventories: IInventoryProps[]) => {
     ...item,
     photoInfo: item.photo ? (
       <img
-        className='w-16 h-16 object-contain overflow-hidden hover:scale-150 transition-all transform-gpu'
+        className='object-contain w-16 h-16 overflow-hidden transition-all hover:scale-150 transform-gpu'
         src={item.photo}
       />
     ) : (
@@ -69,19 +69,7 @@ const Inventories: FC = () => {
           setCurrentPage(1)
         }}
         onChangePage={(page) => setCurrentPage(page)}
-      >
-        {/* <AddInventoryForm
-          onSuccessCallback={() => setModalState(ModalStateEnum.off)}
-          isVisible={modalState === ModalStateEnum.addItem}
-          onCancelCallback={() => setModalState(ModalStateEnum.off)}
-          groups={groupsData?.results ?? []}
-        />
-        <AddInventoryFormCSV
-          onSuccessCallback={() => setModalState(ModalStateEnum.off)}
-          isVisible={modalState === ModalStateEnum.addItemsCSV}
-          onCancelCallback={() => setModalState(ModalStateEnum.off)}
-        /> */}
-      </ContentLayout>
+      ></ContentLayout>
     </>
   )
 }

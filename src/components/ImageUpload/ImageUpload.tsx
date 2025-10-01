@@ -63,7 +63,7 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageChange, imageURL }) => {
   }
 
   return (
-    <div className='w-full flex justify-center text-white'>
+    <div className='flex justify-center w-full text-white'>
       <div
         className={`w-24 h-24 rounded-full flex flex-col justify-center items-center cursor-pointer ${
           avatarURL ? '' : 'bg-gray-1'
@@ -72,19 +72,19 @@ const ImageUpload: FC<ImageUploadProps> = ({ onImageChange, imageURL }) => {
       >
         {isPending && <Spin size='large' />}
         {!isPending && avatarURL ? (
-          <div className='w-40 h-full relative'>
+          <div className='relative w-40 h-full'>
             <span
-              className='absolute bottom-0 right-0 z-10 bg-green-1 flex justify-center items-center p-1 text-white'
+              className='absolute bottom-0 right-0 z-10 flex items-center justify-center p-1 text-white bg-green-1'
               onClick={removeImage}
             >
               <IconPhotoX />
             </span>
-            <img className='w-full h-full object-cover' src={avatarURL} />
+            <img className='object-cover w-full h-full' src={avatarURL} />
           </div>
         ) : (
-          <div className='flex flex-col justify-center items-center'>
+          <div className='flex flex-col items-center justify-center'>
             <IconPhoto />
-            <span className='flex justify-center items-center'>
+            <span className='flex items-center justify-center'>
               <IconPlus size={15} />
               Foto
             </span>

@@ -6,11 +6,11 @@ import { toast } from 'sonner'
 import { isObject } from 'lodash'
 import { logout } from '@/pages/Auth/helpers'
 
-interface IAxiosRequestProps {
+interface IAxiosRequestProps<P = DataPropsForm | FormData> {
   method?: 'get' | 'post' | 'patch' | 'delete' | 'put'
   url: string | URL
   headers?: Record<string, string>
-  payload?: DataPropsForm | FormData
+  payload?: P
   hasAuth?: boolean
   showError?: boolean
   errorObject?: {
@@ -27,7 +27,7 @@ export const getAuthToken = (): IAuthToken | null => {
   return { Authorization: `Bearer ${accessToken}` }
 }
 
-export const axiosRequest = async <T>({
+export const axiosRequest = async <T, P = DataPropsForm | FormData>({
   method = 'get',
   url,
   payload,
@@ -36,7 +36,7 @@ export const axiosRequest = async <T>({
   showError = true,
   headers,
   isFile = false,
-}: IAxiosRequestProps): Promise<AxiosResponse<T> | null> => {
+}: IAxiosRequestProps<P>): Promise<AxiosResponse<T> | null> => {
   const headersNew = hasAuth ? { ...headers, ...getAuthToken() } : { ...headers }
   const urlStr = url instanceof URL ? url.toString() : url
   try {

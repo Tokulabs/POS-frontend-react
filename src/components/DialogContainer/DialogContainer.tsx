@@ -10,6 +10,7 @@ import {
 interface DialogContainerProps {
   title: string
   triggerTitle: ReactNode
+  triggerComponent?: ReactNode
   open: boolean
   onOpenChange?: (value: boolean) => void
   triggerClassName?: string
@@ -20,16 +21,21 @@ export const DialogContainer: FC<PropsWithChildren<DialogContainerProps>> = ({
   onOpenChange,
   title,
   triggerTitle,
+  triggerComponent,
   triggerClassName,
   open,
 }) => {
   return (
     <Dialog open={open} onOpenChange={(value) => onOpenChange && onOpenChange(value)}>
-      <DialogTrigger
-        className={`bg-green-1 flex p-3 text-white border-1 border-solid border-green-1 justify-center items-center rounded-md cursor-pointer hover:bg-white hover:text-green-1 focus-visible:ring-0 ${triggerClassName}`}
-      >
-        {triggerTitle}
-      </DialogTrigger>
+      {triggerComponent ? (
+        <DialogTrigger asChild>{triggerComponent}</DialogTrigger>
+      ) : (
+        <DialogTrigger
+          className={`bg-green-1 flex p-3 text-white border-1 border-solid border-green-1 justify-center items-center rounded-md cursor-pointer hover:bg-white hover:text-green-1 focus-visible:ring-0 ${triggerClassName}`}
+        >
+          {triggerTitle}
+        </DialogTrigger>
+      )}
       <DialogPortal>
         <DialogContent
           onInteractOutside={(e) => {
@@ -37,7 +43,7 @@ export const DialogContainer: FC<PropsWithChildren<DialogContainerProps>> = ({
           }}
           className='flex flex-col gap-6'
         >
-          <DialogTitle className='text-2xl m-0 text-green-1 flex flex-row justify-between'>
+          <DialogTitle className='flex flex-row justify-between m-0 text-2xl text-green-1'>
             {title}
           </DialogTitle>
 

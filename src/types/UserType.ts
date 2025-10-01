@@ -1,3 +1,5 @@
+import { ICompany } from '@/pages/Profile/types/CompanyTypes'
+
 export interface IUser {
   email: string
   fullname: string
@@ -9,11 +11,5 @@ export interface IUser {
   document_id: string
   document_type: string
   photo: string
-  company: {
-    name: string
-    nit: string
-    logo: string
-    phone: string
-    email?: string
-  }
+  company: ICompany
 }

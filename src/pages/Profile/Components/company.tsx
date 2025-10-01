@@ -1,67 +1,126 @@
-import React, { useContext } from 'react'
+import { FC, useContext, useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { store } from '@/store'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Form, FormField, FormItem, FormControl, FormMessage } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
+import FileUploadPreview from '@/components/FileUploadPreview/FileUploadPreviewS3'
+import { useAwsS3Upload } from '@/hooks/useAwsS3Upload'
+import { toast } from 'sonner'
+import { OptionSelect, SearchInputSelect } from '@/components/FormComponents/SearchInputSelect'
+import { useCities } from '@/hooks/useCities'
+import { useMutation } from '@tanstack/react-query'
+import { putCompanyInformation } from '../helpers/services'
 
 const companySchema = z.object({
   name: z.string().nonempty('Campo requerido'),
-  shortName: z.string().nonempty('Campo requerido'),
+  short_name: z.string(),
   email: z.string().email('Correo no válido'),
-  documentType: z.string().nonempty('Campo requerido'),
-  documentId: z.string().nonempty('Campo requerido'),
+  nit: z.string().nonempty('Campo requerido'),
   address: z.string().nonempty('Campo requerido'),
-  municipality: z.string().nonempty('Campo requerido'),
-  phoneNumber: z.string().nonempty('Campo requerido'),
+  city: z.number().gt(0, 'Campo requerido'),
+  phone: z.string().nonempty('Campo requerido'),
+  logo: z.preprocess((val) => {
+    if (val instanceof FileList) return undefined
+    if (val === null) return ''
+    return val
+  }, z.string().optional()),
 })
 
-type CompanyFormValues = z.infer<typeof companySchema>
+export type CompanyFormValues = z.infer<typeof companySchema>
 
-const Company: React.FC = () => {
+const Company: FC = () => {
   const { state } = useContext(store)
+  const { isLoading, citiesData = [] } = useCities('citiesBySearch')
+  const [pendingFileUpload, setPendingFileUpload] = useState<File | null>(null)
 
   const form = useForm<CompanyFormValues>({
     resolver: zodResolver(companySchema),
     defaultValues: {
       name: state.user?.company?.name || '',
-      shortName: '',
+      short_name: state.user?.company?.short_name || '',
       email: state.user?.email || '',
-      documentType: '',
-      documentId: state.user?.company?.nit || '',
-      address: '',
-      municipality: '',
-      phoneNumber: '',
+      nit: state.user?.company?.nit || '',
+      address: state.user?.company?.address || '',
+      city: state.user?.company?.city.id || Number(0),
+      phone: state.user?.company?.phone || '',
+      logo: state.user?.company?.logo || '',
     },
   })
 
+  const { mutate, isPending: isLoadingCompany } = useMutation({
+    mutationFn: putCompanyInformation,
+    onSuccess: () => {
+      toast.success('Información de empresa actualizada')
+    },
+  })
+
+  const { uploadFile, isUploading, resetUpload } = useAwsS3Upload({
+    onSuccess: (imageUrl) => {
+      form.setValue('logo', imageUrl)
+      const currentFormData = form.getValues()
+      handleCompanyUpdate(currentFormData)
+      setPendingFileUpload(null)
+      resetUpload()
+    },
+    onError: (error) => {
+      console.error('Upload failed:', error)
+      setPendingFileUpload(null)
+    },
+    showToasts: false,
+  })
+
+  useEffect(() => {
+    return () => {
+      resetUpload()
+    }
+  }, [])
+
+  const handleCompanyUpdate = (companyData: CompanyFormValues) => {
+    mutate(companyData)
+  }
+
+  const handleFileSelect = (file: File | null) => {
+    setPendingFileUpload(file)
+  }
+
   const onSubmit = (data: CompanyFormValues) => {
-    console.log('Datos actualizados:', data)
+    if (pendingFileUpload) {
+      const key = `company_id=${state.user?.company?.id}/company_images/${Date.now()}-${pendingFileUpload.name}`
+      uploadFile(pendingFileUpload, key)
+    } else {
+      handleCompanyUpdate(data)
+    }
   }
 
   return (
-    <div className='flex flex-col items-center w-full'>
-      <div className='w-full'>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className='grid grid-cols-1 gap-6 md:grid-cols-2'
-          >
+    <div className='flex w-full h-full overflow-y-auto'>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className='flex flex-col items-center justify-center w-full gap-3 p-4 md:px-10 lg:px-32'
+        >
+          <FileUploadPreview
+            control={form.control}
+            name='logo'
+            label='Logo de la Empresa'
+            description='Selecciona una imagen para el logo de tu empresa.'
+            initialPreview={state.user?.company?.logo || ''}
+            onFileSelect={handleFileSelect}
+            onError={(error) => {
+              toast.error(error)
+            }}
+          />
+
+          <div className='flex w-full gap-4'>
             <FormField
               control={form.control}
               name='name'
               render={({ field }) => (
-                <FormItem>
+                <FormItem className='w-1/2'>
                   <Label htmlFor='name'>
                     Nombre<span className='text-red-500'>*</span>
                   </Label>
@@ -71,51 +130,33 @@ const Company: React.FC = () => {
                   <FormMessage />
                 </FormItem>
               )}
+              disabled={isLoadingCompany || isUploading}
             />
 
             <FormField
               control={form.control}
-              name='shortName'
+              name='short_name'
               render={({ field }) => (
-                <FormItem>
-                  <Label htmlFor='shortName'>Nombre Corto</Label>
+                <FormItem className='w-1/2'>
+                  <Label htmlFor='short_name'>
+                    Nombre Corto <span className='text-red-500'>*</span>
+                  </Label>
                   <FormControl>
-                    <Input id='shortName' placeholder='Nombre Corto' {...field} />
+                    <Input id='short_name' placeholder='Nombre Corto' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
+              disabled={isLoadingCompany || isUploading}
             />
+          </div>
 
+          <div className='flex w-full gap-4'>
             <FormField
               control={form.control}
-              name='documentType'
+              name='nit'
               render={({ field }) => (
-                <FormItem>
-                  <Label htmlFor='documentType'>
-                    Tipo de Documento<span className='text-red-500'>*</span>
-                  </Label>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger id='documentType'>
-                        <SelectValue placeholder='Selecciona un tipo' />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value='NIT'>NIT</SelectItem>
-                      <SelectItem value='RUT'>RUT</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name='documentId'
-              render={({ field }) => (
-                <FormItem>
+                <FormItem className='w-1/2'>
                   <Label htmlFor='documentId'>
                     Número de Documento <span className='text-red-500'>*</span>
                   </Label>
@@ -125,13 +166,13 @@ const Company: React.FC = () => {
                   <FormMessage />
                 </FormItem>
               )}
+              disabled={isLoadingCompany || isUploading}
             />
-
             <FormField
               control={form.control}
               name='address'
               render={({ field }) => (
-                <FormItem>
+                <FormItem className='w-1/2'>
                   <Label htmlFor='address'>
                     Dirección<span className='text-red-500'>*</span>
                   </Label>
@@ -141,78 +182,78 @@ const Company: React.FC = () => {
                   <FormMessage />
                 </FormItem>
               )}
+              disabled={isLoadingCompany || isUploading}
             />
+          </div>
 
+          <div className='flex w-full gap-4'>
             <FormField
               control={form.control}
-              name='municipality'
+              name='city'
               render={({ field }) => (
-                <FormItem>
-                  <Label htmlFor='municipality'>
-                    Municipio<span className='text-red-500'>*</span>
-                  </Label>
+                <SearchInputSelect<z.infer<typeof companySchema>, 'city'>
+                  label='Ciudad'
+                  className='w-1/2'
+                  options={citiesData.map((item) => {
+                    const option: OptionSelect = {
+                      label: item.name,
+                      value: item.id,
+                    }
+                    return option
+                  })}
+                  isLoading={isLoading}
+                  field={field}
+                />
+              )}
+              disabled={isLoadingCompany || isUploading}
+            />
+            <FormField
+              control={form.control}
+              name='phone'
+              render={({ field }) => (
+                <FormItem className='w-1/2'>
+                  <Label htmlFor='phone'>Teléfono</Label>
                   <FormControl>
-                    <Input id='municipality' placeholder='Municipio' {...field} />
+                    <Input id='phone' placeholder='Teléfono' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
+              disabled={isLoadingCompany || isUploading}
             />
+          </div>
 
-            <FormField
-              control={form.control}
-              name='email'
-              render={({ field }) => (
-                <FormItem>
-                  <Label htmlFor='email'>Email</Label>
-                  <FormControl>
-                    <Input
-                      id='email'
-                      type='email'
-                      placeholder='Email'
-                      disabled
-                      className='bg-zinc-300'
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <FormField
+            control={form.control}
+            name='email'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <Label htmlFor='email'>Email</Label>
+                <FormControl>
+                  <Input
+                    id='email'
+                    type='email'
+                    placeholder='Email'
+                    disabled
+                    className='bg-zinc-300'
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+            disabled={isLoadingCompany || isUploading}
+          />
 
-            <FormField
-              control={form.control}
-              name='phoneNumber'
-              render={({ field }) => (
-                <FormItem>
-                  <Label htmlFor='phoneNumber'>Teléfono</Label>
-                  <FormControl>
-                    <Input id='phoneNumber' placeholder='Teléfono' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className='flex flex-col gap-2'>
-              <Label>Logo</Label>
-              {
-                <div className='p-[20%] border-2 border-gray-300 rounded-lg flex justify-center items-center'></div>
-              }
-              {/* Componente de carga de archivos*/}
-            </div>
-
-            <div className='col-span-2'>
-              <Button
-                type='submit'
-                className='bg-black text-white text-sm py-1 px-2 rounded-lg w-[25%]'
-              >
-                Actualizar Información
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </div>
+          <Button
+            type='submit'
+            disabled={isUploading || isLoadingCompany}
+            className='self-start px-4 py-2 mt-4 text-sm text-white bg-black rounded-lg disabled:opacity-50'
+          >
+            {isUploading || isLoadingCompany ? 'Cargando...' : 'Guardar'}
+          </Button>
+        </form>
+      </Form>
     </div>
   )
 }
