@@ -1,7 +1,7 @@
 import { axiosRequest } from '@/api/api'
 import { companyURL } from '@/utils/network'
 import { ICompany } from '../types/CompanyTypes'
-import { CompanyFormValues } from '../Components/Company'
+import { CompanyFormValues } from '../Components/CompanySettings'
 
 export const putCompanyInformation = async (values: CompanyFormValues) => {
   return await axiosRequest<ICompany, CompanyFormValues>({
