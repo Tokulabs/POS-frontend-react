@@ -61,42 +61,44 @@ export const UpdatePasswordSettings: FC = () => {
   }
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className='flex flex-col items-center justify-center w-full gap-4 px-5 xs:px-10 sm:px-20 lg:px-40 xl:px-60'
-      >
-        <FormField
-          control={form.control}
-          name='oldPassword'
-          render={({ field }) => (
-            <FormItem className='w-full mt-5'>
-              <Label htmlFor='oldPassword' className='text-sm font-semibold'>
-                Contraseña Actual
-              </Label>
-              <FormControl>
-                <Input
-                  id='oldPassword'
-                  type='password'
-                  {...field}
-                  className='focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 w-full h-[35px] px-3'
-                  placeholder='Ingrese su contraseña actual'
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <UpdatePasswordContainer onValidationChange={setIsPasswordValid} />
-        <FormItem className='flex justify-center w-full'>
-          <Button
-            type='submit'
-            className='w-full text-white border-0 rounded-md cursor-pointer w-bg-neutral-900'
-            disabled={!isPasswordValid || !form.watch('oldPassword') || loading}
-          >
-            {loading ? 'Cargando...' : 'Confirmar'}
-          </Button>
-        </FormItem>
-      </form>
-    </Form>
+    <div className='flex w-full h-full overflow-y-auto'>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className='flex flex-col items-center justify-center w-full gap-4 px-5 xs:px-10 sm:px-20 lg:px-40 xl:px-60'
+        >
+          <FormField
+            control={form.control}
+            name='oldPassword'
+            render={({ field }) => (
+              <FormItem className='w-full mt-5'>
+                <Label htmlFor='oldPassword' className='text-sm font-semibold'>
+                  Contraseña Actual
+                </Label>
+                <FormControl>
+                  <Input
+                    id='oldPassword'
+                    type='password'
+                    {...field}
+                    className='focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 w-full h-[35px] px-3'
+                    placeholder='Ingrese su contraseña actual'
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <UpdatePasswordContainer onValidationChange={setIsPasswordValid} />
+          <FormItem className='flex justify-center w-full'>
+            <Button
+              type='submit'
+              className='w-full text-white border-0 rounded-md cursor-pointer w-bg-neutral-900'
+              disabled={!isPasswordValid || !form.watch('oldPassword') || loading}
+            >
+              {loading ? 'Cargando...' : 'Confirmar'}
+            </Button>
+          </FormItem>
+        </form>
+      </Form>
+    </div>
   )
 }

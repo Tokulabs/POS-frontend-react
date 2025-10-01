@@ -1,7 +1,8 @@
 import { axiosRequest } from '@/api/api'
-import { IQueryParams, IPaginationProps, DataPropsForm } from '@/types/GlobalTypes'
+import { IQueryParams, IPaginationProps } from '@/types/GlobalTypes'
 import { inventoryURL, uploadImageAWSURL } from '@/utils/network'
 import { IInventoryProps, ImageUploadAWSProps } from '../types/InventoryTypes'
+import { AddProductsFormValues } from '@/pages/Storage/components/AddProductsForm'
 
 export const getInventoriesNew = async (queryParams: IQueryParams) => {
   try {
@@ -48,9 +49,9 @@ export const getInventoryByCode = async (code: string) => {
   }
 }
 
-export const postInventoriesNew = async (values: DataPropsForm) => {
+export const postInventoriesNew = async (values: AddProductsFormValues) => {
   try {
-    await axiosRequest({
+    await axiosRequest<IInventoryProps, AddProductsFormValues>({
       method: 'post',
       url: inventoryURL,
       hasAuth: true,
@@ -61,9 +62,9 @@ export const postInventoriesNew = async (values: DataPropsForm) => {
   }
 }
 
-export const putInventoriesEdit = async (data: { values: DataPropsForm; id: number }) => {
+export const putInventoriesEdit = async (data: { values: AddProductsFormValues; id: number }) => {
   try {
-    await axiosRequest({
+    await axiosRequest<IInventoryProps, AddProductsFormValues>({
       method: 'put',
       url: `${inventoryURL}/${data.id}/`,
       hasAuth: true,
@@ -82,13 +83,13 @@ export const toogleInventories = async (id: number) => {
   })
 }
 
-export const postUploadImageToAWS = async (formData: FormData) => {
+export const postUploadImageToAWS = async (payload: FormData) => {
   return await axiosRequest<ImageUploadAWSProps>({
     method: 'post',
     url: uploadImageAWSURL,
     hasAuth: true,
     showError: true,
-    payload: formData,
+    payload: payload,
   })
 }
 

@@ -1,8 +1,6 @@
 import { FC, useState } from 'react'
 import ContentLayout from '@/layouts/ContentLayout/ContentLayout'
-import AddInventoryForm from './components/AddInventoryForm'
 import { Button, Popconfirm, Switch } from 'antd'
-import AddInventoryFormCSV from './components/AddInventoryFormCSV'
 import { columns } from './data/columnsData'
 import { formatNumberToColombianPesos } from '@/utils/helpers'
 import { useGroups } from '@/hooks/useGroups'
@@ -14,13 +12,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ModalStateEnum } from '@/types/ModalTypes'
 import { useProviders } from '@/hooks/useProviders'
 import { toast } from 'sonner'
+import { AddProductsForm } from './components/AddProductsForm'
 
 export const formatinventoryPhoto = (inventories: IInventoryProps[]) => {
   return inventories.map((item) => ({
     ...item,
     photoInfo: item.photo ? (
       <img
-        className='w-16 h-16 object-contain overflow-hidden hover:scale-150 transition-all transform-gpu'
+        className='object-contain w-16 h-16 overflow-hidden transition-all hover:scale-150 transform-gpu'
         src={item.photo}
       />
     ) : (
@@ -71,10 +70,17 @@ const Storage: FC = () => {
       selling_price: formatNumberToColombianPesos(item.selling_price ?? 0, showCurrency),
       buying_price: formatNumberToColombianPesos(item.buying_price ?? 0, showCurrency),
       action: (
-        <div className='flex justify-center items-center gap-2'>
-          <Button type='link' className='p-0' onClick={editInventoryItem(item)}>
-            <IconEdit />
-          </Button>
+        <div className='flex items-center justify-center gap-2'>
+          <AddProductsForm
+            triggerComponent={
+              <Button type='link' className='p-0'>
+                <IconEdit className='text-blue-1 hover:text-blue-400' />
+              </Button>
+            }
+            initialData={item}
+            groups={groupsData?.results ?? []}
+            providers={providersData?.results ?? []}
+          />
           <Popconfirm
             title={`${item.active ? 'Desactivar' : 'Activar'} Producto`}
             description={`¿Estas seguro de ${item.active ? 'desactivar' : 'activar'} este producto?`}
@@ -93,24 +99,26 @@ const Storage: FC = () => {
     }))
   }
 
-  const editInventoryItem = (item: IInventoryProps) => () => {
-    setEditData(item)
-    setModalState(ModalStateEnum.addItem)
-  }
-
   return (
     <>
       <ContentLayout
         pageTitle='Administrador de Inventario'
-        buttonTitle='Agregar productos'
         extraButton={
-          <div className='flex flex-col items-center gap-2'>
-            <span className='font-bold text-green-1'>Activos</span>
-            <Switch
-              value={showActive}
-              loading={isLoading}
-              onChange={() => setShowActive(!showActive)}
+          <div className='flex items-end self-end gap-4'>
+            <AddProductsForm
+              triggerComponent={<Button type='primary'>Agregar producto</Button>}
+              initialData={editData}
+              groups={groupsData?.results ?? []}
+              providers={providersData?.results ?? []}
             />
+            <div className='flex flex-col items-center gap-2'>
+              <span className='font-bold text-green-1'>Activos</span>
+              <Switch
+                value={showActive}
+                loading={isLoading}
+                onChange={() => setShowActive(!showActive)}
+              />
+            </div>
           </div>
         }
         setModalState={() => {
@@ -127,23 +135,7 @@ const Storage: FC = () => {
           setSearch(value)
           setCurrentPage(1)
         }}
-      >
-        {modalState === ModalStateEnum.addItem && (
-          <AddInventoryForm
-            initialData={editData}
-            onSuccessCallback={() => setModalState(ModalStateEnum.off)}
-            isVisible={modalState === ModalStateEnum.addItem}
-            onCancelCallback={() => setModalState(ModalStateEnum.off)}
-            groups={groupsData?.results ?? []}
-            providers={providersData?.results ?? []}
-          />
-        )}
-        <AddInventoryFormCSV
-          onSuccessCallback={() => setModalState(ModalStateEnum.off)}
-          isVisible={modalState === ModalStateEnum.addItemsCSV}
-          onCancelCallback={() => setModalState(ModalStateEnum.off)}
-        />
-      </ContentLayout>
+      ></ContentLayout>
     </>
   )
 }
