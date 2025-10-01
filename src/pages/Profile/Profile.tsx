@@ -2,7 +2,7 @@ import { FC, ReactNode } from 'react'
 import { SettingsLayout } from '@/layouts/ContentLayout/SettingsLayout'
 import { SettingsProfile } from './Components/SettingsProfile'
 import { UpdatePasswordSettings } from './Components/UpdatePassword'
-import Company from './Components/Company'
+import Company from './Components/CompanySettings'
 
 interface ProfileProps {
   children?: ReactNode
