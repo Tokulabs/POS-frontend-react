@@ -14,6 +14,7 @@ import { OptionSelect, SearchInputSelect } from '@/components/FormComponents/Sea
 import { useCities } from '@/hooks/useCities'
 import { useMutation } from '@tanstack/react-query'
 import { putCompanyInformation } from '../helpers/services'
+import { ActionTypes } from '@/types/StoreTypes'
 
 const companySchema = z.object({
   name: z.string().nonempty('Campo requerido'),
@@ -33,7 +34,7 @@ const companySchema = z.object({
 export type CompanyFormValues = z.infer<typeof companySchema>
 
 const Company: FC = () => {
-  const { state } = useContext(store)
+  const { state, dispatch } = useContext(store)
   const { isLoading, citiesData = [] } = useCities('citiesBySearch')
   const [pendingFileUpload, setPendingFileUpload] = useState<File | null>(null)
 
@@ -53,8 +54,15 @@ const Company: FC = () => {
 
   const { mutate, isPending: isLoadingCompany } = useMutation({
     mutationFn: putCompanyInformation,
-    onSuccess: () => {
+    onSuccess: (response) => {
       toast.success('Información de empresa actualizada')
+      if (response?.data) {
+        // Update only the company information using the new action
+        dispatch({
+          type: ActionTypes.UPDATE_COMPANY_INFO,
+          payload: response.data,
+        })
+      }
     },
   })
 
@@ -125,12 +133,16 @@ const Company: FC = () => {
                     Nombre<span className='text-red-500'>*</span>
                   </Label>
                   <FormControl>
-                    <Input id='name' placeholder='Nombre' {...field} />
+                    <Input
+                      id='name'
+                      placeholder='Nombre'
+                      disabled={isLoadingCompany || isUploading}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
-              disabled={isLoadingCompany || isUploading}
             />
 
             <FormField
@@ -142,12 +154,16 @@ const Company: FC = () => {
                     Nombre Corto <span className='text-red-500'>*</span>
                   </Label>
                   <FormControl>
-                    <Input id='short_name' placeholder='Nombre Corto' {...field} />
+                    <Input
+                      id='short_name'
+                      placeholder='Nombre Corto'
+                      disabled={isLoadingCompany || isUploading}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
-              disabled={isLoadingCompany || isUploading}
             />
           </div>
 
@@ -161,12 +177,16 @@ const Company: FC = () => {
                     Número de Documento <span className='text-red-500'>*</span>
                   </Label>
                   <FormControl>
-                    <Input id='documentId' placeholder='Número de documento' {...field} />
+                    <Input
+                      id='documentId'
+                      placeholder='Número de documento'
+                      disabled={isLoadingCompany || isUploading}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
-              disabled={isLoadingCompany || isUploading}
             />
             <FormField
               control={form.control}
@@ -177,12 +197,16 @@ const Company: FC = () => {
                     Dirección<span className='text-red-500'>*</span>
                   </Label>
                   <FormControl>
-                    <Input id='address' placeholder='Dirección' {...field} />
+                    <Input
+                      id='address'
+                      placeholder='Dirección'
+                      disabled={isLoadingCompany || isUploading}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
-              disabled={isLoadingCompany || isUploading}
             />
           </div>
 
@@ -205,7 +229,6 @@ const Company: FC = () => {
                   field={field}
                 />
               )}
-              disabled={isLoadingCompany || isUploading}
             />
             <FormField
               control={form.control}
@@ -214,12 +237,16 @@ const Company: FC = () => {
                 <FormItem className='w-1/2'>
                   <Label htmlFor='phone'>Teléfono</Label>
                   <FormControl>
-                    <Input id='phone' placeholder='Teléfono' {...field} />
+                    <Input
+                      id='phone'
+                      placeholder='Teléfono'
+                      disabled={isLoadingCompany || isUploading}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
-              disabled={isLoadingCompany || isUploading}
             />
           </div>
 
@@ -234,7 +261,7 @@ const Company: FC = () => {
                     id='email'
                     type='email'
                     placeholder='Email'
-                    disabled
+                    disabled={true} // Always disabled
                     className='bg-zinc-300'
                     {...field}
                   />
@@ -242,7 +269,6 @@ const Company: FC = () => {
                 <FormMessage />
               </FormItem>
             )}
-            disabled={isLoadingCompany || isUploading}
           />
 
           <Button

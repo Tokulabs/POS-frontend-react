@@ -192,6 +192,7 @@ const SettingsProfile: React.FC = () => {
                         placeholder='Número de documento'
                         {...field}
                         className='border-gray-1  border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0'
+                        disabled
                       />
                     </FormControl>
                     <FormMessage />
