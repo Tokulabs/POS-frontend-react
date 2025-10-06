@@ -1,10 +1,12 @@
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { FC, ReactNode, useState } from 'react'
+import { useRolePermissions } from '@/hooks/useRolespermissions'
 
 interface TabsProps {
   title: string
   value: string
   content: ReactNode
+  allowedRoles?: string[]
 }
 
 interface SettingsLayoutProps {
@@ -30,16 +32,24 @@ const SettingsLayout: FC<SettingsLayoutProps> = ({ tabs }) => {
       >
         {/* Sidebar Menu */}
         <TabsList className='flex w-full justify-center items-center h-auto md:h-full gap-2 md:w-56 md:flex-col md:border-r-[1px] md:border-r-gray-300 md:bg-white md:rounded-none md:justify-start md:py-4 md:pr-4 md:pl-0'>
-          {tabs.map((tab) => (
-            <TabsTrigger
-              key={tab.value}
-              value={tab.value}
-              onClick={() => setActiveTab(tab.value)}
-              className='w-full'
-            >
-              {tab.title}
-            </TabsTrigger>
-          ))}
+          {tabs.map((tab) => {
+            const { hasPermission } = useRolePermissions({
+              allowedRoles: tab.allowedRoles,
+            })
+
+            if (!hasPermission) return null
+
+            return (
+              <TabsTrigger
+                key={tab.value}
+                value={tab.value}
+                onClick={() => setActiveTab(tab.value)}
+                className='w-full'
+              >
+                {tab.title}
+              </TabsTrigger>
+            )
+          })}
         </TabsList>
 
         {/* Content Area */}
