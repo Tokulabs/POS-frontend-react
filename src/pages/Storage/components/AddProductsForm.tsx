@@ -25,16 +25,16 @@ interface AddProductsFormProps {
   providers: IProvider[]
 }
 
-const addProductsFormSchema = z.object({
+const AddProductsFormSchema = z.object({
   code: z.string().min(1, 'Campo requerido').max(10, 'Máximo 10 caracteres'),
   name: z.string().nonempty('Campo requerido').trim(),
-  total_in_shops: z.coerce.number().gt(0, 'No puede ser negativo'),
-  total_in_storage: z.coerce.number().gt(0, 'No puede ser negativo'),
-  buying_price: z.coerce.number().gt(0, 'No puede ser negativo'),
-  selling_price: z.coerce.number().gt(0, 'No puede ser negativo'),
-  usd_price: z.coerce.number().gt(0, 'No puede ser negativo'),
-  group_id: z.coerce.number().gt(0, 'Campo requerido'),
-  provider_id: z.coerce.number().gt(0, 'Campo requerido'),
+  total_in_shops: z.coerce.number().gte(0, 'No puede ser negativo'),
+  total_in_storage: z.coerce.number().gte(0, 'No puede ser negativo'),
+  buying_price: z.coerce.number().gte(0, 'No puede ser negativo'),
+  selling_price: z.coerce.number().gte(0, 'No puede ser negativo'),
+  usd_price: z.coerce.number().gte(0, 'No puede ser negativo'),
+  group_id: z.coerce.number().gte(0, 'Campo requerido'),
+  provider_id: z.coerce.number().gte(0, 'Campo requerido'),
   cost_center: z.string().nonempty('Campo requerido'),
   photo: z.preprocess((val) => {
     if (val instanceof FileList) return undefined
@@ -43,7 +43,7 @@ const addProductsFormSchema = z.object({
   }, z.string().optional()),
 })
 
-export type AddProductsFormValues = z.infer<typeof addProductsFormSchema>
+export type AddProductsFormValues = z.infer<typeof AddProductsFormSchema>
 
 const AddProductsForm: FC<AddProductsFormProps> = ({
   initialData,
@@ -63,8 +63,8 @@ const AddProductsForm: FC<AddProductsFormProps> = ({
     group_id: initialData.group?.id ?? 0,
     provider_id: initialData.provider?.id ?? 0,
   }
-  const form = useForm<z.infer<typeof addProductsFormSchema>>({
-    resolver: zodResolver(addProductsFormSchema),
+  const form = useForm<z.infer<typeof AddProductsFormSchema>>({
+    resolver: zodResolver(AddProductsFormSchema),
     defaultValues: {
       code: initialValues.code || '',
       name: initialValues.name || '',
@@ -83,10 +83,10 @@ const AddProductsForm: FC<AddProductsFormProps> = ({
   const queryClient = useQueryClient()
 
   const successRegistry = (description: string) => {
+    form.reset()
     queryClient.invalidateQueries({ queryKey: ['paginatedInventories'] })
     setOpen(false)
     toast.success(description)
-    form.reset()
   }
 
   const { mutate, isPending: isLoading } = useMutation({
@@ -123,6 +123,26 @@ const AddProductsForm: FC<AddProductsFormProps> = ({
       resetUpload()
     }
   }, [])
+
+  // Reset form when modal opens with fresh data
+  useEffect(() => {
+    if (open) {
+      const updatedValues = {
+        code: initialData.code || '',
+        name: initialData.name || '',
+        total_in_shops: initialData.total_in_shops || 0,
+        total_in_storage: initialData.total_in_storage || 0,
+        buying_price: initialData.buying_price || 0,
+        selling_price: initialData.selling_price || 0,
+        usd_price: initialData.usd_price || 0,
+        group_id: initialData.group?.id || 0,
+        provider_id: initialData.provider?.id || 0,
+        cost_center: initialData.cost_center || '',
+        photo: initialData.photo || '',
+      }
+      form.reset(updatedValues)
+    }
+  }, [open, initialData, form])
 
   const onSubmit = (data: AddProductsFormValues) => {
     if (pendingFileUpload) {
@@ -301,7 +321,7 @@ const AddProductsForm: FC<AddProductsFormProps> = ({
               control={form.control}
               name='group_id'
               render={({ field }) => (
-                <SearchInputSelect<z.infer<typeof addProductsFormSchema>, 'group_id'>
+                <SearchInputSelect<z.infer<typeof AddProductsFormSchema>, 'group_id'>
                   label='Categoria'
                   className='w-1/2'
                   options={groups.map((item) => {
@@ -322,7 +342,7 @@ const AddProductsForm: FC<AddProductsFormProps> = ({
               control={form.control}
               name='provider_id'
               render={({ field }) => (
-                <SearchInputSelect<z.infer<typeof addProductsFormSchema>, 'provider_id'>
+                <SearchInputSelect<z.infer<typeof AddProductsFormSchema>, 'provider_id'>
                   label='Proveedor'
                   className='w-1/2'
                   options={providers.map((item) => {
@@ -340,7 +360,7 @@ const AddProductsForm: FC<AddProductsFormProps> = ({
               control={form.control}
               name='cost_center'
               render={({ field }) => (
-                <SearchInputSelect<z.infer<typeof addProductsFormSchema>, 'cost_center'>
+                <SearchInputSelect<z.infer<typeof AddProductsFormSchema>, 'cost_center'>
                   label='Centro de Costo'
                   className='w-1/2'
                   options={[
