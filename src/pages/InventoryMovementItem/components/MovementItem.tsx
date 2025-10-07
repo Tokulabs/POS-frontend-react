@@ -17,6 +17,8 @@ const buttonsActions: Record<stateType, Action[]> = {
   approved: ['reject'],
   rejected: ['approve'],
   overrided: [],
+  failed: [],
+  completed: [],
 }
 
 const buttonConfig: Record<
@@ -46,6 +48,8 @@ const stateStyles: Record<stateType, string> = {
   approved: 'border-green-300 bg-green-400',
   rejected: 'border-red-300 bg-red-400',
   overrided: 'border-gray-300 bg-gray-400',
+  failed: 'border-red-600 bg-red-600',
+  completed: 'border-blue-300 bg-blue-400',
 }
 
 const stateRename: Record<stateType, string> = {
@@ -53,6 +57,8 @@ const stateRename: Record<stateType, string> = {
   approved: 'Aprobado',
   rejected: 'Rechazado',
   overrided: 'Anulado',
+  failed: 'Fallido',
+  completed: 'Completado',
 }
 
 const titles = ['Código', 'Producto', 'Cantidad Solicitada', 'Cantidad Recibida', 'Estado']

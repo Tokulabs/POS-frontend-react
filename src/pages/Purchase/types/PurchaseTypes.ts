@@ -36,13 +36,15 @@ export interface Provider {
   active: boolean
 }
 
-export type stateType = 'pending' | 'approved' | 'rejected' | 'overrided'
+export type stateType = 'pending' | 'approved' | 'rejected' | 'overrided' | 'failed' | 'completed'
 
 export const movementStates: Record<stateType, string> = {
   pending: 'Pendiente',
   approved: 'Aprobado',
   rejected: 'Rechazado',
   overrided: 'Anulado',
+  failed: 'Fallido',
+  completed: 'Completado',
 }
 
 export const storageTypes = {
