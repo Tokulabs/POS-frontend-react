@@ -99,6 +99,8 @@ const PrintInventoryMovement: React.FC<PrintInventoryMovementProps> = ({ id, onA
                 pending: 'Pendiente',
                 rejected: 'Rechazado',
                 overrided: 'Anulado',
+                failed: 'Fallido',
+                completed: 'Completado',
               }[movement.state] || movement.state,
             )}
           </span>
@@ -208,6 +210,9 @@ const PrintInventoryMovement: React.FC<PrintInventoryMovementProps> = ({ id, onA
                     approved: 'Aprobado',
                     pending: 'Pendiente',
                     rejected: 'Rechazado',
+                    overrided: 'Anulado',
+                    failed: 'Fallido',
+                    completed: 'Completado',
                   }[item.state || ''],
                 )}
               </td>

@@ -21,6 +21,8 @@ const stateRename: Record<stateType, string> = {
   approved: 'Aprobado',
   rejected: 'Rechazado',
   overrided: 'Anulado',
+  failed: 'Fallido',
+  completed: 'Completado',
 }
 
 const stateColors: Record<stateType, string> = {
@@ -28,6 +30,8 @@ const stateColors: Record<stateType, string> = {
   approved: 'bg-green-400',
   rejected: 'bg-red-400',
   overrided: 'bg-gray-400',
+  failed: 'bg-red-600',
+  completed: 'bg-blue-400',
 }
 
 const movementEventType: Record<MovementEventType, string> = {
@@ -121,7 +125,7 @@ const InventoryMovementItem: FC = () => {
               </h4>
               <button
                 onClick={() => setIsPrinting(true)}
-                className='p-2 text-blue-500 hover:text-blue-600 rounded-full hover:bg-blue-50 transition-colors'
+                className='p-2 text-blue-500 transition-colors rounded-full hover:text-blue-600 hover:bg-blue-50'
               >
                 <IconPrinter size={20} stroke={1.5} />
               </button>
@@ -197,20 +201,17 @@ const InventoryMovementItem: FC = () => {
           />
         )}
       </footer>
-      {isPrinting && movementIdData &&
+      {isPrinting &&
+        movementIdData &&
         createPortal(
-          <div
-          className='fixed w-0 h-0 overflow-hidden pointer-none opacity-0'
-            aria-hidden="true"
-          >
+          <div className='fixed w-0 h-0 overflow-hidden opacity-0 pointer-none' aria-hidden='true'>
             <InventoryMovementPrint
               id={String(movementIdData.id)}
               onAfterPrint={() => setIsPrinting(false)}
             />
           </div>,
-          document.body
-        )
-      }
+          document.body,
+        )}
     </section>
   )
 }
