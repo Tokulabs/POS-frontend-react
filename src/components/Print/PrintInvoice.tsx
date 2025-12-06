@@ -17,9 +17,10 @@ import { IPosData } from '@/pages/POS/components/types/TableTypes'
 interface PrintInvoiceProps {
   id: string
   onAfterPrint?: () => void
+  autoPrint?: boolean
 }
 
-const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint }) => {
+const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint, autoPrint = true }) => {
   const { state } = useContext(store)
 
   const { data: invoice } = useQuery({
@@ -37,10 +38,10 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint }) => {
   })
 
   useLayoutEffect(() => {
-    if (invoice) {
+    if (invoice && autoPrint) {
       triggerPrint()
     }
-  }, [invoice, triggerPrint])
+  }, [invoice, triggerPrint, autoPrint])
 
   if (!invoice) return null
 
