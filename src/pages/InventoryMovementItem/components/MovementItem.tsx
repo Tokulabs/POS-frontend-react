@@ -27,7 +27,7 @@ const buttonConfig: Record<
 > = {
   approve: {
     label: 'Aprobar',
-    className: 'bg-green-1 hover:bg-white hover:text-green-1',
+    className: 'bg-green-1 hover:bg-card hover:text-green-1',
     icon: <IconSquareCheckFilled />,
   },
   reject: {
@@ -99,7 +99,7 @@ export const MovementItem: FC<MovementItemProps> = ({ item, setOpenItem, movemen
   return (
     <AccordionItem
       value={`item-id-${item.id}`}
-      className={`px-4 border-y-0 border-r-0 border-l-4 w-full rounded-md shadow ${stateStyles[item.state]} bg-white`}
+      className={`px-4 border-y-0 border-r-0 border-l-4 w-full rounded-md shadow ${stateStyles[item.state]} bg-card`}
     >
       <AccordionTrigger className='w-full hover:no-underline'>
         <article className='flex flex-col w-full gap-1'>

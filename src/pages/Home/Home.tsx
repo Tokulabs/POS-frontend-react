@@ -67,7 +67,7 @@ const Home: FC = () => {
             <GeneralGoals />
             <SalesByUser />
           </section>
-          <section className='bg-white shadow-md rounded-lg p-5'>
+          <section className='bg-card shadow-md rounded-lg p-5'>
             <Tabs onChange={onchange} type='card' items={DataTabs} />
           </section>
         </>

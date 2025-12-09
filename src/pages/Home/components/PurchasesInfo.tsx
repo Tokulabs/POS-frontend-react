@@ -26,7 +26,7 @@ const PurchasesInfo = () => {
   })
 
   return (
-    <div className='bg-white w-full h-full p-4 rounded-lg lg:col-span-2 flex flex-col gap-4 shadow-md lg:col-start-3'>
+    <div className='bg-card w-full h-full p-4 rounded-lg flex flex-col gap-4 shadow-md'>
       <div className='w-full flex flex-col gap-3'>
         <p className='m-0 font-bold'>
           Ventas del <span className='text-green-1'>{startDate}</span> al{' '}

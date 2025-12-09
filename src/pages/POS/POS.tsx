@@ -27,7 +27,7 @@ const POS: FC = () => {
         <Spin size='large' />
       ) : (
         <section
-          className={`${currentStep === 2 || !existsResolution ? 'w-full' : 'w-3/4'} h-full p-5 bg-white shadow-lg rounded-sm`}
+          className={`${currentStep === 2 || !existsResolution ? 'w-full' : 'w-3/4'} h-full p-5 bg-card shadow-lg rounded-sm`}
         >
           {existsResolution ? (
             <POSStepper />

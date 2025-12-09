@@ -178,7 +178,7 @@ const CreateMovement: FC<CreatePurchaseInterface> = ({ setCreateMovement, curren
   }
 
   return (
-    <section className='w-full bg-white rounded-md p-5 grid h-full grid-rows-[auto_1fr_auto]'>
+    <section className='w-full bg-card rounded-md p-5 grid h-full grid-rows-[auto_1fr_auto]'>
       <header className='flex flex-col gap-3'>
         <div
           className='flex items-center gap-2 cursor-pointer text-gray-2 hover:text-gray-1 w-fit'

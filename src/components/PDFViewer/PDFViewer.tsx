@@ -142,7 +142,7 @@ const SimplePDFViewer = ({ pdfFilePath, pdfDocument }: PDFViewerAppProps) => {
       className='relative w-full h-full bg-slate-200/70 pdfSlick'
     >
       {/* Zoom Controls */}
-      <div className='absolute top-2 right-2 z-10 flex gap-1 p-2 rounded-lg shadow-md bg-white/90'>
+      <div className='absolute top-2 right-2 z-10 flex gap-1 p-2 rounded-lg shadow-md bg-card/90'>
         <button
           onClick={(e) => { e.stopPropagation(); handleZoomOut(); }}
           className='p-1.5 rounded hover:bg-slate-200 transition-colors disabled:opacity-50'

@@ -126,6 +126,9 @@ export const InvoiceItem: FC = () => {
           <InvoiceDetailsPanel
             createdAt={invoiceData.created_at}
             customerName={invoiceData.customer?.name || ''}
+            cufe={invoiceData.cufe}
+            eInvoiceNumber={invoiceData.e_invoice_number}
+            dianPrefix={invoiceData.dian_resolution?.prefix}
             footer={
               <InvoiceActions
                 onPrint={handlePrint}
@@ -165,9 +168,9 @@ export const InvoiceItem: FC = () => {
 
           {/* PDF Viewer or Print Preview */}
           {isPdfLoading && invoiceData.cufe ? (
-            <div className='flex flex-col items-center justify-center flex-1 min-h-[500px] lg:min-h-0 bg-slate-100 rounded-lg gap-3'>
+            <div className='flex flex-col items-center justify-center flex-1 min-h-[500px] lg:min-h-0 bg-secondary rounded-lg gap-3'>
               <div className='animate-spin rounded-full h-10 w-10 border-4 border-green-500 border-t-transparent'></div>
-              <p className='text-sm text-gray-600 font-medium'>Cargando PDF...</p>
+              <p className='text-sm text-muted-foreground font-medium'>Cargando PDF...</p>
             </div>
           ) : pdfUrl ? (
             <div className='flex-1 min-h-[500px] lg:min-h-0'>

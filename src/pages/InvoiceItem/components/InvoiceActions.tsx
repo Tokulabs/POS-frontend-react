@@ -42,7 +42,7 @@ export const InvoiceActions: FC<InvoiceActionsProps> = ({
   }
 
   return (
-    <div className='flex flex-col gap-3 p-4 border-t sm:flex-row sm:flex-wrap sm:p-6 bg-gray-50'>
+    <div className='flex flex-col gap-3 p-4 border-t sm:flex-row sm:flex-wrap sm:p-6 bg-secondary'>
       {/* Print Button */}
       <Button
         onClick={onPrint}
@@ -97,7 +97,7 @@ export const InvoiceActions: FC<InvoiceActionsProps> = ({
           onOpenChange={setOpenOverrideDialog}
         >
           <div className='flex flex-col gap-4'>
-            <p className='text-gray-600'>
+            <p className='text-muted-foreground'>
               ¿Estás seguro de anular esta factura? Esta acción no se puede deshacer.
             </p>
             <div className='flex justify-end gap-3'>
@@ -138,7 +138,7 @@ export const InvoiceActions: FC<InvoiceActionsProps> = ({
           onOpenChange={setOpenSendDialog}
         >
           <div className='flex flex-col gap-4'>
-            <p className='text-gray-600'>¿Estás seguro de enviar esta factura?</p>
+            <p className='text-muted-foreground'>¿Estás seguro de enviar esta factura?</p>
             <div className='flex justify-end gap-3'>
               <Button variant='outline' onClick={() => setOpenSendDialog(false)}>
                 Cancelar

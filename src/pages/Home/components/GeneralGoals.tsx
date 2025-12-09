@@ -41,14 +41,14 @@ const GeneralGoals = () => {
 
   if (isLoadingSummary || isLoadingGoals) {
     return (
-      <div className='bg-white h-full p-4 flex items-center justify-center shadow-md'>
+      <div className='bg-card h-full p-4 flex items-center justify-center shadow-md'>
         <Spin size='large' />
       </div>
     )
   }
 
   return (
-    <div className='bg-white h-full p-4 rounded-lg flex flex-col gap-4 shadow-md'>
+    <div className='bg-card h-full p-4 rounded-lg flex flex-col gap-4 shadow-md'>
       <span className='font-bold self-center'>Metas Generales</span>
       <section className='flex flex-col gap-4'>
         {progressItems ? (

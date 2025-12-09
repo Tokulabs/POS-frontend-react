@@ -11,6 +11,8 @@ import { Spin } from 'antd'
 import { DownloadReports } from '@/components/DownloadReports/DownloadReports'
 import { ModalStateEnum } from '@/types/ModalTypes'
 import KiospotLogoHorizontal from '@/assets/logos/Kiospot-Horizontal-Logo-Color.webp'
+import KiospotLogoHorizontalWhite from '@/assets/logos/Kiospot-Horizontal-Logo-white.webp'
+import { useThemeStore } from '@/store/useThemeStore'
 import { AddGoals } from '@/components/Goals/AddGoals'
 import { axiosRequest } from '@/api/api'
 import { requestVerificationEmailURL } from '@/utils/network'
@@ -32,6 +34,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const location = useLocation()
   const navigate = useNavigate()
   const { start, time } = useCountDown(3, () => setShowClickVerify(true))
+  const resolvedTheme = useThemeStore((state) => state.resolvedTheme)
 
   const { updateCurrentStep } = usePOSStep()
   const { clearPaymentMethods } = usePaymentMethodsData()
@@ -81,7 +84,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <section className='h-screen max-h-screen w-full relative'>
-      <nav className='w-full h-16 flex justify-between items-center py-0 px-5 absolute top-0 bg-white'>
+      <nav className='w-full h-16 flex justify-between items-center py-0 px-5 absolute top-0 bg-card border-b border-border'>
         <MobileNavigationMenu
           openGoalsModal={openGoalsModal}
           openDownloadModal={openDownloadModal}
@@ -90,7 +93,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
           <img
             onClick={() => navigate('/')}
             className='h-16 cursor-pointer'
-            src={KiospotLogoHorizontal}
+            src={resolvedTheme === 'dark' ? KiospotLogoHorizontalWhite : KiospotLogoHorizontal}
             alt='Kiospot Logo Horizontal'
           />
           <div className='hidden md:block'>
@@ -102,10 +105,10 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
         </div>
         <UserDropdownMenu />
       </nav>
-      <div className='w-100 h-screen pt-16 flex bg-background-main'>
+      <div className='w-100 h-screen pt-16 flex bg-background'>
         <div className='h-full w-full overflow-hidden p-5 flex flex-col gap-4'>
           {!state.user?.is_verified && (
-            <div className='w-full z-1 p-5 flex justify-start items-center bg-red-300 text-white rounded-md gap-1'>
+            <div className='w-full z-1 p-5 flex justify-start items-center bg-red-300 dark:bg-red-900 text-white rounded-md gap-1'>
               {loadingVerifyRequest ? <Spin /> : <IconAlertTriangleFilled className='mr-2' />}
               {showClickVerify && (
                 <>

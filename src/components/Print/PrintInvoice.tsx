@@ -65,7 +65,7 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint, autoPrint = true })
   return (
     <article
       ref={printContentRef}
-      className='bg-transparent flex flex-col w-[18.5rem] justify-center items-center text-center p-2 gap-1 relative'
+      className='bg-transparent text-black flex flex-col w-[18.5rem] justify-center items-center text-center p-2 gap-1 relative'
     >
       {isOverride && (
         <img
