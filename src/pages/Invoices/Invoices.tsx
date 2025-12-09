@@ -7,8 +7,6 @@ import {
   IconFiles,
   IconEdit,
   IconFileCheck,
-  IconFileOff,
-  IconPrinter,
   IconSend,
   IconX,
   IconFileDollar,
@@ -36,6 +34,7 @@ import { useInvoices } from '@/hooks/useInvoices'
 import { useRolePermissions } from '@/hooks/useRolespermissions'
 import { createPortal } from 'react-dom'
 import PrintOut from '@/components/Print/PrintInvoice'
+import { useNavigate } from 'react-router-dom'
 
 const Invoices: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -48,6 +47,7 @@ const Invoices: FC = () => {
   const [invoiceToPrint, setInvoiceToPrint] = useState<string | null>(null)
 
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   const statusDictionary = {
     all: {},
@@ -181,19 +181,8 @@ const Invoices: FC = () => {
           </div>
         ),
         action: (
-          <div className='flex gap-3 text-3xl'>
-            <div className='cursor-pointer text-green-1 hover:text-green-800'>
-              <Popconfirm
-                title='Imprimir factura'
-                description='¿Estás seguro de que deseas imprimir esta factura?'
-                onConfirm={() => setInvoiceToPrint(item.invoice_number)}
-                okText='Sí, imprimir'
-                cancelText='Cancelar'
-              >
-                <IconPrinter />
-              </Popconfirm>
-            </div>
-            {isLoadingOverride || isLoadingElectronicInvoice ? (
+          <div className='flex gap-3 text-3xl items-center justify-center' onClick={(e) => e.stopPropagation()}>
+            {isLoadingElectronicInvoice ? (
               <Spin />
             ) : (
               <>
@@ -212,19 +201,6 @@ const Invoices: FC = () => {
                       </Popconfirm>
                     </div>
                   )}
-                {hasPermission && !item.is_electronic_invoiced && !item.is_override && (
-                  <div className='cursor-pointer text-red-1 hover:text-red-800'>
-                    <Popconfirm
-                      title='Anular factura'
-                      description='¿Estás seguro de anular esta factura?'
-                      onConfirm={() => confirmOverride(item.invoice_number)}
-                      okText='Sí, anular'
-                      cancelText='Cancelar'
-                    >
-                      <IconFileOff />
-                    </Popconfirm>
-                  </div>
-                )}
               </>
             )}
           </div>
@@ -246,6 +222,9 @@ const Invoices: FC = () => {
         onSearch={(value) => {
           setSearch(value)
           setCurrentPage(1)
+        }}
+        onRowClick={(record) => {
+          navigate(`/invoice/${String(record.invoice_number)}`)
         }}
         filterOptions={[
           {

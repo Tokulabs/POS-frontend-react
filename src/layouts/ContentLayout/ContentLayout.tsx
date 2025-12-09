@@ -52,7 +52,7 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
   })
   return (
     <>
-      <div className='bg-white h-full rounded p-4 flex flex-col justify-top gap-6'>
+      <div className='bg-card h-full rounded p-4 flex flex-col justify-top gap-6'>
         <div className='flex justify-between items-center'>
           <div className='flex items-center gap-3'>
             <h1 className='m-0 p-0 text-2xl text-green-1 font-semibold'>{pageTitle}</h1>

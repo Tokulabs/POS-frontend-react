@@ -260,7 +260,7 @@ const CreateResolutionForm: FC<CreateResolutionProps> = ({ isVisible = false, on
           <FormItem>
             <Button
               type='submit'
-              className='bg-green-1 hover:bg-white hover:text-green-1 hover:border-green-1 hover:border-[1px]'
+              className='bg-green-1 hover:bg-card hover:text-green-1 hover:border-green-1 hover:border-[1px]'
               disabled={isLoading}
             >
               <IconPlus /> Crear resolución

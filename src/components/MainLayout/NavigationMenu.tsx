@@ -47,7 +47,7 @@ const NavigationMenuComponent: FC<NavigationMenuComponentProps> = ({
               <NavigationMenuTrigger className='border-none bg-transparent font-semibold'>
                 {item.label}
               </NavigationMenuTrigger>
-              <NavigationMenuContent className='bg-white p-3 max-h-[170px]'>
+              <NavigationMenuContent className='bg-card p-3 max-h-[170px]'>
                 <ul
                   className={`flex flex-wrap w-full list-none p-0 justify-between gap-0 ${
                     filteredChildren.length > 1 ? 'min-w-[520px]' : 'justify-center min-w-[250px]'
@@ -57,7 +57,7 @@ const NavigationMenuComponent: FC<NavigationMenuComponentProps> = ({
                     <li key={childIndex}>
                       {child.link ? (
                         <NavigationMenuLink
-                          className={`${navigationMenuTriggerStyle()}hover:bg-gray-200 no-underline text-black text-lg w-full h-full block ${
+                          className={`${navigationMenuTriggerStyle()}hover:bg-secondary no-underline text-foreground text-lg w-full h-full block ${
                             child.disabled
                               ? 'cursor-not-allowed opacity-50 pointer-events-none'
                               : 'cursor-pointer'
@@ -73,7 +73,7 @@ const NavigationMenuComponent: FC<NavigationMenuComponentProps> = ({
                         </NavigationMenuLink>
                       ) : (
                         <div
-                          className={`${navigationMenuTriggerStyle()} hover:bg-gray-200 no-underline text-black text-lg h-full block ${
+                          className={`${navigationMenuTriggerStyle()} hover:bg-secondary no-underline text-foreground text-lg h-full block ${
                             child.disabled
                               ? 'cursor-not-allowed opacity-50 pointer-events-none'
                               : 'cursor-pointer'
@@ -102,7 +102,7 @@ const NavigationMenuComponent: FC<NavigationMenuComponentProps> = ({
 
         <NavigationMenuItem>
           <NavigationMenuLink
-            className={`${navigationMenuTriggerStyle()} font-semibold no-underline text-black text-lg w-full h-full block bg-transparent`}
+            className={`${navigationMenuTriggerStyle()} font-semibold no-underline text-foreground text-lg w-full h-full block bg-transparent`}
             href='/pos'
           >
             POS

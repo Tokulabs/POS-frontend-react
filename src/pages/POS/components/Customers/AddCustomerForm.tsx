@@ -162,7 +162,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
                       </FormControl>
                       <FormLabel
                         htmlFor='naturalPerson'
-                        className='block w-full px-6 py-3 font-medium text-center transition-all bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer text-green-1 hover:bg-gray-100 peer-aria-checked:bg-green-1 peer-aria-checked:text-white peer-aria-checked:border-solid peer-aria-checked::border-1 peer-aria-checked:border-green-1 peer-aria-checked:shadow-lg'
+                        className='block w-full px-6 py-3 font-medium text-center transition-all bg-card border border-border rounded-lg shadow-sm cursor-pointer text-green-1 hover:bg-secondary peer-aria-checked:bg-green-1 peer-aria-checked:text-white peer-aria-checked:border-solid peer-aria-checked::border-1 peer-aria-checked:border-green-1 peer-aria-checked:shadow-lg'
                       >
                         Persona Natural
                       </FormLabel>
@@ -177,7 +177,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
                       </FormControl>
                       <FormLabel
                         htmlFor='legalPerson'
-                        className='block w-full px-6 py-3 font-medium text-center transition-all bg-white border border-gray-300 rounded-lg shadow-sm cursor-pointer text-green-1 hover:bg-gray-100 peer-aria-checked:bg-green-1 peer-aria-checked:text-white peer-aria-checked:border-solid peer-aria-checked::border-1 peer-aria-checked:border-green-1 peer-aria-checked:shadow-lg'
+                        className='block w-full px-6 py-3 font-medium text-center transition-all bg-card border border-border rounded-lg shadow-sm cursor-pointer text-green-1 hover:bg-secondary peer-aria-checked:bg-green-1 peer-aria-checked:text-white peer-aria-checked:border-solid peer-aria-checked::border-1 peer-aria-checked:border-green-1 peer-aria-checked:shadow-lg'
                       >
                         Persona Jurídica
                       </FormLabel>
@@ -329,7 +329,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
           </div>
           <Button
             type='submit'
-            className='flex items-center justify-center w-full p-3 mt-3 text-white border-solid rounded-md cursor-pointer bg-green-1 border-1 border-green-1 hover:bg-white hover:text-green-1 focus-visible:ring-0'
+            className='flex items-center justify-center w-full p-3 mt-3 text-white border-solid rounded-md cursor-pointer bg-green-1 border-1 border-green-1 hover:bg-card hover:text-green-1 focus-visible:ring-0'
           >
             Crear
           </Button>

@@ -16,6 +16,7 @@ import { formatDateTime } from '@/layouts/helpers/helpers'
 import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 import { logout } from '@/pages/Auth/helpers'
 import { useRolePermissions } from '@/hooks/useRolespermissions'
+import { ThemeToggle } from '@/components/Theme/ThemeToggle'
 
 const UserDropdownMenu: FC = () => {
   const { state } = useContext(store)
@@ -43,26 +44,26 @@ const UserDropdownMenu: FC = () => {
 
       <DropdownMenuContent className='w-[250px] justify-items-start mr-[2vw] border-solid'>
         <DropdownMenuLabel>
-          <span className='text-lg font-semibold text-black'>{state.user?.fullname}</span>
+          <span className='text-lg font-semibold text-foreground'>{state.user?.fullname}</span>
           <br />
-          <span className='text-xs font-normal text-black'>
+          <span className='text-xs font-normal text-muted-foreground'>
             (Rol - {UserRolesEnum[state.user?.role as keyof typeof UserRolesEnum]})
           </span>
           <br />
-          <span className='text-xs font-normal text-black'>{state.user?.company.name}</span>
+          <span className='text-xs font-normal text-foreground'>{state.user?.company.name}</span>
           <br />
-          <span className='text-xs font-normal text-black'>
+          <span className='text-xs font-normal text-muted-foreground'>
             <span>Última conexión:</span> {formatDateTime(state.user?.last_login)}
           </span>
         </DropdownMenuLabel>
-        <DropdownMenuSeparator className='w-screen bg-gray-1' />
+        <DropdownMenuSeparator className='w-screen bg-border' />
 
         <DropdownMenuGroup className='w-full'>
           <DropdownMenuItem
             className='flex items-center self-start w-full gap-2 cursor-pointer'
             onClick={() => navigate('/settings')}
           >
-            <IconUser size={15} color='Black' className='m-0' />
+            <IconUser size={15} className='m-0 text-foreground' />
             <span className='font-bold'>Perfil</span>
           </DropdownMenuItem>
           {hasUserActivityPermission && (
@@ -70,16 +71,18 @@ const UserDropdownMenu: FC = () => {
               className='flex items-center self-start w-full gap-2 cursor-pointer'
               onClick={() => navigate('/user-activities')}
             >
-              <IconSettings size={15} color='Black' />
-              <span className='font-bold text-black no-underline'>Actividad de Usuario</span>
+              <IconSettings size={15} className='text-foreground' />
+              <span className='font-bold text-foreground no-underline'>Actividad de Usuario</span>
             </DropdownMenuItem>
           )}
+
+          <ThemeToggle />
 
           <DropdownMenuItem
             className='flex items-center self-start w-full gap-2 cursor-pointer'
             onClick={logoutUser}
           >
-            <IconLogout size={15} color='Black' />
+            <IconLogout size={15} className='text-foreground' />
             <span className='font-bold'>Cerrar Sesión</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
@@ -89,3 +92,4 @@ const UserDropdownMenu: FC = () => {
 }
 
 export { UserDropdownMenu }
+

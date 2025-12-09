@@ -7,6 +7,7 @@ import {
   invoiceByCodeURL,
   invoiceUpdatePaymentMethodsURL,
   eInvoiceDianURL,
+  downloadInvoiceURL,
 } from '@/utils/network'
 import { IInvoiceMinimalProps, IInvoiceProps } from '../types/InvoicesTypes'
 
@@ -98,4 +99,26 @@ export const postSendElectronicInvoice = async (invoiceID: number) => {
     hasAuth: true,
     payload: { invoice_id: invoiceID },
   })
+}
+
+export const getDownloadInvoicePdf = async (invoiceId: number): Promise<string | null> => {
+  const finalURL = new URL(downloadInvoiceURL)
+  finalURL.searchParams.set('invoice_id', invoiceId.toString())
+  
+  const response = await axiosRequest<ArrayBuffer>({
+    method: 'get',
+    url: finalURL,
+    hasAuth: true,
+    isFile: true,
+  })
+
+  console.log(response)
+  
+  
+  if (response?.data) {
+    // Create a blob URL from the PDF data
+    const blob = new Blob([response.data], { type: 'application/pdf' })
+    return URL.createObjectURL(blob)
+  }
+  return null
 }

@@ -8,7 +8,7 @@ const SummaryDataItem: FC<{ props: ISummaryProps; loading: boolean }> = ({
 }) => {
   const Icon = icon
   return (
-    <section className='bg-white rounded-lg p-4 grid content-center shadow-md'>
+    <section className='bg-card rounded-lg p-4 grid content-center shadow-md'>
       {loading ? (
         <Spin />
       ) : (
