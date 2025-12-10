@@ -47,7 +47,7 @@ const Purchase: FC = () => {
             e.stopPropagation()
             setPrintId(record.id)
           }}
-          className='p-2 text-blue-500 hover:text-blue-600 rounded-full hover:bg-blue-50 transition-colors'
+          className='p-2 text-blue-500 hover:text-blue-600 rounded-full hover:bg-secondary transition-colors'
         >
           <IconPrinter size={20} stroke={1.5} />
         </button>
