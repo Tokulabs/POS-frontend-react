@@ -44,12 +44,21 @@ interface MovementItemProps {
 }
 
 const stateStyles: Record<stateType, string> = {
-  pending: 'border-yellow-300 bg-yellow-400',
-  approved: 'border-green-300 bg-green-400',
-  rejected: 'border-red-300 bg-red-400',
-  overrided: 'border-gray-300 bg-gray-400',
-  failed: 'border-red-600 bg-red-600',
-  completed: 'border-blue-300 bg-blue-400',
+  pending: 'border-yellow-400',
+  approved: 'border-green-400',
+  rejected: 'border-red-400',
+  overrided: 'border-gray-400',
+  failed: 'border-red-600',
+  completed: 'border-blue-400',
+}
+
+const stateBadgeStyles: Record<stateType, string> = {
+  pending: 'bg-yellow-400',
+  approved: 'bg-green-400',
+  rejected: 'bg-red-400',
+  overrided: 'bg-gray-400',
+  failed: 'bg-red-600',
+  completed: 'bg-blue-400',
 }
 
 const stateRename: Record<stateType, string> = {
@@ -99,25 +108,25 @@ export const MovementItem: FC<MovementItemProps> = ({ item, setOpenItem, movemen
   return (
     <AccordionItem
       value={`item-id-${item.id}`}
-      className={`px-4 border-y-0 border-r-0 border-l-4 w-full rounded-md shadow ${stateStyles[item.state]} bg-card`}
+      className={`px-4 border-y-0 border-r-0 border-l-4 w-full rounded-md shadow ${stateStyles[item.state]} bg-white dark:bg-[#1C2128]`}
     >
       <AccordionTrigger className='w-full hover:no-underline'>
         <article className='flex flex-col w-full gap-1'>
           <div className='grid w-full grid-cols-5 gap-2'>
             {titles.map((title, index) => (
-              <span key={index} className='w-full text-xs text-gray-2'>
+              <span key={index} className='w-full text-xs text-muted-foreground'>
                 {title}
               </span>
             ))}
           </div>
-          <div className='grid w-full grid-cols-5 gap-2 text-base font-semibold text-blue-950'>
+          <div className='grid w-full grid-cols-5 gap-2 text-base font-semibold text-foreground'>
             <span className='w-full truncate'>{item.inventory.code}</span>
             <span className='w-full truncate'>{item.inventory.name}</span>
             <span className='w-full truncate'>{item.quantity}</span>
             <span className='w-full truncate'>{quantityRejected}</span>
             <div className='h-full'>
               <span
-                className={`text-sm flex w-fit font-medium justify-center items-center text-white rounded-xl px-4 py-0 truncate ${stateStyles[item.state]}`}
+                className={`text-sm flex w-fit font-medium justify-center items-center text-white rounded-xl px-4 py-0 truncate ${stateBadgeStyles[item.state]}`}
               >
                 {stateRename[item.state]}
               </span>
@@ -125,7 +134,7 @@ export const MovementItem: FC<MovementItemProps> = ({ item, setOpenItem, movemen
           </div>
         </article>
       </AccordionTrigger>
-      <AccordionContent className='w-full border-t-[1px] border-gray-100 py-4 flex flex-row gap-8'>
+      <AccordionContent className='w-full border-t border-border py-4 flex flex-row gap-8'>
         <div className='flex items-center justify-center w-56 h-56'>
           {item.inventory.photo ? (
             <img
