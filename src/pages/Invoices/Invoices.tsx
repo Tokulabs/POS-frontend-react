@@ -45,6 +45,7 @@ const Invoices: FC = () => {
     'all' | 'sent' | 'notSent' | 'toSent' | 'override'
   >('all')
   const [invoiceToPrint, setInvoiceToPrint] = useState<string | null>(null)
+  const [loadingInvoiceId, setLoadingInvoiceId] = useState<number | null>(null)
 
   const queryClient = useQueryClient()
   const navigate = useNavigate()
@@ -152,9 +153,13 @@ const Invoices: FC = () => {
               <Button
                 type='link'
                 className='flex items-center justify-center p-0 m-0'
-                onClick={editPaymentInformation(item)}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setLoadingInvoiceId(Number(item.invoice_number))
+                  editPaymentInformation(item)()
+                }}
               >
-                <IconEdit />
+                {loadingInvoiceId === Number(item.invoice_number) ? <Spin size='small' /> : <IconEdit />}
               </Button>
             )}
             {isDebitOrCredit ? (
@@ -276,9 +281,15 @@ const Invoices: FC = () => {
       {modalState === ModalStateEnum.addItem && (
         <ChangePaymentMethodsInvoice
           invoiceId={invoiceIdToEdit}
-          onSuccessCallback={() => setModalState(ModalStateEnum.off)}
+          onSuccessCallback={() => {
+            setModalState(ModalStateEnum.off)
+            setLoadingInvoiceId(null)
+          }}
           isVisible={modalState === ModalStateEnum.addItem}
-          onCancelCallback={() => setModalState(ModalStateEnum.off)}
+          onCancelCallback={() => {
+            setModalState(ModalStateEnum.off)
+            setLoadingInvoiceId(null)
+          }}
         />
       )}
 
