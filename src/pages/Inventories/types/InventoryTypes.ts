@@ -1,7 +1,3 @@
-import { IModalFormProps } from '@/types/ModalTypes'
-import { IGroupsProps } from '@/pages/Groups/types/GroupTypes'
-import { IProvider } from '@/pages/Providers/types/ProviderTypes'
-
 export interface IInventoryProps {
   id: number
   active: boolean
@@ -31,12 +27,6 @@ export interface IInventoryProps {
   photo: string
   sum_of_item?: number
   cost_center: string | null
-}
-
-export interface IAddInventoryFormProps extends IModalFormProps {
-  initialData: IInventoryProps
-  groups: IGroupsProps[]
-  providers: IProvider[]
 }
 
 export interface ImageUploadAWSProps {

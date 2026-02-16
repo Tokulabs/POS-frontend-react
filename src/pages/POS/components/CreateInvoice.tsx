@@ -119,7 +119,7 @@ export const CreateInvoice = () => {
             <span className='font-bold'>intentelo nuevamente</span>
           </span>
           <div
-            className='flex flex-col items-center justify-center p-6 text-white border-white border-solid rounded-md bg-red-1 hover:bg-white hover:border-red-1 hover:text-red-1 hover:cursor-pointer'
+            className='flex flex-col items-center justify-center p-6 text-white border-white border-solid rounded-md bg-red-1 hover:bg-card hover:border-red-1 hover:text-red-1 hover:cursor-pointer'
             onClick={newPurchase}
           >
             <IconScriptPlus size={36} /> <span className='text-lg'>Nueva venta [F2]</span>
@@ -134,14 +134,14 @@ export const CreateInvoice = () => {
           <span className='text-4xl font-bold text-green-1'>Factura creada correctamente!</span>
           <div className='flex gap-4'>
             <div
-              className='flex flex-col items-center justify-center p-6 text-white border-white border-solid rounded-md bg-green-1 hover:bg-white hover:border-green-1 hover:text-green-1 hover:cursor-pointer'
+              className='flex flex-col items-center justify-center p-6 text-white border-white border-solid rounded-md bg-green-1 hover:bg-card hover:border-green-1 hover:text-green-1 hover:cursor-pointer'
               onClick={handlePrint}
             >
               <IconPrinter size={36} />
               <span className='text-lg'>Impimir [F1]</span>
             </div>
             <div
-              className='flex flex-col items-center justify-center p-6 text-white border-white border-solid rounded-md bg-green-1 hover:bg-white hover:border-green-1 hover:text-green-1 hover:cursor-pointer'
+              className='flex flex-col items-center justify-center p-6 text-white border-white border-solid rounded-md bg-green-1 hover:bg-card hover:border-green-1 hover:text-green-1 hover:cursor-pointer'
               onClick={newPurchase}
             >
               <IconScriptPlus size={36} /> <span className='text-lg'>Nueva venta [F2]</span>

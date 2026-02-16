@@ -178,10 +178,10 @@ const CreateMovement: FC<CreatePurchaseInterface> = ({ setCreateMovement, curren
   }
 
   return (
-    <section className='w-full bg-white rounded-md p-5 grid h-full grid-rows-[auto_1fr_auto]'>
+    <section className='w-full bg-card rounded-md p-5 grid h-full grid-rows-[auto_1fr_auto]'>
       <header className='flex flex-col gap-3'>
         <div
-          className='flex items-center gap-2 cursor-pointer text-gray-2 hover:text-gray-1 w-fit'
+          className='flex items-center gap-2 cursor-pointer text-muted-foreground hover:text-foreground w-fit'
           onClick={clearPurchaseData}
         >
           <IconArrowLeft />
@@ -268,11 +268,11 @@ const CreateMovement: FC<CreatePurchaseInterface> = ({ setCreateMovement, curren
         {cartItemsOrders.length > 0 && (
           <section className='h-full overflow-hidden overflow-y-auto scrollbar-hide'>
             <TableHeader tableColumnsData={createMovementData} />
-            <ul className='p-0 overflow-hidden overflow-y-auto divide-y divide-solid divide-gray-1 scrollbar-hide'>
+            <ul className='p-0 overflow-hidden overflow-y-auto divide-y divide-solid divide-border scrollbar-hide'>
               {cartItemsOrders.map((item) => (
                 <li
                   className={
-                    'w-full grid grid-cols-13 gap-3 py-3 text-center text-base list-none place-items-center border-x-0 px-1'
+                    'w-full grid grid-cols-13 gap-3 py-3 text-center text-base list-none place-items-center border-x-0 px-1 bg-card'
                   }
                   key={item.code}
                 >

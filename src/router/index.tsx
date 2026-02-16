@@ -29,6 +29,7 @@ import { Profile } from '@/pages/Profile/Profile'
 import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 import { InventoryMovement } from '@/pages/InventoryMovement/InventoryMovement'
 import { InventoryManagement } from '@/pages/InventoryManagement/InventoryMangament'
+import { InvoiceItem } from '@/pages/InvoiceItem/InvoiceItem'
 
 interface ISideBarData {
   path: string
@@ -62,6 +63,17 @@ const authRoutes: ISideBarData[] = [
   {
     path: '/invoices',
     component: Invoices,
+    allowedRoles: [
+      UserRolesEnum.admin,
+      UserRolesEnum.posAdmin,
+      UserRolesEnum.shopAdmin,
+      UserRolesEnum.sales,
+      UserRolesEnum.supportSales,
+    ],
+  },
+  {
+    path: '/invoice/:id',
+    component: InvoiceItem,
     allowedRoles: [
       UserRolesEnum.admin,
       UserRolesEnum.posAdmin,

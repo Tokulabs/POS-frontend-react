@@ -15,15 +15,18 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { FC } from 'react'
 import { useCities } from '@/hooks/useCities'
 import { useMutation } from '@tanstack/react-query'
-import { postCustomers } from '../../helpers/services'
+import { postCustomers, putCustomersEdit } from '../../helpers/services'
 import { useCustomerData } from '@/store/useCustomerStoreZustand'
 import { toast } from 'sonner'
 import { UserDocumentTypeEnum } from '@/pages/Users/types/UserTypes'
 import { IconCheck } from '@tabler/icons-react'
 import { OptionSelect, SearchInputSelect } from '@/components/FormComponents/SearchInputSelect'
+import { ICustomerProps } from '../types/CustomerTypes'
 
 interface AddCustomerProps {
   setOpen: (value: boolean) => void
+  isEdit?: boolean
+  customerData?: ICustomerProps
 }
 
 const formSchema = z
@@ -85,22 +88,33 @@ const documentTypesOptions = [
   { label: 'Documento de identificación extranjero', value: 'DIE' },
 ] as const
 
-export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
+export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen, isEdit = false, customerData }) => {
   const { isLoading, citiesData = [] } = useCities('citiesBySearch')
   const { updateCustomerData } = useCustomerData()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      isNaturalPerson: 'naturalPerson',
-      clientName: '',
-      documentType: 'CC',
-      idNumber: '',
-      email: '',
-      phone: '',
-      city: Number(0),
-      address: '',
-    },
+    defaultValues: isEdit && customerData
+      ? {
+          isNaturalPerson: customerData.is_natural_person === false ? 'legalPerson' : 'naturalPerson',
+          clientName: customerData.name || '',
+          documentType: customerData.document_type || 'CC',
+          idNumber: customerData.document_id || '',
+          email: customerData.email || '',
+          phone: customerData.phone || '',
+          city: customerData.city?.id || Number(0),
+          address: customerData.address || '',
+        }
+      : {
+          isNaturalPerson: 'naturalPerson',
+          clientName: '',
+          documentType: 'CC',
+          idNumber: '',
+          email: '',
+          phone: '',
+          city: Number(0),
+          address: '',
+        },
   })
 
   const { mutate: mutatePost } = useMutation({
@@ -115,7 +129,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
         city: data?.city.name || '',
       })
       toast.success(
-        <span className='flex items-center  gap-2 font-semibold'>
+        <span className='flex items-center gap-2 font-semibold'>
           <IconCheck className='text-green-1' /> El cliente
           <span className='font-bold'>{data.name}</span> ha sido creado exitosamente
         </span>,
@@ -124,8 +138,29 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
     },
   })
 
+  const { mutate: mutatePut } = useMutation({
+    mutationFn: putCustomersEdit,
+    onSuccess: (data) => {
+      if (!data) return
+      updateCustomerData({
+        ...data,
+        id: data?.id as number,
+        idNumber: data?.document_id,
+        documentType: data?.document_type as UserDocumentTypeEnum,
+        city: data?.city.name || '',
+      })
+      toast.success(
+        <span className='flex items-center gap-2 font-semibold'>
+          <IconCheck className='text-green-1' /> El cliente
+          <span className='font-bold'>{data.name}</span> ha sido actualizado exitosamente
+        </span>,
+      )
+      setOpen(false)
+    },
+  })
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    mutatePost({
+    const payload = {
       name: values.clientName,
       email: values.email,
       document_id: values.idNumber,
@@ -134,13 +169,19 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
       address: values.address,
       city_id: values.city,
       is_natural_person: values.isNaturalPerson === 'naturalPerson',
-    })
+    }
+
+    if (isEdit && customerData?.id) {
+      mutatePut({ values: payload, id: customerData.id })
+    } else {
+      mutatePost(payload)
+    }
   }
 
   return (
     <section className='flex flex-col gap-3'>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='w-full flex flex-col gap-3'>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col w-full gap-3'>
           <FormField
             control={form.control}
             name='isNaturalPerson'
@@ -150,21 +191,19 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
                   <RadioGroup
                     onValueChange={field.onChange}
                     value={field.value} // <- Asegura que refleje el valor actual
-                    className='flex w-full justify-center gap-4 rounded-lg p-2'
+                    className='flex justify-center w-full gap-4 p-2 rounded-lg'
                   >
                     <FormItem className='w-1/2'>
                       <FormControl>
                         <RadioGroupItem
                           value='naturalPerson'
                           id='naturalPerson'
-                          className='peer hidden'
+                          className='hidden peer'
                         />
                       </FormControl>
                       <FormLabel
                         htmlFor='naturalPerson'
-                        className='block w-full text-center cursor-pointer rounded-lg px-6 py-3 border border-gray-300 transition-all text-green-1
-            bg-white font-medium shadow-sm hover:bg-gray-100 
-            peer-aria-checked:bg-green-1 peer-aria-checked:text-white  peer-aria-checked:border-solid peer-aria-checked::border-1 peer-aria-checked:border-green-1 peer-aria-checked:shadow-lg'
+                        className='block w-full px-6 py-3 font-medium text-center transition-all bg-card border border-border rounded-lg shadow-sm cursor-pointer text-green-1 hover:bg-secondary peer-aria-checked:bg-green-1 peer-aria-checked:text-white peer-aria-checked:border-solid peer-aria-checked::border-1 peer-aria-checked:border-green-1 peer-aria-checked:shadow-lg'
                       >
                         Persona Natural
                       </FormLabel>
@@ -174,14 +213,12 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
                         <RadioGroupItem
                           value='legalPerson'
                           id='legalPerson'
-                          className='peer hidden'
+                          className='hidden peer'
                         />
                       </FormControl>
                       <FormLabel
                         htmlFor='legalPerson'
-                        className='block w-full text-center cursor-pointer rounded-lg px-6 py-3 border border-gray-300 transition-all text-green-1
-            bg-white font-medium shadow-sm hover:bg-gray-100 
-            peer-aria-checked:bg-green-1 peer-aria-checked:text-white peer-aria-checked:border-solid peer-aria-checked::border-1 peer-aria-checked:border-green-1 peer-aria-checked:shadow-lg'
+                        className='block w-full px-6 py-3 font-medium text-center transition-all bg-card border border-border rounded-lg shadow-sm cursor-pointer text-green-1 hover:bg-secondary peer-aria-checked:bg-green-1 peer-aria-checked:text-white peer-aria-checked:border-solid peer-aria-checked::border-1 peer-aria-checked:border-green-1 peer-aria-checked:shadow-lg'
                       >
                         Persona Jurídica
                       </FormLabel>
@@ -193,14 +230,14 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
             )}
           />
 
-          <div className='w-full flex gap-3 justify-center'>
+          <div className='flex justify-center w-full gap-3'>
             <FormField
               control={form.control}
               name='documentType'
               render={({ field }) => (
                 <SearchInputSelect<z.infer<typeof formSchema>, 'documentType'>
                   label='Documento'
-                  className='flex flex-col w-1/2 justify-start'
+                  className='flex flex-col justify-start w-1/2'
                   options={documentTypesOptions.map((item) => {
                     const option: OptionSelect = {
                       label: item.label,
@@ -251,7 +288,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
               </FormItem>
             )}
           />
-          <div className='w-full flex gap-3 justify-center'>
+          <div className='flex justify-center w-full gap-3'>
             <FormField
               control={form.control}
               name='email'
@@ -291,7 +328,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
               )}
             />
           </div>
-          <div className='w-full flex gap-3 justify-center'>
+          <div className='flex justify-center w-full gap-3'>
             <FormField
               control={form.control}
               name='city'
@@ -333,9 +370,9 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
           </div>
           <Button
             type='submit'
-            className='mt-3 bg-green-1 flex w-full p-3 text-white border-1 border-solid border-green-1 justify-center items-center rounded-md cursor-pointer hover:bg-white hover:text-green-1 focus-visible:ring-0'
+            className='flex items-center justify-center w-full p-3 mt-3 text-white border-solid rounded-md cursor-pointer bg-green-1 border-1 border-green-1 hover:bg-card hover:text-green-1 focus-visible:ring-0'
           >
-            Crear
+            {isEdit ? 'Actualizar' : 'Crear'}
           </Button>
         </form>
       </Form>

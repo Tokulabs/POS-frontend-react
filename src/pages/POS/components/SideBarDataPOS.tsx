@@ -21,11 +21,11 @@ export const SideBarDataPOS = () => {
   const { subtotalCOP, discountCOP, taxesIVACOP, totalCOP, totalUSD } = useCart()
 
   return (
-    <nav className='w-1/4 h-full flex flex-col justify-between bg-white shadow-lg rounded-sm border-solid border border-green-1'>
+    <nav className='w-1/4 h-full flex flex-col justify-between bg-card shadow-lg rounded-sm border-solid border border-green-1'>
       {isLoadingResolution ? (
         <Spin />
       ) : (
-        <section className='flex flex-col p-5 w-full justify-start gap-1 bg-white shadow-md'>
+        <section className='flex flex-col p-5 w-full justify-start gap-1 bg-card shadow-md'>
           <div className='flex justify-between items-end'>
             <span className='text-xs'>Resolución activa:</span>
             <span className='text-green-1 font-bold truncate'>
@@ -46,8 +46,8 @@ export const SideBarDataPOS = () => {
         </section>
       )}
       <AddDataAndPaymentMethods />
-      <section className='w-full bg-white'>
-        <div className='bg-gray-100 shadow-inner flex justify-center flex-col items-center gap-4 text-sm font-semibold p-5'>
+      <section className='w-full bg-card'>
+        <div className='bg-secondary shadow-inner flex justify-center flex-col items-center gap-4 text-sm font-semibold p-5'>
           <div className='flex w-full justify-between items-center'>
             <span>Subtotal COP</span>
             <span>{formatNumberToColombianPesos(subtotalCOP)}</span>

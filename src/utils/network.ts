@@ -12,6 +12,7 @@ export const meURL = baseURL + 'user/me'
 export const createUserURL = baseURL + 'user/create-user'
 export const usersURL = baseURL + 'user/users'
 export const updatePasswordURL = baseURL + 'user/update-password'
+export const companyURL = baseURL + 'user/company'
 // Groups
 export const groupURL = baseURL + 'app/group'
 // Inventory
@@ -42,3 +43,4 @@ export const goalsURL = baseURL + 'app/goals'
 export const uploadImageAWSURL = baseURL + 'app/upload-photo/'
 export const citiesURL = baseURL + 'user/city'
 export const eInvoiceDianURL = baseURL + 'dian/send_invoice/'
+export const downloadInvoiceURL = baseURL + 'dian/download_invoice'

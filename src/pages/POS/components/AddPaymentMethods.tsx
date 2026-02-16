@@ -180,7 +180,7 @@ export const AddPaymentMethods: FC<{
 
   return (
     <section className='relative flex flex-col w-full h-full gap-4'>
-      <section className='sticky flex flex-col w-full gap-4 bg-white'>
+      <section className='sticky flex flex-col w-full gap-4 bg-card'>
         <div className='flex justify-between'>
           <div className='flex items-end justify-start gap-5'>
             <div className='flex flex-col items-center justify-end'>
@@ -287,7 +287,7 @@ export const AddPaymentMethods: FC<{
         {paymentMethods.map((item, index) => (
           <div
             key={index}
-            className='flex flex-col w-full gap-4 p-4 bg-white border border-solid rounded-md shadow-md border-green-1'
+            className='flex flex-col w-full gap-4 p-4 bg-card border border-solid rounded-md shadow-md border-green-1'
           >
             <div className='flex items-center justify-between'>
               <span className='font-bold'>{item.name}</span>

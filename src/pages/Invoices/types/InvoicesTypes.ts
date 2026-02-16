@@ -26,6 +26,8 @@ export interface IInvoiceProps {
   is_override: boolean
   send_electronic_invoice: boolean
   is_electronic_invoiced: boolean
+  cufe?: string | null
+  e_invoice_number?: string | null
   key?: number
 }
 

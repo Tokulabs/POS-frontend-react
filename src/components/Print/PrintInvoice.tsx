@@ -17,9 +17,10 @@ import { IPosData } from '@/pages/POS/components/types/TableTypes'
 interface PrintInvoiceProps {
   id: string
   onAfterPrint?: () => void
+  autoPrint?: boolean
 }
 
-const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint }) => {
+const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint, autoPrint = true }) => {
   const { state } = useContext(store)
 
   const { data: invoice } = useQuery({
@@ -37,10 +38,10 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint }) => {
   })
 
   useLayoutEffect(() => {
-    if (invoice) {
+    if (invoice && autoPrint) {
       triggerPrint()
     }
-  }, [invoice, triggerPrint])
+  }, [invoice, triggerPrint, autoPrint])
 
   if (!invoice) return null
 
@@ -64,7 +65,7 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint }) => {
   return (
     <article
       ref={printContentRef}
-      className='bg-transparent flex flex-col w-[18.5rem] justify-center items-center text-center p-2 gap-1 relative'
+      className='bg-transparent text-black flex flex-col w-[18.5rem] justify-center items-center text-center p-2 gap-1 relative'
     >
       {isOverride && (
         <img

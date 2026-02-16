@@ -82,8 +82,8 @@ const Dian: FC = () => {
       {isPending ? (
         <Spin size='large' />
       ) : (
-        <div className='h-full bg-white rounded p-4 flex flex-col justify-between gap-3'>
-          <div className='w-full flex justify-between items-end gap-4 mx-auto bg-white'>
+        <div className='h-full bg-card rounded p-4 flex flex-col justify-between gap-3'>
+          <div className='w-full flex justify-between items-end gap-4 mx-auto bg-card'>
             <div className='w-full flex gap-4 justify-center flex-col'>
               <h4 className='font-bold text-green-1 text-3xl m-0'>Resoluciones DIAN</h4>
               <span className='font-semibold text-xs text-gray-2'>
@@ -111,7 +111,7 @@ const Dian: FC = () => {
                   key={item.document_number}
                   value={item}
                   as='div'
-                  className={`flex justify-between items-center border-solid border-2 rounded-lg gap-5 p-5 bg-white ${
+                  className={`flex justify-between items-center border-solid border-2 rounded-lg gap-5 p-5 bg-card ${
                     item.active ? 'border-green-500' : 'border-red-500 opacity-60'
                   }`}
                 >

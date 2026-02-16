@@ -21,6 +21,8 @@ const stateRename: Record<stateType, string> = {
   approved: 'Aprobado',
   rejected: 'Rechazado',
   overrided: 'Anulado',
+  failed: 'Fallido',
+  completed: 'Completado',
 }
 
 const stateColors: Record<stateType, string> = {
@@ -28,6 +30,8 @@ const stateColors: Record<stateType, string> = {
   approved: 'bg-green-400',
   rejected: 'bg-red-400',
   overrided: 'bg-gray-400',
+  failed: 'bg-red-600',
+  completed: 'bg-blue-400',
 }
 
 const movementEventType: Record<MovementEventType, string> = {
@@ -38,7 +42,7 @@ const movementEventType: Record<MovementEventType, string> = {
 
 const DataInfoItem: FC<{ title: string; value: string }> = ({ title, value }) => {
   return (
-    <div className='flex flex-col gap-2 p-2 bg-gray-100 rounded shadow-sm'>
+    <div className='flex flex-col gap-2 p-2 bg-secondary rounded shadow-sm'>
       <span className='text-xs'>{title}</span>
       <span className='text-sm font-semibold'>{value}</span>
     </div>
@@ -106,11 +110,11 @@ const InventoryMovementItem: FC = () => {
   if (isLoading || isPending) return <div>Loading...</div>
 
   return (
-    <section className='w-full bg-white rounded-md p-5 gap-4 grid h-full grid-rows-[auto_1fr_auto]'>
+    <section className='w-full bg-card rounded-md p-5 gap-4 grid h-full grid-rows-[auto_1fr_auto]'>
       <header>
-        <div className='flex flex-col w-full gap-4 p-4 bg-white rounded shadow-md'>
-          <div className='flex flex-col pb-4 justify-center items-center border-b-[1px] border-gray-1'>
-            <h2 className='text-2xl font-bold text-center text-gray-900 '>
+        <div className='flex flex-col w-full gap-4 p-4 bg-card rounded shadow-md'>
+          <div className='flex flex-col pb-4 justify-center items-center border-b border-border'>
+            <h2 className='text-2xl font-bold text-center text-foreground '>
               {movementTypeText} #{String(movementIdData?.id).padStart(4, '0')}
             </h2>
             <div className='flex items-center gap-2'>
@@ -121,14 +125,14 @@ const InventoryMovementItem: FC = () => {
               </h4>
               <button
                 onClick={() => setIsPrinting(true)}
-                className='p-2 text-blue-500 hover:text-blue-600 rounded-full hover:bg-blue-50 transition-colors'
+                className='p-2 text-blue-500 transition-colors rounded-full hover:text-blue-600 hover:bg-secondary'
               >
                 <IconPrinter size={20} stroke={1.5} />
               </button>
             </div>
           </div>
           {movementIdData?.event_type === 'purchase' && (
-            <div className='grid grid-cols-1 gap-4 text-gray-700 sm:grid-cols-3 lg:grid-cols-5'>
+            <div className='grid grid-cols-1 gap-4 text-foreground sm:grid-cols-3 lg:grid-cols-5'>
               <DataInfoItem title='Razón social' value={provider.legal_name} />
               <DataInfoItem title='Nombre proveedor' value={provider.name} />
               <DataInfoItem title='Correo electrónico' value={provider.email} />
@@ -158,7 +162,7 @@ const InventoryMovementItem: FC = () => {
             ))}
         </Accordion>
       </main>
-      <footer className='flex items-end gap-4 border-t-[1px] border-gray-1'>
+      <footer className='flex items-end gap-4 border-t border-border'>
         <div className='w-full'>
           <Label htmlFor='movementNotes' className='text-xs'>
             Notas de la {movementTypeText}
@@ -197,20 +201,17 @@ const InventoryMovementItem: FC = () => {
           />
         )}
       </footer>
-      {isPrinting && movementIdData &&
+      {isPrinting &&
+        movementIdData &&
         createPortal(
-          <div
-          className='fixed w-0 h-0 overflow-hidden pointer-none opacity-0'
-            aria-hidden="true"
-          >
+          <div className='fixed w-0 h-0 overflow-hidden opacity-0 pointer-none' aria-hidden='true'>
             <InventoryMovementPrint
               id={String(movementIdData.id)}
               onAfterPrint={() => setIsPrinting(false)}
             />
           </div>,
-          document.body
-        )
-      }
+          document.body,
+        )}
     </section>
   )
 }

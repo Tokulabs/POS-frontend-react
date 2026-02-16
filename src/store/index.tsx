@@ -20,6 +20,19 @@ const appReducer = (state: IStoreProps, action: ActionProps): IStoreProps => {
       updatePasswordUserId: action.payload,
     }
   }
+
+  if (action.type === ActionTypes.UPDATE_COMPANY_INFO) {
+    return {
+      ...state,
+      user: state.user
+        ? {
+            ...state.user,
+            company: action.payload,
+          }
+        : null,
+    }
+  }
+
   return state
 }
 

@@ -13,7 +13,7 @@ const Notfound: FC<{ fullscreen?: boolean }> = ({ fullscreen = false }) => {
       className={`w-full ${fullscreen ? 'h-screen' : 'h-full'} flex flex-col justify-center items-center`}
     >
       <h2 className='text-9xl font-bold text-green-1 m-0'>404</h2>
-      <p className='text-sm font-semibold text-gray-600'>
+      <p className='text-sm font-semibold text-muted-foreground'>
         No pudimos encontrar la página que buscas ...
       </p>
       <Button type='primary' size='large' onClick={goToHome}>

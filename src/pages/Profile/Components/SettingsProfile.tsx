@@ -88,41 +88,41 @@ const SettingsProfile: React.FC = () => {
   }
 
   return (
-    <div className='flex flex-col items-center w-full'>
-      <div className='flex flex-col items-center pb-5'>
-        <div className='relative flex items-center justify-center w-32 h-32 mb-4 overflow-hidden rounded-full shadow-md'>
-          <img src={selectedAvatar} alt='Avatar Principal' className='object-cover w-full h-full' />
-        </div>
-        <div className='flex justify-center gap-3'>
-          {avatarOptions.map((src, index) => (
-            <button
-              type='button'
-              key={index}
-              className={`relative w-14 h-14 rounded-full overflow-hidden shadow-sm border-2 transition-all duration-200 ${
-                selectedAvatar === src ? 'scale-125' : 'border-transparent'
-              }`}
-              onClick={() => handleAvatarSelect(src)}
-              tabIndex={0}
-            >
-              <img src={src} alt={`Avatar ${index + 1}`} className='object-cover w-full h-full' />
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className='w-full md:px-10 lg:px-32'>
+    <div className='flex w-full h-full overflow-y-auto'>
+      <div className='flex flex-col items-center w-full p-4 md:px-10 lg:px-32'>
         <Form {...form}>
           <form
-            className='grid grid-cols-1 gap-6 md:grid-cols-2'
+            className='flex flex-col items-center w-full gap-3'
             onSubmit={form.handleSubmit(onSubmit)}
           >
+            <div className='flex flex-col items-center w-full gap-3'>
+              <img
+                src={selectedAvatar}
+                alt='Avatar Principal'
+                className='object-cover w-32 h-32 rounded-full shadow-md '
+              />
+              <div className='flex justify-center gap-3'>
+                {avatarOptions.map((src, index) => (
+                  <img
+                    key={index}
+                    onClick={() => handleAvatarSelect(src)}
+                    src={src}
+                    alt={`Avatar ${index + 1}`}
+                    className={`relative w-14 h-14 rounded-full overflow-hidden shadow-sm border-2 transition-all duration-200 cursor-pointer ${
+                      selectedAvatar === src ? 'scale-125' : 'border-transparent'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+
             <FormField
               control={form.control}
               name='fullname'
               render={({ field }) => (
-                <FormItem className='flex flex-col gap-1'>
+                <FormItem className='w-full'>
                   <Label htmlFor='fullname'>
-                    Nombre completo <span className='text-red-1'>*</span>
+                    Nombre completo <span className='text-red-500'>*</span>
                   </Label>
                   <FormControl>
                     <Input
@@ -140,7 +140,7 @@ const SettingsProfile: React.FC = () => {
               control={form.control}
               name='email'
               render={({ field }) => (
-                <FormItem className='flex flex-col gap-1'>
+                <FormItem className='w-full'>
                   <Label htmlFor='email'>Email</Label>
                   <FormControl>
                     <Input
@@ -156,55 +156,58 @@ const SettingsProfile: React.FC = () => {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name='documentType'
-              render={({ field }) => (
-                <SearchInputSelect<z.infer<typeof profileSchema>, 'documentType'>
-                  label='Documento'
-                  className='flex flex-col justify-start '
-                  options={documentTypesOptions.map((item) => {
-                    const option: OptionSelect = {
-                      label: item.label,
-                      value: item.value,
-                    }
-                    return option
-                  })}
-                  field={field}
-                />
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name='documentId'
-              render={({ field }) => (
-                <FormItem className='flex flex-col gap-1'>
-                  <Label htmlFor='documentId'>
-                    Documento de identidad <span className='text-red-1'>*</span>
-                  </Label>
-                  <FormControl>
-                    <Input
-                      id='documentId'
-                      placeholder='Número de documento'
-                      {...field}
-                      className='border-gray-1  border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0'
+            <div className='flex w-full gap-4'>
+              <FormField
+                control={form.control}
+                name='documentType'
+                render={({ field }) => (
+                  <div className='w-1/2'>
+                    <SearchInputSelect<z.infer<typeof profileSchema>, 'documentType'>
+                      label='Documento'
+                      className='flex flex-col justify-start'
+                      options={documentTypesOptions.map((item) => {
+                        const option: OptionSelect = {
+                          label: item.label,
+                          value: item.value,
+                        }
+                        return option
+                      })}
+                      field={field}
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                  </div>
+                )}
+              />
 
-            <div className='col-span-2'>
-              <Button
-                type='submit'
-                className='p-3 text-sm text-white bg-black rounded-lg w-fit'
-                disabled={isPending}
-              >
-                Actualizar Información
-              </Button>
+              <FormField
+                control={form.control}
+                name='documentId'
+                render={({ field }) => (
+                  <FormItem className='w-1/2'>
+                    <Label htmlFor='documentId'>
+                      Documento de identidad <span className='text-red-500'>*</span>
+                    </Label>
+                    <FormControl>
+                      <Input
+                        id='documentId'
+                        placeholder='Número de documento'
+                        {...field}
+                        className='border-gray-1  border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0'
+                        disabled
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
+
+            <Button
+              type='submit'
+              className='self-start px-4 py-2 mt-4 text-sm text-white bg-black rounded-lg'
+              disabled={isPending}
+            >
+              {isPending ? 'Actualizando...' : 'Actualizar Información'}
+            </Button>
           </form>
         </Form>
       </div>
