@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/table'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import { IconCheck, IconSearch } from '@tabler/icons-react'
+import { IconCheck, IconEdit, IconSearch } from '@tabler/icons-react'
 import { FC, useEffect, useRef, useState } from 'react'
 import { debounce } from 'lodash'
 import { getCustomers } from '../../helpers/services'
@@ -19,6 +19,10 @@ import { useQueryClient } from '@tanstack/react-query'
 import { ICustomerProps } from '../types/CustomerTypes'
 import { useKeyPress } from '@/hooks/useKeyPress'
 import { toast } from 'sonner'
+import { DialogContainer } from '@/components/DialogContainer/DialogContainer'
+import { AddCustomerForm } from './AddCustomerForm'
+import { useRolePermissions } from '@/hooks/useRolespermissions'
+import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 
 interface SearchProps {
   open: boolean
@@ -29,6 +33,12 @@ export const SearchCustomer: FC<SearchProps> = ({ open, setOpen }) => {
   const [isLoadingSearch, setIsLoadingSearch] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const [dataSearch, setDataSearch] = useState<ICustomerProps[]>([])
+  const [editOpen, setEditOpen] = useState(false)
+  const [editingCustomer, setEditingCustomer] = useState<ICustomerProps | null>(null)
+
+  const { hasPermission: canEditCustomer } = useRolePermissions({
+    allowedRoles: [UserRolesEnum.posAdmin, UserRolesEnum.admin],
+  })
 
   const moveToInput = () => {
     const input = document.getElementById('search')
@@ -104,6 +114,25 @@ export const SearchCustomer: FC<SearchProps> = ({ open, setOpen }) => {
     setOpen(false)
   }
 
+  const handleEditClick = (e: React.MouseEvent, client: ICustomerProps) => {
+    e.stopPropagation()
+    setEditingCustomer(client)
+    setEditOpen(true)
+  }
+
+  const handleEditClose = (value: boolean) => {
+    setEditOpen(value)
+    if (!value) {
+      setEditingCustomer(null)
+      // Refresh the search results to reflect changes
+      if (searchValue) {
+        fetchCustomersByKeyword(searchValue)
+      } else {
+        fetchCustomersByKeyword('2222222')
+      }
+    }
+  }
+
   return (
     <section className='flex flex-col gap-3'>
       <div className='flex h-auto w-full items-center justify-center gap-2'>
@@ -128,13 +157,16 @@ export const SearchCustomer: FC<SearchProps> = ({ open, setOpen }) => {
               <TableHead className='text-green-1'>Nombre</TableHead>
               <TableHead className='text-green-1'>Tipo Doc</TableHead>
               <TableHead className='text-green-1'>Número</TableHead>
-              <TableHead className='text-right text-green-1'>Correo</TableHead>
+              <TableHead className='text-green-1'>Correo</TableHead>
+              {canEditCustomer && (
+                <TableHead className='text-right text-green-1'>Acciones</TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoadingSearch ? (
               <TableRow>
-                <TableCell colSpan={4} className='text-center'>
+                <TableCell colSpan={5} className='text-center'>
                   Cargando...
                 </TableCell>
               </TableRow>
@@ -148,17 +180,46 @@ export const SearchCustomer: FC<SearchProps> = ({ open, setOpen }) => {
                   <TableCell className='font-medium'>{client.name}</TableCell>
                   <TableCell>{client.document_type}</TableCell>
                   <TableCell>{client.document_id}</TableCell>
-                  <TableCell className='text-right'>{client.email}</TableCell>
+                  <TableCell>{client.email}</TableCell>
+                  {canEditCustomer && (
+                    <TableCell className='text-right'>
+                      <button
+                        type='button'
+                        className='p-1.5 rounded-full text-green-1 bg-green-1/10 hover:bg-green-1/20 hover:scale-110 active:scale-95 transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-1/30'
+                        title='Editar cliente'
+                        onClick={(e) => handleEditClick(e, client)}
+                      >
+                        <IconEdit size={16} stroke={1.5} />
+                      </button>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))
             ) : (
               <TableRow className='text-center'>
-                <TableCell colSpan={4}>No se encontraron resultados</TableCell>
+                <TableCell colSpan={5}>No se encontraron resultados</TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
+
+      {/* Edit Customer Dialog */}
+      <DialogContainer
+        open={editOpen}
+        onOpenChange={handleEditClose}
+        title='Editar cliente'
+        triggerTitle=''
+        triggerComponent={<span />}
+      >
+        {editingCustomer && (
+          <AddCustomerForm
+            setOpen={handleEditClose}
+            isEdit
+            customerData={editingCustomer}
+          />
+        )}
+      </DialogContainer>
     </section>
   )
 }

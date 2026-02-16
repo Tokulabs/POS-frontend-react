@@ -13,6 +13,7 @@ interface ICustomerDataStore {
     city: string
   }
   updateCustomerData: (data: ICustomerDataStore['customer']) => void
+  setIsEditUser: (value: boolean) => void
   clearCustomerData: () => void
 }
 
@@ -33,8 +34,12 @@ export const useCustomerData = create<ICustomerDataStore>((set) => ({
       customer: data,
     })
   },
+  setIsEditUser: (value) => {
+    set({ isEditUser: value })
+  },
   clearCustomerData: () => {
     set({
+      isEditUser: false,
       customer: {
         id: null,
         idNumber: '',

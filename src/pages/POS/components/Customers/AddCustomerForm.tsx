@@ -15,15 +15,18 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { FC } from 'react'
 import { useCities } from '@/hooks/useCities'
 import { useMutation } from '@tanstack/react-query'
-import { postCustomers } from '../../helpers/services'
+import { postCustomers, putCustomersEdit } from '../../helpers/services'
 import { useCustomerData } from '@/store/useCustomerStoreZustand'
 import { toast } from 'sonner'
 import { UserDocumentTypeEnum } from '@/pages/Users/types/UserTypes'
 import { IconCheck } from '@tabler/icons-react'
 import { OptionSelect, SearchInputSelect } from '@/components/FormComponents/SearchInputSelect'
+import { ICustomerProps } from '../types/CustomerTypes'
 
 interface AddCustomerProps {
   setOpen: (value: boolean) => void
+  isEdit?: boolean
+  customerData?: ICustomerProps
 }
 
 const formSchema = z
@@ -85,22 +88,33 @@ const documentTypesOptions = [
   { label: 'Documento de identificación extranjero', value: 'DIE' },
 ] as const
 
-export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
+export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen, isEdit = false, customerData }) => {
   const { isLoading, citiesData = [] } = useCities('citiesBySearch')
   const { updateCustomerData } = useCustomerData()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      isNaturalPerson: 'naturalPerson',
-      clientName: '',
-      documentType: 'CC',
-      idNumber: '',
-      email: '',
-      phone: '',
-      city: Number(0),
-      address: '',
-    },
+    defaultValues: isEdit && customerData
+      ? {
+          isNaturalPerson: customerData.is_natural_person === false ? 'legalPerson' : 'naturalPerson',
+          clientName: customerData.name || '',
+          documentType: customerData.document_type || 'CC',
+          idNumber: customerData.document_id || '',
+          email: customerData.email || '',
+          phone: customerData.phone || '',
+          city: customerData.city?.id || Number(0),
+          address: customerData.address || '',
+        }
+      : {
+          isNaturalPerson: 'naturalPerson',
+          clientName: '',
+          documentType: 'CC',
+          idNumber: '',
+          email: '',
+          phone: '',
+          city: Number(0),
+          address: '',
+        },
   })
 
   const { mutate: mutatePost } = useMutation({
@@ -124,8 +138,29 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
     },
   })
 
+  const { mutate: mutatePut } = useMutation({
+    mutationFn: putCustomersEdit,
+    onSuccess: (data) => {
+      if (!data) return
+      updateCustomerData({
+        ...data,
+        id: data?.id as number,
+        idNumber: data?.document_id,
+        documentType: data?.document_type as UserDocumentTypeEnum,
+        city: data?.city.name || '',
+      })
+      toast.success(
+        <span className='flex items-center gap-2 font-semibold'>
+          <IconCheck className='text-green-1' /> El cliente
+          <span className='font-bold'>{data.name}</span> ha sido actualizado exitosamente
+        </span>,
+      )
+      setOpen(false)
+    },
+  })
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    mutatePost({
+    const payload = {
       name: values.clientName,
       email: values.email,
       document_id: values.idNumber,
@@ -134,7 +169,13 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
       address: values.address,
       city_id: values.city,
       is_natural_person: values.isNaturalPerson === 'naturalPerson',
-    })
+    }
+
+    if (isEdit && customerData?.id) {
+      mutatePut({ values: payload, id: customerData.id })
+    } else {
+      mutatePost(payload)
+    }
   }
 
   return (
@@ -331,7 +372,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen }) => {
             type='submit'
             className='flex items-center justify-center w-full p-3 mt-3 text-white border-solid rounded-md cursor-pointer bg-green-1 border-1 border-green-1 hover:bg-card hover:text-green-1 focus-visible:ring-0'
           >
-            Crear
+            {isEdit ? 'Actualizar' : 'Crear'}
           </Button>
         </form>
       </Form>
