@@ -6,6 +6,7 @@ interface UploadResultsProps {
   errors: string[]
   errorMessage?: string
   onFixErrors?: () => void
+  onFinish?: () => void
   type?: 'import' | 'update'
 }
 
@@ -14,83 +15,84 @@ export default function UploadResults({
   errors = [],
   errorMessage,
   onFixErrors,
+  onFinish,
   type = 'import',
 }: UploadResultsProps) {
   const productsTitle = type === 'update' ? 'Productos actualizados' : 'Nuevos Productos'
-  console.log('Productos:', products)
-  console.log('Errores:', errors)
-
   const hasProducts = products.length > 0
   const hasErrors = errors.length > 0
 
   const navigate = useNavigate()
 
   return (
-    <div className='flex flex-col w-full h-full bg-white'>
-      <div className='flex flex-col items-start px-10 pt-10'>
-        <h1 className='text-3xl font-semibold font-sans'>Resultados de la Carga de Productos</h1>
-        <p className='text-gray-600 text-2xl'>
+    <div className='flex flex-col w-full h-full bg-card p-8 md:p-10 overflow-y-auto'>
+      {/* Header */}
+      <div className='mb-8'>
+        <h1 className='text-2xl md:text-3xl font-bold text-zinc-900 dark:text-zinc-100'>
+          Resultados de la Carga de Productos
+        </h1>
+        <p className='mt-1 text-sm text-zinc-500 dark:text-zinc-400'>
           A continuación, puede ver el resultado de la carga de productos:
         </p>
       </div>
-      <h1 className='text-3xl font-semibold flex justify-center pt-8'>Resultados</h1>
-      <div className='flex justify-center py-12'>
-        <div
-          className={`flex gap-8 w-full max-w-5xl ${
-            hasProducts && hasErrors ? 'justify-between' : 'justify-center'
-          }`}
-        >
-          {hasProducts && (
-            <div className='bg-gray-50 rounded-lg shadow-lg border p-4 w-full max-w-md'>
-              <div className='flex items-center gap-2 mb-4'>
-                <IconCircleCheckFilled className='text-green-600' size={22} />
-                <span className='font-semibold text-green-700'>{productsTitle}</span>
-              </div>
-              <ul className='divide-y text-gray-800 text-sm max-h-80 overflow-y-auto'>
-                {products.map((code, i) => (
-                  <li key={i} className='py-1'>
-                    {code}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
 
-          {hasErrors && (
-            <div className='bg-gray-50 rounded-lg shadow-lg border p-4 w-full max-w-md'>
-              <div className='flex items-center gap-2 mb-2 font-semibold'>
-                <IconAlertCircleFilled className='text-red-600' size={28} />
-                Errores
-              </div>
-              {errorMessage && <p className='text-red-600 text-sm mb-2'>{errorMessage}</p>}
-              <ul className='divide-y text-gray-800 text-sm max-h-80 overflow-y-auto'>
-                {errors.map((err, i) => (
-                  <li key={i} className='py-1'>
-                    {err}
-                  </li>
-                ))}
-              </ul>
+      {/* Results */}
+      <div className={`grid gap-6 ${
+        hasProducts && hasErrors ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 max-w-lg'
+      }`}>
+        {hasProducts && (
+          <div className='rounded-2xl border border-green-200 dark:border-green-800/40 bg-white dark:bg-zinc-800/50 shadow-sm p-6'>
+            <div className='flex items-center gap-2.5 mb-4'>
+              <IconCircleCheckFilled className='text-green-600 dark:text-green-400' size={22} />
+              <span className='font-semibold text-green-700 dark:text-green-400 text-base'>{productsTitle}</span>
             </div>
-          )}
-        </div>
+            <ul className='divide-y divide-zinc-100 dark:divide-zinc-700/60 text-sm text-zinc-800 dark:text-zinc-300 max-h-80 overflow-y-auto'>
+              {products.map((code, i) => (
+                <li key={i} className='py-2'>
+                  {code}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {hasErrors && (
+          <div className='rounded-2xl border border-red-200 dark:border-red-800/40 bg-white dark:bg-zinc-800/50 shadow-sm p-6'>
+            <div className='flex items-center gap-2.5 mb-4'>
+              <IconAlertCircleFilled className='text-red-600 dark:text-red-400' size={22} />
+              <span className='font-semibold text-red-700 dark:text-red-400 text-base'>Errores</span>
+            </div>
+            {errorMessage && (
+              <p className='text-red-600 dark:text-red-400 text-sm mb-3'>{errorMessage}</p>
+            )}
+            <ul className='divide-y divide-zinc-100 dark:divide-zinc-700/60 text-sm text-zinc-800 dark:text-zinc-300 max-h-80 overflow-y-auto'>
+              {errors.map((err, i) => (
+                <li key={i} className='py-2'>
+                  {err}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
-      <div className='flex justify-end px-8 py-4 w-[80%]'>
+      {/* Action button */}
+      <div className='flex justify-end mt-8'>
         <button
-          className={`w-48 py-2 rounded-md ${
+          className={`px-8 py-2.5 rounded-xl text-sm font-medium transition-colors ${
             hasErrors && !hasProducts
-              ? 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+              ? 'bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-300 dark:hover:bg-zinc-600'
               : hasProducts && !hasErrors
-                ? 'bg-green-600 text-white hover:bg-green-700'
+                ? 'bg-green-1 text-white hover:bg-green-700'
                 : hasProducts && hasErrors
-                  ? 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-                  : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                  ? 'bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-300 dark:hover:bg-zinc-600'
+                  : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-400 dark:text-zinc-500 cursor-not-allowed'
           }`}
           onClick={() => {
             if (hasErrors) {
               onFixErrors?.()
             } else if (hasProducts && !hasErrors) {
-              navigate('/')
+              onFinish ? onFinish() : navigate('/inventory-management')
             }
           }}
           disabled={!hasProducts && !hasErrors}
@@ -107,3 +109,4 @@ export default function UploadResults({
     </div>
   )
 }
+

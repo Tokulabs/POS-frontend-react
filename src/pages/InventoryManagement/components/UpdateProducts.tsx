@@ -100,6 +100,7 @@ export default function UpdateProducts({ onBack }: UpdateProductsProps) {
           setErrorData(null)
           setShowErrorBanner(true)
         }}
+        onFinish={onBack}
         type="update"
       />
     )
@@ -115,6 +116,12 @@ export default function UpdateProducts({ onBack }: UpdateProductsProps) {
       isLoading={updateMutation.isPending}
       onBack={onBack}
       showErrorBanner={showErrorBanner}
-    />
+      templateUrl='/actualizar_productos.csv'
+      recommendations={[
+        'Solo se aceptan archivos con extensión .csv.',
+        'El peso del archivo no puede exceder 2MB',
+        'El único campo obligatorio es el código de producto, los demás campos son opcionales',
+      ]}
+       />
   )
 }

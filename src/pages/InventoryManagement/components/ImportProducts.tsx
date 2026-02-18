@@ -117,6 +117,7 @@ export default function ImportProducts({ onBack }: ImportProductsProps) {
       isLoading={importMutation.isPending}
       onBack={onBack}
       showErrorBanner={showErrorBanner}
+      templateUrl='/nuevos_productos.csv'
     />
   )
 }
