@@ -49,7 +49,10 @@ const CreateResolutionForm: FC<CreateResolutionProps> = ({ isVisible = false, on
     mutationFn: postDianResolution,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['allDianResolutions'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboardDianPOS'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboardDianFE'] })
       toast.success('Resolución Creada!')
+      form.reset()
       onOpenChange(false)
     },
   })

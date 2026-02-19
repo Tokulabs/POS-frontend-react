@@ -10,6 +10,7 @@ import { SalesByUser } from './components/SalesByUser'
 import { GeneralGoals } from './components/GeneralGoals'
 import { UserRolesEnum } from '../Users/types/UserTypes'
 import { useRolePermissions } from '@/hooks/useRolespermissions'
+import { DianExpiryAlert } from './components/DianExpiryAlert'
 
 const Home: FC = () => {
   const [dataType, setDataType] = useState('daily')
@@ -54,6 +55,7 @@ const Home: FC = () => {
 
   return (
     <main className='flex flex-col gap-4 h-full overflow-hidden overflow-y-auto scrollbar-hide'>
+      <DianExpiryAlert />
       <SummaryData />
       <section
         className={`grid grid-cols-1 gap-4 ${hasPermissionDashboard ? 'lg:grid-cols-3' : ''}`}

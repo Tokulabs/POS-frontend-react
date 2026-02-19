@@ -27,7 +27,7 @@ export const formSchema = z
         message: 'Ambas fechas son requeridas',
         path: [],
       })
-      .refine((data) => data.from && data.to && data.to >= data.to, {
+      .refine((data) => data.from && data.to && data.to >= data.from, {
         message: 'La fecha final debe ser igual o posterior a la inicial',
         path: [],
       }),

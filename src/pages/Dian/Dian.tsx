@@ -1,7 +1,5 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import { useDianResolutions } from '@/hooks/useDianResolution'
-import { IconArticle, IconArticleOff, IconDeviceFloppy, IconEdit } from '@tabler/icons-react'
-import { InputNumber, Spin, Switch } from 'antd'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { putDiaResolution, toggleDianResolution } from './helpers/services'
 import { Reorder } from 'framer-motion'
@@ -11,11 +9,16 @@ import { IDianResolutionProps } from './types/DianResolutionTypes'
 import { toast } from 'sonner'
 import { ToggleSwitch } from '@/components/ToggleSwitch/ToggleSwitch'
 import { CreateResolutionForm } from './components/CreateResolutionForm'
+import { ResolutionCard } from './components/ResolutionCard'
+import { ResolutionSkeleton } from './components/ResolutionSkeleton'
+import { EmptyResolutionState } from './components/EmptyResolutionState'
+import { IconChevronDown, IconFileDescription, IconFileOff, IconFileCheck } from '@tabler/icons-react'
 
 const Dian: FC = () => {
   const [modalState, setModalState] = useState(false)
   const [currentNumber, setCurrentNumber] = useState<number>(0)
-  const [edit, setEdit] = useState(false)
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [inactiveExpanded, setInactiveExpanded] = useState(false)
   const allowedRolesOverride = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
   const { hasPermission } = useRolePermissions({ allowedRoles: allowedRolesOverride })
   const [resolutionType, setResolutionType] = useState(0)
@@ -27,14 +30,27 @@ const Dian: FC = () => {
   })
 
   const sortedDianDataResolution = dianResolutionData?.results.sort((a, b) => {
-    if (a.active && !b.active) {
-      return -1
-    }
-    if (!a.active && b.active) {
-      return 1
-    }
+    if (a.active && !b.active) return -1
+    if (!a.active && b.active) return 1
     return 0
   })
+
+  // Split active vs inactive
+  const activeResolutions = useMemo(
+    () => sortedDianDataResolution?.filter((r) => r.active) ?? [],
+    [sortedDianDataResolution],
+  )
+  const inactiveResolutions = useMemo(
+    () => sortedDianDataResolution?.filter((r) => !r.active) ?? [],
+    [sortedDianDataResolution],
+  )
+
+  // Stats
+  const totalCount = sortedDianDataResolution?.length ?? 0
+  const activeCount = activeResolutions.length
+  const inactiveCount = inactiveResolutions.length
+  const activeRes = activeResolutions[0]
+  const availableInvoices = activeRes ? activeRes.to_number - activeRes.current_number : 0
 
   const queryClient = useQueryClient()
 
@@ -44,12 +60,10 @@ const Dian: FC = () => {
     )
   }, [dianResolutionData])
 
-  const { mutate, isPending: isPendingToggle } = useMutation({
+  const [isSwapping, setIsSwapping] = useState(false)
+
+  const { mutateAsync: toggleAsync, isPending: isPendingToggle } = useMutation({
     mutationFn: toggleDianResolution,
-    onSuccess: () => {
-      toast.success('Resolución actualizada!')
-      queryClient.invalidateQueries({ queryKey: ['allDianResolutions'] })
-    },
   })
 
   const { mutate: mutatePut, isPending: isPendingPut } = useMutation({
@@ -57,11 +71,39 @@ const Dian: FC = () => {
     onSuccess: () => {
       toast.success('Último número actualizado!')
       queryClient.invalidateQueries({ queryKey: ['allDianResolutions'] })
+      setEditingId(null)
     },
   })
 
-  const toggleResolutionActive = (id: number) => async () => {
-    mutate(id)
+  const toggleResolutionActive = (clickedId: number, isCurrentlyActive: boolean) => async () => {
+    try {
+      if (isCurrentlyActive) {
+        // Deactivating: single call
+        await toggleAsync(clickedId)
+        toast.success('Resolución desactivada!')
+      } else {
+        // Activating: check if another resolution is already active
+        const currentActive = activeResolutions[0]
+        if (currentActive) {
+          // Auto-swap: deactivate current, then activate new
+          setIsSwapping(true)
+          await toggleAsync(currentActive.id)
+          await toggleAsync(clickedId)
+          toast.success('Resolución cambiada exitosamente!')
+        } else {
+          // No active resolution, just activate
+          await toggleAsync(clickedId)
+          toast.success('Resolución activada!')
+        }
+      }
+      queryClient.invalidateQueries({ queryKey: ['allDianResolutions'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboardDianPOS'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboardDianFE'] })
+    } catch {
+      toast.error('Error al cambiar la resolución. Intente de nuevo.')
+    } finally {
+      setIsSwapping(false)
+    }
   }
 
   const updateCurrentNumber = (item: IDianResolutionProps) => {
@@ -74,133 +116,161 @@ const Dian: FC = () => {
       to_number: item.to_number,
     }
     mutatePut({ id: item.id, payload: infoDianToUpdate })
-    setEdit(false)
   }
+
+  const handleEditStart = (item: IDianResolutionProps) => {
+    setEditingId(item.id)
+    setCurrentNumber(item.current_number)
+  }
+
+  const hasResults = sortedDianDataResolution && sortedDianDataResolution.length > 0
+
+  const renderCard = (item: IDianResolutionProps, compact = false) => (
+    <ResolutionCard
+      item={item}
+      hasPermission={hasPermission}
+      isEditing={editingId === item.id}
+      currentNumber={currentNumber}
+      isPendingToggle={isPendingToggle || isSwapping}
+      isPendingPut={isPendingPut}
+      compact={compact}
+      onToggle={toggleResolutionActive(item.id, item.active)}
+      onEditStart={() => handleEditStart(item)}
+      onEditCancel={() => setEditingId(null)}
+      onEditSave={() => updateCurrentNumber(item)}
+      onCurrentNumberChange={setCurrentNumber}
+    />
+  )
 
   return (
     <section className='h-full'>
-      {isPending ? (
-        <Spin size='large' />
-      ) : (
-        <div className='h-full bg-card rounded p-4 flex flex-col justify-between gap-3'>
-          <div className='w-full flex justify-between items-end gap-4 mx-auto bg-card'>
-            <div className='w-full flex gap-4 justify-center flex-col'>
-              <h4 className='font-bold text-green-1 text-3xl m-0'>Resoluciones DIAN</h4>
-              <span className='font-semibold text-xs text-gray-2'>
-                Solo puedes tener una resolución activa a la vez por tipo
-              </span>
+      <div className='h-full bg-card rounded-xl p-5 md:p-6 flex flex-col gap-5'>
+        {/* Header */}
+        <div className='flex flex-col gap-4'>
+          <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
+            <div className='flex flex-col gap-1'>
+              <h1 className='font-bold text-green-1 text-2xl md:text-3xl m-0 tracking-tight'>
+                Resoluciones DIAN
+              </h1>
+              <p className='text-sm text-muted-foreground m-0'>
+                Gestiona las resoluciones de facturación. Solo puedes tener una resolución activa
+                por tipo.
+              </p>
+            </div>
+            <div className='shrink-0'>
               <CreateResolutionForm isVisible={modalState} onOpenChange={setModalState} />
-
-              <ToggleSwitch
-                options={options}
-                selectedIndex={resolutionType}
-                onSelect={setResolutionType}
-              />
             </div>
           </div>
-          <div className='h-full overflow-hidden overflow-y-auto scrollbar-hide'>
-            <Reorder.Group
-              as='div'
-              axis='y'
-              values={sortedDianDataResolution ?? []}
-              onReorder={() => null}
-              className='flex flex-col gap-4 list-none'
-            >
-              {sortedDianDataResolution?.map((item) => (
-                <Reorder.Item
-                  key={item.document_number}
-                  value={item}
-                  as='div'
-                  className={`flex justify-between items-center border-solid border-2 rounded-lg gap-5 p-5 bg-card ${
-                    item.active ? 'border-green-500' : 'border-red-500 opacity-60'
-                  }`}
-                >
-                  <div className='flex items-center gap-8'>
-                    <div>
-                      {item.active ? (
-                        <div className='flex flex-col items-center'>
-                          <IconArticle size={100} color='#22c55e' />
-                          <p className='font-bold text-green-500 text-lg m-0'>Activo</p>
-                        </div>
-                      ) : (
-                        <div className='flex flex-col items-center'>
-                          <IconArticleOff size={100} color='#ef4444' />
-                          <p className='font-bold text-red-500 text-lg m-0'>Inactivo</p>
-                        </div>
-                      )}
-                    </div>
-                    <div className='flex flex-col'>
-                      <h1
-                        className={`font-bold text-2xl ${
-                          item.active ? 'text-green-500' : 'text-red-500'
-                        }`}
-                      >
-                        {item.prefix} - {item.document_number}
-                      </h1>
-                      <div className='flex gap-10 items-top'>
-                        <div className='flex flex-col gap-2 justify-between'>
-                          <span className='text-sm'>Fechas válidas</span>
-                          <span className='font-bold'>{`${item.from_date} / ${item.to_date}`}</span>
-                        </div>
-                        <div className='flex flex-col gap-2 justify-between'>
-                          <span className='text-sm'>Número habilitados</span>
-                          <span className='font-bold'>{`${item.from_number} - ${item.to_number}`}</span>
-                        </div>
-                        <div className='flex flex-col gap-2 justify-between'>
-                          <span className='text-sm'>Última factura registrada</span>
-                          <div className='flex items-center gap-3 cursor-pointer'>
-                            <span className='font-bold'>{item.current_number}</span>
-                            {hasPermission &&
-                              item.active &&
-                              (edit ? (
-                                <InputNumber
-                                  style={{ width: '12rem' }}
-                                  addonAfter={
-                                    isPendingPut ? (
-                                      <Spin size='small' />
-                                    ) : (
-                                      <span
-                                        onClick={() => updateCurrentNumber(item)}
-                                        className='text-green-1 cursor-pointer'
-                                      >
-                                        <IconDeviceFloppy size={24} />
-                                      </span>
-                                    )
-                                  }
-                                  onPressEnter={() => updateCurrentNumber(item)}
-                                  value={currentNumber}
-                                  onChange={(value) => setCurrentNumber(value as number)}
-                                  disabled={isPendingPut}
-                                />
-                              ) : (
-                                <span className='text-green-1'>
-                                  <IconEdit onClick={() => setEdit(true)} size={20} />
-                                </span>
-                              ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
 
-                  <div className='flex flex-col items-center gap-4'>
-                    <span
-                      className={`font-bold ${item.active ? 'text-green-500' : 'text-red-500'}`}
-                    >
-                      {item.active ? 'Desactivar' : 'Activar'}
-                    </span>
-                    <Switch
-                      value={item.active}
-                      loading={isPendingToggle}
-                      onChange={toggleResolutionActive(item.id)}
-                    />
-                  </div>
-                </Reorder.Item>
-              ))}
-            </Reorder.Group>
-          </div>
+          {/* Separator */}
+          <div className='h-px bg-border' />
+
+          {/* Type Toggle */}
+          <ToggleSwitch
+            options={options}
+            selectedIndex={resolutionType}
+            onSelect={setResolutionType}
+          />
         </div>
-      )}
+
+        {/* Stats Bar */}
+        {!isPending && hasResults && (
+          <div className='flex flex-wrap items-center gap-x-5 gap-y-2 px-1 text-xs text-muted-foreground'>
+            <div className='flex items-center gap-1.5'>
+              <IconFileDescription size={14} />
+              <span>{totalCount} {totalCount === 1 ? 'resolución' : 'resoluciones'}</span>
+            </div>
+            <div className='flex items-center gap-1.5'>
+              <IconFileCheck size={14} className='text-green-500' />
+              <span>{activeCount} activa{activeCount !== 1 ? 's' : ''}</span>
+            </div>
+            {inactiveCount > 0 && (
+              <div className='flex items-center gap-1.5'>
+                <IconFileOff size={14} />
+                <span>{inactiveCount} inactiva{inactiveCount !== 1 ? 's' : ''}</span>
+              </div>
+            )}
+            {activeRes && (
+              <div className='flex items-center gap-1.5 ml-auto'>
+                <span className='font-medium text-foreground'>
+                  {availableInvoices.toLocaleString()} facturas disponibles
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Content */}
+        <div className='flex-1 overflow-hidden overflow-y-auto scrollbar-hide'>
+          {isPending ? (
+            /* Skeleton Loading */
+            <div className='flex flex-col gap-4'>
+              {[1, 2, 3].map((i) => (
+                <ResolutionSkeleton key={i} />
+              ))}
+            </div>
+          ) : !hasResults ? (
+            /* Empty State */
+            <EmptyResolutionState onCreateClick={() => setModalState(true)} />
+          ) : (
+            <div className='flex flex-col gap-5'>
+              {/* Active Resolutions Section */}
+              {activeResolutions.length > 0 && (
+                <div className='flex flex-col gap-3'>
+                  <h3 className='text-xs font-semibold text-muted-foreground uppercase tracking-wider m-0 px-1'>
+                    Resolución Activa
+                  </h3>
+                  <Reorder.Group
+                    as='div'
+                    axis='y'
+                    values={activeResolutions}
+                    onReorder={() => null}
+                    className='flex flex-col gap-3 list-none'
+                  >
+                    {activeResolutions.map((item) => (
+                      <Reorder.Item
+                        key={item.document_number}
+                        value={item}
+                        as='div'
+                        dragListener={false}
+                      >
+                        {renderCard(item)}
+                      </Reorder.Item>
+                    ))}
+                  </Reorder.Group>
+                </div>
+              )}
+
+              {/* Inactive Resolutions Section */}
+              {inactiveResolutions.length > 0 && (
+                <div className='flex flex-col gap-3'>
+                  <button
+                    onClick={() => setInactiveExpanded(!inactiveExpanded)}
+                    className='flex items-center gap-2 px-1 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wider
+                      hover:text-foreground transition-colors cursor-pointer bg-transparent border-0 text-left'
+                  >
+                    <IconChevronDown
+                      size={14}
+                      className={`transition-transform duration-200 ${
+                        inactiveExpanded ? 'rotate-0' : '-rotate-90'
+                      }`}
+                    />
+                    Resoluciones Inactivas ({inactiveCount})
+                  </button>
+
+                  {inactiveExpanded && (
+                    <div className='flex flex-col gap-2'>
+                      {inactiveResolutions.map((item) => (
+                        <div key={item.document_number}>{renderCard(item, true)}</div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
     </section>
   )
 }
