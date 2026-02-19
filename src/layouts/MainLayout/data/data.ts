@@ -1,6 +1,5 @@
 import {
   IconProps,
-  Icon,
   IconPackage,
   IconShoppingCart,
   IconBuildingStore,
@@ -16,7 +15,7 @@ interface NavigationMenuItem {
   description?: string
   action?: string
   children?: NavigationMenuItem[]
-  icon?: ForwardRefExoticComponent<Omit<IconProps, 'ref'> & RefAttributes<Icon>>
+  icon?: ForwardRefExoticComponent<Omit<IconProps, 'ref'> & RefAttributes<SVGSVGElement>>
   disabled?: boolean
 }
 

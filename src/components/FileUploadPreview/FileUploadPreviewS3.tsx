@@ -1,5 +1,4 @@
-import { FC, useState, useEffect, ChangeEvent, useRef } from 'react'
-import { Input } from '@/components/ui/input'
+import { useState, useEffect, ChangeEvent, useRef } from 'react'
 import { Label } from '@/components/ui/label'
 import {
   FormField,
@@ -69,7 +68,7 @@ const FileUploadPreview = <T extends FieldValues>({
   onPreviewChange,
   onError,
   onFileSelect,
-}: FileUploadPreviewProps<T>): JSX.Element => {
+}: FileUploadPreviewProps<T>) => {
   const [preview, setPreview] = useState(initialPreview)
   const fileInputRef = useRef<HTMLInputElement>(null)
 

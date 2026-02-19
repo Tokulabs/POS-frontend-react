@@ -1,10 +1,10 @@
-import { Icon, IconProps } from '@tabler/icons-react'
+import { IconProps } from '@tabler/icons-react'
 import { ForwardRefExoticComponent, RefAttributes } from 'react'
 
 export interface ISummaryProps {
   title: string
   value: number
-  icon: ForwardRefExoticComponent<Omit<IconProps, 'ref'> & RefAttributes<Icon>>
+  icon: ForwardRefExoticComponent<Omit<IconProps, 'ref'> & RefAttributes<SVGSVGElement>>
   color?: string
 }
 

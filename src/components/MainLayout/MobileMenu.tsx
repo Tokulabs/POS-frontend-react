@@ -10,7 +10,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
-import { IconMenu2, IconCash, type IconProps, type Icon } from '@tabler/icons-react'
+import { IconMenu2, IconCash, type IconProps } from '@tabler/icons-react'
 import { useRolePermissions } from '@/hooks/useRolespermissions'
 import { navigationMenu } from '@/layouts/MainLayout/data/data'
 import { useNavigate } from 'react-router-dom'
@@ -98,7 +98,7 @@ const Section = ({
   openDownloadModal,
 }: {
   label: string
-  icon?: ForwardRefExoticComponent<Omit<IconProps, 'ref'> & RefAttributes<Icon>>
+  icon?: ForwardRefExoticComponent<Omit<IconProps, 'ref'> & RefAttributes<SVGSVGElement>>
   items: {
     label: string
     link?: string

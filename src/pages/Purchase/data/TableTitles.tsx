@@ -1,7 +1,8 @@
 import { ITableTitles } from '@/pages/POS/components/types/TableTypes'
 import { TableColumnsType } from 'antd'
+import { IPurchaseSimple } from '../types/PurchaseTypes'
 
-export const columnsDataPurchase: TableColumnsType = [
+export const columnsDataPurchase: TableColumnsType<IPurchaseSimple> = [
   {
     title: 'ID',
     dataIndex: 'key',
