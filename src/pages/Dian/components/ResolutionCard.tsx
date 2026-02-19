@@ -1,5 +1,6 @@
 import { FC, useState } from 'react'
 import { IDianResolutionProps } from '../types/DianResolutionTypes'
+import { formatDate, isExpired } from '../helpers/utils'
 import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
 import { Input } from '@/components/ui/input'
@@ -38,40 +39,6 @@ interface ResolutionCardProps {
   onCurrentNumberChange: (value: number) => void
 }
 
-/** Format ISO date string (YYYY-MM-DD) to friendly locale format */
-const formatDate = (dateStr: string): string => {
-  try {
-    const [year, month, day] = dateStr.split('-').map(Number)
-    const date = new Date(year, month - 1, day)
-    return date.toLocaleDateString('es-CO', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    })
-  } catch {
-    return dateStr
-  }
-}
-
-/** Check if a resolution's date range has expired */
-const isExpired = (toDate: string): boolean => {
-  try {
-    const [year, month, day] = toDate.split('-').map(Number)
-    const end = new Date(year, month - 1, day)
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    return end < today
-  } catch {
-    return false
-  }
-}
-
-/** Truncate long strings with ellipsis */
-const truncateText = (text: string, maxLen: number): string => {
-  if (text.length <= maxLen) return text
-  return text.slice(0, maxLen) + '…'
-}
-
 const ResolutionCard: FC<ResolutionCardProps> = ({
   item,
   hasPermission,
@@ -105,8 +72,7 @@ const ResolutionCard: FC<ResolutionCardProps> = ({
     return 'bg-green-500'
   }
 
-  const docNumberDisplay = truncateText(item.document_number, 18)
-  const isDocTruncated = item.document_number.length > 18
+
 
   // ─── Compact layout for inactive cards ───
   if (compact) {
@@ -119,13 +85,9 @@ const ResolutionCard: FC<ResolutionCardProps> = ({
             <div className='flex items-center gap-2 min-w-0 flex-1'>
               <h4
                 className='text-sm font-bold text-foreground m-0 truncate'
-                title={
-                  isDocTruncated
-                    ? `${item.prefix} - ${item.document_number}`
-                    : undefined
-                }
+                title={`${item.prefix} - ${item.document_number}`}
               >
-                {item.prefix} - {docNumberDisplay}
+                {item.prefix} - {item.document_number}
               </h4>
               <Badge
                 variant='secondary'
@@ -147,7 +109,7 @@ const ResolutionCard: FC<ResolutionCardProps> = ({
             <div className='flex items-center gap-4 text-xs text-muted-foreground shrink-0'>
               <span>{formatDate(item.from_date)} — {formatDate(item.to_date)}</span>
               <span className='hidden sm:inline'>
-                {item.from_number.toLocaleString()} – {item.to_number.toLocaleString()}
+                {item.from_number} – {item.to_number}
               </span>
             </div>
 
@@ -198,18 +160,16 @@ const ResolutionCard: FC<ResolutionCardProps> = ({
   // ─── Full layout for active cards ───
   return (
     <div
-      className={`rounded-xl border bg-card overflow-hidden transition-all duration-300 hover:shadow-lg ${
-        item.active
-          ? 'border-border hover:border-green-1/40'
-          : 'border-border'
-      }`}
+      className={`rounded-xl border bg-card overflow-hidden transition-all duration-300 hover:shadow-lg ${item.active
+        ? 'border-border hover:border-green-1/40'
+        : 'border-border'
+        }`}
     >
       <div className='flex'>
         {/* Status indicator strip */}
         <div
-          className={`w-1.5 shrink-0 transition-colors duration-300 ${
-            item.active ? 'bg-green-500' : 'bg-muted-foreground/30'
-          }`}
+          className={`w-1.5 shrink-0 transition-colors duration-300 ${item.active ? 'bg-green-500' : 'bg-muted-foreground/30'
+            }`}
         />
 
         <div className='flex-1 p-5 space-y-4'>
@@ -218,21 +178,16 @@ const ResolutionCard: FC<ResolutionCardProps> = ({
             <div className='flex items-center gap-2 flex-wrap min-w-0'>
               <h3
                 className='text-xl font-bold text-foreground m-0 tracking-tight truncate'
-                title={
-                  isDocTruncated
-                    ? `${item.prefix} - ${item.document_number}`
-                    : undefined
-                }
+                title={`${item.prefix} - ${item.document_number}`}
               >
-                {item.prefix} - {docNumberDisplay}
+                {item.prefix} - {item.document_number}
               </h3>
               <Badge
                 variant={item.active ? 'default' : 'secondary'}
-                className={`text-xs font-medium px-2.5 py-0.5 shrink-0 ${
-                  item.active
-                    ? 'bg-green-500/15 text-green-600 dark:text-green-400 border-green-500/20 hover:bg-green-500/15'
-                    : 'bg-muted text-muted-foreground hover:bg-muted'
-                }`}
+                className={`text-xs font-medium px-2.5 py-0.5 shrink-0 ${item.active
+                  ? 'bg-green-500/15 text-green-600 dark:text-green-400 border-green-500/20 hover:bg-green-500/15'
+                  : 'bg-muted text-muted-foreground hover:bg-muted'
+                  }`}
               >
                 {item.active ? 'Activo' : 'Inactivo'}
               </Badge>
@@ -323,7 +278,7 @@ const ResolutionCard: FC<ResolutionCardProps> = ({
                 </span>
               </div>
               <span className='text-sm font-semibold text-foreground'>
-                {item.from_number.toLocaleString()} — {item.to_number.toLocaleString()}
+                {item.from_number} — {item.to_number}
               </span>
             </div>
 
@@ -350,11 +305,10 @@ const ResolutionCard: FC<ResolutionCardProps> = ({
                           if (e.key === 'Escape') onEditCancel()
                         }}
                         disabled={isPendingPut}
-                        className={`h-7 w-28 text-sm font-semibold ${
-                          currentNumber < item.from_number || currentNumber > item.to_number
-                            ? 'border-red-500 focus-visible:ring-red-500'
-                            : ''
-                        }`}
+                        className={`h-7 w-28 text-sm font-semibold ${currentNumber < item.from_number || currentNumber > item.to_number
+                          ? 'border-red-500 focus-visible:ring-red-500'
+                          : ''
+                          }`}
                         autoFocus
                       />
                       <button
@@ -375,14 +329,14 @@ const ResolutionCard: FC<ResolutionCardProps> = ({
                     </div>
                     {(currentNumber < item.from_number || currentNumber > item.to_number) && (
                       <span className='text-[10px] text-red-500'>
-                        Rango válido: {item.from_number.toLocaleString()} – {item.to_number.toLocaleString()}
+                        Rango válido: {item.from_number} – {item.to_number}
                       </span>
                     )}
                   </div>
                 ) : (
                   <div className='flex items-center gap-2'>
                     <span className='text-sm font-semibold text-foreground'>
-                      {item.current_number.toLocaleString()}
+                      {item.current_number}
                     </span>
                     {hasPermission && item.active && (
                       <button
