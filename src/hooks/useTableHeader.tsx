@@ -1,7 +1,7 @@
 import { debounce } from 'lodash'
 import { RefObject, useLayoutEffect, useState } from 'react'
 
-export const useTableHeight = (ref: RefObject<Element>) => {
+export const useTableHeight = (ref: RefObject<Element | null>) => {
   // Keep the Table the height of the parent.
   const [tableHeight, setTableHeight] = useState<number>()
   const resizeTable = debounce(

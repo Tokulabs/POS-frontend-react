@@ -9,6 +9,7 @@ import { movementStates, IPurchaseSimple } from './types/PurchaseTypes'
 import PrintInventoryMovement from '@/components/PrintInfo/PrintInventoryMovement'
 import { IconPrinter } from '@tabler/icons-react'
 import { createPortal } from 'react-dom'
+import { TableColumnsType } from 'antd'
 
 const Purchase: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -29,6 +30,7 @@ const Purchase: FC = () => {
 
   const dataPurchaseModified = inventoryMovementsData?.results.map((item) => ({
     ...item,
+    provider_name: item.provider?.legal_name ?? 'Sin proveedor',
     state: movementStates[item.state as keyof typeof movementStates],
     created_at: formatDateTime(item.created_at),
     state_reviewed_at: item.state_reviewed_at
@@ -36,7 +38,7 @@ const Purchase: FC = () => {
       : 'Pendiente de aprobación',
   }))
 
-  const columns = [
+  const columns: TableColumnsType<IPurchaseSimple> = [
     ...columnsDataPurchase,
     {
       title: 'Acciones',

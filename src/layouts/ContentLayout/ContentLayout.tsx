@@ -6,12 +6,12 @@ import { IconAdjustmentsHorizontal, IconCirclePlus, IconRefresh } from '@tabler/
 import { useKeyPress } from '@/hooks/useKeyPress'
 import { useTableHeight } from '@/hooks/useTableHeader'
 
-interface IContentLayoutProps {
+interface IContentLayoutProps<T extends object = any> {
   pageTitle: string
   setModalState?: (value: boolean) => void
   buttonTitle?: string
-  dataSource: DataPropsForm[] | undefined
-  columns: TableColumnsType
+  dataSource: T[] | undefined
+  columns: TableColumnsType<T>
   fetching: boolean
   totalItems: number
   currentPage: number
@@ -20,10 +20,10 @@ interface IContentLayoutProps {
   filterOptions?: { label: ReactNode; key: number }[]
   onChangePage?: (page: number) => void
   onSearch?: (value: string) => void
-  onRowClick?: (record: DataPropsForm, index: number) => void
+  onRowClick?: (record: T, index: number) => void
 }
 
-const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
+const ContentLayout = <T extends object = any>({
   pageTitle,
   setModalState,
   buttonTitle,
@@ -39,7 +39,7 @@ const ContentLayout: FC<PropsWithChildren<IContentLayoutProps>> = ({
   onChangePage = () => null,
   onSearch = () => null,
   onRowClick = () => null,
-}) => {
+}: PropsWithChildren<IContentLayoutProps<T>>) => {
   const contentRef = useRef<HTMLDivElement>(null)
   const tableHeight = useTableHeight(contentRef)
 

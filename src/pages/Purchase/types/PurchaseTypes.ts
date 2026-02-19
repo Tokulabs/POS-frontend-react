@@ -70,15 +70,18 @@ export interface IPurchase {
 
 export interface IPurchaseSimple {
   id: number
-  provider: {
+  key?: number
+  provider?: {
     legal_name: string
   }
+  provider_name?: string
   total: number
   state: string
   created_at: string
   destination: string
   origin: string
   state_reviewed_at: string
+  delivery_notes: string
 }
 
 export interface ICreateMovement {

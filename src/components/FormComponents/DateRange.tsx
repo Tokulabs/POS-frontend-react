@@ -41,14 +41,14 @@ export const DateRangePicker = ({ className, value, onChange }: DateRangePickerP
         </PopoverTrigger>
         <PopoverContent className='w-auto p-0' align='start'>
           <Calendar
-            initialFocus
+            autoFocus
             mode='range'
             defaultMonth={new Date()}
             selected={value as DateRange}
             onSelect={onChange}
             numberOfMonths={2}
             classNames={{
-              day_today: 'bg-green-1 opacity-50 text-white',
+              today: 'bg-green-1 opacity-50 text-white',
             }}
           />
         </PopoverContent>

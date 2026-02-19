@@ -1,5 +1,5 @@
 import { usePDFSlick } from '@pdfslick/react'
-import { pdf } from '@react-pdf/renderer'
+import { pdf, DocumentProps } from '@react-pdf/renderer'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { IconZoomIn, IconZoomOut } from '@tabler/icons-react'
 
@@ -7,7 +7,7 @@ import '@pdfslick/react/dist/pdf_viewer.css'
 
 type PDFViewerAppProps = {
   pdfFilePath?: string
-  pdfDocument?: React.ReactElement
+  pdfDocument?: React.ReactElement<DocumentProps>
 }
 
 const SimplePDFViewer = ({ pdfFilePath, pdfDocument }: PDFViewerAppProps) => {
