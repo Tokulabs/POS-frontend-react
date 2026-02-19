@@ -36,7 +36,8 @@ export const axiosRequest = async <T, P = DataPropsForm | FormData>({
   showError = true,
   headers,
   isFile = false,
-}: IAxiosRequestProps<P>): Promise<AxiosResponse<T> | null> => {
+  returnErrorResponse = false, // << nuevo parámetro
+}: IAxiosRequestProps & { returnErrorResponse?: boolean }): Promise<AxiosResponse<T> | null> => {
   const headersNew = hasAuth ? { ...headers, ...getAuthToken() } : { ...headers }
   const urlStr = url instanceof URL ? url.toString() : url
   try {
@@ -47,14 +48,21 @@ export const axiosRequest = async <T, P = DataPropsForm | FormData>({
       headers: { ...headersNew },
       responseType: isFile ? 'arraybuffer' : 'json',
     })
-    if (response) return response
+    return response
   } catch (e: unknown) {
-    if (!showError) return null
     const err = e as ICustomAxiosError
+
+    if (returnErrorResponse && err.response) {
+      return err.response as AxiosResponse<T>
+    }
+
+    if (!showError) return null
+
     if (err.status === 403) {
       logout()
       window.location.reload()
     }
+
     const errorObjectDescription = errorObject?.description
     const errorMessage =
       err.response?.data?.error ??
@@ -62,8 +70,8 @@ export const axiosRequest = async <T, P = DataPropsForm | FormData>({
         (isObject(err.response.data) && Object.values(err.response.data).length > 0
           ? Object.values(err.response.data)[0]
           : err.message))
+
     toast.error(errorObjectDescription ?? errorMessage)
     throw Error(errorObjectDescription ?? errorMessage)
   }
-  return null
 }

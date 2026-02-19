@@ -47,10 +47,10 @@ const NavigationMenuComponent: FC<NavigationMenuComponentProps> = ({
               <NavigationMenuTrigger className='border-none bg-transparent font-semibold'>
                 {item.label}
               </NavigationMenuTrigger>
-              <NavigationMenuContent className='bg-card p-3 max-h-[170px]'>
+              <NavigationMenuContent className='bg-card p-3 max-h-[280px] overflow-y-auto'>
                 <ul
-                  className={`flex flex-wrap w-full list-none p-0 justify-between gap-0 ${
-                    filteredChildren.length > 1 ? 'min-w-[520px]' : 'justify-center min-w-[250px]'
+                  className={`grid w-full list-none p-0 gap-2 ${
+                    filteredChildren.length > 1 ? 'grid-cols-2 min-w-[520px]' : 'grid-cols-1 min-w-[250px]'
                   }`}
                 >
                   {filteredChildren.map((child, childIndex) => (

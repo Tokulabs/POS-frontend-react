@@ -119,10 +119,11 @@ const Section = ({
         <span className='font-semibold'>{label}</span>
       </div>
     </AccordionTrigger>
-    <AccordionContent className='grid gap-1 justify-items-start text-foreground px-6 pb-3'>
+    <AccordionContent className='grid gap-1 justify-items-start text-foreground px-3 pb-3'>
       {items.map((item, i) => (
         <Button
           key={i}
+          variant='ghost'
           onClick={() => {
             if (item.disabled) return
             if (item.link) {
@@ -139,7 +140,7 @@ const Section = ({
             }
           }}
           disabled={item.disabled}
-          className={`bg-transparent w-full shadow-none text-foreground rounded-none hover:bg-transparent hover:underline active:bg-transparent px-0 justify-start ${
+          className={`w-full shadow-none text-foreground rounded-md justify-start ${
             item.disabled ? 'opacity-50 cursor-not-allowed' : ''
           }`}
         >

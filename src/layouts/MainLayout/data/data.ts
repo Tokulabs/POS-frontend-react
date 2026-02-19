@@ -70,6 +70,16 @@ export const navigationMenu: NavigationMenuItem[] = [
         description: 'Registra y gestiona las devoluciones de productos fácilmente',
         action: '',
       },
+      {
+        label: 'Gestión de Inventario',
+        link: '/inventory-management',
+        allowedRoles: [
+          UserRolesEnum.admin,
+          UserRolesEnum.posAdmin,
+        ],
+        description: 'Crea y actualiza productos de manera masiva con archivos CSV',
+        action: '',
+      }
     ],
   },
   {

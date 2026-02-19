@@ -111,9 +111,6 @@ export const getDownloadInvoicePdf = async (invoiceId: number): Promise<string |
     hasAuth: true,
     isFile: true,
   })
-
-  console.log(response)
-  
   
   if (response?.data) {
     // Create a blob URL from the PDF data
