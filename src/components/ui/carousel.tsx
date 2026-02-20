@@ -18,11 +18,7 @@ type CarouselProps = {
   setApi?: (api: CarouselApi) => void
 }
 
-interface CarouselButtonProps extends React.ComponentProps<typeof Button> {
-  className?: string
-  variant?: 'default' | 'outline-solid' | 'ghost' | 'link'
-  size?: 'default' | 'icon' | 'sm' | 'lg'
-}
+interface CarouselButtonProps extends React.ComponentProps<typeof Button> { }
 
 type CarouselContextProps = {
   carouselRef: ReturnType<typeof useEmblaCarousel>[0]
