@@ -111,7 +111,7 @@ export default function FileUploadForm({
 
         <section
           className={`rounded-2xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/50 
-            shadow-sm flex flex-col md:flex-row gap-10 p-8 md:p-10 transition-colors ${
+            shadow-xs flex flex-col md:flex-row gap-10 p-8 md:p-10 transition-colors ${
             isLoading ? 'pointer-events-none' : ''
           }`}
         >

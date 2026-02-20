@@ -158,7 +158,7 @@ const FileUploadPreview = <T extends FieldValues>({
                         </button>
                       </div>
                       <div className='flex items-center text-xs text-center text-gray-500 md:text-sm'>
-                        <IconUpload className='flex-shrink-0 w-3 h-3 mr-1 md:w-4 md:h-4' />
+                        <IconUpload className='shrink-0 w-3 h-3 mr-1 md:w-4 md:h-4' />
                         <span>
                           Haz click para cambiar la imagen, formatos JPG, PNG, WebP máximo 500KB
                         </span>
@@ -168,7 +168,7 @@ const FileUploadPreview = <T extends FieldValues>({
                     <div className='flex flex-col items-center text-center'>
                       <IconPhoto className='w-10 h-10 mb-2 text-gray-400 md:w-12 md:h-12 md:mb-3' />
                       <div className='flex items-center mb-1 text-xs font-medium text-gray-700 md:text-sm'>
-                        <IconUpload className='flex-shrink-0 w-3 h-3 mr-1 md:w-4 md:h-4' />
+                        <IconUpload className='shrink-0 w-3 h-3 mr-1 md:w-4 md:h-4' />
                         Haz click para subir imagen
                       </div>
                       <p className='text-xs text-gray-500'>JPG, PNG, WebP máximo 500KB</p>

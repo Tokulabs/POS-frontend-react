@@ -203,7 +203,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen, isEdit = false,
                       </FormControl>
                       <FormLabel
                         htmlFor='naturalPerson'
-                        className='block w-full px-6 py-3 font-medium text-center transition-all bg-card border border-border rounded-lg shadow-sm cursor-pointer text-green-1 hover:bg-secondary peer-aria-checked:bg-green-1 peer-aria-checked:text-white peer-aria-checked:border-solid peer-aria-checked::border-1 peer-aria-checked:border-green-1 peer-aria-checked:shadow-lg'
+                        className='block w-full px-6 py-3 font-medium text-center transition-all bg-card border border-border rounded-lg shadow-xs cursor-pointer text-green-1 hover:bg-secondary peer-aria-checked:bg-green-1 peer-aria-checked:text-white peer-aria-checked:border-solid peer-aria-checked::border-1 peer-aria-checked:border-green-1 peer-aria-checked:shadow-lg'
                       >
                         Persona Natural
                       </FormLabel>
@@ -218,7 +218,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen, isEdit = false,
                       </FormControl>
                       <FormLabel
                         htmlFor='legalPerson'
-                        className='block w-full px-6 py-3 font-medium text-center transition-all bg-card border border-border rounded-lg shadow-sm cursor-pointer text-green-1 hover:bg-secondary peer-aria-checked:bg-green-1 peer-aria-checked:text-white peer-aria-checked:border-solid peer-aria-checked::border-1 peer-aria-checked:border-green-1 peer-aria-checked:shadow-lg'
+                        className='block w-full px-6 py-3 font-medium text-center transition-all bg-card border border-border rounded-lg shadow-xs cursor-pointer text-green-1 hover:bg-secondary peer-aria-checked:bg-green-1 peer-aria-checked:text-white peer-aria-checked:border-solid peer-aria-checked::border-1 peer-aria-checked:border-green-1 peer-aria-checked:shadow-lg'
                       >
                         Persona Jurídica
                       </FormLabel>
@@ -261,7 +261,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen, isEdit = false,
                     <Input
                       placeholder='Numero de documento'
                       {...field}
-                      className='border-gray-1  border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0'
+                      className='border-gray-1  border border-solid rounded-md p-3 outline-hidden focus-visible:ring-0'
                     />
                   </FormControl>
                   <FormMessage />
@@ -281,7 +281,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen, isEdit = false,
                   <Input
                     placeholder='Nombre completo'
                     {...field}
-                    className='border-gray-1  border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0'
+                    className='border-gray-1  border border-solid rounded-md p-3 outline-hidden focus-visible:ring-0'
                   />
                 </FormControl>
                 <FormMessage />
@@ -301,7 +301,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen, isEdit = false,
                     <Input
                       placeholder='Correo Electrónico'
                       {...field}
-                      className='border-gray-1  border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0'
+                      className='border-gray-1  border border-solid rounded-md p-3 outline-hidden focus-visible:ring-0'
                     />
                   </FormControl>
                   <FormMessage />
@@ -320,7 +320,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen, isEdit = false,
                     <Input
                       placeholder='Teléfono'
                       {...field}
-                      className='border-gray-1  border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0'
+                      className='border-gray-1  border border-solid rounded-md p-3 outline-hidden focus-visible:ring-0'
                     />
                   </FormControl>
                   <FormMessage />
@@ -360,7 +360,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen, isEdit = false,
                     <Input
                       placeholder='Dirección'
                       {...field}
-                      className='border-gray-1  border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0'
+                      className='border-gray-1  border border-solid rounded-md p-3 outline-hidden focus-visible:ring-0'
                     />
                   </FormControl>
                   <FormMessage />
@@ -370,7 +370,7 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen, isEdit = false,
           </div>
           <Button
             type='submit'
-            className='flex items-center justify-center w-full p-3 mt-3 text-white border-solid rounded-md cursor-pointer bg-green-1 border-1 border-green-1 hover:bg-card hover:text-green-1 focus-visible:ring-0'
+            className='flex items-center justify-center w-full p-3 mt-3 text-white border-solid rounded-md cursor-pointer bg-green-1 border border-green-1 hover:bg-card hover:text-green-1 focus-visible:ring-0'
           >
             {isEdit ? 'Actualizar' : 'Crear'}
           </Button>

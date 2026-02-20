@@ -44,7 +44,7 @@ const UpdatePasswordContainer: FC<UpdatePasswordContainerProps> = ({ onValidatio
               id='password'
               type={showPasswordOne ? 'text' : 'password'}
               {...register('passwordOne')}
-              className='pr-10 focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 w-full h-[35px]'
+              className='pr-10 focus-visible:outline-hidden focus-visible:ring-0 border-solid border-neutral-300 w-full h-[35px]'
             />
             {passwordOne && (
               <button
@@ -69,7 +69,7 @@ const UpdatePasswordContainer: FC<UpdatePasswordContainerProps> = ({ onValidatio
               id='confirm-password'
               type={showPasswordTwo ? 'text' : 'password'}
               {...register('passwordTwo')}
-              className='pr-10 focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 w-full h-[35px]'
+              className='pr-10 focus-visible:outline-hidden focus-visible:ring-0 border-solid border-neutral-300 w-full h-[35px]'
             />
             {passwordTwo && (
               <button

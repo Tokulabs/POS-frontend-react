@@ -59,7 +59,7 @@ const ToggleSwitch: FC<ToggleSwitchProps> = ({
       >
         {/* Sliding indicator */}
         <div
-          className='absolute top-1 bottom-1 rounded-md bg-green-1 shadow-sm transition-all duration-300 ease-out'
+          className='absolute top-1 bottom-1 rounded-md bg-green-1 shadow-xs transition-all duration-300 ease-out'
           style={{
             left: `${indicatorStyle.left}px`,
             width: `${indicatorStyle.width}px`,
@@ -74,7 +74,7 @@ const ToggleSwitch: FC<ToggleSwitchProps> = ({
             onClick={() => onSelect(index)}
             className={`relative z-10 flex-1 py-2.5 px-4 flex justify-center items-center rounded-md
               text-sm font-medium transition-colors duration-200 cursor-pointer
-              focus:outline-none focus-visible:ring-2 focus-visible:ring-green-1/50
+              focus:outline-hidden focus-visible:ring-2 focus-visible:ring-green-1/50
               ${
                 selectedIndex === index
                   ? 'text-white'

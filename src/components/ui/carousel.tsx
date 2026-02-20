@@ -20,7 +20,7 @@ type CarouselProps = {
 
 interface CarouselButtonProps extends React.ComponentProps<typeof Button> {
   className?: string
-  variant?: 'default' | 'outline' | 'ghost' | 'link'
+  variant?: 'default' | 'outline-solid' | 'ghost' | 'link'
   size?: 'default' | 'icon' | 'sm' | 'lg'
 }
 

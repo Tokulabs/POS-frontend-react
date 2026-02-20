@@ -117,7 +117,7 @@ export const ConfirmEmailVerification: FC<IModalDownloadReports> = ({
                             <InputOTP
                               maxLength={6}
                               pattern={REGEXP_ONLY_DIGITS}
-                              containerClassName='border-[0.5px] border-gray-100 w-full active:border-primary-foreground focus-visible:outline-none focus-visible:ring-0'
+                              containerClassName='border-[0.5px] border-gray-100 w-full active:border-primary-foreground focus-visible:outline-hidden focus-visible:ring-0'
                               {...field}
                             >
                               <InputOTPGroup className='flex w-full justify-between'>
@@ -126,7 +126,7 @@ export const ConfirmEmailVerification: FC<IModalDownloadReports> = ({
                                     key={index}
                                     index={index}
                                     className={cn(
-                                      'border-solid border-[0.5px] w-full h-[40px] border-gray-300 shadow-none border-l-primary-foreground focus-visible:outline-none focus-visible:ring-0',
+                                      'border-solid border-[0.5px] w-full h-[40px] border-gray-300 shadow-none border-l-primary-foreground focus-visible:outline-hidden focus-visible:ring-0',
                                       index === 5 && 'border-r-primary-foreground',
                                     )}
                                   />

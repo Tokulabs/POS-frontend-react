@@ -53,7 +53,7 @@ export const LoginForm: React.FC<IAuthForm> = ({ onSubmit, loading }) => {
                     type='email'
                     placeholder='Email'
                     required
-                    className='focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 shadow-none w-full h-[40px]'
+                    className='focus-visible:outline-hidden focus-visible:ring-0 border-solid border-neutral-300 shadow-none w-full h-[40px]'
                     {...field}
                   />
                 </FormControl>
@@ -77,7 +77,7 @@ export const LoginForm: React.FC<IAuthForm> = ({ onSubmit, loading }) => {
                       type={showPassword ? 'text' : 'password'}
                       placeholder='Contraseña'
                       {...field}
-                      className='focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 shadow-none w-full h-[40px]'
+                      className='focus-visible:outline-hidden focus-visible:ring-0 border-solid border-neutral-300 shadow-none w-full h-[40px]'
                     />
                   </FormControl>
                   <FormMessage />

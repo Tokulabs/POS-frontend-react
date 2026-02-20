@@ -108,7 +108,7 @@ const SettingsProfile: React.FC = () => {
                     onClick={() => handleAvatarSelect(src)}
                     src={src}
                     alt={`Avatar ${index + 1}`}
-                    className={`relative w-14 h-14 rounded-full overflow-hidden shadow-sm border-2 transition-all duration-200 cursor-pointer ${
+                    className={`relative w-14 h-14 rounded-full overflow-hidden shadow-xs border-2 transition-all duration-200 cursor-pointer ${
                       selectedAvatar === src ? 'scale-125' : 'border-transparent'
                     }`}
                   />
@@ -128,7 +128,7 @@ const SettingsProfile: React.FC = () => {
                     <Input
                       id='fullname'
                       {...field}
-                      className='border-gray-1  border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0'
+                      className='border-gray-1  border border-solid rounded-md p-3 outline-hidden focus-visible:ring-0'
                     />
                   </FormControl>
                   <FormMessage />
@@ -191,7 +191,7 @@ const SettingsProfile: React.FC = () => {
                         id='documentId'
                         placeholder='Número de documento'
                         {...field}
-                        className='border-gray-1  border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0'
+                        className='border-gray-1  border border-solid rounded-md p-3 outline-hidden focus-visible:ring-0'
                         disabled
                       />
                     </FormControl>

@@ -21,7 +21,7 @@ const EmptyResolutionState: FC<EmptyResolutionStateProps> = ({ onCreateClick }) 
         onClick={onCreateClick}
         className='px-5 py-2.5 bg-green-1 text-white rounded-lg font-medium text-sm
           hover:bg-green-1/90 transition-colors duration-200
-          focus:outline-none focus:ring-2 focus:ring-green-1/50 focus:ring-offset-2 focus:ring-offset-background'
+          focus:outline-hidden focus:ring-2 focus:ring-green-1/50 focus:ring-offset-2 focus:ring-offset-background'
       >
         + Crear resolución
       </button>

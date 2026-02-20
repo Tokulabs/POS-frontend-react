@@ -42,7 +42,7 @@ const movementEventType: Record<MovementEventType, string> = {
 
 const DataInfoItem: FC<{ title: string; value: string }> = ({ title, value }) => {
   return (
-    <div className='flex flex-col gap-2 p-2 bg-secondary rounded shadow-sm'>
+    <div className='flex flex-col gap-2 p-2 bg-secondary rounded shadow-xs'>
       <span className='text-xs'>{title}</span>
       <span className='text-sm font-semibold'>{value}</span>
     </div>

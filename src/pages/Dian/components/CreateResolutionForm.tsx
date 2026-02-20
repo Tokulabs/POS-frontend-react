@@ -105,7 +105,7 @@ const CreateResolutionForm: FC<CreateResolutionProps> = ({ isVisible = false, on
           <IconDeviceIpadPlus /> Nueva Resolución
         </span>
       }
-      triggerClassName='border-[1px] w-[300px] hover:border-green-1'
+      triggerClassName='border w-[300px] hover:border-green-1'
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col gap-4'>
@@ -159,7 +159,7 @@ const CreateResolutionForm: FC<CreateResolutionProps> = ({ isVisible = false, on
                           className={cn(
                             'w-full justify-between',
                             !field.value && 'text-muted-foreground',
-                            'border-gray-1 border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0',
+                            'border-gray-1 border border-solid rounded-md p-3 outline-hidden focus-visible:ring-0',
                           )}
                         >
                           <span className='truncate'>
@@ -175,7 +175,7 @@ const CreateResolutionForm: FC<CreateResolutionProps> = ({ isVisible = false, on
                       <Command>
                         <CommandInput
                           placeholder='Buscar tipo'
-                          className='h-9 border-gray-1 border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0'
+                          className='h-9 border-gray-1 border border-solid rounded-md p-3 outline-hidden focus-visible:ring-0'
                         />
                         <CommandList>
                           <CommandEmpty>No encontrado</CommandEmpty>
@@ -263,7 +263,7 @@ const CreateResolutionForm: FC<CreateResolutionProps> = ({ isVisible = false, on
           <FormItem>
             <Button
               type='submit'
-              className='bg-green-1 hover:bg-card hover:text-green-1 hover:border-green-1 hover:border-[1px]'
+              className='bg-green-1 hover:bg-card hover:text-green-1 hover:border-green-1 hover:border'
               disabled={isLoading}
             >
               <IconPlus /> Crear resolución

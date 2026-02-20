@@ -35,7 +35,7 @@ const ImageCarousel = () => {
                   <img
                     src={image.src}
                     alt={image.alt}
-                    className='object-cover w-full h-full brightness-[85%]'
+                    className='object-cover w-full h-full brightness-85'
                   />
                 </CardContent>
               </Card>
