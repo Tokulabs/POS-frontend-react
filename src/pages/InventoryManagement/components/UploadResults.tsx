@@ -41,7 +41,7 @@ export default function UploadResults({
         hasProducts && hasErrors ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 max-w-lg'
       }`}>
         {hasProducts && (
-          <div className='rounded-2xl border border-green-200 dark:border-green-800/40 bg-white dark:bg-zinc-800/50 shadow-sm p-6'>
+          <div className='rounded-2xl border border-green-200 dark:border-green-800/40 bg-white dark:bg-zinc-800/50 shadow-xs p-6'>
             <div className='flex items-center gap-2.5 mb-4'>
               <IconCircleCheckFilled className='text-green-600 dark:text-green-400' size={22} />
               <span className='font-semibold text-green-700 dark:text-green-400 text-base'>{productsTitle}</span>
@@ -57,7 +57,7 @@ export default function UploadResults({
         )}
 
         {hasErrors && (
-          <div className='rounded-2xl border border-red-200 dark:border-red-800/40 bg-white dark:bg-zinc-800/50 shadow-sm p-6'>
+          <div className='rounded-2xl border border-red-200 dark:border-red-800/40 bg-white dark:bg-zinc-800/50 shadow-xs p-6'>
             <div className='flex items-center gap-2.5 mb-4'>
               <IconAlertCircleFilled className='text-red-600 dark:text-red-400' size={22} />
               <span className='font-semibold text-red-700 dark:text-red-400 text-base'>Errores</span>

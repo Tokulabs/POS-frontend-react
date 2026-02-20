@@ -54,7 +54,7 @@ export const SearchInputSelect = <T extends FieldValues, K extends Path<T>>({
               variant='outline'
               role='combobox'
               className={cn(
-                'justify-between truncate border-gray-1 border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0',
+                'justify-between truncate border-gray-1 border border-solid rounded-md p-3 outline-hidden focus-visible:ring-0',
                 !field.value && 'text-muted-foreground',
               )}
             >

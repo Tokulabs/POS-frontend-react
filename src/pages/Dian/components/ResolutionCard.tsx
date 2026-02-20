@@ -77,7 +77,7 @@ const ResolutionCard: FC<ResolutionCardProps> = ({
   // ─── Compact layout for inactive cards ───
   if (compact) {
     return (
-      <div className='rounded-lg border bg-card overflow-hidden transition-all duration-200 hover:shadow-sm'>
+      <div className='rounded-lg border bg-card overflow-hidden transition-all duration-200 hover:shadow-xs'>
         <div className='flex'>
           <div className='w-1 shrink-0 bg-muted-foreground/20' />
           <div className='flex-1 px-4 py-3 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6'>

@@ -181,7 +181,7 @@ const SimplePDFViewer = ({ pdfFilePath, pdfDocument }: PDFViewerAppProps) => {
       {/* Drag overlay - only visible when zoomed, captures mouse events for panning */}
       {scale > 1 && (
         <div
-          className='absolute inset-0 z-[5]'
+          className='absolute inset-0 z-5'
           onMouseDown={handleMouseDown}
           onMouseMove={(e) => handleMouseMove(e)}
           onMouseUp={handleMouseUp}

@@ -108,7 +108,7 @@ export const MovementItem: FC<MovementItemProps> = ({ item, setOpenItem, movemen
   return (
     <AccordionItem
       value={`item-id-${item.id}`}
-      className={`px-4 border-y-0 border-r-0 border-l-4 w-full rounded-md shadow ${stateStyles[item.state]} bg-white dark:bg-[#1C2128]`}
+      className={`px-4 border-y-0 border-r-0 border-l-4 w-full rounded-md shadow-sm ${stateStyles[item.state]} bg-white dark:bg-[#1C2128]`}
     >
       <AccordionTrigger className='w-full hover:no-underline'>
         <article className='flex flex-col w-full gap-1'>
@@ -143,7 +143,7 @@ export const MovementItem: FC<MovementItemProps> = ({ item, setOpenItem, movemen
               className='object-cover w-full h-full aspect-square'
             />
           ) : (
-            <span className='text-4xl text-center flex justify-center items-center rounded border-[1px] w-full h-full text-gray-1'>
+            <span className='text-4xl text-center flex justify-center items-center rounded border w-full h-full text-gray-1'>
               No foto
             </span>
           )}

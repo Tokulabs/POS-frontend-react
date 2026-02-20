@@ -19,7 +19,7 @@ export const DialogAddUser = () => {
       onOpenChange={(value) => setOpen(value)}
       title='Agregar cliente'
       triggerTitle='Agregar cliente'
-      triggerClassName='border-[1px] w-full'
+      triggerClassName='border w-full'
     >
       <ToggleSwitch options={options} selectedIndex={selectedIndex} onSelect={setSelectedIndex} />
     </DialogContainer>

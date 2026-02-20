@@ -65,7 +65,7 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint, autoPrint = true })
   return (
     <article
       ref={printContentRef}
-      className='bg-transparent text-black flex flex-col w-[18.5rem] justify-center items-center text-center p-2 gap-1 relative'
+      className='bg-transparent text-black flex flex-col w-74 justify-center items-center text-center p-2 gap-1 relative'
     >
       {isOverride && (
         <img
@@ -109,14 +109,14 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint, autoPrint = true })
       </section>
 
       <article>
-        <section className='grid grid-cols-4 w-full p-1 border-0 border-b-[1px] border-black border-solid'>
+        <section className='grid grid-cols-4 w-full p-1 border-0 border-b border-black border-solid'>
           <p className='m-0 text-sm font-bold text-left'>Cod.</p>
           <p className='m-0 text-sm font-bold text-left'>Descripción</p>
           <p className='m-0 text-sm font-bold text-right'>Cant.</p>
           <p className='m-0 text-sm font-bold text-right'>Subtotal</p>
         </section>
 
-        <section className='border-0 border-b-[1px] border-black border-solid p-1'>
+        <section className='border-0 border-b border-black border-solid p-1'>
           {dataItems.map((item, index) => (
             <div key={index} className='grid w-full grid-cols-4 gap-2'>
               <p className='m-0 text-xs text-left truncate'>{safeValue(item.item_code)}</p>
@@ -129,7 +129,7 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint, autoPrint = true })
           ))}
         </section>
 
-        <section className='grid grid-cols-2 pt-3 border-0 border-b-[1px] border-black border-solid p-1'>
+        <section className='grid grid-cols-2 pt-3 border-0 border-b border-black border-solid p-1'>
           <section className='text-xs font-bold text-right'>
             <p className='m-0 text-sm text-right'>Subtotal base</p>
             <p className='m-0 text-sm text-right'>IVA 19%</p>

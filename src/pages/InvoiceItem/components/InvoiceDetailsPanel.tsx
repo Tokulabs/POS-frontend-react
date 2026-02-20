@@ -53,7 +53,7 @@ export const InvoiceDetailsPanel: FC<InvoiceDetailsPanelProps> = ({
     : null
 
   return (
-    <div className='flex flex-col w-full overflow-hidden bg-card border border-border rounded-lg shadow-sm lg:flex-1 min-h-[60vh] lg:min-h-0'>
+    <div className='flex flex-col w-full overflow-hidden bg-card border border-border rounded-lg shadow-xs lg:flex-1 min-h-[60vh] lg:min-h-0'>
       <div className='flex-1 p-4 overflow-hidden overflow-y-auto sm:p-6 scrollbar-hide'>
         <div className='mb-6'>
           <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>

@@ -145,7 +145,7 @@ export const SearchCustomer: FC<SearchProps> = ({ open, setOpen }) => {
           id='search'
           value={searchValue}
           placeholder='Buscar por nombre o documento (F3 para buscar)'
-          className='border-gray-1  border-[1px] border-solid rounded-md p-3 outline-none focus-visible:ring-0'
+          className='border-gray-1  border border-solid rounded-md p-3 outline-hidden focus-visible:ring-0'
           onChange={(event) => handleSearch(event.target.value)}
         />
       </div>
@@ -174,7 +174,7 @@ export const SearchCustomer: FC<SearchProps> = ({ open, setOpen }) => {
               dataSearch.map((client) => (
                 <TableRow
                   key={client.id}
-                  className='cursor-pointer hover:bg-green-1 hover:bg-opacity-20'
+                  className='cursor-pointer hover:bg-green-1/20'
                   onClick={() => handleChangeSearch(client.document_id)}
                 >
                   <TableCell className='font-medium'>{client.name}</TableCell>
@@ -185,7 +185,7 @@ export const SearchCustomer: FC<SearchProps> = ({ open, setOpen }) => {
                     <TableCell className='text-right'>
                       <button
                         type='button'
-                        className='p-1.5 rounded-full text-green-1 bg-green-1/10 hover:bg-green-1/20 hover:scale-110 active:scale-95 transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-1/30'
+                        className='p-1.5 rounded-full text-green-1 bg-green-1/10 hover:bg-green-1/20 hover:scale-110 active:scale-95 transition-all duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-green-1/30 cursor-pointer'
                         title='Editar cliente'
                         onClick={(e) => handleEditClick(e, client)}
                       >

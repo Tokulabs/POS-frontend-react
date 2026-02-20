@@ -80,7 +80,7 @@ export const UpdatePasswordSettings: FC = () => {
                     id='oldPassword'
                     type='password'
                     {...field}
-                    className='focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 w-full h-[35px] px-3'
+                    className='focus-visible:outline-hidden focus-visible:ring-0 border-solid border-neutral-300 w-full h-[35px] px-3'
                     placeholder='Ingrese su contraseña actual'
                   />
                 </FormControl>

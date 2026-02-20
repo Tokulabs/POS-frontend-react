@@ -66,7 +66,7 @@ const NavigationMenuComponent: FC<NavigationMenuComponentProps> = ({
                         >
                           <div className='grid grid-cols-1 gap-0 w-[228px]'>
                             <span className='text-base font-semibold'>{child.label}</span>
-                            <span className='text-gray-500 break-words whitespace-normal text-xs'>
+                            <span className='text-gray-500 wrap-break-word whitespace-normal text-xs'>
                               {child.description}
                             </span>
                           </div>
@@ -86,7 +86,7 @@ const NavigationMenuComponent: FC<NavigationMenuComponentProps> = ({
                         >
                           <div className='grid grid-cols-1 gap-0 w-full max-w-[228px]'>
                             <span className='text-base font-semibold'>{child.label}</span>
-                            <span className='text-gray-500 break-words whitespace-normal text-xs'>
+                            <span className='text-gray-500 wrap-break-word whitespace-normal text-xs'>
                               {child.description}
                             </span>
                           </div>

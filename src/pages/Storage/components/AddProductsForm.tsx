@@ -168,7 +168,7 @@ const AddProductsForm: FC<AddProductsFormProps> = ({
       title='Agregar producto'
       triggerComponent={triggerComponent}
       triggerTitle='Agregar producto'
-      triggerClassName='border-[1px] w-full'
+      triggerClassName='border w-full'
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col w-full gap-2'>

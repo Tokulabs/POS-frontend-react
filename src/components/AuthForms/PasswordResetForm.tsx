@@ -64,13 +64,13 @@ export const PasswordResetForm: FC<IAuthForm> = ({ onSubmit, loading }) => {
             name='verificationCode'
             render={({ field }) => (
               <FormItem className='w-full justify-items-center'>
-                <h5 className='-mb-1 text-sm font-semibold'>Código de verificación</h5>
+                <h5 className='text-sm font-semibold'>Código de verificación</h5>
                 <FormControl>
                   <div className='flex justify-center w-full px-8'>
                     <InputOTP
                       maxLength={6}
                       pattern={REGEXP_ONLY_DIGITS}
-                      containerClassName='border-[0.5px] border-gray-100 w-full active:border-primary-foreground focus-visible:outline-none focus-visible:ring-0'
+                      containerClassName='border-[0.5px] border-gray-100 w-full active:border-primary-foreground focus-visible:outline-hidden focus-visible:ring-0'
                       {...field}
                     >
                       <InputOTPGroup className='flex justify-between w-full'>
@@ -79,7 +79,7 @@ export const PasswordResetForm: FC<IAuthForm> = ({ onSubmit, loading }) => {
                             key={index}
                             index={index}
                             className={cn(
-                              'border-solid border-[0.5px] w-full h-[40px] border-gray-300 shadow-none border-l-primary-foreground focus-visible:outline-none focus-visible:ring-0',
+                              'border-solid border-[0.5px] w-full h-[40px] border-gray-300 shadow-none border-l-primary-foreground focus-visible:outline-hidden focus-visible:ring-0',
                               index === 5 && 'border-r-primary-foreground',
                             )}
                           />

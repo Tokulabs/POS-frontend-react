@@ -79,14 +79,14 @@ const InventoryManagement: FC = () => {
               key={card.id}
               className='group relative rounded-2xl border border-zinc-200 dark:border-zinc-700/60
                 bg-white dark:bg-zinc-800/50 p-6 cursor-pointer
-                shadow-sm hover:shadow-lg
+                shadow-xs hover:shadow-lg
                 hover:border-green-1/40 dark:hover:border-green-1/50
                 transition-all duration-200 ease-out hover:-translate-y-0.5'
               onClick={() => setSelectedCard(card.id)}
             >
               <div className='flex items-start gap-4'>
                 {/* Icon circle */}
-                <div className='flex-shrink-0 w-14 h-14 rounded-xl bg-green-50 dark:bg-green-900/20
+                <div className='shrink-0 w-14 h-14 rounded-xl bg-green-50 dark:bg-green-900/20
                   flex items-center justify-center
                   group-hover:bg-green-1 transition-colors duration-200'>
                   <Icon
@@ -108,7 +108,7 @@ const InventoryManagement: FC = () => {
                 </div>
 
                 {/* Arrow */}
-                <div className='flex-shrink-0 self-center'>
+                <div className='shrink-0 self-center'>
                   <IconArrowRight
                     size={20}
                     className='text-zinc-300 dark:text-zinc-600
@@ -161,7 +161,7 @@ const InventoryManagement: FC = () => {
 
       {/* Tip */}
       <div className='mt-6 rounded-xl bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30 p-4 flex items-start gap-3'>
-        <IconInfoCircle size={20} className='text-blue-500 dark:text-blue-400 flex-shrink-0 mt-0.5' />
+        <IconInfoCircle size={20} className='text-blue-500 dark:text-blue-400 shrink-0 mt-0.5' />
         <div>
           <p className='text-sm font-medium text-blue-800 dark:text-blue-300'>
             Consejo

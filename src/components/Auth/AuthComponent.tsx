@@ -21,7 +21,7 @@ const Authcomponent: FC<PropsWithChildren<IAuthComponentProps>> = ({ children })
   return (
     <section className='flex min-h-screen bg-background'>
       {/* Lado izquierdo con el carrusel */}
-      <div className='md:w-[50%] min-h-[100vh] bg-secondary md:flex items-center justify-center hidden'>
+      <div className='md:w-[50%] min-h-screen bg-secondary md:flex items-center justify-center hidden'>
         <ImageCarousel />
       </div>
 

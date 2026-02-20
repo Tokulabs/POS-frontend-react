@@ -74,7 +74,7 @@ const PasswordRecovery: FC = () => {
               control={form.control}
               name='email'
               render={({ field }) => (
-                <FormItem className='w-full -mb-2'>
+                <FormItem className='w-full'>
                   <Label htmlFor='email' className='mb-4 text-left block'>
                     Correo electrónico
                   </Label>
@@ -85,7 +85,7 @@ const PasswordRecovery: FC = () => {
                       type='email'
                       {...field}
                       required
-                      className='focus-visible:outline-none focus-visible:ring-0 border-solid border-neutral-300 shadow-none w-full h-10 px-4'
+                      className='focus-visible:outline-hidden focus-visible:ring-0 border-solid border-neutral-300 shadow-none w-full h-10 px-4'
                     />
                   </FormControl>
                   <FormMessage />

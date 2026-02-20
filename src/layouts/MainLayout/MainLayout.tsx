@@ -105,7 +105,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
         </div>
         <UserDropdownMenu />
       </nav>
-      <div className='w-100 h-screen pt-16 flex bg-background'>
+      <div className='w-full h-screen pt-16 flex bg-background'>
         <div className='h-full w-full overflow-hidden p-5 flex flex-col gap-4'>
           {!state.user?.is_verified && (
             <div className='w-full z-1 p-5 flex justify-start items-center bg-red-300 dark:bg-red-900 text-white rounded-md gap-1'>

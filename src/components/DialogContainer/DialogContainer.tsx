@@ -31,7 +31,7 @@ export const DialogContainer: FC<PropsWithChildren<DialogContainerProps>> = ({
         <DialogTrigger asChild>{triggerComponent}</DialogTrigger>
       ) : (
         <DialogTrigger
-          className={`bg-green-1 flex p-3 text-white border-1 border-solid border-green-1 justify-center items-center rounded-md cursor-pointer hover:bg-card hover:text-green-1 focus-visible:ring-0 ${triggerClassName}`}
+          className={`bg-green-1 flex p-3 text-white border border-solid border-green-1 justify-center items-center rounded-md cursor-pointer hover:bg-card hover:text-green-1 focus-visible:ring-0 ${triggerClassName}`}
         >
           {triggerTitle}
         </DialogTrigger>
