@@ -71,9 +71,6 @@ export interface IPurchase {
 export interface IPurchaseSimple {
   id: number
   key?: number
-  provider?: {
-    legal_name: string
-  }
   provider_name?: string
   total: number
   state: string

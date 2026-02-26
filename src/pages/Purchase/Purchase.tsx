@@ -30,7 +30,7 @@ const Purchase: FC = () => {
 
   const dataPurchaseModified = inventoryMovementsData?.results.map((item) => ({
     ...item,
-    provider_name: item.provider?.legal_name ?? 'Sin proveedor',
+    provider_name: item.provider_name || 'Sin proveedor',
     state: movementStates[item.state as keyof typeof movementStates],
     created_at: formatDateTime(item.created_at),
     state_reviewed_at: item.state_reviewed_at
