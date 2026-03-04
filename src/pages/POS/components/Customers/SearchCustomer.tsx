@@ -21,8 +21,7 @@ import { useKeyPress } from '@/hooks/useKeyPress'
 import { toast } from 'sonner'
 import { DialogContainer } from '@/components/DialogContainer/DialogContainer'
 import { AddCustomerForm } from './AddCustomerForm'
-import { useRolePermissions } from '@/hooks/useRolespermissions'
-import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
+import { useHasPermission } from '@/hooks/useHasPermission'
 
 interface SearchProps {
   open: boolean
@@ -36,9 +35,7 @@ export const SearchCustomer: FC<SearchProps> = ({ open, setOpen }) => {
   const [editOpen, setEditOpen] = useState(false)
   const [editingCustomer, setEditingCustomer] = useState<ICustomerProps | null>(null)
 
-  const { hasPermission: canEditCustomer } = useRolePermissions({
-    allowedRoles: [UserRolesEnum.posAdmin, UserRolesEnum.admin],
-  })
+  const canEditCustomer = useHasPermission('can_edit_customer')
 
   const moveToInput = () => {
     const input = document.getElementById('search')

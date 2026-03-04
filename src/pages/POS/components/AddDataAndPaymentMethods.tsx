@@ -8,7 +8,7 @@ import { useCart } from '@/store/useCartStoreZustand'
 import { DialogAddUser } from './DialogAddUser'
 
 export const AddDataAndPaymentMethods = () => {
-  const { usersData } = useUsers('allUsers', { keyword: 'sales', is_active: 'True' })
+  const { usersData } = useUsers('allUsers', { has_permission: 'can_create_invoice', is_active: 'True' })
 
   const { customer } = useCustomerData()
   const { saleById, updateSaleById } = useCart()

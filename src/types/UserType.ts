@@ -1,5 +1,18 @@
 import { ICompany } from '@/pages/Profile/types/CompanyTypes'
 
+export interface IUserPermission {
+  codename: string
+  name: string
+  module: string
+}
+
+export interface IUserCompanyRole {
+  id: number
+  name: string
+  is_owner: boolean
+  permissions: IUserPermission[]
+}
+
 export interface IUser {
   email: string
   fullname: string
@@ -12,4 +25,5 @@ export interface IUser {
   document_type: string
   photo: string
   company: ICompany
+  company_role: IUserCompanyRole | null
 }

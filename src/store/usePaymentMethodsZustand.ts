@@ -116,7 +116,7 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
     if (!paymentMethodExist) return
     const newPaymentMethods = paymentMethods.map((item) => {
       if (item.name === name) {
-        const paidAmount = item.paidAmount
+        const paidAmount = [...item.paidAmount]
         paidAmount[index] = value
         const totalPaidAmount = paidAmount.reduce((acc, curr) => acc + curr, 0)
         return {
@@ -129,9 +129,7 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
       return item
     })
     const newPaymentMethodsWithChange = calculateBackAmount(newPaymentMethods, name)
-    set({
-      paymentMethods: newPaymentMethodsWithChange,
-    })
+    set({ paymentMethods: newPaymentMethodsWithChange })
     updateTotalValues()
   },
   updateReceivedAmount: (name, value) => {
@@ -159,21 +157,15 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
     if (!paymentMethodExist) return
     const newPaymentMethods = paymentMethods.map((item) => {
       if (item.name === name) {
-        const paidAmount = item.paidAmount
-        paidAmount.push(0)
-        const transactionNumber = item.transactionNumber
-        transactionNumber.push('')
         return {
           ...item,
-          paidAmount,
-          transactionNumber,
+          paidAmount: [...item.paidAmount, 0],
+          transactionNumber: [...item.transactionNumber, ''],
         }
       }
       return item
     })
-    set({
-      paymentMethods: newPaymentMethods,
-    })
+    set({ paymentMethods: newPaymentMethods })
     updateTotalValues()
   },
   removePaidAmountFromPaymentMethod(name, index) {
@@ -182,11 +174,9 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
     if (!paymentMethodExist) return
     const newPaymentMethods = paymentMethods.map((item) => {
       if (item.name === name) {
-        const paidAmount = item.paidAmount
-        const transactionNumber = item.transactionNumber
-        const receivedAmount = item.receivedAmount - paidAmount[index]
-        paidAmount.splice(index, 1)
-        transactionNumber.splice(index, 1)
+        const paidAmount = item.paidAmount.filter((_, i) => i !== index)
+        const transactionNumber = item.transactionNumber.filter((_, i) => i !== index)
+        const receivedAmount = item.receivedAmount - item.paidAmount[index]
         const totalPaidAmount = paidAmount.reduce((acc, curr) => acc + curr, 0)
         return {
           ...item,
@@ -198,9 +188,7 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
       }
       return item
     })
-    set({
-      paymentMethods: newPaymentMethods,
-    })
+    set({ paymentMethods: newPaymentMethods })
     updateTotalValues()
   },
   updateTransactionNumber(name, value, index = 0) {
@@ -209,7 +197,7 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
     if (!paymentMethodExist) return
     const newPaymentMethods = paymentMethods.map((item) => {
       if (item.name === name) {
-        const transactionNumber = item.transactionNumber
+        const transactionNumber = [...item.transactionNumber]
         transactionNumber[index] = value
         return {
           ...item,
@@ -218,9 +206,7 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
       }
       return item
     })
-    set({
-      paymentMethods: newPaymentMethods,
-    })
+    set({ paymentMethods: newPaymentMethods })
   },
 }))
 

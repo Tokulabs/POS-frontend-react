@@ -10,6 +10,7 @@ import PrintInventoryMovement from '@/components/PrintInfo/PrintInventoryMovemen
 import { IconPrinter } from '@tabler/icons-react'
 import { createPortal } from 'react-dom'
 import { TableColumnsType } from 'antd'
+import { useHasPermission } from '@/hooks/useHasPermission'
 
 const Purchase: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -18,6 +19,7 @@ const Purchase: FC = () => {
   const [printId, setPrintId] = useState<number | null>(null)
 
   const navigate = useNavigate()
+  const canCreate = useHasPermission('can_create_purchase')
 
   const { isLoading, inventoryMovementsData } = useinventoryMovements(
     'paginatedInventoryMovements',
@@ -63,8 +65,8 @@ const Purchase: FC = () => {
     <>
       <ContentLayout
         pageTitle='Compras'
-        buttonTitle='Crear compra'
-        setModalState={() => setCreatePurchase(true)}
+        buttonTitle={canCreate ? 'Crear compra' : undefined}
+        setModalState={canCreate ? () => setCreatePurchase(true) : undefined}
         dataSource={dataPurchaseModified ?? []}
         columns={columns}
         totalItems={inventoryMovementsData?.count ?? 0}

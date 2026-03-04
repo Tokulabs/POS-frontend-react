@@ -13,17 +13,14 @@ import { IconLogout, IconSettings, IconUser } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
 import { store } from '@/store'
 import { formatDateTime } from '@/layouts/helpers/helpers'
-import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
+import { useHasPermission } from '@/hooks/useHasPermission'
 import { logout } from '@/pages/Auth/helpers'
-import { useRolePermissions } from '@/hooks/useRolespermissions'
 import { ThemeToggle } from '@/components/Theme/ThemeToggle'
 
 const UserDropdownMenu: FC = () => {
   const { state } = useContext(store)
   const navigate = useNavigate()
-  const { hasPermission: hasUserActivityPermission } = useRolePermissions({
-    allowedRoles: [UserRolesEnum.admin],
-  })
+  const hasUserActivityPermission = useHasPermission('can_view_user_activities')
 
   const logoutUser = () => {
     logout()
@@ -47,7 +44,7 @@ const UserDropdownMenu: FC = () => {
           <span className='text-lg font-semibold text-foreground'>{state.user?.fullname}</span>
           <br />
           <span className='text-xs font-normal text-muted-foreground'>
-            (Rol - {UserRolesEnum[state.user?.role as keyof typeof UserRolesEnum]})
+            (Rol - {state.user?.company_role?.name ?? state.user?.role})
           </span>
           <br />
           <span className='text-xs font-normal text-foreground'>{state.user?.company.name}</span>

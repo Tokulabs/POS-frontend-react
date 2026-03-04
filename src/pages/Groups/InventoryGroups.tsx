@@ -10,6 +10,7 @@ import { ModalStateEnum } from '@/types/ModalTypes'
 import { IconCircleCheck, IconCircleX, IconEdit, IconPower } from '@tabler/icons-react'
 import { toggleActiveGroups } from './helpers/services'
 import { toast } from 'sonner'
+import { useHasPermission } from '@/hooks/useHasPermission'
 
 const InventoryGroups: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -19,6 +20,8 @@ const InventoryGroups: FC = () => {
   const [editData, setEditData] = useState<IGroupsProps & { belongs_to_id: number | undefined }>(
     {} as IGroupsProps & { belongs_to_id: number },
   )
+
+  const canManage = useHasPermission('can_manage_categories')
 
   const { groupsData, isLoading } = useGroups('paginatedGroups', {
     keyword: search,
@@ -54,7 +57,7 @@ const InventoryGroups: FC = () => {
       ) : (
         <IconCircleX className='text-red-1' />
       ),
-      action: (
+      action: canManage ? (
         <div className='flex justify-center items-center gap-2'>
           <Button type='link' className='p-0' onClick={editGroupsData(item)}>
             <IconEdit />
@@ -73,14 +76,14 @@ const InventoryGroups: FC = () => {
             </Button>
           </Popconfirm>
         </div>
-      ),
+      ) : null,
     }))
   }
 
   return (
     <ContentLayout
       pageTitle='Categorias'
-      buttonTitle='Categoria'
+      buttonTitle={canManage ? 'Categoria' : undefined}
       extraButton={
         <div className='flex flex-col items-center gap-2'>
           <span className='font-bold text-green-1'>Activos</span>
@@ -91,10 +94,10 @@ const InventoryGroups: FC = () => {
           />
         </div>
       }
-      setModalState={() => {
+      setModalState={canManage ? () => {
         setEditData({} as IGroupsProps & { belongs_to_id: number | undefined })
         setModalState(ModalStateEnum.addItem)
-      }}
+      } : undefined}
       dataSource={formatEditAndDelete(groupsData?.results || [])}
       columns={columns}
       fetching={isLoading}

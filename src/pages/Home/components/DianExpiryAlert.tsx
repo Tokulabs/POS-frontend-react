@@ -2,8 +2,7 @@ import { FC, useMemo } from 'react'
 import { useDianResolutions } from '@/hooks/useDianResolution'
 import { IconAlertTriangle, IconExternalLink } from '@tabler/icons-react'
 import { useNavigate } from 'react-router-dom'
-import { useRolePermissions } from '@/hooks/useRolespermissions'
-import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
+import { useHasPermission } from '@/hooks/useHasPermission'
 
 /** Days threshold for "close to expire" warning */
 const EXPIRY_WARNING_DAYS = 30
@@ -20,9 +19,7 @@ interface WarningItem {
 
 const DianExpiryAlert: FC = () => {
   const navigate = useNavigate()
-  const { hasPermission } = useRolePermissions({
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
-  })
+  const hasPermission = useHasPermission('can_manage_dian')
 
   const { dianResolutionData: posData } = useDianResolutions('dashboardDianPOS', {
     type: 'POS',
@@ -122,9 +119,8 @@ const DianExpiryAlert: FC = () => {
             className='flex items-center gap-3 text-sm'
           >
             <span
-              className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                w.type === 'expiring' ? 'bg-yellow-500' : 'bg-red-500'
-              }`}
+              className={`w-1.5 h-1.5 rounded-full shrink-0 ${w.type === 'expiring' ? 'bg-yellow-500' : 'bg-red-500'
+                }`}
             />
             <span className='text-muted-foreground'>
               {w.prefix && w.docNumber ? (

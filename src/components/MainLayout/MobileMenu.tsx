@@ -11,10 +11,10 @@ import {
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
 import { IconMenu2, IconCash, type IconProps } from '@tabler/icons-react'
-import { useRolePermissions } from '@/hooks/useRolespermissions'
 import { navigationMenu } from '@/layouts/MainLayout/data/data'
 import { useNavigate } from 'react-router-dom'
-import { type ForwardRefExoticComponent, type RefAttributes, useState } from 'react'
+import { type ForwardRefExoticComponent, type RefAttributes, useState, useContext } from 'react'
+import { store } from '@/store'
 
 const MobileNavigationMenu = ({
   openGoalsModal,
@@ -25,6 +25,24 @@ const MobileNavigationMenu = ({
 }) => {
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
+  const { state } = useContext(store)
+  const userPermissions = state.user?.company_role?.permissions ?? []
+
+  const hasPermission = (codename?: string) => {
+    if (!codename) return true
+    return userPermissions.some((p) => p.codename === codename)
+  }
+
+  const hasAnyPermission = (codenames?: string[]) => {
+    if (!codenames || codenames.length === 0) return true
+    return codenames.some((c) => userPermissions.some((p) => p.codename === c))
+  }
+
+  const isChildVisible = (child: (typeof navigationMenu)[0]['children'] extends (infer T)[] | undefined ? T : never) => {
+    if (!hasPermission(child.requiredPermission)) return false
+    if (!hasAnyPermission(child.requiredAnyPermission)) return false
+    return true
+  }
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -35,23 +53,8 @@ const MobileNavigationMenu = ({
       <DropdownMenuContent className='md:hidden w-[80vw] sm:w-[80vw] mt-[1.9vh] bg-card rounded-none border-none px-3 py-2'>
         <Accordion type='single' collapsible className='w-full'>
           {navigationMenu.map((item, index) => {
-            if (item.allowedRoles) {
-              const { hasPermission } = useRolePermissions({
-                allowedRoles: item.allowedRoles,
-              })
-              if (!hasPermission) return null
-            }
-
             const filteredChildren =
-              item.children?.filter((child) => {
-                if (child.allowedRoles) {
-                  const { hasPermission } = useRolePermissions({
-                    allowedRoles: child.allowedRoles,
-                  })
-                  return hasPermission
-                }
-                return true
-              }) ?? []
+              item.children?.filter((child) => isChildVisible(child)) ?? []
 
             if (filteredChildren.length === 0) return null
 
@@ -104,7 +107,6 @@ const Section = ({
     link?: string
     action?: string
     description?: string
-    allowedRoles?: string[]
     disabled?: boolean
   }[]
   navigate: ReturnType<typeof useNavigate>
@@ -140,9 +142,8 @@ const Section = ({
             }
           }}
           disabled={item.disabled}
-          className={`w-full shadow-none text-foreground rounded-md justify-start ${
-            item.disabled ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
+          className={`w-full shadow-none text-foreground rounded-md justify-start ${item.disabled ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
         >
           {item.label}
         </Button>

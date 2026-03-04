@@ -11,6 +11,8 @@ export interface IUserProps {
   role: string
   id: number
   key?: number
+  company_role?: { id: number; name: string; is_owner: boolean } | null
+  company_role_id?: number | null
 }
 
 export interface IAddUser extends IModalFormProps {
@@ -24,13 +26,4 @@ export enum UserDocumentTypeEnum {
   TI = 'Tarjeta de Identidad',
   PA = 'Pasaporte',
   DIE = 'Documento de Identificación Extranjero',
-}
-
-export enum UserRolesEnum {
-  admin = 'Super Admin',
-  posAdmin = 'Administrador POS',
-  shopAdmin = 'Administrador Tienda',
-  sales = 'Vendedor Fijo',
-  supportSales = 'Vendedor Apoyo',
-  storageAdmin = 'Administrador Bodega',
 }

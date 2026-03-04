@@ -5,16 +5,15 @@ import { AddDataAndPaymentMethods } from './AddDataAndPaymentMethods'
 import Clock from '@/components/Clock/Clock'
 // Store
 import { useCart } from '@/store/useCartStoreZustand'
-// Hooks
-import { useDianResolutions } from '@/hooks/useDianResolution'
-// Third party
-import { Spin } from 'antd'
+// Types
+import { IPaginationProps } from '@/types/GlobalTypes'
+import { IDianResolutionProps } from '@/pages/Dian/types/DianResolutionTypes'
 
-export const SideBarDataPOS = () => {
-  const { dianResolutionData, isPending: isLoadingResolution } = useDianResolutions(
-    'getActiveDianResolution',
-    { active: 'True' },
-  )
+interface SideBarDataPOSProps {
+  dianResolutionData: IPaginationProps<IDianResolutionProps> | undefined
+}
+
+export const SideBarDataPOS = ({ dianResolutionData }: SideBarDataPOSProps) => {
   const currentNumber = dianResolutionData?.results[0]?.current_number ?? null
   const nextNumber = currentNumber !== null ? currentNumber + 1 : '0'
 
@@ -22,29 +21,25 @@ export const SideBarDataPOS = () => {
 
   return (
     <nav className='w-1/4 h-full flex flex-col justify-between bg-card shadow-lg rounded-sm border-solid border border-green-1'>
-      {isLoadingResolution ? (
-        <Spin />
-      ) : (
-        <section className='flex flex-col p-5 w-full justify-start gap-1 bg-card shadow-md'>
-          <div className='flex justify-between items-end'>
-            <span className='text-xs'>Resolución activa:</span>
-            <span className='text-green-1 font-bold truncate'>
-              {dianResolutionData?.results[0].document_number}
-            </span>
-          </div>
-          <div className='flex gap-1 justify-between items-end'>
-            <span className='text-xs'># de factura:</span>
+      <section className='flex flex-col p-5 w-full justify-start gap-1 bg-card shadow-md'>
+        <div className='flex justify-between items-end'>
+          <span className='text-xs'>Resolución activa:</span>
+          <span className='text-green-1 font-bold truncate'>
+            {dianResolutionData?.results[0].document_number}
+          </span>
+        </div>
+        <div className='flex gap-1 justify-between items-end'>
+          <span className='text-xs'># de factura:</span>
 
-            <span className='text-green-1 font-bold truncate'>GUA-{nextNumber}</span>
-          </div>
-          <div className='flex gap-1 justify-between items-end'>
-            <span className='text-xs'>Fecha y Hora:</span>
-            <span className='text-green-1 font-bold truncate'>
-              <Clock />
-            </span>
-          </div>
-        </section>
-      )}
+          <span className='text-green-1 font-bold truncate'>GUA-{nextNumber}</span>
+        </div>
+        <div className='flex gap-1 justify-between items-end'>
+          <span className='text-xs'>Fecha y Hora:</span>
+          <span className='text-green-1 font-bold truncate'>
+            <Clock />
+          </span>
+        </div>
+      </section>
       <AddDataAndPaymentMethods />
       <section className='w-full bg-card'>
         <div className='bg-secondary shadow-inner flex justify-center flex-col items-center gap-4 text-sm font-semibold p-5'>

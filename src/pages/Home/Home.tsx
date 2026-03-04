@@ -8,8 +8,7 @@ import { SalesByKeyframe } from './components/SalesByKeyFrame'
 import { useQueryClient } from '@tanstack/react-query'
 import { SalesByUser } from './components/SalesByUser'
 import { GeneralGoals } from './components/GeneralGoals'
-import { UserRolesEnum } from '../Users/types/UserTypes'
-import { useRolePermissions } from '@/hooks/useRolespermissions'
+import { useHasPermission } from '@/hooks/useHasPermission'
 import { DianExpiryAlert } from './components/DianExpiryAlert'
 
 const Home: FC = () => {
@@ -48,10 +47,7 @@ const Home: FC = () => {
     }
   }, [dataType])
 
-  const allowedRolesGoals = [UserRolesEnum.storageAdmin]
-  const { hasPermission: hasPermissionDashboard } = useRolePermissions({
-    notAllowedRoles: allowedRolesGoals,
-  })
+  const hasPermissionDashboard = useHasPermission('can_view_dashboard_reports')
 
   return (
     <main className='flex flex-col gap-4 h-full overflow-hidden overflow-y-auto scrollbar-hide'>

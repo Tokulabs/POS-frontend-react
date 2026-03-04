@@ -3,8 +3,7 @@ import { useDianResolutions } from '@/hooks/useDianResolution'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { putDiaResolution, toggleDianResolution } from './helpers/services'
 import { Reorder } from 'framer-motion'
-import { UserRolesEnum } from '../Users/types/UserTypes'
-import { useRolePermissions } from '@/hooks/useRolespermissions'
+import { useHasPermission } from '@/hooks/useHasPermission'
 import { IDianResolutionProps } from './types/DianResolutionTypes'
 import { toast } from 'sonner'
 import { ToggleSwitch } from '@/components/ToggleSwitch/ToggleSwitch'
@@ -19,8 +18,7 @@ const Dian: FC = () => {
   const [currentNumber, setCurrentNumber] = useState<number>(0)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [inactiveExpanded, setInactiveExpanded] = useState(false)
-  const allowedRolesOverride = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
-  const { hasPermission } = useRolePermissions({ allowedRoles: allowedRolesOverride })
+  const hasPermission = useHasPermission('can_manage_dian')
   const [resolutionType, setResolutionType] = useState(0)
 
   const options = [{ label: 'Resoluciones POS' }, { label: 'Resoluciones F.E.' }]
@@ -251,9 +249,8 @@ const Dian: FC = () => {
                   >
                     <IconChevronDown
                       size={14}
-                      className={`transition-transform duration-200 ${
-                        inactiveExpanded ? 'rotate-0' : '-rotate-90'
-                      }`}
+                      className={`transition-transform duration-200 ${inactiveExpanded ? 'rotate-0' : '-rotate-90'
+                        }`}
                     />
                     Resoluciones Inactivas ({inactiveCount})
                   </button>

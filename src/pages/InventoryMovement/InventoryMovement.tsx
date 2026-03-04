@@ -10,6 +10,7 @@ import { columnsDataMovement } from './data/TableData'
 import PrintInventoryMovement from '@/components/PrintInfo/PrintInventoryMovement'
 import { IconPrinter } from '@tabler/icons-react'
 import { createPortal } from 'react-dom'
+import { useHasAnyPermission } from '@/hooks/useHasPermission'
 
 const movementEventType: Record<MovementEventType, string> = {
   purchase: 'Compras',
@@ -34,6 +35,8 @@ export const InventoryMovement: FC = () => {
   const [eventTypeSearch, setEventTypeSearch] =
     useState<Exclude<MovementEventType, 'purchase'>>('shipment')
   const [selectedMovement, setSelectedMovement] = useState<InventoryMovementData | null>(null)
+
+  const canCreate = useHasAnyPermission(['can_create_shipment_movement', 'can_create_return_movement'])
 
   const { isLoading, inventoryMovementsData } = useinventoryMovements(
     'paginatedInventoryMovements',
@@ -87,8 +90,8 @@ export const InventoryMovement: FC = () => {
         <>
           <ContentLayout
             pageTitle={`Movimientos de inventario - ${movementEventType[eventTypeSearch]}`}
-            buttonTitle='Crear movimiento'
-            setModalState={() => setCreateMovement(true)}
+            buttonTitle={canCreate ? 'Crear movimiento' : undefined}
+            setModalState={canCreate ? () => setCreateMovement(true) : undefined}
             dataSource={dataPurchaseModified ?? []}
             columns={extendedColumns}
             totalItems={inventoryMovementsData?.count ?? 0}
