@@ -3,14 +3,14 @@ import ContentLayout from '@/layouts/ContentLayout/ContentLayout'
 import AddUserForm from './components/AddUserForm'
 import { columns } from './data/columsData'
 import { useUsers } from '@/hooks/useUsers'
-import { IUserProps, UserDocumentTypeEnum, UserRolesEnum } from './types/UserTypes'
+import { IUserProps, UserDocumentTypeEnum } from './types/UserTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Button, Popconfirm, Switch, Tooltip } from 'antd'
 import { IconCircleCheck, IconCircleX, IconEdit, IconPower } from '@tabler/icons-react'
 import { ModalStateEnum } from '@/types/ModalTypes'
 import { toggleActiveUser } from './helpers/services'
 import { toast } from 'sonner'
-import { useRolePermissions } from '@/hooks/useRolespermissions'
+import { useHasPermission } from '@/hooks/useHasPermission'
 
 const Users: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -44,10 +44,7 @@ const Users: FC = () => {
     mutate(id)
   }
 
-  const allowedRolesDownload = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
-  const { hasPermission: hasPermissionsToEdit } = useRolePermissions({
-    allowedRoles: allowedRolesDownload,
-  })
+  const hasPermissionsToEdit = useHasPermission('can_manage_users')
 
   const formatEditAndDelete = (userData: IUserProps[]) => {
     return userData.map((item) => ({

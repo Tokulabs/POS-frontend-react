@@ -35,61 +35,60 @@ export const useCart = create<ICartStore>((set, get) => ({
   saleById: null,
   addToCart: (product: IPosData) => {
     const { cartItems, addDiscountToItem } = get()
-    const productExist = cartItems.find((item) => item.code === product.code)
-    if (productExist) {
-      const originalQuantity = productExist.quantity
-      productExist.quantity = originalQuantity + 1
+    const index = cartItems.findIndex((item) => item.code === product.code)
+    if (index !== -1) {
+      const existing = cartItems[index]
+      const newQuantity = existing.quantity + 1
       if (
-        productExist.total_in_shops === 0 ||
-        productExist.quantity > (productExist.total_in_shops || 0)
+        existing.total_in_shops === 0 ||
+        newQuantity > (existing.total_in_shops || 0)
       ) {
         toast.error('Lo sentimos, este producto no cuenta más existencias en tienda')
-        productExist.quantity = originalQuantity
         return
       }
-      productExist.total = productExist.quantity * product.selling_price
-      productExist.usd_total = productExist.quantity * product.usd_price
-      set({
-        cartItems: [...cartItems],
-      })
-      if (productExist.discount > 0) {
-        addDiscountToItem(product.code, productExist.discount)
+      const updatedItem = {
+        ...existing,
+        quantity: newQuantity,
+        total: newQuantity * product.selling_price,
+        usd_total: newQuantity * product.usd_price,
+      }
+      const newCartItems = cartItems.map((item, i) => (i === index ? updatedItem : item))
+      set({ cartItems: newCartItems })
+      if (updatedItem.discount > 0) {
+        addDiscountToItem(product.code, updatedItem.discount)
       }
     } else {
       if (product.total_in_shops === 0) {
         toast.error('Lo sentimos, este producto no cuenta más existencias en tienda')
         return
       }
-      set({
-        cartItems: [product, ...cartItems],
-      })
+      set({ cartItems: [product, ...cartItems] })
     }
   },
   removeFromCart: (product: IPosData, hardRemove: boolean = false) => {
     const { cartItems, addDiscountToItem } = get()
     if (hardRemove) {
-      set({
-        cartItems: cartItems.filter((item) => item.code !== product.code),
-      })
+      set({ cartItems: cartItems.filter((item) => item.code !== product.code) })
       return
     }
-    const productExist = cartItems.find((item) => item.code === product.code)
-    if (productExist) {
-      const originalQuantity = productExist.quantity
-      if (originalQuantity > 1) {
-        productExist.quantity = originalQuantity - 1
-        productExist.total = productExist.quantity * product.selling_price
-        productExist.usd_total = productExist.quantity * product.usd_price
-        set({
-          cartItems: [...cartItems],
-        })
-        if (productExist.discount > 0) {
-          addDiscountToItem(product.code, productExist.discount)
+    const index = cartItems.findIndex((item) => item.code === product.code)
+    if (index !== -1) {
+      const existing = cartItems[index]
+      if (existing.quantity > 1) {
+        const newQuantity = existing.quantity - 1
+        const updatedItem = {
+          ...existing,
+          quantity: newQuantity,
+          total: newQuantity * product.selling_price,
+          usd_total: newQuantity * product.usd_price,
+        }
+        const newCartItems = cartItems.map((item, i) => (i === index ? updatedItem : item))
+        set({ cartItems: newCartItems })
+        if (updatedItem.discount > 0) {
+          addDiscountToItem(product.code, updatedItem.discount)
         }
       } else {
-        set({
-          cartItems: cartItems.filter((item) => item.code !== product.code),
-        })
+        set({ cartItems: cartItems.filter((item) => item.code !== product.code) })
       }
     }
   },
@@ -122,55 +121,43 @@ export const useCart = create<ICartStore>((set, get) => ({
   },
   addDiscountToItem: (code: string, discount: number) => {
     const { cartItems } = get()
-    const productExist = cartItems.find((item) => item.code === code)
-    if (productExist) {
-      productExist.discount = discount
-      set({
-        cartItems: [...cartItems],
-      })
-      const { totalItemCOP, totalItemUSD } = calcMetaDataProdudct(productExist)
-      productExist.total = totalItemCOP
-      productExist.usd_total = totalItemUSD
-      set({
-        cartItems: [...cartItems],
-      })
-    }
+    const newCartItems = cartItems.map((item) => {
+      if (item.code === code) {
+        const withDiscount = { ...item, discount }
+        const { totalItemCOP, totalItemUSD } = calcMetaDataProdudct(withDiscount)
+        return { ...withDiscount, total: totalItemCOP, usd_total: totalItemUSD }
+      }
+      return item
+    })
+    set({ cartItems: newCartItems })
   },
   updateQuantity: (code: string, quantity: number | null) => {
     const { cartItems } = get()
-    const productExist = cartItems.find((item) => item.code === code)
-    if (productExist) {
-      const originalQuantity = productExist.quantity
-      productExist.quantity = quantity ?? 0
+    const index = cartItems.findIndex((item) => item.code === code)
+    if (index !== -1) {
+      const existing = cartItems[index]
+      const newQuantity = quantity ?? 0
       if (
-        productExist.total_in_shops === 0 ||
-        productExist.quantity > (productExist.total_in_shops || 0)
+        existing.total_in_shops === 0 ||
+        newQuantity > (existing.total_in_shops || 0)
       ) {
         toast.error('Lo sentimos, este producto no cuenta más existencias en tienda')
-        productExist.quantity = originalQuantity
         return
       }
-      set({
-        cartItems: [...cartItems],
-      })
-      const { totalItemCOP, totalItemUSD } = calcMetaDataProdudct(productExist)
-      productExist.total = totalItemCOP
-      productExist.usd_total = totalItemUSD
-      set({
-        cartItems: [...cartItems],
-      })
+      const withQuantity = { ...existing, quantity: newQuantity }
+      const { totalItemCOP, totalItemUSD } = calcMetaDataProdudct(withQuantity)
+      const updatedItem = { ...withQuantity, total: totalItemCOP, usd_total: totalItemUSD }
+      const newCartItems = cartItems.map((item, i) => (i === index ? updatedItem : item))
+      set({ cartItems: newCartItems })
     }
   },
   updateIsGift: async (code: string, isGift: boolean) => {
     const { cartItems, updateTotalPrice } = get()
-    const productExist = cartItems.find((item) => item.code === code)
-    if (productExist) {
-      productExist.is_gift = isGift
-      set({
-        cartItems: [...cartItems],
-      })
-      updateTotalPrice()
-    }
+    const newCartItems = cartItems.map((item) =>
+      item.code === code ? { ...item, is_gift: isGift } : item,
+    )
+    set({ cartItems: newCartItems })
+    updateTotalPrice()
   },
   updateSaleById: (id: number) => {
     set({

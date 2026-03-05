@@ -16,15 +16,15 @@ import { PaymentMethodsEnum } from './types/PaymentMethodsTypes'
 const steps = [
   {
     title: 'Agregar Productos',
-    content: <AddItemsToPurchase />,
+    Content: AddItemsToPurchase,
   },
   {
     title: 'Métodos de Pago',
-    content: <AddPaymentMethods />,
+    Content: AddPaymentMethods,
   },
   {
     title: 'Confirmar Venta',
-    content: <CreateInvoice />,
+    Content: CreateInvoice,
   },
 ]
 
@@ -116,7 +116,10 @@ export const POSStepper: FC = () => {
       <section
         className={`h-full ${currentStep === 0 ? 'overflow-hidden ' : 'overflow-hidden overflow-y-auto scrollbar-hide'}`}
       >
-        {steps[currentStep].content}
+        {(() => {
+          const StepContent = steps[currentStep].Content
+          return <StepContent />
+        })()}
       </section>
       <footer className='flex justify-end'>
         {currentStep === 0 && (

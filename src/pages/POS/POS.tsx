@@ -6,6 +6,7 @@ import { SideBarDataPOS } from './components/SideBarDataPOS'
 import { usePOSStep } from '@/store/usePOSSteps'
 // Hooks
 import { useDianResolutions } from '@/hooks/useDianResolution'
+import { useHasPermission } from '@/hooks/useHasPermission'
 // Third Party
 import { IconFileSad } from '@tabler/icons-react'
 import { Spin } from 'antd'
@@ -14,6 +15,7 @@ import { useNavigate } from 'react-router-dom'
 const POS: FC = () => {
   const { currentStep } = usePOSStep()
   const navigate = useNavigate()
+  const canManageDian = useHasPermission('can_manage_dian')
 
   const { dianResolutionData, isPending } = useDianResolutions('getActiveDianResolution', {
     active: 'True',
@@ -36,20 +38,24 @@ const POS: FC = () => {
               <IconFileSad size={120} />
               <div className='flex flex-col items-center'>
                 <span className='font-bold text-2xl'>No hay resoluciones activas</span>
-                <span
-                  className='cursor-pointer text-blue-500 underline'
-                  onClick={() => {
-                    navigate('/dian-resolution')
-                  }}
-                >
-                  Crear o activar resolución
-                </span>
+                {canManageDian && (
+                  <span
+                    className='cursor-pointer text-blue-500 underline'
+                    onClick={() => {
+                      navigate('/dian-resolution')
+                    }}
+                  >
+                    Crear o activar resolución
+                  </span>
+                )}
               </div>
             </section>
           )}
         </section>
       )}
-      {currentStep !== 2 && existsResolution ? <SideBarDataPOS /> : null}
+      {currentStep !== 2 && existsResolution ? (
+        <SideBarDataPOS dianResolutionData={dianResolutionData} />
+      ) : null}
     </section>
   )
 }

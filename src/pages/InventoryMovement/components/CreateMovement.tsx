@@ -18,13 +18,12 @@ import { IInventoryProps } from '../../Inventories/types/InventoryTypes'
 import { DataPropsForm } from '@/types/GlobalTypes'
 import { movementEventsDictionary } from '@/pages/InventoryMovementItem/types/InventoryMovementsTypes'
 import { ICreateMovement, MovementEventType } from '@/pages/Purchase/types/PurchaseTypes'
-import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 // Store
 import { useCartMovements } from '@/store/useCartStoreMovementsZustand'
 // Hooks
 import { useKeyPress } from '@/hooks/useKeyPress'
 import { useDebouncedCallback } from '@/hooks/useDebounceCallback'
-import { useRolePermissions } from '@/hooks/useRolespermissions'
+import { useHasPermission } from '@/hooks/useHasPermission'
 // Data
 import { createMovementData } from '../data/TableData'
 // Store
@@ -44,43 +43,28 @@ const CreateMovement: FC<CreatePurchaseInterface> = ({ setCreateMovement, curren
   const [isLoadingSearch, setIsLoadingSearch] = useState(false)
   const [data, setData] = useState<IInventoryProps[]>([])
 
-  const userRoleEventTypeDefault =
-    UserRolesEnum[user?.role as keyof typeof UserRolesEnum] === UserRolesEnum.storageAdmin
-      ? 'shipment'
-      : 'return'
-  const [eventType, setEventType] = useState<'shipment' | 'return'>(userRoleEventTypeDefault)
+  const hasPermissionShipment = useHasPermission('can_create_shipment_movement')
+  const hasPermissionReturn = useHasPermission('can_create_return_movement')
 
-  const allowedRolesShipment = [
-    UserRolesEnum.admin,
-    UserRolesEnum.posAdmin,
-    UserRolesEnum.storageAdmin,
-  ]
-  const allowedRolesReturn = [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin]
-
-  const { hasPermission: hasPermissionShipment } = useRolePermissions({
-    allowedRoles: allowedRolesShipment,
-  })
-
-  const { hasPermission: hasPermissionReturn } = useRolePermissions({
-    allowedRoles: allowedRolesReturn,
-  })
+  const defaultEventType = hasPermissionShipment && !hasPermissionReturn ? 'shipment' : 'return'
+  const [eventType, setEventType] = useState<'shipment' | 'return'>(defaultEventType)
 
   const optionsEventType = [
     ...(hasPermissionReturn
       ? [
-          {
-            value: 'return',
-            label: 'Devolución',
-          },
-        ]
+        {
+          value: 'return',
+          label: 'Devolución',
+        },
+      ]
       : []),
     ...(hasPermissionShipment
       ? [
-          {
-            value: 'shipment',
-            label: 'Remisión',
-          },
-        ]
+        {
+          value: 'shipment',
+          label: 'Remisión',
+        },
+      ]
       : []),
   ]
 

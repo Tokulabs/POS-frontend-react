@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useContext } from 'react'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -8,8 +8,8 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu'
-import { useRolePermissions } from '@/hooks/useRolespermissions'
 import { navigationMenu } from '@/layouts/MainLayout/data/data'
+import { store } from '@/store'
 
 interface NavigationMenuComponentProps {
   openGoalsModal: () => void
@@ -20,27 +20,33 @@ const NavigationMenuComponent: FC<NavigationMenuComponentProps> = ({
   openGoalsModal,
   openDownloadModal,
 }) => {
+  const { state } = useContext(store)
+  const userPermissions = state.user?.company_role?.permissions ?? []
+
+  const hasPermission = (codename?: string) => {
+    if (!codename) return true
+    return userPermissions.some((p) => p.codename === codename)
+  }
+
+  const hasAnyPermission = (codenames?: string[]) => {
+    if (!codenames || codenames.length === 0) return true
+    return codenames.some((c) => userPermissions.some((p) => p.codename === c))
+  }
+
+  const isChildVisible = (child: (typeof navigationMenu)[0]['children'] extends (infer T)[] | undefined ? T : never) => {
+    if (!hasPermission(child.requiredPermission)) return false
+    if (!hasAnyPermission(child.requiredAnyPermission)) return false
+    return true
+  }
+
   return (
     <NavigationMenu className='relative z-50'>
       <NavigationMenuList className='gap-2 m-0 p-0'>
         {navigationMenu.map((item, index) => {
-          if (item.allowedRoles) {
-            const { hasPermission } = useRolePermissions({
-              allowedRoles: item.allowedRoles,
-            })
-            if (!hasPermission) return null
-          }
-
           const filteredChildren =
-            item.children?.filter((child) => {
-              if (child.allowedRoles) {
-                const { hasPermission } = useRolePermissions({
-                  allowedRoles: child.allowedRoles,
-                })
-                return hasPermission
-              }
-              return true
-            }) ?? []
+            item.children?.filter((child) => isChildVisible(child)) ?? []
+
+          if (filteredChildren.length === 0) return null
 
           return (
             <NavigationMenuItem key={index}>
@@ -49,19 +55,17 @@ const NavigationMenuComponent: FC<NavigationMenuComponentProps> = ({
               </NavigationMenuTrigger>
               <NavigationMenuContent className='bg-card p-3 max-h-[280px] overflow-y-auto'>
                 <ul
-                  className={`grid w-full list-none p-0 gap-2 ${
-                    filteredChildren.length > 1 ? 'grid-cols-2 min-w-[520px]' : 'grid-cols-1 min-w-[250px]'
-                  }`}
+                  className={`grid w-full list-none p-0 gap-2 ${filteredChildren.length > 1 ? 'grid-cols-2 min-w-[520px]' : 'grid-cols-1 min-w-[250px]'
+                    }`}
                 >
                   {filteredChildren.map((child, childIndex) => (
                     <li key={childIndex}>
                       {child.link ? (
                         <NavigationMenuLink
-                          className={`${navigationMenuTriggerStyle()}hover:bg-secondary no-underline text-foreground text-lg w-full h-full block ${
-                            child.disabled
-                              ? 'cursor-not-allowed opacity-50 pointer-events-none'
-                              : 'cursor-pointer'
-                          }`}
+                          className={`${navigationMenuTriggerStyle()}hover:bg-secondary no-underline text-foreground text-lg w-full h-full block ${child.disabled
+                            ? 'cursor-not-allowed opacity-50 pointer-events-none'
+                            : 'cursor-pointer'
+                            }`}
                           href={child.link}
                         >
                           <div className='grid grid-cols-1 gap-0 w-[228px]'>
@@ -73,11 +77,10 @@ const NavigationMenuComponent: FC<NavigationMenuComponentProps> = ({
                         </NavigationMenuLink>
                       ) : (
                         <div
-                          className={`${navigationMenuTriggerStyle()} hover:bg-secondary no-underline text-foreground text-lg h-full block ${
-                            child.disabled
-                              ? 'cursor-not-allowed opacity-50 pointer-events-none'
-                              : 'cursor-pointer'
-                          }`}
+                          className={`${navigationMenuTriggerStyle()} hover:bg-secondary no-underline text-foreground text-lg h-full block ${child.disabled
+                            ? 'cursor-not-allowed opacity-50 pointer-events-none'
+                            : 'cursor-pointer'
+                            }`}
                           onClick={() => {
                             if (child.disabled) return
                             if (child.action === 'openGoalsModal') openGoalsModal()

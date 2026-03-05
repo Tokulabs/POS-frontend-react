@@ -4,8 +4,7 @@ import { formatNumberToColombianPesos, formatToUsd } from '@/utils/helpers'
 import { usePurchaseSummary } from '@/hooks/useSummaryData'
 import moment from 'moment'
 import dayjs from 'dayjs'
-import { useRolePermissions } from '@/hooks/useRolespermissions'
-import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
+import { useHasPermission } from '@/hooks/useHasPermission'
 
 const PurchasesInfo = () => {
   const dateFormat = 'YYYY-MM-DD'
@@ -20,10 +19,7 @@ const PurchasesInfo = () => {
   })
   const showCurrency = false
 
-  const allowedRolesOverride = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
-  const { hasPermission: hasPermissionToSeeData } = useRolePermissions({
-    allowedRoles: allowedRolesOverride,
-  })
+  const hasPermissionToSeeData = useHasPermission('can_view_dashboard_reports')
 
   return (
     <div className='bg-card w-full h-full p-4 rounded-lg flex flex-col gap-4 shadow-md'>

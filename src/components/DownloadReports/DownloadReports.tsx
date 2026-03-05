@@ -8,14 +8,13 @@ import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
 // Types
 import { DataPropsForm } from '@/types/GlobalTypes'
-import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 // Axios
 import { axiosRequest } from '@/api/api'
 // Utils
 import { downloadReportURL } from '@/utils/network'
 // Helpers
 import { getArrayDatesOrDateWithHour } from '@/layouts/helpers/helpers'
-import { useRolePermissions } from '@/hooks/useRolespermissions'
+import { useHasPermission } from '@/hooks/useHasPermission'
 // Store
 import { store } from '@/store'
 
@@ -65,52 +64,35 @@ const DownloadReports: FC<IModalDownloadReports> = ({
 }) => {
   const { state } = useContext(store)
   const [form] = useForm()
+
+  // Per-report permission checks
+  const canDaily = useHasPermission('can_download_daily_report')
+  const canInventory = useHasPermission('can_download_inventory_report')
+  const canProductSales = useHasPermission('can_download_product_sales_report')
+  const canInvoices = useHasPermission('can_download_invoices_report')
+  const canElectronic = useHasPermission('can_download_electronic_invoice_report')
+
+  const reportsToDownload: IReportToDownload[] = useMemo(() => [
+    { url: 'daily_report_export/', name: 'Reporte Diario', show: canDaily },
+    { url: 'inventories_report_export/', name: 'Reporte de inventarios', show: canInventory },
+    { url: 'product_sales_report_export/', name: 'Reporte Ventas de Productos', show: canProductSales },
+    { url: 'invoices_report_export/', name: 'Reporte de Facturas', show: canInvoices },
+    { url: 'electronic_invoice_export/', name: 'Reporte Facturación Electrónica', show: canElectronic },
+  ], [canDaily, canInventory, canProductSales, canInvoices, canElectronic])
+
+  // Pick the first available report as the default
+  const defaultReport = useMemo(() => {
+    const first = reportsToDownload.find((r) => r.show)
+    return first?.url ?? 'daily_report_export/'
+  }, [reportsToDownload])
+
   const initialValues = useMemo(
     () => ({
-      report_type:
-        state.user?.role === 'storageAdmin' ? 'inventories_report_export/' : 'daily_report_export/',
+      report_type: defaultReport,
       document_dates: [],
     }),
-    [state.user?.role],
+    [defaultReport],
   )
-
-  const allowedRolesSales = [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin]
-  const { hasPermission: hasPermissionSales } = useRolePermissions({
-    allowedRoles: allowedRolesSales,
-  })
-
-  const notAllowedRolesStorage = [UserRolesEnum.storageAdmin]
-  const { hasPermission: hasPermissionStorageAdmin } = useRolePermissions({
-    notAllowedRoles: notAllowedRolesStorage,
-  })
-
-  const reportsToDownload: IReportToDownload[] = [
-    {
-      url: 'daily_report_export/',
-      name: 'Reporte Diario',
-      show: hasPermissionStorageAdmin,
-    },
-    {
-      url: 'inventories_report_export/',
-      name: 'Reporte de inventarios',
-      show: true,
-    },
-    {
-      url: 'product_sales_report_export/',
-      name: 'Reporte Ventas de Productos',
-      show: hasPermissionStorageAdmin,
-    },
-    {
-      url: 'invoices_report_export/',
-      name: 'Reporte de Facturas',
-      show: hasPermissionSales && hasPermissionStorageAdmin,
-    },
-    {
-      url: 'electronic_invoice_export/',
-      name: 'Reporte Facturación Electrónica',
-      show: hasPermissionSales && hasPermissionStorageAdmin,
-    },
-  ]
 
   const { mutate, isPending: isLoading } = useMutation({
     mutationFn: downloadReport,

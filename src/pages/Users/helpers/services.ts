@@ -2,7 +2,7 @@ import { axiosRequest } from '@/api/api'
 import { formatDateTime } from '@/layouts/helpers/helpers'
 import { IQueryParams, IPaginationProps, DataPropsForm } from '@/types/GlobalTypes'
 import { createUserURL, usersURL } from '@/utils/network'
-import { IUserProps, UserRolesEnum } from '../types/UserTypes'
+import { IUserProps } from '../types/UserTypes'
 import { IUser } from '@/types/UserType'
 
 export const getUsersNew = async (queryParams: IQueryParams) => {
@@ -28,7 +28,7 @@ export const getUsersNew = async (queryParams: IQueryParams) => {
         created_at: formatDateTime(item.created_at),
         last_login: item.last_login ? formatDateTime(item.last_login) : 'N/A',
         is_active: item.is_active,
-        role: UserRolesEnum[item.role as keyof typeof UserRolesEnum] || 'Rol desconocido',
+        role: item.company_role?.name ?? 'Sin rol',
       }))
       return { ...response.data, results: data }
     }

@@ -1,16 +1,15 @@
-import { FC } from 'react'
+import { FC, useContext } from 'react'
 import { RouteObject, RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Login from '@/pages/Auth/Login'
 import ForceUpdatePassword from '@/pages/Auth/ForceUpdatePassword'
 import AuthRoutes from '@/components/Auth/AuthRoutes'
-import { useRolePermissions } from '@/hooks/useRolespermissions'
 import Notfound from '@/pages/NotFound/404Notfound'
 import { useAuth } from '@/hooks/useAuth'
 import { MainLayout } from '@/layouts/MainLayout/MainLayout'
 import PasswordRecovery from '@/pages/Auth/PasswordRecovery'
 import PasswordReset from '@/pages/Auth/PasswordReset'
+import { store } from '@/store/index'
 // Pages
-
 import { Home } from '@/pages/Home/Home'
 import { Inventories } from '@/pages/Inventories/Inventories'
 import { Invoices } from '@/pages/Invoices/Invoices'
@@ -25,8 +24,6 @@ import { Providers } from '@/pages/Providers/Providers'
 import { Purchase } from '@/pages/Purchase/Purchase'
 import { InventoryMovementItem } from '@/pages/InventoryMovementItem/InventoryMovements'
 import { Profile } from '@/pages/Profile/Profile'
-// Types
-import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
 import { InventoryMovement } from '@/pages/InventoryMovement/InventoryMovement'
 import { InventoryManagement } from '@/pages/InventoryManagement/InventoryMangament'
 import { InvoiceItem } from '@/pages/InvoiceItem/InvoiceItem'
@@ -34,189 +31,63 @@ import { InvoiceItem } from '@/pages/InvoiceItem/InvoiceItem'
 interface ISideBarData {
   path: string
   component: FC
-  allowedRoles?: string[]
+  requiredPermission?: string
+  requiredAnyPermission?: string[]
 }
 
 const authRoutes: ISideBarData[] = [
-  {
-    path: '/',
-    component: Home,
-    allowedRoles: [
-      UserRolesEnum.admin,
-      UserRolesEnum.posAdmin,
-      UserRolesEnum.sales,
-      UserRolesEnum.shopAdmin,
-      UserRolesEnum.supportSales,
-      UserRolesEnum.storageAdmin,
-    ],
-  },
-  {
-    path: '/inventories',
-    component: Inventories,
-    allowedRoles: [
-      UserRolesEnum.admin,
-      UserRolesEnum.posAdmin,
-      UserRolesEnum.shopAdmin,
-      UserRolesEnum.sales,
-    ],
-  },
-  {
-    path: '/invoices',
-    component: Invoices,
-    allowedRoles: [
-      UserRolesEnum.admin,
-      UserRolesEnum.posAdmin,
-      UserRolesEnum.shopAdmin,
-      UserRolesEnum.sales,
-      UserRolesEnum.supportSales,
-    ],
-  },
-  {
-    path: '/invoice/:id',
-    component: InvoiceItem,
-    allowedRoles: [
-      UserRolesEnum.admin,
-      UserRolesEnum.posAdmin,
-      UserRolesEnum.shopAdmin,
-      UserRolesEnum.sales,
-      UserRolesEnum.supportSales,
-    ],
-  },
-  {
-    path: '/pos',
-    component: POS,
-    allowedRoles: [
-      UserRolesEnum.admin,
-      UserRolesEnum.posAdmin,
-      UserRolesEnum.sales,
-      UserRolesEnum.shopAdmin,
-      UserRolesEnum.supportSales,
-    ],
-  },
-  {
-    component: InventoryGroups,
-    path: '/inventory-groups',
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
-  },
-  {
-    component: Users,
-    path: '/users',
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.shopAdmin],
-  },
-  {
-    path: '/user-activities',
-    component: UserActivities,
-    allowedRoles: [UserRolesEnum.admin],
-  },
-  {
-    path: '/dian-resolution',
-    component: Dian,
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
-  },
-  {
-    path: '/storage',
-    component: Storage,
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
-  },
-  {
-    path: '/payment-terminals',
-    component: PaymentTerminals,
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin],
-  },
-  {
-    path: '/providers',
-    component: Providers,
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
-  },
-  {
-    path: '/purchases',
-    component: Purchase,
-    allowedRoles: [UserRolesEnum.admin, UserRolesEnum.posAdmin, UserRolesEnum.storageAdmin],
-  },
-  {
-    path: '/inventory-movements',
-    component: InventoryMovement,
-    allowedRoles: [
-      UserRolesEnum.admin,
-      UserRolesEnum.posAdmin,
-      UserRolesEnum.storageAdmin,
-      UserRolesEnum.shopAdmin,
-    ],
-  },
-  {
-    path: '/inventory-movement/:id',
-    component: InventoryMovementItem,
-    allowedRoles: [
-      UserRolesEnum.admin,
-      UserRolesEnum.posAdmin,
-      UserRolesEnum.storageAdmin,
-      UserRolesEnum.shopAdmin,
-    ],
-  },
-  {
-    path: '/inventory-management',
-    component: InventoryManagement,
-    allowedRoles: [
-      UserRolesEnum.admin,
-      UserRolesEnum.posAdmin,
-    ],
-  },
-  {
-    path: '/settings',
-    component: Profile,
-    allowedRoles: [
-      UserRolesEnum.admin,
-      UserRolesEnum.posAdmin,
-      UserRolesEnum.sales,
-      UserRolesEnum.shopAdmin,
-      UserRolesEnum.supportSales,
-      UserRolesEnum.storageAdmin,
-    ],
-  },
+  { path: '/', component: Home, requiredPermission: 'can_view_dashboard_reports' },
+  { path: '/inventories', component: Inventories, requiredPermission: 'can_view_inventory' },
+  { path: '/invoices', component: Invoices, requiredPermission: 'can_view_invoices' },
+  { path: '/invoice/:id', component: InvoiceItem, requiredPermission: 'can_view_invoices' },
+  { path: '/pos', component: POS, requiredPermission: 'can_create_invoice' },
+  { path: '/inventory-groups', component: InventoryGroups, requiredPermission: 'can_manage_categories' },
+  { path: '/users', component: Users, requiredPermission: 'can_manage_users' },
+  { path: '/user-activities', component: UserActivities, requiredPermission: 'can_view_user_activities' },
+  { path: '/dian-resolution', component: Dian, requiredPermission: 'can_manage_dian' },
+  { path: '/storage', component: Storage, requiredPermission: 'can_manage_storage' },
+  { path: '/payment-terminals', component: PaymentTerminals, requiredPermission: 'can_manage_company' },
+  { path: '/providers', component: Providers, requiredPermission: 'can_manage_providers' },
+  { path: '/purchases', component: Purchase, requiredAnyPermission: ['can_view_purchases', 'can_create_purchase'] },
+  { path: '/inventory-movements', component: InventoryMovement, requiredAnyPermission: ['can_view_inventory_movements', 'can_create_shipment_movement', 'can_create_return_movement'] },
+  { path: '/inventory-movement/:id', component: InventoryMovementItem, requiredAnyPermission: ['can_view_inventory_movements', 'can_create_shipment_movement', 'can_create_return_movement'] },
+  { path: '/inventory-management', component: InventoryManagement, requiredPermission: 'can_import_inventory' },
+  { path: '/settings', component: Profile },
 ]
 
 const Router: FC = () => {
   const { isLogged } = useAuth({})
+  const { state } = useContext(store)
+  const userPermissions = state.user?.company_role?.permissions ?? []
+
   const router = createBrowserRouter([
     {
       element: <AuthRoutes />,
       children: authRoutes.map((item) => {
-        const { hasPermission } = useRolePermissions({ allowedRoles: item.allowedRoles || [] })
-        const Component = item.component
-        const routerData: RouteObject = {
-          path: item.path,
-          element: <Component />,
+        let hasPermission = true
+
+        if (item.requiredPermission) {
+          hasPermission = userPermissions.some((p) => p.codename === item.requiredPermission)
+        } else if (item.requiredAnyPermission) {
+          hasPermission = item.requiredAnyPermission.some((code) =>
+            userPermissions.some((p) => p.codename === code),
+          )
         }
+
+        const Component = item.component
         return hasPermission
-          ? routerData
-          : {
-              path: '*',
-              element: <Notfound />,
-            }
+          ? { path: item.path, element: <Component /> }
+          : { path: '*', element: <Notfound /> }
       }),
     },
-    {
-      path: '/login',
-      element: <Login />,
-    },
-    {
-      path: '/force-update-password',
-      element: <ForceUpdatePassword />,
-    },
-    {
-      path: '/password-recovery',
-      element: <PasswordRecovery />,
-    },
-    {
-      path: '/password-reset',
-      element: <PasswordReset />,
-    },
+    { path: '/login', element: <Login /> },
+    { path: '/force-update-password', element: <ForceUpdatePassword /> },
+    { path: '/password-recovery', element: <PasswordRecovery /> },
+    { path: '/password-reset', element: <PasswordReset /> },
     {
       path: '*',
       element: isLogged ? (
-        <MainLayout>
-          <Notfound />
-        </MainLayout>
+        <MainLayout><Notfound /></MainLayout>
       ) : (
         <Notfound fullscreen={true} />
       ),

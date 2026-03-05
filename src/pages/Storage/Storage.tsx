@@ -13,6 +13,7 @@ import { ModalStateEnum } from '@/types/ModalTypes'
 import { useProviders } from '@/hooks/useProviders'
 import { toast } from 'sonner'
 import { AddProductsForm } from './components/AddProductsForm'
+import { useHasPermission } from '@/hooks/useHasPermission'
 
 export const formatinventoryPhoto = (inventories: IInventoryProps[]) => {
   return inventories.map((item) => ({
@@ -33,6 +34,8 @@ const Storage: FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [showActive, setShowActive] = useState(true)
   const [search, setSearch] = useState('')
+
+  const canEdit = useHasPermission('can_edit_inventory')
 
   const { isLoading, inventoriesData } = useInventories('paginatedInventories', {
     keyword: search,
@@ -88,7 +91,7 @@ const Storage: FC = () => {
         ),
         selling_price: formatNumberToColombianPesos(item.selling_price ?? 0, showCurrency),
         buying_price: formatNumberToColombianPesos(item.buying_price ?? 0, showCurrency),
-        action: (
+        action: canEdit ? (
           <div className='flex items-center justify-center gap-2'>
             <AddProductsForm
               key={`edit-${item.id}-${JSON.stringify([item.name, item.selling_price, item.buying_price])}`} // Force re-render when data changes
@@ -115,10 +118,10 @@ const Storage: FC = () => {
               </Button>
             </Popconfirm>
           </div>
-        ),
+        ) : null,
       }))
     }
-  }, [groupsData?.results, providersData?.results, confirmtoggle])
+  }, [groupsData?.results, providersData?.results, confirmtoggle, canEdit])
 
   // Memoized formatted data
   const formattedInventories = useMemo(() => {
@@ -131,13 +134,15 @@ const Storage: FC = () => {
         pageTitle='Administrador de Inventario'
         extraButton={
           <div className='flex items-end self-end gap-4'>
-            <AddProductsForm
-              key='create-product' // Stable key for create form
-              triggerComponent={<Button type='primary'>Agregar producto</Button>}
-              initialData={{} as IInventoryProps}
-              groups={groupsData?.results ?? []}
-              providers={providersData?.results ?? []}
-            />
+            {canEdit && (
+              <AddProductsForm
+                key='create-product' // Stable key for create form
+                triggerComponent={<Button type='primary'>Agregar producto</Button>}
+                initialData={{} as IInventoryProps}
+                groups={groupsData?.results ?? []}
+                providers={providersData?.results ?? []}
+              />
+            )}
             <div className='flex flex-col items-center gap-2'>
               <span className='font-bold text-green-1'>Activos</span>
               <Switch value={showActive} loading={isLoading} onChange={handleActiveToggle} />

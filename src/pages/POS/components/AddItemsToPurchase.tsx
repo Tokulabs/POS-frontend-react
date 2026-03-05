@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 // Third Party
 import { Select } from 'antd'
 import { AxiosError } from 'axios'
@@ -41,8 +41,10 @@ export const AddItemsToPurchase = () => {
     try {
       setIsLoadingSearch(true)
       const data = await queryClient.fetchQuery({
-        queryKey: ['inventoriesByKeyword'],
+        queryKey: ['inventoriesByKeyword', keyword],
         queryFn: async () => getInventoriesNew({ keyword, active: 'True', page: 1 }),
+        staleTime: 30_000,
+        gcTime: 60_000,
       })
       setData(data?.results || [])
     } catch (error) {
@@ -77,6 +79,18 @@ export const AddItemsToPurchase = () => {
     }
   }, [debouncedSearch])
 
+  const selectOptions = useMemo(
+    () =>
+      data.map((item) => ({
+        value: item.code,
+        label: `${item.name} - ${item.code} - Quedan: ${item.total_in_shops}`,
+        photo: item.photo,
+        name: item.name,
+        total_in_shops: item.total_in_shops,
+      })),
+    [data],
+  )
+
   return (
     <section className='w-full h-full'>
       <Select
@@ -92,24 +106,22 @@ export const AddItemsToPurchase = () => {
         onSearch={handleSearch}
         onChange={handleChange}
         notFoundContent={null}
-      >
-        {data.map((item) => (
-          <Select.Option key={item.code} value={item.code}>
-            <div className='flex gap-6 items-center my-2'>
-              {item.photo && (
-                <img
-                  src={item.photo}
-                  alt={item.name}
-                  className='w-10 h-10 object-cover rounded-md'
-                />
-              )}
-              <span className='h-full'>
-                {item.name} - {item.code} - Quedan: {item.total_in_shops}
-              </span>
-            </div>
-          </Select.Option>
-        ))}
-      </Select>
+        options={selectOptions}
+        optionRender={(option) => (
+          <div className='flex gap-6 items-center my-2'>
+            {option.data.photo && (
+              <img
+                src={option.data.photo}
+                alt={option.data.name}
+                className='w-10 h-10 object-cover rounded-md'
+              />
+            )}
+            <span className='h-full'>
+              {option.data.name} - {option.value} - Quedan: {option.data.total_in_shops}
+            </span>
+          </div>
+        )}
+      />
       {cartItems.length > 0 ? (
         <section className='h-full overflow-hidden overflow-y-auto scrollbar-hide'>
           <TableHeader tableColumnsData={TableData} />

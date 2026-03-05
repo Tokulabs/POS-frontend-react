@@ -22,7 +22,6 @@ import { DataPropsForm } from '@/types/GlobalTypes'
 import { IInvoiceMinimalProps } from './types/InvoicesTypes'
 import { ModalStateEnum } from '@/types/ModalTypes'
 import { PaymentMethodsEnum } from '../POS/components/types/PaymentMethodsTypes'
-import { UserRolesEnum } from '../Users/types/UserTypes'
 // Data
 import { columns } from './data/columnsData'
 // Helpers and Utilities
@@ -31,7 +30,7 @@ import { formatNumberToColombianPesos, formatToUsd } from '@/utils/helpers'
 import { patchOverrideInvoice, postSendElectronicInvoice } from './helpers/services'
 // Hooks
 import { useInvoices } from '@/hooks/useInvoices'
-import { useRolePermissions } from '@/hooks/useRolespermissions'
+import { useHasPermission } from '@/hooks/useHasPermission'
 import { createPortal } from 'react-dom'
 import PrintOut from '@/components/Print/PrintInvoice'
 import { useNavigate } from 'react-router-dom'
@@ -64,16 +63,9 @@ const Invoices: FC = () => {
     ...statusDictionary[invoiceStatus],
   })
 
-  const allowedRolesOverride = [
-    UserRolesEnum.admin,
-    UserRolesEnum.posAdmin,
-    UserRolesEnum.shopAdmin,
-  ]
-  const allowedRolesEditPaymentMethods = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
-  const { hasPermission } = useRolePermissions({ allowedRoles: allowedRolesOverride })
-  const { hasPermission: hasPermissionEditPaymentMethods } = useRolePermissions({
-    allowedRoles: allowedRolesEditPaymentMethods,
-  })
+  const hasPermission = useHasPermission('can_void_invoice')
+  const hasPermissionEditPaymentMethods = useHasPermission('can_edit_payment_methods')
+  const hasPermissionSendElectronic = useHasPermission('can_send_electronic_invoice')
 
   const { mutate: mutateOverride, isPending: isLoadingOverride } = useMutation({
     mutationFn: patchOverrideInvoice,
@@ -122,9 +114,9 @@ const Invoices: FC = () => {
       const isDebitOrCredit = item.payment_methods.some(
         (pm) =>
           PaymentMethodsEnum[pm.name as keyof typeof PaymentMethodsEnum] ===
-            PaymentMethodsEnum.debitCard ||
+          PaymentMethodsEnum.debitCard ||
           PaymentMethodsEnum[pm.name as keyof typeof PaymentMethodsEnum] ===
-            PaymentMethodsEnum.creditCard,
+          PaymentMethodsEnum.creditCard,
       )
 
       const methodsStrings = item.payment_methods
@@ -165,7 +157,7 @@ const Invoices: FC = () => {
             {isDebitOrCredit ? (
               <Tooltip
                 mouseLeaveDelay={0.3}
-                destroyTooltipOnHide
+                destroyOnHidden
                 title={
                   <div>
                     <span>
@@ -191,7 +183,7 @@ const Invoices: FC = () => {
               <Spin />
             ) : (
               <>
-                {hasPermissionEditPaymentMethods &&
+                {hasPermissionSendElectronic &&
                   !item.is_electronic_invoiced &&
                   !item.is_override && (
                     <div>

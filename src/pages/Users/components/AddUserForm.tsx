@@ -1,11 +1,12 @@
-import { Form, Modal, Input, Select, Button } from 'antd'
+import { Form, Modal, Input, Select, Button, Skeleton } from 'antd'
 import { FC } from 'react'
 import { DataPropsForm } from '@/types/GlobalTypes'
 import { useForm } from 'antd/es/form/Form'
-import { IAddUser, UserDocumentTypeEnum, UserRolesEnum } from '../types/UserTypes'
+import { IAddUser, UserDocumentTypeEnum } from '../types/UserTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { postUsersNew, putUsers } from '../helpers/services'
 import { toast } from 'sonner'
+import { useCompanyRoles } from '@/hooks/useCompanyRoles'
 
 const AddUserForm: FC<IAddUser> = ({
   isVisible = false,
@@ -15,12 +16,14 @@ const AddUserForm: FC<IAddUser> = ({
 }) => {
   const [form] = useForm()
   const queryClient = useQueryClient()
+  const { companyRoles, isPending: loadingRoles } = useCompanyRoles()
+
+  // Filter out the Owner role — it's auto-assigned to superusers only
+  const assignableRoles = (companyRoles ?? []).filter((r) => !r.is_owner)
 
   const initialValues = {
     ...initialData,
-    role: Object.keys(UserRolesEnum).find(
-      (key) => UserRolesEnum[key as keyof typeof UserRolesEnum] === initialData.role,
-    ),
+    company_role_id: initialData.company_role?.id ?? null,
   }
 
   const isEdit = !!initialData.id
@@ -53,7 +56,7 @@ const AddUserForm: FC<IAddUser> = ({
 
   return (
     <Modal
-      title='Crear usuario'
+      title={isEdit ? 'Editar usuario' : 'Crear usuario'}
       open={isVisible}
       onOk={() => onSuccessCallback}
       onCancel={() => {
@@ -116,23 +119,24 @@ const AddUserForm: FC<IAddUser> = ({
         </Form.Item>
         <Form.Item
           label='Rol'
-          name='role'
+          name='company_role_id'
           rules={[{ required: true, message: 'El Rol es un campo obligatorio' }]}
         >
-          <Select
-            placeholder='Rol de usuario'
-            options={[
-              { value: 'posAdmin', label: UserRolesEnum.posAdmin },
-              { value: 'shopAdmin', label: UserRolesEnum.shopAdmin },
-              { value: 'sales', label: UserRolesEnum.sales },
-              { value: 'supportSales', label: UserRolesEnum.supportSales },
-              { value: 'storageAdmin', label: UserRolesEnum.storageAdmin },
-            ]}
-          />
+          {loadingRoles ? (
+            <Skeleton.Input active block />
+          ) : (
+            <Select
+              placeholder='Selecciona un rol'
+              options={assignableRoles.map((role) => ({
+                value: role.id,
+                label: role.name,
+              }))}
+            />
+          )}
         </Form.Item>
         <Form.Item>
-          <Button htmlType='submit' type='primary' block loading={isLoading}>
-            Submit
+          <Button htmlType='submit' type='primary' block loading={isLoading || isLoadingEdit}>
+            {isEdit ? 'Guardar cambios' : 'Crear Usuario'}
           </Button>
         </Form.Item>
       </Form>

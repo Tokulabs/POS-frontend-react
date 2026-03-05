@@ -6,8 +6,7 @@ import { formatNumberToColombianPesos } from '@/utils/helpers'
 import { DatePicker, DatePickerProps, Spin } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useRef, useState } from 'react'
-import { UserRolesEnum } from '@/pages/Users/types/UserTypes'
-import { useRolePermissions } from '@/hooks/useRolespermissions'
+import { useHasPermission } from '@/hooks/useHasPermission'
 import { motion } from 'framer-motion'
 
 const SalesByUser = () => {
@@ -46,10 +45,7 @@ const SalesByUser = () => {
     setDate(date.format(dateFormat))
   }
 
-  const allowedRolesOverride = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
-  const { hasPermission: hasPermissionToSeeData } = useRolePermissions({
-    allowedRoles: allowedRolesOverride,
-  })
+  const hasPermissionToSeeData = useHasPermission('can_view_dashboard_reports')
 
   return (
     <section className='bg-card p-4 rounded-lg lg:col-span-2 lg:col-start-2 shadow-md flex flex-col gap-7 w-full items-center justify-start'>

@@ -4,8 +4,7 @@ import { IconCameraOff } from '@tabler/icons-react'
 import { useTopSellingProducts } from '@/hooks/useSummaryData'
 import moment from 'moment'
 import dayjs from 'dayjs'
-import { UserRolesEnum } from '../../Users/types/UserTypes'
-import { useRolePermissions } from '@/hooks/useRolespermissions'
+import { useHasPermission } from '@/hooks/useHasPermission'
 
 const TopSell = () => {
   const dateFormat = 'YYYY-MM-DD'
@@ -18,14 +17,7 @@ const TopSell = () => {
   })
   const { RangePicker } = DatePicker
 
-  const allowedRolesOverride = [
-    UserRolesEnum.admin,
-    UserRolesEnum.posAdmin,
-    UserRolesEnum.storageAdmin,
-  ]
-  const { hasPermission: hasPermissionToSeeData } = useRolePermissions({
-    allowedRoles: allowedRolesOverride,
-  })
+  const hasPermissionToSeeData = useHasPermission('can_view_dashboard_reports')
 
   return (
     <div className='bg-card h-auto md:max-h-96 overflow-scroll scrollbar-hide p-4 rounded-lg lg:col-span-2 flex flex-col gap-8 shadow-md'>
@@ -61,15 +53,14 @@ const TopSell = () => {
               >
                 <div className='rounded-t-lg w-full h-40 relative'>
                   <span
-                    className={`absolute rounded-full -left-2 -top-3 shadow-md h-8 w-8 flex justify-center items-center text-white font-bold z-10 ${
-                      index === 0
+                    className={`absolute rounded-full -left-2 -top-3 shadow-md h-8 w-8 flex justify-center items-center text-white font-bold z-10 ${index === 0
                         ? 'bg-[#BBA53D]'
                         : index === 1
                           ? 'bg-[#A5A9B4]'
                           : index === 2
                             ? 'bg-[#CD7F32]'
                             : 'bg-green-1'
-                    }`}
+                      }`}
                   >
                     {item.sum_top_ten_items}
                   </span>

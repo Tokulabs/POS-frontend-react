@@ -8,8 +8,7 @@ import { patchOverrideInvoice, postSendElectronicInvoice } from '../Invoices/hel
 import { toast } from 'sonner'
 import { createPortal } from 'react-dom'
 import PrintInvoice from '@/components/Print/PrintInvoice'
-import { useRolePermissions } from '@/hooks/useRolespermissions'
-import { UserRolesEnum } from '../Users/types/UserTypes'
+import { useHasPermission } from '@/hooks/useHasPermission'
 import {
   InvoiceHeader,
   InvoiceDetailsPanel,
@@ -27,16 +26,9 @@ export const InvoiceItem: FC = () => {
 
   const decodedID = id ? id : ''
 
-  // Permission roles - same as Invoices table
-  const allowedRolesOverride = [
-    UserRolesEnum.admin,
-    UserRolesEnum.posAdmin,
-    UserRolesEnum.shopAdmin,
-  ]
-  const allowedRolesSendInvoice = [UserRolesEnum.admin, UserRolesEnum.posAdmin]
-  
-  const { hasPermission: canOverride } = useRolePermissions({ allowedRoles: allowedRolesOverride })
-  const { hasPermission: canSendInvoice } = useRolePermissions({ allowedRoles: allowedRolesSendInvoice })
+  // Permission checks
+  const canOverride = useHasPermission('can_void_invoice')
+  const canSendInvoice = useHasPermission('can_send_electronic_invoice')
 
   const { data: invoiceData, isLoading } = useQuery({
     queryKey: ['invoice', decodedID],

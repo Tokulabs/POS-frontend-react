@@ -93,6 +93,13 @@ export const CreateInvoice = () => {
     if (currentStep === 2) mutateInvoice(invoiceData)
   }, [currentStep])
 
+  // Safety timeout: clear print portal if onAfterPrint never fires (e.g., dialog cancelled)
+  useEffect(() => {
+    if (!printId) return
+    const timeout = setTimeout(() => setPrintId(''), 30_000)
+    return () => clearTimeout(timeout)
+  }, [printId])
+
   const newPurchase = () => {
     clearCart()
     clearCustomerData()
