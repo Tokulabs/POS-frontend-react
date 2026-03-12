@@ -58,7 +58,7 @@ export const axiosRequest = async <T, P = DataPropsForm | FormData>({
 
     if (!showError) return null
 
-    if (err.status === 403) {
+    if (err.status === 401) {
       logout()
       window.location.reload()
     }

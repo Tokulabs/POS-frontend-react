@@ -44,7 +44,7 @@ const SettingsLayout: FC<SettingsLayoutProps> = ({ tabs }) => {
               key={tab.value}
               value={tab.value}
               onClick={() => setActiveTab(tab.value)}
-              className='w-full'
+              className='w-full text-left justify-start cursor-pointer'
             >
               {tab.title}
             </TabsTrigger>

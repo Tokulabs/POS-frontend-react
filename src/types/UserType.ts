@@ -13,6 +13,21 @@ export interface IUserCompanyRole {
   permissions: IUserPermission[]
 }
 
+export interface IQuotaUsageItem {
+  used: number
+  max: number
+  is_unlimited: boolean
+  resets_at: string | null
+}
+
+export interface ICurrentPlan {
+  slug: string
+  name: string
+  product: string
+  period_start: string | null
+  period_end: string | null
+}
+
 export interface IUser {
   email: string
   fullname: string
@@ -26,4 +41,10 @@ export interface IUser {
   photo: string
   company: ICompany
   company_role: IUserCompanyRole | null
+  // Subscription data from MeView
+  active_products?: string[]
+  feature_flags?: Record<string, boolean>
+  quotas?: Record<string, number>
+  quota_usage?: Record<string, IQuotaUsageItem>
+  current_plan?: ICurrentPlan
 }

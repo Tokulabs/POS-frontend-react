@@ -46,7 +46,7 @@ const Company: FC = () => {
       email: state.user?.email || '',
       nit: state.user?.company?.nit || '',
       address: state.user?.company?.address || '',
-      city: state.user?.company?.city.id || Number(0),
+      city: state.user?.company?.city?.id || Number(0),
       phone: state.user?.company?.phone || '',
       logo: state.user?.company?.logo || '',
     },

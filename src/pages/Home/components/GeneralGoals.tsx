@@ -3,6 +3,7 @@ import { useGetGoals, useSummmaryByKeyFrame } from '@/hooks/useSummaryData'
 import { IGeneralGoals } from '../types/DashboardTypes'
 import { formatNumberToColombianPesos } from '@/utils/helpers'
 import { useMemo } from 'react'
+import { useFeatureFlag } from '@/hooks/useSubscription'
 
 type GoalType = 'diary' | 'weekly' | 'monthly' | 'annual'
 enum GoalTypeEnum {
@@ -13,11 +14,13 @@ enum GoalTypeEnum {
 }
 
 const GeneralGoals = () => {
+  const canManageGoals = useFeatureFlag('can_manage_goals')
+
   const { isLoading: isLoadingSummary, summaryByKeyframe: summaryGeneral } =
     useSummmaryByKeyFrame<IGeneralGoals>('summaryGeneral', {
       type: 'general',
     })
-  const { isLoading: isLoadingGoals, goals } = useGetGoals('getGoals')
+  const { isLoading: isLoadingGoals, goals } = useGetGoals('getGoals', canManageGoals)
 
   const calculatePercentage = useMemo(() => {
     return (goalType: GoalType) => {
@@ -38,6 +41,10 @@ const GeneralGoals = () => {
       id: goal.id,
     }))
   }, [goals, summaryGeneral, calculatePercentage])
+
+  if (!canManageGoals) {
+    return null
+  }
 
   if (isLoadingSummary || isLoadingGoals) {
     return (
@@ -86,3 +93,4 @@ const GeneralGoals = () => {
 }
 
 export { GeneralGoals }
+

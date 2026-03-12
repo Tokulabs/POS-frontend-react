@@ -48,7 +48,7 @@ const SalesByUser = () => {
   const hasPermissionToSeeData = useHasPermission('can_view_dashboard_reports')
 
   return (
-    <section className='bg-card p-4 rounded-lg lg:col-span-2 lg:col-start-2 shadow-md flex flex-col gap-7 w-full items-center justify-start'>
+    <section className='bg-card p-4 rounded-lg shadow-md flex flex-col gap-7 w-full items-center justify-start'>
       <span className='flex gap-3 font-bold items-center'>
         Ventas por usuario del
         {hasPermissionToSeeData ? (
