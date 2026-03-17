@@ -5,11 +5,10 @@ import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
 import { formatDate } from '@/pages/Dian/helpers/utils'
 
-const QUOTA_LABELS: Record<string, { label: string; icon: string }> = {
-  products: { label: 'Productos', icon: '📦' },
+const QUOTA_LABELS: Record<string, { label: string; icon: string; note?: string }> = {
+  products: { label: 'Productos', icon: '📦', note: 'Los productos inactivos también cuentan.' },
   users: { label: 'Usuarios', icon: '👥' },
   roles: { label: 'Roles', icon: '🔑' },
-  resolutions: { label: 'Resoluciones DIAN', icon: '📋' },
   invoices_month: { label: 'Facturas (este mes)', icon: '🧾' },
   electronic_invoices_month: { label: 'Facturas electrónicas (este mes)', icon: '⚡' },
   credit_notes_month: { label: 'Notas de crédito (este mes)', icon: '📝' },
@@ -37,10 +36,13 @@ const QuotaRow: FC<{ quotaKey: string }> = ({ quotaKey }) => {
       {!isUnlimited && max > 0 && (
         <Progress value={percentage} className='h-2' />
       )}
-      {resetsAt && (
+      {resetsAt && max > 0 && (
         <span className='text-xs text-muted-foreground'>
           Se reinicia el {formatDate(resetsAt)}
         </span>
+      )}
+      {meta.note && (
+        <span className='text-xs text-muted-foreground italic'>{meta.note}</span>
       )}
     </div>
   )
@@ -59,7 +61,11 @@ const SubscriptionInfo: FC = () => {
     can_import_inventory: 'Importar inventario (CSV)',
     can_manage_storage: 'Gestión de bodega',
     can_view_inventory_movements: 'Movimientos de inventario',
+    can_create_shipment_movement: 'Crear movimientos de envío',
+    can_create_return_movement: 'Crear movimientos de devolución',
+    can_approve_movement: 'Aprobar movimientos',
     can_view_purchases: 'Ver compras',
+    can_create_purchase: 'Crear compras',
     can_manage_providers: 'Gestión de proveedores',
     can_download_daily_report: 'Reporte diario',
     can_download_inventory_report: 'Reporte de inventario',
@@ -72,7 +78,16 @@ const SubscriptionInfo: FC = () => {
     can_manage_goals: 'Metas de venta',
     can_use_credit_notes: 'Notas de crédito',
     can_use_usd_pricing: 'Precios en USD',
+    dashboard_advanced: 'Dashboard avanzado',
+    restaurant_addon: 'Módulo restaurante',
   }
+
+  // Derive entries from what the backend actually returns, not the hardcoded list
+  const featureEntries = Object.keys(featureFlags).map((flag) => ({
+    flag,
+    label: FEATURE_LABELS[flag] ?? flag.replace(/_/g, ' '),
+    enabled: featureFlags[flag] ?? false,
+  }))
 
   return (
     <div className='flex flex-col gap-6 p-4 md:p-6 overflow-y-auto h-full scrollbar-hide' style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
@@ -101,9 +116,11 @@ const SubscriptionInfo: FC = () => {
       <div className='flex flex-col gap-2'>
         <h4 className='text-lg font-semibold'>Uso de recursos</h4>
         <div className='grid gap-3 md:grid-cols-2'>
-          {Object.keys(QUOTA_LABELS).map((key) =>
-            quotaUsage[key] ? <QuotaRow key={key} quotaKey={key} /> : null
-          )}
+          {Object.keys(QUOTA_LABELS).map((key) => {
+            if (key === 'credit_notes_month' && !featureFlags['can_use_credit_notes']) return null
+            if (key === 'electronic_invoices_month' && !featureFlags['can_send_electronic_invoice']) return null
+            return quotaUsage[key] ? <QuotaRow key={key} quotaKey={key} /> : null
+          })}
         </div>
       </div>
 
@@ -111,18 +128,15 @@ const SubscriptionInfo: FC = () => {
       <div className='flex flex-col gap-2'>
         <h4 className='text-lg font-semibold'>Funcionalidades del plan</h4>
         <div className='grid gap-2 md:grid-cols-2'>
-          {Object.entries(FEATURE_LABELS).map(([flag, label]) => {
-            const enabled = featureFlags[flag] ?? false
-            return (
-              <div
-                key={flag}
-                className='flex items-center gap-2 p-3 rounded-lg border border-border bg-background text-sm'
-              >
-                <span>{enabled ? '✅' : '❌'}</span>
-                <span className={enabled ? '' : 'text-muted-foreground'}>{label}</span>
-              </div>
-            )
-          })}
+          {featureEntries.map(({ flag, label, enabled }) => (
+            <div
+              key={flag}
+              className='flex items-center gap-2 p-3 rounded-lg border border-border bg-background text-sm'
+            >
+              <span>{enabled ? '✅' : '❌'}</span>
+              <span className={enabled ? '' : 'text-muted-foreground'}>{label}</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>

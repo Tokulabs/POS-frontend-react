@@ -10,6 +10,7 @@ import PasswordRecovery from '@/pages/Auth/PasswordRecovery'
 import PasswordReset from '@/pages/Auth/PasswordReset'
 import { store } from '@/store/index'
 import { useSubscription } from '@/hooks/useSubscription'
+import { LockedByPlan } from '@/components/Auth/LockedByPlan'
 // Pages
 import { Home } from '@/pages/Home/Home'
 import { Inventories } from '@/pages/Inventories/Inventories'
@@ -55,7 +56,7 @@ const authRoutes: ISideBarData[] = [
   { path: '/inventory-movements', component: InventoryMovement, requiredAnyPermission: ['can_view_inventory_movements', 'can_create_shipment_movement', 'can_create_return_movement'], requiredFeatureFlag: 'can_view_inventory_movements' },
   { path: '/inventory-movement/:id', component: InventoryMovementItem, requiredAnyPermission: ['can_view_inventory_movements', 'can_create_shipment_movement', 'can_create_return_movement'], requiredFeatureFlag: 'can_view_inventory_movements' },
   { path: '/inventory-management', component: InventoryManagement, requiredPermission: 'can_import_inventory', requiredFeatureFlag: 'can_import_inventory' },
-  { path: '/settings', component: Profile },
+  { path: '/settings/:tab?', component: Profile },
 ]
 
 const Router: FC = () => {
@@ -69,6 +70,7 @@ const Router: FC = () => {
       element: <AuthRoutes />,
       children: authRoutes.map((item) => {
         let hasPermission = true
+        let hasFeature = true
 
         if (item.requiredPermission) {
           hasPermission = userPermissions.some((p) => p.codename === item.requiredPermission)
@@ -78,16 +80,14 @@ const Router: FC = () => {
           )
         }
 
-        // Also check plan-level feature flag
         if (item.requiredFeatureFlag) {
-          const flagEnabled = featureFlags[item.requiredFeatureFlag] ?? false
-          if (!flagEnabled) hasPermission = false
+          hasFeature = featureFlags[item.requiredFeatureFlag] ?? false
         }
 
         const Component = item.component
-        return hasPermission
-          ? { path: item.path, element: <Component /> }
-          : { path: '*', element: <Notfound /> }
+        if (!hasPermission) return { path: item.path, element: <Notfound /> }
+        if (!hasFeature) return { path: item.path, element: <LockedByPlan /> }
+        return { path: item.path, element: <Component /> }
       }),
     },
     { path: '/login', element: <Login /> },

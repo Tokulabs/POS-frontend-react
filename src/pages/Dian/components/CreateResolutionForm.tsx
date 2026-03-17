@@ -31,6 +31,7 @@ import {
   CommandList,
 } from '@/components/ui/command'
 import { IconDeviceIpadPlus, IconPlus } from '@tabler/icons-react'
+import { useFeatureFlag, useRefreshSubscription } from '@/hooks/useSubscription'
 
 interface CreateResolutionProps {
   isVisible: boolean
@@ -44,6 +45,12 @@ const resolutionType = [
 
 const CreateResolutionForm: FC<CreateResolutionProps> = ({ isVisible = false, onOpenChange }) => {
   const queryClient = useQueryClient()
+  const canSendElectronicInvoice = useFeatureFlag('can_send_electronic_invoice')
+  const refreshSubscription = useRefreshSubscription()
+
+  const availableResolutionTypes = resolutionType.filter(
+    (t) => t.value !== 'ElectronicInvoice' || canSendElectronicInvoice
+  )
 
   const { mutate, isPending: isLoading } = useMutation({
     mutationFn: postDianResolution,
@@ -54,6 +61,7 @@ const CreateResolutionForm: FC<CreateResolutionProps> = ({ isVisible = false, on
       toast.success('Resolución Creada!')
       form.reset()
       onOpenChange(false)
+      refreshSubscription()
     },
   })
 
@@ -180,7 +188,7 @@ const CreateResolutionForm: FC<CreateResolutionProps> = ({ isVisible = false, on
                         <CommandList>
                           <CommandEmpty>No encontrado</CommandEmpty>
                           <CommandGroup>
-                            {resolutionType.map((doc) => (
+                            {availableResolutionTypes.map((doc) => (
                               <CommandItem
                                 value={doc.label}
                                 key={doc.value}

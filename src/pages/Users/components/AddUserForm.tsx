@@ -7,6 +7,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { postUsersNew, putUsers } from '../helpers/services'
 import { toast } from 'sonner'
 import { useCompanyRoles } from '@/hooks/useCompanyRoles'
+import { useQuota, useRefreshSubscription } from '@/hooks/useSubscription'
 
 const AddUserForm: FC<IAddUser> = ({
   isVisible = false,
@@ -17,6 +18,8 @@ const AddUserForm: FC<IAddUser> = ({
   const [form] = useForm()
   const queryClient = useQueryClient()
   const { companyRoles, isPending: loadingRoles } = useCompanyRoles()
+  const { used, max, isUnlimited } = useQuota('users')
+  const refreshSubscription = useRefreshSubscription()
 
   // Filter out the Owner role — it's auto-assigned to superusers only
   const assignableRoles = (companyRoles ?? []).filter((r) => !r.is_owner)
@@ -27,6 +30,7 @@ const AddUserForm: FC<IAddUser> = ({
   }
 
   const isEdit = !!initialData.id
+  const isAtUserLimit = !isEdit && !isUnlimited && max > 0 && used >= max
 
   const successRegistry = (description: string) => {
     queryClient.invalidateQueries({ queryKey: ['paginatedUsers'] })
@@ -39,6 +43,7 @@ const AddUserForm: FC<IAddUser> = ({
     mutationFn: postUsersNew,
     onSuccess: () => {
       successRegistry('Usuario creado!')
+      refreshSubscription()
     },
   })
 
@@ -134,8 +139,13 @@ const AddUserForm: FC<IAddUser> = ({
             />
           )}
         </Form.Item>
+        {isAtUserLimit && (
+          <p className='text-xs text-red-500 mb-2'>
+            Has alcanzado el límite de {max} usuarios de tu plan. Actualiza tu plan para agregar más.
+          </p>
+        )}
         <Form.Item>
-          <Button htmlType='submit' type='primary' block loading={isLoading || isLoadingEdit}>
+          <Button htmlType='submit' type='primary' block loading={isLoading || isLoadingEdit} disabled={isAtUserLimit}>
             {isEdit ? 'Guardar cambios' : 'Crear Usuario'}
           </Button>
         </Form.Item>

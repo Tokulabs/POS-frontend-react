@@ -1,5 +1,6 @@
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { FC, ReactNode, useState, useContext } from 'react'
+import { FC, ReactNode, useContext } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { store } from '@/store'
 
 interface TabsProps {
@@ -14,7 +15,8 @@ interface SettingsLayoutProps {
 }
 
 const SettingsLayout: FC<SettingsLayoutProps> = ({ tabs }) => {
-  const [activeTab, setActiveTab] = useState(tabs[0]?.value || '')
+  const { tab } = useParams<{ tab?: string }>()
+  const navigate = useNavigate()
   const { state } = useContext(store)
   const userPermissions = state.user?.company_role?.permissions ?? []
 
@@ -23,8 +25,12 @@ const SettingsLayout: FC<SettingsLayoutProps> = ({ tabs }) => {
     return userPermissions.some((p) => p.codename === codename)
   }
 
-  const visibleTabs = tabs.filter((tab) => hasPermission(tab.requiredPermission))
-  const activeContent = visibleTabs.find((tab) => tab.value === activeTab)?.content
+  const visibleTabs = tabs.filter((t) => hasPermission(t.requiredPermission))
+
+  const activeTab =
+    visibleTabs.find((t) => t.value === tab)?.value ?? visibleTabs[0]?.value ?? ''
+
+  const activeContent = visibleTabs.find((t) => t.value === activeTab)?.content
 
   return (
     <section className='flex flex-col w-full h-full gap-5 p-5 bg-card rounded-md md:gap-0'>
@@ -35,18 +41,18 @@ const SettingsLayout: FC<SettingsLayoutProps> = ({ tabs }) => {
         </span>
       </header>
       <Tabs
-        defaultValue='profile'
+        value={activeTab}
         className='flex flex-col items-start justify-center flex-1 overflow-hidden md:flex-row'
       >
         <TabsList className='flex w-full justify-center items-center h-auto md:h-full gap-2 md:w-56 md:flex-col md:border-r md:border-r-border md:bg-card md:rounded-none md:justify-start md:py-4 md:pr-4 md:pl-0'>
-          {visibleTabs.map((tab) => (
+          {visibleTabs.map((t) => (
             <TabsTrigger
-              key={tab.value}
-              value={tab.value}
-              onClick={() => setActiveTab(tab.value)}
+              key={t.value}
+              value={t.value}
+              onClick={() => navigate(`/settings/${t.value}`)}
               className='w-full text-left justify-start cursor-pointer'
             >
-              {tab.title}
+              {t.title}
             </TabsTrigger>
           ))}
         </TabsList>

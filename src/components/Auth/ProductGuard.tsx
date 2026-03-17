@@ -1,4 +1,5 @@
 import { FC, PropsWithChildren } from 'react'
+import { Link } from 'react-router-dom'
 import { useHasProduct } from '@/hooks/useSubscription'
 
 interface ProductGuardProps {
@@ -27,6 +28,12 @@ const ProductGuard: FC<PropsWithChildren<ProductGuardProps>> = ({ product, child
           Tu empresa no tiene una suscripción activa para este producto.
           Contacta al administrador para activarla.
         </p>
+        <Link
+          to='/settings'
+          className='px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity'
+        >
+          Ver suscripción
+        </Link>
       </div>
     )
   }

@@ -29,6 +29,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useCompanyRoles, usePermissionsGrouped } from '@/hooks/useCompanyRoles'
 import { postCompanyRole, putCompanyRole, deleteCompanyRole } from '../helpers/rolesServices'
 import { ICompanyRole } from '../types/RoleTypes'
+import { useFeatureFlag, useQuota, useRefreshSubscription } from '@/hooks/useSubscription'
+import { LockedByPlan } from '@/components/Auth/LockedByPlan'
 
 const MODULE_LABELS: Record<string, string> = {
     invoicing: 'Facturación',
@@ -43,6 +45,10 @@ const RolesSettings: FC = () => {
     const queryClient = useQueryClient()
     const { isPending: loadingRoles, companyRoles } = useCompanyRoles()
     const { isPending: loadingPerms, permissionsGrouped } = usePermissionsGrouped()
+    const canManageRoles = useFeatureFlag('can_manage_roles')
+    const { used, max, isUnlimited } = useQuota('roles')
+    const isAtRoleLimit = !isUnlimited && max > 0 && used >= max
+    const refreshSubscription = useRefreshSubscription()
 
     const [drawerOpen, setDrawerOpen] = useState(false)
     const [editingRole, setEditingRole] = useState<ICompanyRole | null>(null)
@@ -86,6 +92,7 @@ const RolesSettings: FC = () => {
             toast.success('Rol creado exitosamente')
             setDrawerOpen(false)
             invalidate()
+            refreshSubscription()
         },
         onError: () => toast.error('Error al crear el rol'),
     })
@@ -106,6 +113,7 @@ const RolesSettings: FC = () => {
             toast.success('Rol eliminado')
             setDeleteTarget(null)
             invalidate()
+            refreshSubscription()
         },
         onError: (error: Error) => {
             toast.error(error.message ?? 'Error al eliminar el rol')
@@ -132,6 +140,8 @@ const RolesSettings: FC = () => {
 
     const isBusy = creating || updating
 
+    if (!canManageRoles) return <LockedByPlan />
+
     return (
         <div className='flex flex-col w-full h-full gap-5 p-4 md:px-8 overflow-y-auto'>
             {/* Header */}
@@ -142,11 +152,21 @@ const RolesSettings: FC = () => {
                         Crea roles personalizados y asigna permisos a cada uno
                     </p>
                 </div>
-                <Button onClick={openCreate} className='flex items-center gap-2'>
+                <Button
+                    onClick={openCreate}
+                    disabled={isAtRoleLimit}
+                    title={isAtRoleLimit ? `Límite alcanzado (${used}/${max} roles)` : undefined}
+                    className='flex items-center gap-2'
+                >
                     <IconPlus size={16} />
                     Nuevo Rol
                 </Button>
             </div>
+            {isAtRoleLimit && (
+                <p className='text-xs text-destructive'>
+                    Has alcanzado el límite de {max} roles de tu plan. Actualiza tu plan para crear más.
+                </p>
+            )}
 
             {/* Roles list */}
             {loadingRoles ? (

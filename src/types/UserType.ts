@@ -33,7 +33,6 @@ export interface IUser {
   fullname: string
   id: string
   created_at: string
-  role: string
   last_login: string
   is_verified: boolean
   document_id: string

@@ -1,6 +1,8 @@
-import { useContext } from 'react'
+import { useContext, useCallback } from 'react'
 import { store } from '@/store/index'
+import { ActionTypes } from '@/types/StoreTypes'
 import { IQuotaUsageItem, ICurrentPlan } from '@/types/UserType'
+import { authHandler } from '@/pages/Auth/helpers'
 
 /**
  * Hook to access the current user's subscription data.
@@ -95,4 +97,22 @@ export const useQuota = (quotaKey: string): {
 export const useCurrentPlan = (): ICurrentPlan | null => {
   const { currentPlan } = useSubscription()
   return currentPlan
+}
+
+/**
+ * Returns a stable function that re-fetches /user/me and updates the store.
+ * Call this after subscription changes (plan upgrade, new product activated, etc.)
+ *
+ * Usage:
+ *   const refresh = useRefreshSubscription()
+ *   await refresh()
+ */
+export const useRefreshSubscription = () => {
+  const { dispatch } = useContext(store)
+  return useCallback(async () => {
+    const user = await authHandler()
+    if (user) {
+      dispatch({ type: ActionTypes.UPDATE_USER_INFO, payload: user })
+    }
+  }, [dispatch])
 }
