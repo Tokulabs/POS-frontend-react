@@ -19,9 +19,10 @@ const POS: FC = () => {
 
   const { dianResolutionData, isPending } = useDianResolutions('getActiveDianResolution', {
     active: 'True',
+    type: 'POS',
   })
 
-  const existsResolution = dianResolutionData?.results.length ?? 0 > 0
+  const existsResolution = (dianResolutionData?.results.length ?? 0) > 0
 
   return (
     <section className='w-full h-[calc(100vh-6.50rem)] flex gap-6 justify-center items-center'>
