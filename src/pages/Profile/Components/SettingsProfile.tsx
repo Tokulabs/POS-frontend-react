@@ -82,7 +82,6 @@ const SettingsProfile: React.FC = () => {
       ...rest,
       document_type: documentType,
       document_id: documentId,
-      role: state.user?.role || '',
     }
     mutate({ values: formattedValues, id: state.user?.id || '' })
   }

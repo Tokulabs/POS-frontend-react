@@ -44,7 +44,7 @@ const UserDropdownMenu: FC = () => {
           <span className='text-lg font-semibold text-foreground'>{state.user?.fullname}</span>
           <br />
           <span className='text-xs font-normal text-muted-foreground'>
-            (Rol - {state.user?.company_role?.name ?? state.user?.role})
+            (Rol - {state.user?.company_role?.name})
           </span>
           <br />
           <span className='text-xs font-normal text-foreground'>{state.user?.company.name}</span>
