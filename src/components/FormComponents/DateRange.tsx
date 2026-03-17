@@ -14,7 +14,7 @@ interface DateRangePickerProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onC
 
 export const DateRangePicker = ({ className, value, onChange }: DateRangePickerProps) => {
   return (
-    <div className={cn('mt-2', className)}>
+    <div className={cn(className)}>
       <Popover>
         <PopoverTrigger asChild>
           <Button
@@ -43,10 +43,13 @@ export const DateRangePicker = ({ className, value, onChange }: DateRangePickerP
           <Calendar
             autoFocus
             mode='range'
-            defaultMonth={new Date()}
+            defaultMonth={value?.from ?? new Date()}
             selected={value as DateRange}
             onSelect={onChange}
-            numberOfMonths={2}
+            numberOfMonths={1}
+            captionLayout='dropdown'
+            startMonth={new Date(2020, 0)}
+            endMonth={new Date(2040, 11)}
             classNames={{
               today: 'bg-green-1 opacity-50 text-white',
             }}

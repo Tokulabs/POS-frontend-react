@@ -219,7 +219,7 @@ const CreateResolutionForm: FC<CreateResolutionProps> = ({ isVisible = false, on
               control={form.control}
               name='dateRange'
               render={({ field }) => (
-                <FormItem className='w-full'>
+                <FormItem className='w-full space-y-2'>
                   <FormLabel>
                     Fechas de resolución <span className='text-red-1'>*</span>
                   </FormLabel>
