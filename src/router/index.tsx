@@ -1,5 +1,5 @@
 import { FC, useContext } from 'react'
-import { RouteObject, RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Login from '@/pages/Auth/Login'
 import ForceUpdatePassword from '@/pages/Auth/ForceUpdatePassword'
 import AuthRoutes from '@/components/Auth/AuthRoutes'
@@ -9,6 +9,8 @@ import { MainLayout } from '@/layouts/MainLayout/MainLayout'
 import PasswordRecovery from '@/pages/Auth/PasswordRecovery'
 import PasswordReset from '@/pages/Auth/PasswordReset'
 import { store } from '@/store/index'
+import { useSubscription } from '@/hooks/useSubscription'
+import { LockedByPlan } from '@/components/Auth/LockedByPlan'
 // Pages
 import { Home } from '@/pages/Home/Home'
 import { Inventories } from '@/pages/Inventories/Inventories'
@@ -27,12 +29,14 @@ import { Profile } from '@/pages/Profile/Profile'
 import { InventoryMovement } from '@/pages/InventoryMovement/InventoryMovement'
 import { InventoryManagement } from '@/pages/InventoryManagement/InventoryMangament'
 import { InvoiceItem } from '@/pages/InvoiceItem/InvoiceItem'
+import Register from '@/pages/Auth/Register'
 
 interface ISideBarData {
   path: string
   component: FC
   requiredPermission?: string
   requiredAnyPermission?: string[]
+  requiredFeatureFlag?: string
 }
 
 const authRoutes: ISideBarData[] = [
@@ -42,29 +46,31 @@ const authRoutes: ISideBarData[] = [
   { path: '/invoice/:id', component: InvoiceItem, requiredPermission: 'can_view_invoices' },
   { path: '/pos', component: POS, requiredPermission: 'can_create_invoice' },
   { path: '/inventory-groups', component: InventoryGroups, requiredPermission: 'can_manage_categories' },
-  { path: '/users', component: Users, requiredPermission: 'can_manage_users' },
-  { path: '/user-activities', component: UserActivities, requiredPermission: 'can_view_user_activities' },
+  { path: '/users', component: Users, requiredPermission: 'can_manage_users', requiredFeatureFlag: 'can_manage_users' },
+  { path: '/user-activities', component: UserActivities, requiredPermission: 'can_view_user_activities', requiredFeatureFlag: 'can_view_user_activities' },
   { path: '/dian-resolution', component: Dian, requiredPermission: 'can_manage_dian' },
-  { path: '/storage', component: Storage, requiredPermission: 'can_manage_storage' },
-  { path: '/payment-terminals', component: PaymentTerminals, requiredPermission: 'can_manage_company' },
-  { path: '/providers', component: Providers, requiredPermission: 'can_manage_providers' },
-  { path: '/purchases', component: Purchase, requiredAnyPermission: ['can_view_purchases', 'can_create_purchase'] },
-  { path: '/inventory-movements', component: InventoryMovement, requiredAnyPermission: ['can_view_inventory_movements', 'can_create_shipment_movement', 'can_create_return_movement'] },
-  { path: '/inventory-movement/:id', component: InventoryMovementItem, requiredAnyPermission: ['can_view_inventory_movements', 'can_create_shipment_movement', 'can_create_return_movement'] },
-  { path: '/inventory-management', component: InventoryManagement, requiredPermission: 'can_import_inventory' },
-  { path: '/settings', component: Profile },
+  { path: '/storage', component: Storage, requiredPermission: 'can_manage_storage', requiredFeatureFlag: 'can_manage_storage' },
+  { path: '/payment-terminals', component: PaymentTerminals, requiredPermission: 'can_manage_company', requiredFeatureFlag: 'can_edit_payment_methods' },
+  { path: '/providers', component: Providers, requiredPermission: 'can_manage_providers', requiredFeatureFlag: 'can_manage_providers' },
+  { path: '/purchases', component: Purchase, requiredAnyPermission: ['can_view_purchases', 'can_create_purchase'], requiredFeatureFlag: 'can_view_purchases' },
+  { path: '/inventory-movements', component: InventoryMovement, requiredAnyPermission: ['can_view_inventory_movements', 'can_create_shipment_movement', 'can_create_return_movement'], requiredFeatureFlag: 'can_view_inventory_movements' },
+  { path: '/inventory-movement/:id', component: InventoryMovementItem, requiredAnyPermission: ['can_view_inventory_movements', 'can_create_shipment_movement', 'can_create_return_movement'], requiredFeatureFlag: 'can_view_inventory_movements' },
+  { path: '/inventory-management', component: InventoryManagement, requiredPermission: 'can_import_inventory', requiredFeatureFlag: 'can_import_inventory' },
+  { path: '/settings/:tab?', component: Profile },
 ]
 
 const Router: FC = () => {
   const { isLogged } = useAuth({})
   const { state } = useContext(store)
   const userPermissions = state.user?.company_role?.permissions ?? []
+  const { featureFlags } = useSubscription()
 
   const router = createBrowserRouter([
     {
       element: <AuthRoutes />,
       children: authRoutes.map((item) => {
         let hasPermission = true
+        let hasFeature = true
 
         if (item.requiredPermission) {
           hasPermission = userPermissions.some((p) => p.codename === item.requiredPermission)
@@ -74,13 +80,18 @@ const Router: FC = () => {
           )
         }
 
+        if (item.requiredFeatureFlag) {
+          hasFeature = featureFlags[item.requiredFeatureFlag] ?? false
+        }
+
         const Component = item.component
-        return hasPermission
-          ? { path: item.path, element: <Component /> }
-          : { path: '*', element: <Notfound /> }
+        if (!hasPermission) return { path: item.path, element: <Notfound /> }
+        if (!hasFeature) return { path: item.path, element: <LockedByPlan /> }
+        return { path: item.path, element: <Component /> }
       }),
     },
     { path: '/login', element: <Login /> },
+    { path: '/register', element: <Register /> },
     { path: '/force-update-password', element: <ForceUpdatePassword /> },
     { path: '/password-recovery', element: <PasswordRecovery /> },
     { path: '/password-reset', element: <PasswordReset /> },

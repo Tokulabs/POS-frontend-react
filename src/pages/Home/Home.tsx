@@ -10,6 +10,7 @@ import { SalesByUser } from './components/SalesByUser'
 import { GeneralGoals } from './components/GeneralGoals'
 import { useHasPermission } from '@/hooks/useHasPermission'
 import { DianExpiryAlert } from './components/DianExpiryAlert'
+import { useFeatureFlag } from '@/hooks/useSubscription'
 
 const Home: FC = () => {
   const [dataType, setDataType] = useState('daily')
@@ -48,22 +49,31 @@ const Home: FC = () => {
   }, [dataType])
 
   const hasPermissionDashboard = useHasPermission('can_view_dashboard_reports')
+  const canManageGoals = useFeatureFlag('can_manage_goals')
+  const canViewPurchases = useFeatureFlag('can_view_purchases')
+
+  // Compute how many items are in the top row (TopSell + PurchasesInfo)
+  const topRowCols = hasPermissionDashboard && canViewPurchases ? 'lg:grid-cols-3' : ''
+  // Compute how many items are in the goals row
+  const goalsRowCols = canManageGoals ? 'lg:grid-cols-3' : ''
 
   return (
     <main className='flex flex-col gap-4 h-full overflow-hidden overflow-y-auto scrollbar-hide'>
       <DianExpiryAlert />
       <SummaryData />
       <section
-        className={`grid grid-cols-1 gap-4 ${hasPermissionDashboard ? 'lg:grid-cols-3' : ''}`}
+        className={`grid grid-cols-1 gap-4 ${topRowCols}`}
       >
         <TopSell />
-        {hasPermissionDashboard && <PurchasesInfo />}
+        {hasPermissionDashboard && canViewPurchases && <PurchasesInfo />}
       </section>
       {hasPermissionDashboard && (
         <>
-          <section className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
-            <GeneralGoals />
-            <SalesByUser />
+          <section className={`grid grid-cols-1 ${goalsRowCols} gap-4`}>
+            {canManageGoals && <GeneralGoals />}
+            <div className={canManageGoals ? 'lg:col-span-2' : ''}>
+              <SalesByUser />
+            </div>
           </section>
           <section className='bg-card shadow-md rounded-lg p-5'>
             <Tabs onChange={onchange} type='card' items={DataTabs} />

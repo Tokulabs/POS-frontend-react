@@ -12,6 +12,7 @@ interface NavigationMenuItem {
   link?: string
   requiredPermission?: string
   requiredAnyPermission?: string[]
+  requiredFeatureFlag?: string
   description?: string
   action?: string
   children?: NavigationMenuItem[]
@@ -28,6 +29,7 @@ export const navigationMenu: NavigationMenuItem[] = [
         label: 'Bodega',
         link: '/storage',
         requiredPermission: 'can_manage_storage',
+        requiredFeatureFlag: 'can_manage_storage',
         description: 'Gestione el inventario y controle el stock disponible',
         action: '',
       },
@@ -49,6 +51,7 @@ export const navigationMenu: NavigationMenuItem[] = [
         label: 'Movimiento de Inventarios',
         link: '/inventory-movements',
         requiredAnyPermission: ['can_view_inventory_movements', 'can_create_shipment_movement', 'can_create_return_movement'],
+        requiredFeatureFlag: 'can_view_inventory_movements',
         description: 'Registra y gestiona las devoluciones de productos fácilmente',
         action: '',
       },
@@ -56,6 +59,7 @@ export const navigationMenu: NavigationMenuItem[] = [
         label: 'Gestión de Inventario',
         link: '/inventory-management',
         requiredPermission: 'can_import_inventory',
+        requiredFeatureFlag: 'can_import_inventory',
         description: 'Crea y actualiza productos de manera masiva con archivos CSV',
         action: '',
       }
@@ -82,6 +86,7 @@ export const navigationMenu: NavigationMenuItem[] = [
         label: 'Datáfonos',
         link: '/payment-terminals',
         requiredPermission: 'can_manage_company',
+        requiredFeatureFlag: 'can_edit_payment_methods',
         description: 'Gestiona los dispositivos de pago electrónico disponibles',
         action: '',
       },
@@ -102,6 +107,7 @@ export const navigationMenu: NavigationMenuItem[] = [
         label: 'Proveedores',
         link: '/providers',
         requiredPermission: 'can_manage_providers',
+        requiredFeatureFlag: 'can_manage_providers',
         description: 'Administra y consulta la información de tus proveedores',
         action: '',
       },
@@ -109,6 +115,7 @@ export const navigationMenu: NavigationMenuItem[] = [
         label: 'Compras',
         link: '/purchases',
         requiredAnyPermission: ['can_view_purchases', 'can_create_purchase'],
+        requiredFeatureFlag: 'can_view_purchases',
         description: 'Registra y gestiona las compras realizadas a proveedores',
         action: '',
       },
@@ -136,12 +143,14 @@ export const navigationMenu: NavigationMenuItem[] = [
         link: '',
         action: 'openGoalsModal',
         requiredPermission: 'can_manage_goals',
+        requiredFeatureFlag: 'can_manage_goals',
         description: 'Crea y gestiona objetivos de ventas para tu negocio',
       },
       {
         label: 'Usuarios',
         link: '/users',
         requiredPermission: 'can_manage_users',
+        requiredFeatureFlag: 'can_manage_users',
         description: 'Gestiona y agrega usuarios a tu negocio',
       },
     ],

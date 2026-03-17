@@ -5,6 +5,7 @@ import FileUploadForm from './FileUpdateForm'
 import { toast } from 'sonner'
 import { inventoryCsvRequest } from '../helpers/InventoryApi'
 import { set } from 'lodash'
+import { useRefreshSubscription } from '@/hooks/useSubscription'
 
 interface ImportResponse {
   created_items: string[]
@@ -21,6 +22,7 @@ export default function ImportProducts({ onBack }: ImportProductsProps) {
   const [showResults, setShowResults] = useState(false)
   const [errorData, setErrorData] = useState<ImportResponse | null>(null)
   const [showErrorBanner, setShowErrorBanner] = useState(false)
+  const refreshSubscription = useRefreshSubscription()
 
   const importMutation = useMutation<ImportResponse, Error, File>({
     mutationFn: (file) => inventoryCsvRequest<ImportResponse>(file, 'post'),
@@ -44,7 +46,11 @@ export default function ImportProducts({ onBack }: ImportProductsProps) {
         setShowResults(true)
         return
       } else if (hasGlobalError) {
-        // Solo error global (NO mostrar toast)
+        const errorMsg = Array.isArray(data.error) ? data.error[0] : data.error
+        const isQuotaError = typeof errorMsg === 'string' && errorMsg.includes('límite')
+        if (isQuotaError) {
+          toast.error('Has alcanzado el límite de productos de tu plan.')
+        }
         setErrorData({
           created_items: data.created_items ?? [],
           error_list: [
@@ -58,6 +64,7 @@ export default function ImportProducts({ onBack }: ImportProductsProps) {
 
       toast.success('Productos importados correctamente')
       setShowResults(true)
+      refreshSubscription()
     },
     onError: (e) => {
       let parsedData: ImportResponse
@@ -71,9 +78,16 @@ export default function ImportProducts({ onBack }: ImportProductsProps) {
 
       const errorCount = parsedData.error_list?.length ?? 0
       const createdCount = parsedData.created_items?.length ?? 0
+      const hasQuotaErrors = parsedData.error_list?.some((err) => err.includes('límite del plan')) ?? false
 
-      if (createdCount === 0 && errorCount > 0) {
-        toast.error(parsedData.error)
+      if (createdCount > 0 && hasQuotaErrors) {
+        // Partial success — some created, some rejected due to quota
+        toast.warning(
+          `${createdCount} producto${createdCount !== 1 ? 's' : ''} importado${createdCount !== 1 ? 's' : ''}. ${errorCount} rechazado${errorCount !== 1 ? 's' : ''} por límite del plan.`,
+        )
+        refreshSubscription()
+      } else if (createdCount === 0 && errorCount > 0) {
+        toast.error(parsedData.error ?? `Se encontraron ${errorCount} errores en la importación`)
       } else {
         toast.error(
           errorCount > 0

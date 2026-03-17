@@ -5,6 +5,7 @@ import { usePurchaseSummary } from '@/hooks/useSummaryData'
 import moment from 'moment'
 import dayjs from 'dayjs'
 import { useHasPermission } from '@/hooks/useHasPermission'
+import { useFeatureFlag } from '@/hooks/useSubscription'
 
 const PurchasesInfo = () => {
   const dateFormat = 'YYYY-MM-DD'
@@ -13,10 +14,11 @@ const PurchasesInfo = () => {
   const [endDate, setEndDate] = useState<string>(today)
   const { RangePicker } = DatePicker
 
+  const canViewPurchases = useFeatureFlag('can_view_purchases')
   const { purchaseSummary, isLoading } = usePurchaseSummary('purchaseSummary', {
     start_date: startDate,
     end_date: endDate,
-  })
+  }, canViewPurchases)
   const showCurrency = false
 
   const hasPermissionToSeeData = useHasPermission('can_view_dashboard_reports')

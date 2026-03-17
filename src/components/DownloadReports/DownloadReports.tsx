@@ -15,6 +15,7 @@ import { downloadReportURL } from '@/utils/network'
 // Helpers
 import { getArrayDatesOrDateWithHour } from '@/layouts/helpers/helpers'
 import { useHasPermission } from '@/hooks/useHasPermission'
+import { useFeatureFlag } from '@/hooks/useSubscription'
 // Store
 import { store } from '@/store'
 
@@ -65,20 +66,27 @@ const DownloadReports: FC<IModalDownloadReports> = ({
   const { state } = useContext(store)
   const [form] = useForm()
 
-  // Per-report permission checks
+  // Per-report permission checks (role-based)
   const canDaily = useHasPermission('can_download_daily_report')
   const canInventory = useHasPermission('can_download_inventory_report')
   const canProductSales = useHasPermission('can_download_product_sales_report')
   const canInvoices = useHasPermission('can_download_invoices_report')
   const canElectronic = useHasPermission('can_download_electronic_invoice_report')
 
+  // Per-report plan feature flag checks
+  const flagDaily = useFeatureFlag('can_download_daily_report')
+  const flagInventory = useFeatureFlag('can_download_inventory_report')
+  const flagProductSales = useFeatureFlag('can_download_product_sales_report')
+  const flagInvoices = useFeatureFlag('can_download_invoices_report')
+  const flagElectronic = useFeatureFlag('can_download_electronic_invoice_report')
+
   const reportsToDownload: IReportToDownload[] = useMemo(() => [
-    { url: 'daily_report_export/', name: 'Reporte Diario', show: canDaily },
-    { url: 'inventories_report_export/', name: 'Reporte de inventarios', show: canInventory },
-    { url: 'product_sales_report_export/', name: 'Reporte Ventas de Productos', show: canProductSales },
-    { url: 'invoices_report_export/', name: 'Reporte de Facturas', show: canInvoices },
-    { url: 'electronic_invoice_export/', name: 'Reporte Facturación Electrónica', show: canElectronic },
-  ], [canDaily, canInventory, canProductSales, canInvoices, canElectronic])
+    { url: 'daily_report_export/', name: 'Reporte Diario', show: canDaily && flagDaily },
+    { url: 'inventories_report_export/', name: 'Reporte de inventarios', show: canInventory && flagInventory },
+    { url: 'product_sales_report_export/', name: 'Reporte Ventas de Productos', show: canProductSales && flagProductSales },
+    { url: 'invoices_report_export/', name: 'Reporte de Facturas', show: canInvoices && flagInvoices },
+    { url: 'electronic_invoice_export/', name: 'Reporte Facturación Electrónica', show: canElectronic && flagElectronic },
+  ], [canDaily, canInventory, canProductSales, canInvoices, canElectronic, flagDaily, flagInventory, flagProductSales, flagInvoices, flagElectronic])
 
   // Pick the first available report as the default
   const defaultReport = useMemo(() => {

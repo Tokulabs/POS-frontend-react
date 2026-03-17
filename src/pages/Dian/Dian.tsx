@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { putDiaResolution, toggleDianResolution } from './helpers/services'
 import { Reorder } from 'framer-motion'
 import { useHasPermission } from '@/hooks/useHasPermission'
+import { useFeatureFlag } from '@/hooks/useSubscription'
 import { IDianResolutionProps } from './types/DianResolutionTypes'
 import { toast } from 'sonner'
 import { ToggleSwitch } from '@/components/ToggleSwitch/ToggleSwitch'
@@ -19,9 +20,18 @@ const Dian: FC = () => {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [inactiveExpanded, setInactiveExpanded] = useState(false)
   const hasPermission = useHasPermission('can_manage_dian')
+  const canSendElectronicInvoice = useFeatureFlag('can_send_electronic_invoice')
   const [resolutionType, setResolutionType] = useState(0)
 
-  const options = [{ label: 'Resoluciones POS' }, { label: 'Resoluciones F.E.' }]
+  useEffect(() => {
+    if (!canSendElectronicInvoice && resolutionType === 1) {
+      setResolutionType(0)
+    }
+  }, [canSendElectronicInvoice])
+
+  const options = canSendElectronicInvoice
+    ? [{ label: 'Resoluciones POS' }, { label: 'Resoluciones F.E.' }]
+    : [{ label: 'Resoluciones POS' }]
 
   const { dianResolutionData, isPending } = useDianResolutions('allDianResolutions', {
     type: !resolutionType ? 'POS' : 'ElectronicInvoice',

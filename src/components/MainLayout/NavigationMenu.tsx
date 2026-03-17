@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/navigation-menu'
 import { navigationMenu } from '@/layouts/MainLayout/data/data'
 import { store } from '@/store'
+import { useSubscription } from '@/hooks/useSubscription'
 
 interface NavigationMenuComponentProps {
   openGoalsModal: () => void
@@ -22,6 +23,7 @@ const NavigationMenuComponent: FC<NavigationMenuComponentProps> = ({
 }) => {
   const { state } = useContext(store)
   const userPermissions = state.user?.company_role?.permissions ?? []
+  const { featureFlags } = useSubscription()
 
   const hasPermission = (codename?: string) => {
     if (!codename) return true
@@ -33,9 +35,15 @@ const NavigationMenuComponent: FC<NavigationMenuComponentProps> = ({
     return codenames.some((c) => userPermissions.some((p) => p.codename === c))
   }
 
+  const hasFeatureFlag = (flag?: string) => {
+    if (!flag) return true
+    return featureFlags[flag] ?? false
+  }
+
   const isChildVisible = (child: (typeof navigationMenu)[0]['children'] extends (infer T)[] | undefined ? T : never) => {
     if (!hasPermission(child.requiredPermission)) return false
     if (!hasAnyPermission(child.requiredAnyPermission)) return false
+    if (!hasFeatureFlag(child.requiredFeatureFlag)) return false
     return true
   }
 

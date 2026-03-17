@@ -107,10 +107,13 @@ export const LoginForm: React.FC<IAuthForm> = ({ onSubmit, loading }) => {
           </Button>
         </FormItem>
 
-        <div className='w-full mx-auto'>
+        <div className='w-full mx-auto flex flex-col gap-1'>
           <Link to='/password-recovery' className='text-sm text-foreground underline'>
             ¿Olvidaste tu contraseña?
           </Link>
+          {/* <Link to='/register' className='text-sm text-foreground underline'>
+            ¿No tienes cuenta? Crear cuenta
+          </Link> */}
         </div>
       </form>
     </Form>

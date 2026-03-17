@@ -49,12 +49,13 @@ export const useSummaryByUser = (queryKey: string, payload: DataPropsForm) => {
   }
 }
 
-export const usePurchaseSummary = (queryKey: string, payload: DataPropsForm) => {
+export const usePurchaseSummary = (queryKey: string, payload: DataPropsForm, enabled: boolean = true) => {
   const queryKeyToSend: QueryKey = [queryKey, payload]
   const { isLoading, data: purchaseSummary } = useQuery({
     queryKey: queryKeyToSend,
     queryFn: async () => await postPurchaseSummary(payload),
     refetchOnWindowFocus: false,
+    enabled,
   })
   return {
     isLoading,
@@ -75,15 +76,17 @@ export const useTopSellingProducts = (queryKey: string, payload: DataPropsForm) 
   }
 }
 
-export const useGetGoals = (queryKey: string) => {
+export const useGetGoals = (queryKey: string, enabled: boolean = true) => {
   const queryKeyToSend: QueryKey = [queryKey]
   const { isLoading, data: goals } = useQuery({
     queryKey: queryKeyToSend,
     queryFn: async () => await getGoalsData(),
     refetchOnWindowFocus: false,
+    enabled,
   })
   return {
     isLoading,
     goals,
   }
 }
+

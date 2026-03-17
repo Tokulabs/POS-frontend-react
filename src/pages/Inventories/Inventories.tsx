@@ -44,7 +44,6 @@ const Inventories: FC = () => {
     page: currentPage,
     active: showActive ? 'True' : undefined,
   })
-
   return (
     <>
       <ContentLayout
