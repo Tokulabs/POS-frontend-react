@@ -99,15 +99,39 @@ const SubscriptionInfo: FC = () => {
             <div className='flex flex-col gap-1'>
               <span className='text-xl font-bold'>{currentPlan.name}</span>
               <span className='text-sm text-muted-foreground'>{currentPlan.product}</span>
-              {currentPlan.period_start && currentPlan.period_end && (
-                <span className='text-xs text-muted-foreground'>
-                  Período: {formatDate(currentPlan.period_start)} — {formatDate(currentPlan.period_end)}
+              {currentPlan.billing_period === 'lifetime' ? (
+                <span className='text-xs text-green-600 dark:text-green-400 font-medium'>
+                  Acceso vitalicio
                 </span>
-              )}
+              ) : currentPlan.period_end ? (
+                <span className={`text-xs font-medium ${
+                  (currentPlan.days_until_expiry ?? 99) <= 0
+                    ? 'text-destructive'
+                    : (currentPlan.days_until_expiry ?? 99) <= 7
+                      ? 'text-yellow-500'
+                      : 'text-muted-foreground'
+                }`}>
+                  Vence el {formatDate(currentPlan.period_end)}
+                  {(currentPlan.days_until_expiry ?? 99) <= 0
+                    ? ' — Vencido'
+                    : (currentPlan.days_until_expiry ?? 99) <= 7
+                      ? ` (${currentPlan.days_until_expiry} días)`
+                      : ''}
+                </span>
+              ) : null}
             </div>
-            <Badge variant='secondary' className='ml-auto text-xs'>
-              {currentPlan.slug.toUpperCase()}
-            </Badge>
+            <div className='ml-auto flex flex-col items-end gap-1.5'>
+              <Badge variant='secondary' className='text-xs'>
+                {currentPlan.slug.toUpperCase()}
+              </Badge>
+              <Badge variant='outline' className='text-xs'>
+                {currentPlan.billing_period === 'monthly'
+                  ? 'Mensual'
+                  : currentPlan.billing_period === 'yearly'
+                    ? 'Anual'
+                    : 'Vitalicio'}
+              </Badge>
+            </div>
           </div>
         </div>
       )}
