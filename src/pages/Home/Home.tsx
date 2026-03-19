@@ -10,6 +10,7 @@ import { SalesByUser } from './components/SalesByUser'
 import { GeneralGoals } from './components/GeneralGoals'
 import { useHasPermission } from '@/hooks/useHasPermission'
 import { DianExpiryAlert } from './components/DianExpiryAlert'
+import { SubscriptionExpiryAlert } from './components/SubscriptionExpiryAlert'
 import { useFeatureFlag } from '@/hooks/useSubscription'
 
 const Home: FC = () => {
@@ -59,6 +60,7 @@ const Home: FC = () => {
 
   return (
     <main className='flex flex-col gap-4 h-full overflow-hidden overflow-y-auto scrollbar-hide'>
+      <SubscriptionExpiryAlert />
       <DianExpiryAlert />
       <SummaryData />
       <section

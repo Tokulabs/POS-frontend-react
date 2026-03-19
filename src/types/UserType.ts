@@ -26,6 +26,9 @@ export interface ICurrentPlan {
   product: string
   period_start: string | null
   period_end: string | null
+  billing_period: 'monthly' | 'yearly' | 'lifetime'
+  status: 'active' | 'trial' | 'past_due' | 'cancelled'
+  days_until_expiry: number | null  // null = lifetime (never expires)
 }
 
 export interface IUser {
