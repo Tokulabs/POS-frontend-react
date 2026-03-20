@@ -111,9 +111,9 @@ export const LoginForm: React.FC<IAuthForm> = ({ onSubmit, loading }) => {
           <Link to='/password-recovery' className='text-sm text-foreground underline'>
             ¿Olvidaste tu contraseña?
           </Link>
-          {/* <Link to='/register' className='text-sm text-foreground underline'>
+          <Link to='/register' className='text-sm text-foreground underline'>
             ¿No tienes cuenta? Crear cuenta
-          </Link> */}
+          </Link>
         </div>
       </form>
     </Form>
