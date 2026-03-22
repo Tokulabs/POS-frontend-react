@@ -5,6 +5,7 @@ import { UpdatePasswordSettings } from './Components/UpdatePassword'
 import Company from './Components/CompanySettings'
 import { RolesSettings } from './Components/RolesSettings'
 import { SubscriptionInfo } from './Components/SubscriptionInfo'
+import { CostCentersSettings } from './Components/CostCentersSettings'
 import { store } from '@/store'
 
 interface ProfileProps {
@@ -37,6 +38,12 @@ const Profile: FC<ProfileProps> = () => {
       value: 'roles',
       content: <RolesSettings />,
       requiredPermission: 'can_manage_roles',
+    },
+    {
+      title: 'Centros de Costo',
+      value: 'cost-centers',
+      content: <CostCentersSettings />,
+      requiredPermission: 'can_manage_company',
     },
     ...(isOwner
       ? [

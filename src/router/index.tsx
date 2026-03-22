@@ -51,7 +51,7 @@ const authRoutes: ISideBarData[] = [
   { path: '/dian-resolution', component: Dian, requiredPermission: 'can_manage_dian' },
   { path: '/storage', component: Storage, requiredPermission: 'can_manage_storage', requiredFeatureFlag: 'can_manage_storage' },
   { path: '/payment-terminals', component: PaymentTerminals, requiredPermission: 'can_manage_company', requiredFeatureFlag: 'can_edit_payment_methods' },
-  { path: '/providers', component: Providers, requiredPermission: 'can_manage_providers', requiredFeatureFlag: 'can_manage_providers' },
+  { path: '/providers', component: Providers, requiredPermission: 'can_manage_providers' },
   { path: '/purchases', component: Purchase, requiredAnyPermission: ['can_view_purchases', 'can_create_purchase'], requiredFeatureFlag: 'can_view_purchases' },
   { path: '/inventory-movements', component: InventoryMovement, requiredAnyPermission: ['can_view_inventory_movements', 'can_create_shipment_movement', 'can_create_return_movement'], requiredFeatureFlag: 'can_view_inventory_movements' },
   { path: '/inventory-movement/:id', component: InventoryMovementItem, requiredAnyPermission: ['can_view_inventory_movements', 'can_create_shipment_movement', 'can_create_return_movement'], requiredFeatureFlag: 'can_view_inventory_movements' },

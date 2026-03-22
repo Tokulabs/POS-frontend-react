@@ -8,9 +8,10 @@ import { useInventories } from '@/hooks/useInventories'
 import { IInventoryProps } from '../Inventories/types/InventoryTypes'
 import { IconCircleCheck, IconCircleX, IconEdit, IconPower } from '@tabler/icons-react'
 import { toogleInventories } from '../Inventories/helpers/services'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ModalStateEnum } from '@/types/ModalTypes'
 import { useProviders } from '@/hooks/useProviders'
+import { getCostCenters } from '@/pages/Profile/helpers/costCenterServices'
 import { toast } from 'sonner'
 import { AddProductsForm } from './components/AddProductsForm'
 import { useHasPermission } from '@/hooks/useHasPermission'
@@ -44,6 +45,7 @@ const Storage: FC = () => {
   })
   const { groupsData } = useGroups('allGroups', { active: 'True' })
   const { providersData } = useProviders('allProviders', { active: 'True' })
+  const { data: costCenters = [] } = useQuery({ queryKey: ['costCenters'], queryFn: getCostCenters })
 
   const queryClient = useQueryClient()
 
@@ -103,6 +105,7 @@ const Storage: FC = () => {
               initialData={item}
               groups={groupsData?.results ?? []}
               providers={providersData?.results ?? []}
+              costCenters={costCenters}
             />
             <Popconfirm
               title={`${item.active ? 'Desactivar' : 'Activar'} Producto`}
@@ -121,7 +124,7 @@ const Storage: FC = () => {
         ) : null,
       }))
     }
-  }, [groupsData?.results, providersData?.results, confirmtoggle, canEdit])
+  }, [groupsData?.results, providersData?.results, costCenters, confirmtoggle, canEdit])
 
   // Memoized formatted data
   const formattedInventories = useMemo(() => {
@@ -141,6 +144,7 @@ const Storage: FC = () => {
                 initialData={{} as IInventoryProps}
                 groups={groupsData?.results ?? []}
                 providers={providersData?.results ?? []}
+                costCenters={costCenters}
               />
             )}
             <div className='flex flex-col items-center gap-2'>
