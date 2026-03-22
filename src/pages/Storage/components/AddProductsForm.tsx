@@ -14,6 +14,7 @@ import { DialogContainer } from '@/components/DialogContainer/DialogContainer'
 import { OptionSelect, SearchInputSelect } from '@/components/FormComponents/SearchInputSelect'
 import { IGroupsProps } from '@/pages/Groups/types/GroupTypes'
 import { IProvider } from '@/pages/Providers/types/ProviderTypes'
+import { ICostCenter } from '@/pages/Profile/types/CostCenterTypes'
 import { Button } from '@/components/ui/button'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { postInventoriesNew, putInventoriesEdit } from '@/pages/Inventories/helpers/services'
@@ -23,6 +24,7 @@ interface AddProductsFormProps {
   initialData: IInventoryProps
   groups: IGroupsProps[]
   providers: IProvider[]
+  costCenters: ICostCenter[]
 }
 
 const AddProductsFormSchema = z.object({
@@ -49,6 +51,7 @@ const AddProductsForm: FC<AddProductsFormProps> = ({
   initialData,
   groups,
   providers,
+  costCenters,
   triggerComponent,
 }) => {
   const [pendingFileUpload, setPendingFileUpload] = useState<File | null>(null)
@@ -363,20 +366,7 @@ const AddProductsForm: FC<AddProductsFormProps> = ({
                 <SearchInputSelect<z.infer<typeof AddProductsFormSchema>, 'cost_center'>
                   label='Centro de Costo'
                   className='w-1/2'
-                  options={[
-                    {
-                      value: 'Guasá',
-                      label: 'Guasá',
-                    },
-                    {
-                      value: 'CHOCOLATE',
-                      label: 'CHOCOLATE',
-                    },
-                    {
-                      value: 'REALIDAD VIRTUAL',
-                      label: 'REALIDAD VIRTUAL',
-                    },
-                  ]}
+                  options={costCenters.map((cc) => ({ value: cc.name, label: cc.name }))}
                   field={field}
                 />
               )}
