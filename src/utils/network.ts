@@ -48,3 +48,5 @@ export const eInvoiceDianURL = baseURL + 'dian/send_invoice/'
 export const downloadInvoiceURL = baseURL + 'dian/download_invoice'
 export const companyRolesURL = baseURL + 'user/company-roles'
 export const permissionsURL = baseURL + 'user/permissions'
+// Taxes
+export const taxRatesURL = baseURL + 'app/tax-rates/'

@@ -1,3 +1,19 @@
+export interface ITaxType {
+  id: number
+  name: string
+  code: string
+  description: string
+}
+
+export interface ITaxRate {
+  id: number
+  name: string
+  percentage: number
+  is_default: boolean
+  dian_code: string
+  tax_type: ITaxType
+}
+
 export interface IInventoryProps {
   id: number
   active: boolean
@@ -27,6 +43,7 @@ export interface IInventoryProps {
   photo: string
   sum_of_item?: number
   cost_center: string | null
+  tax: ITaxRate | null
 }
 
 export interface ImageUploadAWSProps {

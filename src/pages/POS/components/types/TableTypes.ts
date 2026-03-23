@@ -21,6 +21,7 @@ export interface IPosData {
   total_in_shops?: number
   total_in_storage?: number
   photo?: string
+  tax?: { percentage: number } | null
 }
 
 export interface ITableRowProps {

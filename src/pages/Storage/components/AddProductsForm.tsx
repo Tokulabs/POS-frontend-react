@@ -16,8 +16,10 @@ import { IGroupsProps } from '@/pages/Groups/types/GroupTypes'
 import { IProvider } from '@/pages/Providers/types/ProviderTypes'
 import { ICostCenter } from '@/pages/Profile/types/CostCenterTypes'
 import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { postInventoriesNew, putInventoriesEdit } from '@/pages/Inventories/helpers/services'
+import { useTaxRates } from '@/hooks/useTaxRates'
 
 interface AddProductsFormProps {
   triggerComponent?: React.ReactNode
@@ -38,6 +40,7 @@ const AddProductsFormSchema = z.object({
   group_id: z.coerce.number().gte(0, 'Campo requerido'),
   provider_id: z.coerce.number().gte(0, 'Campo requerido'),
   cost_center: z.string().nonempty('Campo requerido'),
+  tax_id: z.coerce.number().min(1, 'Selecciona un impuesto'),
   photo: z.preprocess((val) => {
     if (val instanceof FileList) return undefined
     if (val === null) return ''
@@ -56,8 +59,8 @@ const AddProductsForm: FC<AddProductsFormProps> = ({
 }) => {
   const [pendingFileUpload, setPendingFileUpload] = useState<File | null>(null)
   const [open, setOpen] = useState(false)
-
   const { state } = useContext(store)
+  const { taxRates } = useTaxRates()
 
   const isEdit = !!initialData.id
 
@@ -79,6 +82,7 @@ const AddProductsForm: FC<AddProductsFormProps> = ({
       group_id: initialValues.group_id || 0,
       provider_id: initialValues.provider_id || 0,
       cost_center: initialValues.cost_center || '',
+      tax_id: initialValues.tax?.id ?? 0,
       photo: initialValues.photo || '',
     },
   })
@@ -141,6 +145,7 @@ const AddProductsForm: FC<AddProductsFormProps> = ({
         group_id: initialData.group?.id || 0,
         provider_id: initialData.provider?.id || 0,
         cost_center: initialData.cost_center || '',
+        tax_id: initialData.tax?.id ?? taxRates.find((t) => t.is_default)?.id ?? 0,
         photo: initialData.photo || '',
       }
       form.reset(updatedValues)
@@ -372,6 +377,37 @@ const AddProductsForm: FC<AddProductsFormProps> = ({
               )}
             />
           </div>
+          <FormField
+            control={form.control}
+            name='tax_id'
+            render={({ field }) => (
+              <FormItem>
+                <Label>
+                  Impuesto <span className='text-red-500'>*</span>
+                </Label>
+                <Select
+                  onValueChange={(v) => field.onChange(Number(v))}
+                  value={field.value ? field.value.toString() : ''}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder='Seleccionar impuesto' />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {taxRates.map((tax) => (
+                      <SelectItem key={tax.id} value={tax.id.toString()}>
+                        {tax.name}
+                        <span className='text-muted-foreground ml-1'>({tax.tax_type.code})</span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <Button
             type='submit'
             disabled={isUploading}

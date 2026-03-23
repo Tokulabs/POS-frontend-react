@@ -29,6 +29,11 @@ export const roundNumberToDecimals = (number: number, decimals: number): number 
   return parseFloat((Math.round(number * factor) / factor).toFixed(decimals))
 }
 
+const getTaxRate = (tax?: { percentage: number } | null): number => {
+  if (!tax) return 0.19 // backward-compat default
+  return tax.percentage / 100
+}
+
 export const calcMetaDataProdudct = (product: IPosData) => {
   if (product.is_gift)
     return {
@@ -40,11 +45,15 @@ export const calcMetaDataProdudct = (product: IPosData) => {
       totalItemCOP: 0,
       totalItemUSD: 0,
     }
+
+  const taxRate = getTaxRate(product.tax)
+  const taxDivisor = 1 + taxRate
+
   const priceQuantityCOP = product.quantity * product.selling_price
   const priceQuantityUSD = product.quantity * product.usd_price
 
-  const itemWithNoTaxCOP = priceQuantityCOP / 1.19
-  const itemWithNoTaxUSD = priceQuantityUSD / 1.19
+  const itemWithNoTaxCOP = priceQuantityCOP / taxDivisor
+  const itemWithNoTaxUSD = priceQuantityUSD / taxDivisor
 
   const itemDiscountCOP = itemWithNoTaxCOP * (product.discount / 100)
   const itemDiscountUSD = itemWithNoTaxUSD * (product.discount / 100)
@@ -52,8 +61,8 @@ export const calcMetaDataProdudct = (product: IPosData) => {
   const itemTaxableIncomeCOP = itemWithNoTaxCOP - itemDiscountCOP
   const itemTaxableIncomeUSD = itemWithNoTaxUSD - itemDiscountUSD
 
-  const itemTaxesCOP = itemTaxableIncomeCOP * 0.19
-  const itemTaxesUSD = itemTaxableIncomeUSD * 0.19
+  const itemTaxesCOP = itemTaxableIncomeCOP * taxRate
+  const itemTaxesUSD = itemTaxableIncomeUSD * taxRate
 
   const totalItemCOP = itemTaxableIncomeCOP + itemTaxesCOP
   const totalItemUSD = itemTaxableIncomeUSD + itemTaxesUSD
@@ -159,6 +168,7 @@ export const formatDatatoIPOSData = (data: IInventoryProps): IPosData => {
     total_in_shops: data.total_in_shops,
     total_in_storage: data.total_in_storage,
     is_gift: false,
+    tax: data.tax,
   }
 }
 
