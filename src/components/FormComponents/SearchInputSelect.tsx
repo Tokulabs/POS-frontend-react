@@ -28,6 +28,7 @@ interface SearchInputSelectProps<T extends FieldValues, K extends Path<T>> {
   className?: string
   onkeydown?: (e: React.KeyboardEvent) => void
   isLoading?: boolean
+  onSearch?: (value: string) => void
 }
 
 export const SearchInputSelect = <T extends FieldValues, K extends Path<T>>({
@@ -38,6 +39,7 @@ export const SearchInputSelect = <T extends FieldValues, K extends Path<T>>({
   className,
   onkeydown,
   isLoading,
+  onSearch,
 }: SearchInputSelectProps<T, K>) => {
   const [open, setOpen] = useState(false)
 
@@ -68,16 +70,21 @@ export const SearchInputSelect = <T extends FieldValues, K extends Path<T>>({
           </PopoverTrigger>
 
           <PopoverContent className='p-0' forceMount align='start' sideOffset={4}>
-            <Command>
+            <Command shouldFilter={!onSearch}>
               {isLoading && (
                 <div className='flex items-center justify-center h-12'>
                   <div className='animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-gray-900' />
                 </div>
               )}
 
-              <CommandInput placeholder='Búsqueda...' className='h-9' onKeyDown={onkeydown} />
+              <CommandInput
+                placeholder='Búsqueda...'
+                className='h-9'
+                onKeyDown={onkeydown}
+                onValueChange={onSearch}
+              />
               <CommandList className='overflow-y-auto max-h-60'>
-                <CommandEmpty>No option found.</CommandEmpty>
+                <CommandEmpty>{onSearch ? 'Escribe para buscar...' : 'No se encontraron opciones.'}</CommandEmpty>
                 <CommandGroup>
                   {options.map((item) => (
                     <CommandItem
