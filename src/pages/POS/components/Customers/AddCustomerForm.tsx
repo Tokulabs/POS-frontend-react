@@ -12,8 +12,9 @@ import { Button } from '@/components/ui/button'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { useCities } from '@/hooks/useCities'
+import { useDebouncedCallback } from '@/hooks/useDebounceCallback'
 import { useMutation } from '@tanstack/react-query'
 import { postCustomers, putCustomersEdit } from '../../helpers/services'
 import { useCustomerData } from '@/store/useCustomerStoreZustand'
@@ -89,7 +90,25 @@ const documentTypesOptions = [
 ] as const
 
 export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen, isEdit = false, customerData }) => {
-  const { isLoading, citiesData = [] } = useCities('citiesBySearch')
+  const [cityKeyword, setCityKeyword] = useState('')
+  const debouncedSetKeyword = useDebouncedCallback((value: string) => setCityKeyword(value), 400)
+
+  const { isLoading, citiesData = [] } = useCities(
+    'citiesBySearch',
+    cityKeyword.length >= 2 ? { keyword: cityKeyword } : undefined,
+    cityKeyword.length >= 2,
+  )
+
+  // In edit mode, seed the current city so the label shows before any search
+  const cityOptions: OptionSelect[] = isEdit && customerData?.city
+    ? [
+        { label: customerData.city.name, value: customerData.city.id },
+        ...citiesData
+          .filter((c) => c.id !== customerData.city?.id)
+          .map((c) => ({ label: c.name, value: c.id })),
+      ]
+    : citiesData.map((c) => ({ label: c.name, value: c.id }))
+
   const { updateCustomerData } = useCustomerData()
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -336,15 +355,10 @@ export const AddCustomerForm: FC<AddCustomerProps> = ({ setOpen, isEdit = false,
                 <SearchInputSelect<z.infer<typeof formSchema>, 'city'>
                   label='Ciudad'
                   className='w-1/2'
-                  options={citiesData.map((item) => {
-                    const option: OptionSelect = {
-                      label: item.name,
-                      value: item.id,
-                    }
-                    return option
-                  })}
+                  options={cityOptions}
                   isLoading={isLoading}
                   field={field}
+                  onSearch={debouncedSetKeyword}
                 />
               )}
             />
