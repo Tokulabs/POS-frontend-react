@@ -29,7 +29,8 @@ import { Profile } from '@/pages/Profile/Profile'
 import { InventoryMovement } from '@/pages/InventoryMovement/InventoryMovement'
 import { InventoryManagement } from '@/pages/InventoryManagement/InventoryMangament'
 import { InvoiceItem } from '@/pages/InvoiceItem/InvoiceItem'
-import Register from '@/pages/Auth/Register'
+// import Register from '@/pages/Auth/Register' // Disabled — registrations closed
+
 
 interface ISideBarData {
   path: string
@@ -91,7 +92,7 @@ const Router: FC = () => {
       }),
     },
     { path: '/login', element: <Login /> },
-    { path: '/register', element: <Register /> },
+    // { path: '/register', element: <Register /> }, // Disabled — registrations closed
     { path: '/force-update-password', element: <ForceUpdatePassword /> },
     { path: '/password-recovery', element: <PasswordRecovery /> },
     { path: '/password-reset', element: <PasswordReset /> },
