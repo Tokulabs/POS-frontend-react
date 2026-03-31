@@ -74,7 +74,7 @@ const TableCard: FC<TableCardProps> = ({ table, onEdit, onDelete, onStatusChange
         {/* Number + status */}
         <div className='flex items-start justify-between gap-1'>
           <span className={`text-lg font-bold leading-none ${isDisabled ? 'line-through text-muted-foreground' : ''}`}>
-            Mesa {table.number}
+            {table.number}
           </span>
           <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${styles.badge}`}>
             {TABLE_STATUS_LABELS[table.status] ?? table.status}
