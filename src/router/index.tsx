@@ -1,10 +1,9 @@
-import { FC, useContext } from 'react'
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { FC, useContext, useMemo } from 'react'
+import { RouterProvider, createBrowserRouter, Navigate } from 'react-router-dom'
 import Login from '@/pages/Auth/Login'
 import ForceUpdatePassword from '@/pages/Auth/ForceUpdatePassword'
 import AuthRoutes from '@/components/Auth/AuthRoutes'
 import Notfound from '@/pages/NotFound/404Notfound'
-import { useAuth } from '@/hooks/useAuth'
 import { MainLayout } from '@/layouts/MainLayout/MainLayout'
 import PasswordRecovery from '@/pages/Auth/PasswordRecovery'
 import PasswordReset from '@/pages/Auth/PasswordReset'
@@ -74,51 +73,85 @@ const authRoutes: ISideBarData[] = [
   { path: '/restaurant/orders/:id', component: RestaurantOrderDetail, requiredFeatureFlag: 'restaurant_addon' },
 ]
 
-const Router: FC = () => {
-  const { isLogged } = useAuth({})
+// Checks permissions at render time (after AuthRoutes has loaded the user).
+const PermissionGuard: FC<Pick<ISideBarData, 'component' | 'requiredPermission' | 'requiredAnyPermission' | 'requiredFeatureFlag'>> = ({
+  component: Component,
+  requiredPermission,
+  requiredAnyPermission,
+  requiredFeatureFlag,
+}) => {
   const { state } = useContext(store)
-  const userPermissions = state.user?.company_role?.permissions ?? []
   const { featureFlags } = useSubscription()
+  const userPermissions = state.user?.company_role?.permissions ?? []
 
-  const router = createBrowserRouter([
+  let hasPermission = true
+  if (requiredPermission) {
+    hasPermission = userPermissions.some((p) => p.codename === requiredPermission)
+  } else if (requiredAnyPermission) {
+    hasPermission = requiredAnyPermission.some((code) => userPermissions.some((p) => p.codename === code))
+  }
+
+  if (!hasPermission) return <Notfound />
+
+  if (requiredFeatureFlag && !(featureFlags[requiredFeatureFlag] ?? false)) return <LockedByPlan />
+
+  return <Component />
+}
+
+// For the root path: show Home if permitted, otherwise redirect to the first accessible route.
+const HomeRedirect: FC = () => {
+  const { state } = useContext(store)
+  const { featureFlags } = useSubscription()
+  const userPermissions = state.user?.company_role?.permissions ?? []
+
+  const canAccessRoute = (item: ISideBarData): boolean => {
+    let hasPerm = true
+    if (item.requiredPermission) {
+      hasPerm = userPermissions.some((p) => p.codename === item.requiredPermission)
+    } else if (item.requiredAnyPermission) {
+      hasPerm = item.requiredAnyPermission.some((code) => userPermissions.some((p) => p.codename === code))
+    }
+    if (!hasPerm) return false
+    if (item.requiredFeatureFlag) return featureFlags[item.requiredFeatureFlag] ?? false
+    return true
+  }
+
+  if (canAccessRoute(authRoutes[0])) return <Home />
+
+  const fallback = authRoutes.slice(1).find(canAccessRoute)
+  if (fallback) return <Navigate to={fallback.path} replace />
+
+  return <Notfound />
+}
+
+const WildcardRoute: FC = () => {
+  const { state } = useContext(store)
+  return state.user ? <MainLayout><Notfound /></MainLayout> : <Notfound fullscreen={true} />
+}
+
+const Router: FC = () => {
+  const router = useMemo(() => createBrowserRouter([
     {
       element: <AuthRoutes />,
-      children: authRoutes.map((item) => {
-        let hasPermission = true
-        let hasFeature = true
-
-        if (item.requiredPermission) {
-          hasPermission = userPermissions.some((p) => p.codename === item.requiredPermission)
-        } else if (item.requiredAnyPermission) {
-          hasPermission = item.requiredAnyPermission.some((code) =>
-            userPermissions.some((p) => p.codename === code),
-          )
-        }
-
-        if (item.requiredFeatureFlag) {
-          hasFeature = featureFlags[item.requiredFeatureFlag] ?? false
-        }
-
-        const Component = item.component
-        if (!hasPermission) return { path: item.path, element: <Notfound /> }
-        if (!hasFeature) return { path: item.path, element: <LockedByPlan /> }
-        return { path: item.path, element: <Component /> }
-      }),
+      children: authRoutes.map((item) => ({
+        path: item.path,
+        element: item.path === '/' ? <HomeRedirect /> : (
+          <PermissionGuard
+            component={item.component}
+            requiredPermission={item.requiredPermission}
+            requiredAnyPermission={item.requiredAnyPermission}
+            requiredFeatureFlag={item.requiredFeatureFlag}
+          />
+        ),
+      })),
     },
     { path: '/login', element: <Login /> },
     // { path: '/register', element: <Register /> }, // Disabled — registrations closed
     { path: '/force-update-password', element: <ForceUpdatePassword /> },
     { path: '/password-recovery', element: <PasswordRecovery /> },
     { path: '/password-reset', element: <PasswordReset /> },
-    {
-      path: '*',
-      element: isLogged ? (
-        <MainLayout><Notfound /></MainLayout>
-      ) : (
-        <Notfound fullscreen={true} />
-      ),
-    },
-  ])
+    { path: '*', element: <WildcardRoute /> },
+  ]), [])
 
   return <RouterProvider router={router} />
 }

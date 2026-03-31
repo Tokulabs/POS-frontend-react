@@ -16,19 +16,20 @@ import { useFeatureFlag } from '@/hooks/useSubscription'
 const Home: FC = () => {
   const [dataType, setDataType] = useState('daily')
   const queryClient = useQueryClient()
+
   const DataTabs = [
     {
-      label: `Hoy ${new Date().toLocaleDateString()}`,
+      label: `Hoy`,
       key: '1',
       children: <SalesByHour update={dataType} />,
     },
     {
-      label: 'Últimos 7 días',
+      label: 'Últ. 7 días',
       key: 'daily',
       children: <SalesByKeyframe type={dataType} />,
     },
     {
-      label: 'Últimas 5 semanas',
+      label: 'Últ. 5 semanas',
       key: 'weekly',
       children: <SalesByKeyframe type={dataType} />,
     },
@@ -39,9 +40,7 @@ const Home: FC = () => {
     },
   ]
 
-  const onchange = (key: string) => {
-    setDataType(key)
-  }
+  const onchange = (key: string) => setDataType(key)
 
   useEffect(() => {
     if (dataType === '1') {
@@ -53,32 +52,49 @@ const Home: FC = () => {
   const canManageGoals = useFeatureFlag('can_manage_goals')
   const canViewPurchases = useFeatureFlag('can_view_purchases')
 
-  // Compute how many items are in the top row (TopSell + PurchasesInfo)
-  const topRowCols = hasPermissionDashboard && canViewPurchases ? 'lg:grid-cols-3' : ''
-  // Compute how many items are in the goals row
-  const goalsRowCols = canManageGoals ? 'lg:grid-cols-3' : ''
+  const showPurchases = hasPermissionDashboard && canViewPurchases
 
   return (
     <main className='flex flex-col gap-4 h-full overflow-hidden overflow-y-auto scrollbar-hide'>
       <SubscriptionExpiryAlert />
       <DianExpiryAlert />
+
+      {/* KPI summary cards */}
       <SummaryData />
-      <section
-        className={`grid grid-cols-1 gap-4 ${topRowCols}`}
-      >
-        <TopSell />
-        {hasPermissionDashboard && canViewPurchases && <PurchasesInfo />}
+
+      {/* Sales hero + top products */}
+      <section className={`grid grid-cols-1 gap-4 ${showPurchases ? 'lg:grid-cols-3' : ''}`}>
+        {showPurchases && (
+          <div className='lg:col-span-1'>
+            <PurchasesInfo />
+          </div>
+        )}
+        <div className={showPurchases ? 'lg:col-span-2' : ''}>
+          <TopSell />
+        </div>
       </section>
+
       {hasPermissionDashboard && (
         <>
-          <section className={`grid grid-cols-1 ${goalsRowCols} gap-4`}>
+          {/* Goals + sales by user */}
+          <section className={`grid grid-cols-1 gap-4 ${canManageGoals ? 'lg:grid-cols-3' : ''}`}>
             {canManageGoals && <GeneralGoals />}
             <div className={canManageGoals ? 'lg:col-span-2' : ''}>
               <SalesByUser />
             </div>
           </section>
-          <section className='bg-card shadow-md rounded-lg p-5'>
-            <Tabs onChange={onchange} type='card' items={DataTabs} />
+
+          {/* Sales chart */}
+          <section className='bg-card shadow-md rounded-lg p-3 sm:p-5 min-w-0'>
+            <div className='overflow-x-auto'>
+              <Tabs
+                onChange={onchange}
+                type='card'
+                items={DataTabs}
+                size='small'
+                className='min-w-0'
+              />
+            </div>
           </section>
         </>
       )}

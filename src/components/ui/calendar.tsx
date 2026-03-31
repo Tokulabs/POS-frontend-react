@@ -26,10 +26,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
           'text-sm font-medium',
           props.captionLayout?.includes('dropdown') && 'sr-only',
         ),
-        dropdowns: cn(
-          'flex items-center gap-1.5',
-          defaultClassNames.dropdowns,
-        ),
+        dropdowns: cn('flex items-center gap-1.5', defaultClassNames.dropdowns),
         dropdown: cn(
           defaultClassNames.dropdown,
           'h-8 rounded-md border border-input bg-background px-2 py-1 text-sm font-medium',
@@ -51,12 +48,17 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         month_grid: cn('w-full border-collapse', defaultClassNames.month_grid),
         weekdays: cn('flex', defaultClassNames.weekdays),
         weekday: cn(
-          'text-zinc-500 rounded-md w-8 font-normal text-[0.8rem] dark:text-zinc-400',
+          'text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]',
           defaultClassNames.weekday,
         ),
         week: cn('flex w-full mt-2', defaultClassNames.week),
+        // Range row: tint the cell background with the accent green, not zinc
         day: cn(
-          'relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-zinc-100 [&:has([aria-selected].day-outside)]:bg-zinc-100/50 dark:[&:has([aria-selected])]:bg-zinc-800 dark:[&:has([aria-selected].day-outside)]:bg-zinc-800/50',
+          'relative p-0 text-center text-sm focus-within:relative focus-within:z-20',
+          '[&:has([aria-selected])]:bg-accent',
+          '[&:has([aria-selected].day-outside)]:bg-accent/40',
+          'dark:[&:has([aria-selected])]:bg-accent',
+          'dark:[&:has([aria-selected].day-outside)]:bg-accent/30',
           props.mode === 'range'
             ? '[&:has(>.day-range-end)]:rounded-r-md [&:has(>.day-range-start)]:rounded-l-md first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md'
             : '[&:has([aria-selected])]:rounded-md',
@@ -69,21 +71,27 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         ),
         range_start: cn('day-range-start rounded-l-md', defaultClassNames.range_start),
         range_end: cn('day-range-end rounded-r-md', defaultClassNames.range_end),
+        // Use brand green for selected (start/end) instead of black
         selected: cn(
-          'bg-zinc-900 text-zinc-50 hover:bg-zinc-900 hover:text-zinc-50 focus:bg-zinc-900 focus:text-zinc-50 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50 dark:hover:text-zinc-900 dark:focus:bg-zinc-50 dark:focus:text-zinc-900',
+          'bg-primary text-primary-foreground',
+          'hover:bg-primary hover:text-primary-foreground',
+          'focus:bg-primary focus:text-primary-foreground',
           defaultClassNames.selected,
         ),
-        today: cn(
-          'bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-50',
-          defaultClassNames.today,
-        ),
+        // Today: subtle ring — but ONLY when it is not an outside day
+        // (.day-outside is applied by the `outside` classname below)
+        today: '[&:not(.day-outside)]:ring-1 [&:not(.day-outside)]:ring-primary/70 [&:not(.day-outside)]:rounded-md font-semibold',
+        // Outside days: muted text; keep subtle range tint when inside a selection
         outside: cn(
-          'day-outside text-zinc-500 aria-selected:bg-zinc-100/50 aria-selected:text-zinc-500 dark:text-zinc-400 dark:aria-selected:bg-zinc-800/50 dark:aria-selected:text-zinc-400',
+          'day-outside text-muted-foreground opacity-50',
+          'aria-selected:opacity-70 aria-selected:text-muted-foreground',
           defaultClassNames.outside,
         ),
-        disabled: cn('text-zinc-500 opacity-50 dark:text-zinc-400', defaultClassNames.disabled),
+        disabled: cn('text-muted-foreground opacity-30', defaultClassNames.disabled),
+        // Range middle: use the accent green tint
         range_middle: cn(
-          'aria-selected:bg-zinc-100 aria-selected:text-zinc-900 dark:aria-selected:bg-zinc-800 dark:aria-selected:text-zinc-50',
+          'aria-selected:bg-accent aria-selected:text-accent-foreground',
+          'dark:aria-selected:bg-accent dark:aria-selected:text-accent-foreground',
           defaultClassNames.range_middle,
         ),
         hidden: cn('invisible', defaultClassNames.hidden),
@@ -91,9 +99,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
       }}
       components={{
         Chevron: ({ ...props }) => {
-          if (props.orientation === 'left') {
-            return <ChevronLeft className='h-4 w-4' />
-          }
+          if (props.orientation === 'left') return <ChevronLeft className='h-4 w-4' />
           return <ChevronRight className='h-4 w-4' />
         },
       }}

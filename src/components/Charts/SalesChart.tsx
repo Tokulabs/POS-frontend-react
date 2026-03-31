@@ -1,5 +1,3 @@
-// src/components/SalesChart.tsx
-
 import React from 'react'
 import {
   LineChart,
@@ -21,56 +19,59 @@ interface SalesChartProps {
   xAxisKey: string
 }
 
-const SalesChart: React.FC<SalesChartProps> = ({ data, dataKey, xAxisKey }) => (
-  <ResponsiveContainer width='100%' height={400}>
-    <LineChart
-      data={data}
-      margin={{
-        top: 15,
-        right: 35,
-        left: 25,
-        bottom: 10,
-      }}
-    >
-      <CartesianGrid strokeDasharray='3 3' />
-      <XAxis
-        dataKey={xAxisKey}
-        tickFormatter={(value: number) => {
-          if (dataKey === 'total_quantity') return `${value.toString().padStart(2, '0')}:00`
-          if (xAxisKey === 'day') return dateFormater(value.toString())
-          if (xAxisKey === 'week_number') return convertToCurrentWeek(value.toString())
-          return value.toString()
-        }}
-      />
-      <YAxis
-        tickFormatter={(value: number) => {
-          if (dataKey === 'total_quantity') return value.toString()
-          return formatNumberToColombianPesos(value)
-        }}
-      />
-      <Tooltip
-        labelFormatter={(value: number) => {
-          if (dataKey === 'total_quantity') return `${value.toString().padStart(2, '0')}:00`
-          if (xAxisKey === 'day') return dateFormater(value.toString())
-          if (xAxisKey === 'week_number') return convertToCurrentWeek(value.toString())
-          return value.toString()
-        }}
-        formatter={(value: number) => {
-          if (dataKey === 'total_quantity') return value.toString()
-          return formatNumberToColombianPesos(value)
-        }}
-      />
-      <Legend />
-      <Line
-        name={dataKey === 'total_quantity' ? 'Total Productos vendidos' : 'Total Ventas'}
-        type='monotone'
-        dataKey={dataKey}
-        stroke='#269962'
-        strokeWidth={2}
-        activeDot={{ r: 8 }}
-      />
-    </LineChart>
-  </ResponsiveContainer>
-)
+const SalesChart: React.FC<SalesChartProps> = ({ data, dataKey, xAxisKey }) => {
+  const isQuantity = dataKey === 'total_quantity'
+
+  const formatX = (value: number) => {
+    if (isQuantity) return `${value.toString().padStart(2, '0')}:00`
+    if (xAxisKey === 'day') return dateFormater(value.toString())
+    if (xAxisKey === 'week_number') return convertToCurrentWeek(value.toString())
+    return value.toString()
+  }
+
+  const formatY = (value: number) =>
+    isQuantity ? value.toString() : formatNumberToColombianPesos(value)
+
+  return (
+    // Responsive height: compact on mobile, full on desktop
+    <div className='w-full h-52 sm:h-64 md:h-80 lg:h-96'>
+      <ResponsiveContainer width='100%' height='100%'>
+        <LineChart
+          data={data}
+          margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+        >
+          <CartesianGrid strokeDasharray='3 3' />
+          <XAxis
+            dataKey={xAxisKey}
+            tickFormatter={formatX}
+            tick={{ fontSize: 11 }}
+            tickLine={false}
+          />
+          <YAxis
+            tickFormatter={formatY}
+            tick={{ fontSize: 11 }}
+            tickLine={false}
+            axisLine={false}
+            width={isQuantity ? 30 : 80}
+          />
+          <Tooltip
+            labelFormatter={formatX}
+            formatter={(value: number) => [formatY(value), isQuantity ? 'Productos vendidos' : 'Total Ventas']}
+          />
+          <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
+          <Line
+            name={isQuantity ? 'Total Productos vendidos' : 'Total Ventas'}
+            type='monotone'
+            dataKey={dataKey}
+            stroke='#269962'
+            strokeWidth={2}
+            dot={false}
+            activeDot={{ r: 5 }}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  )
+}
 
 export { SalesChart }
