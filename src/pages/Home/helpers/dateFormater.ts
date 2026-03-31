@@ -18,30 +18,27 @@ export const dateFormater = (date: string) => {
 }
 
 export const convertToCurrentWeek = (weekStr: string): string => {
-  const weekNumber = parseInt(weekStr.split(' ')[1])
+  // API sends plain numbers ("13"); also handle prefixed strings ("Week 13", "Semana 13")
+  const parts = weekStr.trim().split(' ')
+  const weekNumber = parseInt(parts.length > 1 ? parts[parts.length - 1] : parts[0])
+  if (isNaN(weekNumber)) return weekStr
+
   const year = new Date().getFullYear()
 
-  // Get the first day of the year
-  const firstDayOfYear = new Date(year, 0, 1)
+  // ISO 8601: week 1 is the week containing the first Thursday of the year.
+  // Jan 4 is always in ISO week 1, so we find the Monday of that week.
+  const jan4 = new Date(year, 0, 4)
+  const dayOfWeek = jan4.getDay() || 7 // treat Sunday (0) as 7 so Monday = 1
+  const week1Monday = new Date(jan4)
+  week1Monday.setDate(jan4.getDate() - (dayOfWeek - 1))
 
-  // Calculate the day of the week for the first day of the year (0 = Sunday, 1 = Monday, etc.)
-  const dayOfWeek = firstDayOfYear.getDay()
+  // Advance by (weekNumber - 1) full weeks from ISO week 1 Monday
+  const firstDay = new Date(week1Monday)
+  firstDay.setDate(week1Monday.getDate() + (weekNumber - 1) * 7)
 
-  // Calculate the difference to the first Monday of the year
-  const diffToMonday = dayOfWeek === 0 ? 1 : 8 - dayOfWeek
-
-  // Get the first Monday of the year
-  const firstMonday = new Date(year, 0, 1 + diffToMonday)
-
-  // Calculate the first day of the week (Monday) for the given week number
-  const firstDay = new Date(firstMonday)
-  firstDay.setDate(firstMonday.getDate() + (weekNumber - 1) * 7)
-
-  // Calculate the last day of the week (Sunday)
   const lastDay = new Date(firstDay)
   lastDay.setDate(firstDay.getDate() + 6)
 
-  // Format the dates as DD/MM
   const firstDayFormatted = `${firstDay.getDate()}/${firstDay.getMonth() + 1}`
   const lastDayFormatted = `${lastDay.getDate()}/${lastDay.getMonth() + 1}`
 

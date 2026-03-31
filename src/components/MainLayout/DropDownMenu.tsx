@@ -47,7 +47,7 @@ const UserDropdownMenu: FC = () => {
             (Rol - {state.user?.company_role?.name})
           </span>
           <br />
-          <span className='text-xs font-normal text-foreground'>{state.user?.company.name}</span>
+          <span className='text-xs font-normal text-foreground'>{state.user?.company?.name}</span>
           <br />
           <span className='text-xs font-normal text-muted-foreground'>
             <span>Última conexión:</span> {formatDateTime(state.user?.last_login)}
