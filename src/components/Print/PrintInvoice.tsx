@@ -54,6 +54,7 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint, autoPrint = true })
     invoice_number: invoiceNumber,
     is_override: isOverride,
     created_at,
+    tip,
   } = invoice
 
   const showDataitems = buildPrintDataFromInvoiceProps(invoice)
@@ -61,6 +62,19 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint, autoPrint = true })
   const { discountCOP, taxesIVACOP, totalCOP, subtotalCOP } = calcTotalPrices(
     showDataitems.dataItems,
   )
+
+  // Aggregate taxes_applied by name across all items for dynamic tax lines
+  const taxLines = dataItems
+    .filter((item) => !item.is_gift)
+    .flatMap((item) => item.taxes_applied ?? [])
+    .reduce<Record<string, number>>((acc, t) => {
+      acc[t.name] = (acc[t.name] ?? 0) + t.amount
+      return acc
+    }, {})
+
+  // Fall back to the calculated total under "IVA 19%" if no taxes_applied data
+  const hasTaxLines = Object.keys(taxLines).length > 0
+  const tipAmount = tip ?? 0
 
   return (
     <article
@@ -132,15 +146,29 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint, autoPrint = true })
         <section className='grid grid-cols-2 pt-3 border-0 border-b border-black border-solid p-1'>
           <section className='text-xs font-bold text-right'>
             <p className='m-0 text-sm text-right'>Subtotal base</p>
-            <p className='m-0 text-sm text-right'>IVA 19%</p>
+            {hasTaxLines
+              ? Object.keys(taxLines).map((name) => (
+                  <p key={name} className='m-0 text-sm text-right'>{name}</p>
+                ))
+              : <p className='m-0 text-sm text-right'>IVA 19%</p>
+            }
             <p className='m-0 text-sm text-right'>Descuento</p>
             <p className='m-0 text-sm text-right'>Total</p>
+            {tipAmount > 0 && <p className='m-0 text-sm text-right'>Propina</p>}
+            {tipAmount > 0 && <p className='m-0 text-sm font-bold text-right'>A pagar</p>}
           </section>
           <section className='text-xs text-right'>
             <p className='m-0 text-sm text-right'>{formatNumberToColombianPesos(subtotalCOP)}</p>
-            <p className='m-0 text-sm text-right'>{formatNumberToColombianPesos(taxesIVACOP)}</p>
+            {hasTaxLines
+              ? Object.keys(taxLines).map((name) => (
+                  <p key={name} className='m-0 text-sm text-right'>{formatNumberToColombianPesos(taxLines[name])}</p>
+                ))
+              : <p className='m-0 text-sm text-right'>{formatNumberToColombianPesos(taxesIVACOP)}</p>
+            }
             <p className='m-0 text-sm text-right'>{formatNumberToColombianPesos(discountCOP)}</p>
             <p className='m-0 text-sm text-right'>{formatNumberToColombianPesos(totalCOP)}</p>
+            {tipAmount > 0 && <p className='m-0 text-sm text-right'>{formatNumberToColombianPesos(tipAmount)}</p>}
+            {tipAmount > 0 && <p className='m-0 text-sm font-bold text-right'>{formatNumberToColombianPesos(totalCOP + tipAmount)}</p>}
           </section>
         </section>
 

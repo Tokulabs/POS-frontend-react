@@ -4,6 +4,7 @@ import {
   IconShoppingCart,
   IconBuildingStore,
   IconCash,
+  IconToolsKitchen2,
 } from '@tabler/icons-react'
 import { ForwardRefExoticComponent, RefAttributes } from 'react'
 
@@ -117,6 +118,43 @@ export const navigationMenu: NavigationMenuItem[] = [
         requiredFeatureFlag: 'can_view_purchases',
         description: 'Registra y gestiona las compras realizadas a proveedores',
         action: '',
+      },
+    ],
+  },
+  {
+    label: 'Restaurante',
+    icon: IconToolsKitchen2,
+    requiredFeatureFlag: 'restaurant_addon',
+    children: [
+      {
+        label: 'Unidades de Medida',
+        link: '/restaurant/units',
+        requiredFeatureFlag: 'restaurant_addon',
+        description: 'Gestiona las unidades de medida para tus ingredientes',
+      },
+      {
+        label: 'Ingredientes',
+        link: '/restaurant/ingredients',
+        requiredFeatureFlag: 'restaurant_addon',
+        description: 'Controla el stock de ingredientes y sus costos',
+      },
+      {
+        label: 'Mesas',
+        link: '/restaurant/tables',
+        requiredFeatureFlag: 'restaurant_addon',
+        description: 'Gestiona las mesas del restaurante y sus áreas',
+      },
+      {
+        label: 'Comandas',
+        link: '/restaurant/orders',
+        requiredFeatureFlag: 'restaurant_addon',
+        description: 'Gestiona las comandas activas del restaurante',
+      },
+      {
+        label: 'Menú',
+        link: '/restaurant/menu',
+        requiredFeatureFlag: 'restaurant_addon',
+        description: 'Gestiona los platos del menú y sus recetas',
       },
     ],
   },

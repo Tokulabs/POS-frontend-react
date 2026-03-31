@@ -28,6 +28,7 @@ export interface IInvoiceProps {
   is_electronic_invoiced: boolean
   cufe?: string | null
   e_invoice_number?: string | null
+  tip?: number
   key?: number
 }
 
@@ -64,4 +65,5 @@ export interface IItemInvoice {
   quantity: number
   usd_amount: number
   is_gift: boolean
+  taxes_applied?: { name: string; percentage: number; amount: number; code?: string }[]
 }

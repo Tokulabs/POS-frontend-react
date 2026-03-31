@@ -9,6 +9,8 @@ import { toast } from 'sonner'
 import { createPortal } from 'react-dom'
 import PrintInvoice from '@/components/Print/PrintInvoice'
 import { useHasPermission } from '@/hooks/useHasPermission'
+import { axiosRequest } from '@/api/api'
+import { restaurantOrderByInvoiceURL } from '@/utils/network'
 import {
   InvoiceHeader,
   InvoiceDetailsPanel,
@@ -98,6 +100,24 @@ export const InvoiceItem: FC = () => {
     staleTime: Infinity,
   })
 
+  // Try to find a linked restaurant order for this invoice
+  const { data: restaurantOrder } = useQuery({
+    queryKey: ['restaurantOrderByInvoice', invoiceData?.invoice_number],
+    queryFn: async () => {
+      const url = new URL(restaurantOrderByInvoiceURL)
+      url.searchParams.set('invoice_number', String(invoiceData!.invoice_number))
+      const res = await axiosRequest<{ id: number; order_number: string; table_number: string | null }>({
+        url,
+        hasAuth: true,
+        showError: false,
+      })
+      return res?.data ?? null
+    },
+    enabled: !!invoiceData?.invoice_number,
+    refetchOnWindowFocus: false,
+    staleTime: Infinity,
+  })
+
   if (isLoading) {
     return <div className='flex items-center justify-center w-full h-full'>Loading...</div>
   }
@@ -107,6 +127,14 @@ export const InvoiceItem: FC = () => {
   }
 
   const totals = calcTotalPrices(buildPrintDataFromInvoiceProps(invoiceData).dataItems)
+
+  const taxLines = invoiceData.invoice_items
+    .filter((item) => !item.is_gift)
+    .flatMap((item) => item.taxes_applied ?? [])
+    .reduce<Record<string, number>>((acc, t) => {
+      acc[t.name] = (acc[t.name] ?? 0) + t.amount
+      return acc
+    }, {})
 
   return (
     <>
@@ -121,6 +149,7 @@ export const InvoiceItem: FC = () => {
             cufe={invoiceData.cufe}
             eInvoiceNumber={invoiceData.e_invoice_number}
             dianPrefix={invoiceData.dian_resolution?.prefix}
+            restaurantOrder={restaurantOrder}
             footer={
               <InvoiceActions
                 onPrint={handlePrint}
@@ -155,6 +184,8 @@ export const InvoiceItem: FC = () => {
               tax={totals.taxesIVACOP}
               discount={totals.discountCOP}
               total={totals.totalCOP}
+              taxLines={taxLines}
+              tip={invoiceData.tip}
             />
           </InvoiceDetailsPanel>
 

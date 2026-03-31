@@ -30,7 +30,7 @@ const steps = [
 
 export const POSStepper: FC = () => {
   const { cartItems, totalCOP } = useCart()
-  const { paymentMethods, totalValueToPay, clearPaymentMethods, paymentTerminalID } =
+  const { paymentMethods, totalValueToPay, clearPaymentMethods, paymentTerminalID, tipAmount } =
     usePaymentMethodsData()
   const { currentStep, updateCurrentStep } = usePOSStep()
   const { customer } = useCustomerData()
@@ -81,7 +81,7 @@ export const POSStepper: FC = () => {
 
       return (
         !paymentMethods.length ||
-        totalValueToPay !== totalCOP ||
+        totalValueToPay !== totalCOP + tipAmount ||
         requirePaymentTerminal ||
         missingTransactionNumber.includes(false) ||
         !existCustomer ||
@@ -95,6 +95,7 @@ export const POSStepper: FC = () => {
     cartItems,
     totalCOP,
     totalValueToPay,
+    tipAmount,
     requirePaymentTerminal,
     customer,
   ])

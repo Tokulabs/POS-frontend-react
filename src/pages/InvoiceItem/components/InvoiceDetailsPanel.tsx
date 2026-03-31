@@ -1,8 +1,14 @@
 import { FC, ReactNode } from 'react'
 import { formatDateTime } from '@/layouts/helpers/helpers'
-import { IconCopy, IconCheck } from '@tabler/icons-react'
+import { IconCopy, IconCheck, IconToolsKitchen2 } from '@tabler/icons-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+
+interface RestaurantOrderRef {
+  id: number
+  order_number: string
+  table_number: string | null
+}
 
 interface InvoiceDetailsPanelProps {
   createdAt: string
@@ -12,6 +18,7 @@ interface InvoiceDetailsPanelProps {
   cufe?: string | null
   eInvoiceNumber?: string | null
   dianPrefix?: string | null
+  restaurantOrder?: RestaurantOrderRef | null
 }
 
 const CopyButton: FC<{ text: string; label: string }> = ({ text, label }) => {
@@ -47,6 +54,7 @@ export const InvoiceDetailsPanel: FC<InvoiceDetailsPanelProps> = ({
   cufe,
   eInvoiceNumber,
   dianPrefix,
+  restaurantOrder,
 }) => {
   const fullEInvoiceNumber = eInvoiceNumber
     ? `${dianPrefix || 'FE'} - ${eInvoiceNumber}`
@@ -66,6 +74,23 @@ export const InvoiceDetailsPanel: FC<InvoiceDetailsPanelProps> = ({
               <p className='font-medium'>{customerName || 'N/A'}</p>
             </div>
           </div>
+          {/* Restaurant Order Origin */}
+          {restaurantOrder && (
+            <div className='flex items-center gap-2 mt-3 px-3 py-2 rounded-md bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800'>
+              <IconToolsKitchen2 size={16} className='text-amber-600 dark:text-amber-400 shrink-0' />
+              <div className='text-sm'>
+                <span className='text-muted-foreground'>Comanda: </span>
+                <span className='font-semibold text-amber-700 dark:text-amber-300'>{restaurantOrder.order_number}</span>
+                {restaurantOrder.table_number && (
+                  <>
+                    <span className='text-muted-foreground mx-1'>·</span>
+                    <span className='text-muted-foreground'>Mesa </span>
+                    <span className='font-medium'>{restaurantOrder.table_number}</span>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
           {/* Electronic Invoice Information */}
           {(cufe || eInvoiceNumber) && (
             <div className='grid grid-cols-1 gap-4 mt-4 pt-4 border-t border-border'>

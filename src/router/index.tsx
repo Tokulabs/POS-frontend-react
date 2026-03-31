@@ -29,6 +29,13 @@ import { Profile } from '@/pages/Profile/Profile'
 import { InventoryMovement } from '@/pages/InventoryMovement/InventoryMovement'
 import { InventoryManagement } from '@/pages/InventoryManagement/InventoryMangament'
 import { InvoiceItem } from '@/pages/InvoiceItem/InvoiceItem'
+import { RestaurantUnits } from '@/pages/Restaurant/common/Units/RestaurantUnits'
+import { RestaurantIngredients } from '@/pages/Restaurant/common/Ingredients/RestaurantIngredients'
+import { RestaurantMenu } from '@/pages/Restaurant/features/Menu/RestaurantMenu'
+import { RestaurantMenuDetail } from '@/pages/Restaurant/features/Menu/RestaurantMenuDetail'
+import { RestaurantTables } from '@/pages/Restaurant/features/Tables/RestaurantTables'
+import { RestaurantOrders } from '@/pages/Restaurant/features/Orders/RestaurantOrders'
+import { RestaurantOrderDetail } from '@/pages/Restaurant/features/Orders/RestaurantOrderDetail'
 // import Register from '@/pages/Auth/Register' // Disabled — registrations closed
 
 
@@ -58,6 +65,13 @@ const authRoutes: ISideBarData[] = [
   { path: '/inventory-movement/:id', component: InventoryMovementItem, requiredAnyPermission: ['can_view_inventory_movements', 'can_create_shipment_movement', 'can_create_return_movement'], requiredFeatureFlag: 'can_view_inventory_movements' },
   { path: '/inventory-management', component: InventoryManagement, requiredPermission: 'can_import_inventory', requiredFeatureFlag: 'can_import_inventory' },
   { path: '/settings/:tab?', component: Profile },
+  { path: '/restaurant/units', component: RestaurantUnits, requiredFeatureFlag: 'restaurant_addon' },
+  { path: '/restaurant/ingredients', component: RestaurantIngredients, requiredFeatureFlag: 'restaurant_addon' },
+  { path: '/restaurant/menu', component: RestaurantMenu, requiredFeatureFlag: 'restaurant_addon' },
+  { path: '/restaurant/menu/:id', component: RestaurantMenuDetail, requiredFeatureFlag: 'restaurant_addon' },
+  { path: '/restaurant/tables', component: RestaurantTables, requiredFeatureFlag: 'restaurant_addon' },
+  { path: '/restaurant/orders', component: RestaurantOrders, requiredFeatureFlag: 'restaurant_addon' },
+  { path: '/restaurant/orders/:id', component: RestaurantOrderDetail, requiredFeatureFlag: 'restaurant_addon' },
 ]
 
 const Router: FC = () => {
