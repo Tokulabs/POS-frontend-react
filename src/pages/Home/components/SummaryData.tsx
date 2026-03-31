@@ -18,7 +18,9 @@ const SummaryData = () => {
       })
       if (response) {
         const result = response.data as { [key: string]: number }
-        const tempData = Object.assign({}, summaryData)
+        const tempData: ISummaryDataProps = Object.fromEntries(
+          Object.entries(summaryData).map(([k, v]) => [k, { ...v }]),
+        ) as ISummaryDataProps
 
         Object.keys(result).forEach((key) => {
           const count = result[key]
