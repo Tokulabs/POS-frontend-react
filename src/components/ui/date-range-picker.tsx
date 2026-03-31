@@ -52,7 +52,9 @@ export const DateRangePicker = ({
     } else {
       // Phase 2 — lock in the end date
       const from = range?.from
-      const raw = selected?.to ?? selected?.from
+      // When clicking the same date as `from`, react-day-picker deselects it
+      // and calls onSelect with undefined — fall back to hoverDate (still set at click time).
+      const raw = selected?.to ?? selected?.from ?? hoverDate
       if (!from || !raw) return
 
       const [finalFrom, finalTo] = from <= raw ? [from, raw] : [raw, from]
