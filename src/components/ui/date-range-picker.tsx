@@ -26,39 +26,25 @@ export const DateRangePicker = ({
   align = 'end',
 }: DateRangePickerProps) => {
   const [open, setOpen] = useState(false)
-  const [range, setRange] = useState<DateRange | undefined>({
-    from: parseLocal(startDate),
-    to: parseLocal(endDate),
-  })
+  const [from, setFrom] = useState<Date | undefined>(parseLocal(startDate))
   const [awaitingEnd, setAwaitingEnd] = useState(false)
   const [hoverDate, setHoverDate] = useState<Date | undefined>()
 
   const handleOpenChange = (next: boolean) => {
     if (next) {
-      setRange({ from: parseLocal(startDate), to: parseLocal(endDate) })
+      setFrom(parseLocal(startDate))
       setAwaitingEnd(false)
       setHoverDate(undefined)
     }
     setOpen(next)
   }
 
-  const handleSelect = (selected: DateRange | undefined) => {
+  const handleDayClick = (day: Date) => {
     if (!awaitingEnd) {
-      // Phase 1 — lock in the start date
-      const from = selected?.from ?? selected?.to
-      if (!from) return
-      setRange({ from, to: undefined })
+      setFrom(day)
       setAwaitingEnd(true)
     } else {
-      // Phase 2 — lock in the end date
-      const from = range?.from
-      // When clicking the same date as `from`, react-day-picker deselects it
-      // and calls onSelect with undefined — fall back to hoverDate (still set at click time).
-      const raw = selected?.to ?? selected?.from ?? hoverDate
-      if (!from || !raw) return
-
-      const [finalFrom, finalTo] = from <= raw ? [from, raw] : [raw, from]
-      setRange({ from: finalFrom, to: finalTo })
+      const [finalFrom, finalTo] = from! <= day ? [from!, day] : [day, from!]
       setAwaitingEnd(false)
       setHoverDate(undefined)
       onChange(format(finalFrom, 'yyyy-MM-dd'), format(finalTo, 'yyyy-MM-dd'))
@@ -66,13 +52,11 @@ export const DateRangePicker = ({
     }
   }
 
-  // While waiting for the end date, build a live preview range driven by the
-  // hovered day so the user sees the potential selection as they move the cursor.
+  // Live preview while hovering for the end date
   const displayRange: DateRange | undefined = (() => {
-    if (!awaitingEnd || !range?.from || !hoverDate) return range
-    return range.from <= hoverDate
-      ? { from: range.from, to: hoverDate }
-      : { from: hoverDate, to: range.from }
+    if (!awaitingEnd || !from) return { from: parseLocal(startDate), to: parseLocal(endDate) }
+    if (!hoverDate) return { from, to: undefined }
+    return from <= hoverDate ? { from, to: hoverDate } : { from: hoverDate, to: from }
   })()
 
   const label = startDate === endDate ? startDate : `${startDate}  →  ${endDate}`
@@ -98,12 +82,11 @@ export const DateRangePicker = ({
         <Calendar
           mode='range'
           selected={displayRange}
-          onSelect={handleSelect}
+          onDayClick={handleDayClick}
           onDayMouseEnter={(day) => awaitingEnd && setHoverDate(day)}
           onDayMouseLeave={() => setHoverDate(undefined)}
           numberOfMonths={2}
           locale={es}
-          initialFocus
         />
       </PopoverContent>
     </Popover>
