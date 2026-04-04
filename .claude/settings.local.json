@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(xargs grep -l \"restaurant\")",
-      "Bash(ls -la \"c:\\\\Users\\\\os-da\\\\OneDrive\\\\Escritorio\\\\inventory-frontend\\\\src\\\\pages\\\\Restaurant\\\\features\\\\Orders\"\" 2>/dev/null || echo \"Directory not found \")",
-      "Bash(\"C:/Users/os-da/OneDrive/Escritorio/InventoryProject/inventory_app_env/Scripts/pip.exe\" install:*)"
-    ]
-  }
-}

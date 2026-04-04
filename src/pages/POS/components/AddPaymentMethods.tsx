@@ -11,6 +11,7 @@ import { useCart } from '@/store/useCartStoreZustand'
 import { formatNumberToColombianPesos, formatToUsd } from '@/utils/helpers'
 // Hooks
 import { usePaymentTerminals } from '@/hooks/usePaymentTerminals'
+import { useFeatureFlag } from '@/hooks/useSubscription'
 
 const OPTIONS = [
   PaymentMethodsEnum.cash,
@@ -60,6 +61,8 @@ export const AddPaymentMethods: FC<{
       removePaidAmountFromPaymentMethod,
       updateTransactionNumber,
     } = usePaymentMethodsData()
+
+    const isRestaurant = useFeatureFlag('restaurant_addon')
 
     const [selectedItems, setSelectedItems] = useState<PaymentMethodsEnum[]>([])
     const [tipMode, setTipMode] = useState<'percentage' | 'fixed'>('percentage')
@@ -296,7 +299,7 @@ export const AddPaymentMethods: FC<{
         </section>
 
         {/* Tip section */}
-        {!isDollar && (
+        {!isDollar && !isRestaurant && (
           <div className='flex items-center gap-3 p-3 rounded-md border border-solid border-green-1 bg-card'>
             <span className='font-semibold text-sm shrink-0'>Propina</span>
             <Radio.Group

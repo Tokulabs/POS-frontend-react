@@ -64,13 +64,13 @@ const authRoutes: ISideBarData[] = [
   { path: '/inventory-movement/:id', component: InventoryMovementItem, requiredAnyPermission: ['can_view_inventory_movements', 'can_create_shipment_movement', 'can_create_return_movement'], requiredFeatureFlag: 'can_view_inventory_movements' },
   { path: '/inventory-management', component: InventoryManagement, requiredPermission: 'can_import_inventory', requiredFeatureFlag: 'can_import_inventory' },
   { path: '/settings/:tab?', component: Profile },
-  { path: '/restaurant/units', component: RestaurantUnits, requiredFeatureFlag: 'restaurant_addon' },
-  { path: '/restaurant/ingredients', component: RestaurantIngredients, requiredFeatureFlag: 'restaurant_addon' },
-  { path: '/restaurant/menu', component: RestaurantMenu, requiredFeatureFlag: 'restaurant_addon' },
-  { path: '/restaurant/menu/:id', component: RestaurantMenuDetail, requiredFeatureFlag: 'restaurant_addon' },
-  { path: '/restaurant/tables', component: RestaurantTables, requiredFeatureFlag: 'restaurant_addon' },
-  { path: '/restaurant/orders', component: RestaurantOrders, requiredFeatureFlag: 'restaurant_addon' },
-  { path: '/restaurant/orders/:id', component: RestaurantOrderDetail, requiredFeatureFlag: 'restaurant_addon' },
+  { path: '/restaurant/units', component: RestaurantUnits, requiredFeatureFlag: 'restaurant_addon', requiredPermission: 'can_manage_restaurant_ingredients' },
+  { path: '/restaurant/ingredients', component: RestaurantIngredients, requiredFeatureFlag: 'restaurant_addon', requiredPermission: 'can_manage_restaurant_ingredients' },
+  { path: '/restaurant/menu', component: RestaurantMenu, requiredFeatureFlag: 'restaurant_addon', requiredPermission: 'can_manage_restaurant_menu' },
+  { path: '/restaurant/menu/:id', component: RestaurantMenuDetail, requiredFeatureFlag: 'restaurant_addon', requiredPermission: 'can_manage_restaurant_menu' },
+  { path: '/restaurant/tables', component: RestaurantTables, requiredFeatureFlag: 'restaurant_addon', requiredPermission: 'can_manage_restaurant_tables' },
+  { path: '/restaurant/orders', component: RestaurantOrders, requiredFeatureFlag: 'restaurant_addon', requiredPermission: 'can_manage_restaurant_orders' },
+  { path: '/restaurant/orders/:id', component: RestaurantOrderDetail, requiredFeatureFlag: 'restaurant_addon', requiredPermission: 'can_manage_restaurant_orders' },
 ]
 
 // Checks permissions at render time (after AuthRoutes has loaded the user).
