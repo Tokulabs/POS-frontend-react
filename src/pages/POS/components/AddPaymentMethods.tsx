@@ -299,7 +299,7 @@ export const AddPaymentMethods: FC<{
         </section>
 
         {/* Tip section */}
-        {!isDollar && !isRestaurant && (
+        {!isDollar && isRestaurant && (
           <div className='flex items-center gap-3 p-3 rounded-md border border-solid border-green-1 bg-card'>
             <span className='font-semibold text-sm shrink-0'>Propina</span>
             <Radio.Group

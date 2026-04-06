@@ -84,7 +84,7 @@ export const SideBarDataPOS = ({ dianResolutionData }: SideBarDataPOSProps) => {
           )}
         </div>
         <div className='w-full border-solid border-t border-x-0 border-b-0 border-green-1 rounded-b-sm p-5 flex flex-col gap-2 font-bold'>
-          {!isRestaurant && tipAmount > 0 && (
+          {tipAmount > 0 && (
             <div className='flex justify-between items-end w-full text-sm font-semibold text-muted-foreground'>
               <span>Propina</span>
               <span>{formatNumberToColombianPesos(tipAmount)}</span>
@@ -92,7 +92,7 @@ export const SideBarDataPOS = ({ dianResolutionData }: SideBarDataPOSProps) => {
           )}
           <div className='flex justify-between items-end w-full'>
             <span className='text-base'>Total a pagar COP</span>
-            <span className='text-2xl text-green-1'>{formatNumberToColombianPesos(totalCOP + (isRestaurant ? 0 : tipAmount))}</span>
+            <span className='text-2xl text-green-1'>{formatNumberToColombianPesos(totalCOP + tipAmount)}</span>
           </div>
           <div className='flex justify-between items-end w-full'>
             <span className='text-base'>Total a pagar USD</span>
