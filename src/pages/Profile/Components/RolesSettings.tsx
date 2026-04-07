@@ -39,6 +39,7 @@ const MODULE_LABELS: Record<string, string> = {
     customers: 'Clientes',
     reports: 'Reportes',
     settings: 'Configuración',
+    restaurant: 'Restaurante',
 }
 
 const RolesSettings: FC = () => {

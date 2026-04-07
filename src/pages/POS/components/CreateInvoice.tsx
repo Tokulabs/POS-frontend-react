@@ -13,15 +13,20 @@ import { useKeyPress } from '@/hooks/useKeyPress'
 import PrintOut from '@/components/Print/PrintInvoice'
 import { toast } from 'sonner'
 import { createPortal } from 'react-dom'
+import { useLocation } from 'react-router-dom'
+import { axiosRequest } from '@/api/api'
+import { restaurantOrdersURL } from '@/utils/network'
 
 export const CreateInvoice = () => {
   const [printId, setPrintId] = useState('')
   const [printIdSaved, setPrintIdSaved] = useState('')
   const { cartItems, saleById, clearCart } = useCart()
   const { customer, clearCustomerData } = useCustomerData()
-  const { paymentTerminalID, paymentMethods, clearPaymentMethods, isDollar, isElectronicInvoice } =
+  const { paymentTerminalID, paymentMethods, clearPaymentMethods, isDollar, isElectronicInvoice, tipAmount } =
     usePaymentMethodsData()
   const { currentStep, updateCurrentStep } = usePOSStep()
+  const location = useLocation()
+  const restaurantOrderId = (location.state as any)?.restaurantOrderId as number | undefined
 
   useKeyPress('F2', () => {
     newPurchase()
@@ -44,6 +49,7 @@ export const CreateInvoice = () => {
     amount: cartItem.total,
     usd_amount: cartItem.usd_total,
     is_gift: cartItem.is_gift,
+    skip_stock_check: cartItem.skip_stock_check ?? false,
   }))
 
   const payment_methods: IPaymentMethodToSend[] = []
@@ -65,6 +71,16 @@ export const CreateInvoice = () => {
   const payment_terminal_id = paymentTerminalID || null
   const sale_by_id = saleById || null
 
+  const { mutate: completeBilling } = useMutation({
+    mutationFn: ({ orderId, invoiceNumber }: { orderId: number; invoiceNumber: string }) =>
+      axiosRequest({
+        url: `${restaurantOrdersURL}${orderId}/complete-billing/`,
+        method: 'post',
+        hasAuth: true,
+        payload: { invoice_number: invoiceNumber },
+      }),
+  })
+
   const {
     mutate: mutateInvoice,
     isPending,
@@ -76,6 +92,9 @@ export const CreateInvoice = () => {
       setPrintId(String(printId))
       setPrintIdSaved(String(printId))
       toast.success('Factura creada correctamente!')
+      if (restaurantOrderId) {
+        completeBilling({ orderId: restaurantOrderId, invoiceNumber: String(printId) })
+      }
     },
   })
 
@@ -87,6 +106,7 @@ export const CreateInvoice = () => {
     payment_methods,
     is_dollar: isDollar,
     send_electronic_invoice: isElectronicInvoice,
+    tip: tipAmount,
   }
 
   useEffect(() => {

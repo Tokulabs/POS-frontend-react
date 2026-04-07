@@ -1,6 +1,6 @@
 import { FC, useEffect, useMemo, useState } from 'react'
 // Third Party
-import { Divider, Input, InputNumber, Select, Switch } from 'antd'
+import { Divider, Input, InputNumber, Radio, Select, Switch } from 'antd'
 import { IconPlus, IconTrash } from '@tabler/icons-react'
 // Types
 import { IPaymentMethod, PaymentMethodsEnum } from './types/PaymentMethodsTypes'
@@ -11,6 +11,7 @@ import { useCart } from '@/store/useCartStoreZustand'
 import { formatNumberToColombianPesos, formatToUsd } from '@/utils/helpers'
 // Hooks
 import { usePaymentTerminals } from '@/hooks/usePaymentTerminals'
+import { useFeatureFlag } from '@/hooks/useSubscription'
 
 const OPTIONS = [
   PaymentMethodsEnum.cash,
@@ -46,6 +47,8 @@ export const AddPaymentMethods: FC<{
       isElectronicInvoice,
       totalReturnedValue,
       paymentTerminalID,
+      tipAmount,
+      setTipAmount,
       addPaymentMethod,
       updateTotalValues,
       removePaymentMethod,
@@ -59,7 +62,18 @@ export const AddPaymentMethods: FC<{
       updateTransactionNumber,
     } = usePaymentMethodsData()
 
+    const isRestaurant = useFeatureFlag('restaurant_addon')
+
     const [selectedItems, setSelectedItems] = useState<PaymentMethodsEnum[]>([])
+    const [tipMode, setTipMode] = useState<'percentage' | 'fixed'>('percentage')
+    const [tipInput, setTipInput] = useState<number>(0)
+
+    const handleTipChange = (value: number | null, mode: 'percentage' | 'fixed' = tipMode) => {
+      const v = value ?? 0
+      setTipInput(v)
+      const computed = mode === 'percentage' ? Math.round(totalCOP * (v / 100)) : v
+      setTipAmount(computed)
+    }
 
     const filteredOptions = OPTIONS.filter((o) => {
       if (isDollar) return o === PaymentMethodsEnum.cash
@@ -195,9 +209,9 @@ export const AddPaymentMethods: FC<{
               {!isDollar && (
                 <div className='flex flex-col items-center justify-end'>
                   <span
-                    className={`${totalCOP - totalValueToPay < 0 ? 'text-red-1' : 'text-green-1'} text-xl font-bold `}
+                    className={`${(totalCOP + tipAmount) - totalValueToPay < 0 ? 'text-red-1' : 'text-green-1'} text-xl font-bold `}
                   >
-                    {formatNumberToColombianPesos(totalCOP - totalValueToPay, true)}
+                    {formatNumberToColombianPesos((totalCOP + tipAmount) - totalValueToPay, true)}
                   </span>
                   <span className='text-sm font-semibold text-gray-2'>Diferencia</span>
                 </div>
@@ -283,6 +297,40 @@ export const AddPaymentMethods: FC<{
             )}
           </div>
         </section>
+
+        {/* Tip section */}
+        {!isDollar && isRestaurant && (
+          <div className='flex items-center gap-3 p-3 rounded-md border border-solid border-green-1 bg-card'>
+            <span className='font-semibold text-sm shrink-0'>Propina</span>
+            <Radio.Group
+              size='small'
+              value={tipMode}
+              onChange={(e) => {
+                setTipMode(e.target.value)
+                handleTipChange(tipInput, e.target.value)
+              }}
+            >
+              <Radio.Button value='percentage'>%</Radio.Button>
+              <Radio.Button value='fixed'>$</Radio.Button>
+            </Radio.Group>
+            <InputNumber
+              style={{ width: 120 }}
+              min={0}
+              max={tipMode === 'percentage' ? 100 : undefined}
+              value={tipInput}
+              onChange={(v) => handleTipChange(v)}
+              controls={false}
+              autoComplete='off'
+              addonAfter={tipMode === 'percentage' ? '%' : 'COP'}
+            />
+            {tipAmount > 0 && (
+              <span className='text-sm text-green-1 font-semibold'>
+                = {formatNumberToColombianPesos(tipAmount)}
+              </span>
+            )}
+          </div>
+        )}
+
         <section className='flex flex-col gap-5'>
           {paymentMethods.map((item, index) => (
             <div

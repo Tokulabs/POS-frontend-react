@@ -50,3 +50,20 @@ export const companyRolesURL = baseURL + 'user/company-roles'
 export const permissionsURL = baseURL + 'user/permissions'
 // Taxes
 export const taxRatesURL = baseURL + 'app/tax-rates/'
+// Restaurant
+export const restaurantUnitsURL = baseURL + 'restaurant/units/'
+export const restaurantIngredientsURL = baseURL + 'restaurant/ingredients/'
+export const restaurantMenuURL = baseURL + 'restaurant/menu/'
+export const restaurantRecipesURL = baseURL + 'restaurant/recipes/'
+export const restaurantAreasURL = baseURL + 'restaurant/areas/'
+export const restaurantTablesURL = baseURL + 'restaurant/tables/'
+export const restaurantOrdersURL = baseURL + 'restaurant/orders/'
+export const restaurantOrderByInvoiceURL = baseURL + 'restaurant/orders/by-invoice/'
+export const restaurantComboItemsURL = (menuItemId: number) =>
+  `${baseURL}restaurant/menu/${menuItemId}/combo-items/`
+
+// WebSocket — replace http(s):// with ws(s)://
+export const restaurantWsURL = baseURL
+  .replace(/^https/, 'wss')
+  .replace(/^http/, 'ws')
+  .replace(/\/api\/$/, '')   // strip trailing /api/ path, keep host only
