@@ -46,7 +46,7 @@ const AddOrderItemModal: FC<AddOrderItemModalProps> = ({ open, isPending, onAdd,
       const data = await queryClient.fetchQuery<IPaginationProps<IRestaurantProductDetail>>({
         queryKey: ['menuItemSearch', keyword],
         queryFn: () => axiosRequest<IPaginationProps<IRestaurantProductDetail>>({ url, hasAuth: true })
-          .then((res) => res?.data ?? { count: 0, results: [], next: null, previous: null }),
+          .then((res) => res?.data ?? { count: 0, page: 1, results: [], next: null, previous: null }),
         staleTime: 30_000,
       })
       setResults(data.results)
