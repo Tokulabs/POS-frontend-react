@@ -12,6 +12,8 @@ const QUOTA_LABELS: Record<string, { label: string; icon: string; note?: string 
   invoices_month: { label: 'Facturas (este mes)', icon: '🧾' },
   electronic_invoices_month: { label: 'Facturas electrónicas (este mes)', icon: '⚡' },
   credit_notes_month: { label: 'Notas de crédito (este mes)', icon: '📝' },
+  restaurant_tables: { label: 'Mesas', icon: '🍽️' },
+  restaurant_menu_items: { label: 'Ítems del menú', icon: '📋' },
 }
 
 const QuotaRow: FC<{ quotaKey: string }> = ({ quotaKey }) => {
@@ -143,6 +145,7 @@ const SubscriptionInfo: FC = () => {
           {Object.keys(QUOTA_LABELS).map((key) => {
             if (key === 'credit_notes_month' && !featureFlags['can_use_credit_notes']) return null
             if (key === 'electronic_invoices_month' && !featureFlags['can_send_electronic_invoice']) return null
+            if ((key === 'restaurant_tables' || key === 'restaurant_menu_items') && !featureFlags['restaurant_addon']) return null
             return quotaUsage[key] ? <QuotaRow key={key} quotaKey={key} /> : null
           })}
         </div>

@@ -48,6 +48,12 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
     clearCart()
     clearPaymentMethods()
     clearCartOrders()
+    // After clearing, re-populate cart if navigating to POS with preloaded restaurant items
+    const preloaded = (location.state as any)?.preloadedItems
+    if (preloaded?.length) {
+      useCart.setState({ cartItems: preloaded })
+      useCart.getState().updateTotalPrice()
+    }
   }, [location])
 
   const openDownloadModal = () => {

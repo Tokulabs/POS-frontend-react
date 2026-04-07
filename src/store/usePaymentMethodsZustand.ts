@@ -12,6 +12,8 @@ interface IPaymentMethodStore {
   isDollar: boolean
   isElectronicInvoice: boolean
   paymentTerminalID: number | null
+  tipAmount: number
+  setTipAmount: (amount: number) => void
   addPaymentMethod: (data: IPaymentMethod) => void
   removePaymentMethod: (name: string) => void
   clearPaymentMethods: () => void
@@ -34,6 +36,10 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
   isDollar: false,
   isElectronicInvoice: false,
   paymentTerminalID: null,
+  tipAmount: 0,
+  setTipAmount: (amount) => {
+    set({ tipAmount: Math.round(Math.max(0, amount)) })
+  },
   updatePaymentTerminalID: (id) => {
     set({
       paymentTerminalID: id,
@@ -66,6 +72,7 @@ export const usePaymentMethodsData = create<IPaymentMethodStore>((set, get) => (
       paymentTerminalID: null,
       isDollar: false,
       isElectronicInvoice: false,
+      tipAmount: 0,
     })
     updateTotalValues()
   },
