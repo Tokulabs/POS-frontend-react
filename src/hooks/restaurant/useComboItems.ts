@@ -23,7 +23,7 @@ export const useComboItems = (menuItemId: number) => {
     mutationFn: (payload: { product_id: number; quantity: number }) =>
       axiosRequest({
         url: restaurantComboItemsURL(menuItemId),
-        method: 'POST',
+        method: 'post',
         payload,
         hasAuth: true,
       }),
@@ -34,7 +34,7 @@ export const useComboItems = (menuItemId: number) => {
     mutationFn: (comboItemId: number) =>
       axiosRequest({
         url: `${restaurantComboItemsURL(menuItemId)}${comboItemId}/`,
-        method: 'DELETE',
+        method: 'delete',
         hasAuth: true,
       }),
     onSuccess: () => qc.invalidateQueries({ queryKey: key }),
