@@ -63,7 +63,7 @@ export const restaurantComboItemsURL = (menuItemId: number) =>
   `${baseURL}restaurant/menu/${menuItemId}/combo-items/`
 
 // WebSocket — replace http(s):// with ws(s)://
-export const restaurantWsURL = baseURL
-  .replace(/^https/, 'wss')
-  .replace(/^http/, 'ws')
+const wsBaseURL = baseURL.replace(/^https/, 'wss').replace(/^http/, 'ws')
+export const restaurantWsURL = wsBaseURL
+export const dashboardWsURL = wsBaseURL
   .replace(/\/api\/$/, '')   // strip trailing /api/ path, keep host only

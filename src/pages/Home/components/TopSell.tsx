@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { IconCameraOff, IconTrophy, IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
+import { IconCameraOff, IconTrophy, IconChevronLeft, IconChevronRight, IconHash, IconCurrencyDollar } from '@tabler/icons-react'
 import { useTopSellingProducts } from '@/hooks/useSummaryData'
 import moment from 'moment'
 import { useHasPermission } from '@/hooks/useHasPermission'
@@ -14,10 +14,13 @@ const RANK_BG: Record<number, string> = {
 
 const SCROLL_STEP = 280
 
+type SortMode = 'quantity' | 'price'
+
 const TopSell = () => {
   const today = moment().format('YYYY-MM-DD')
   const [startDate, setStartDate] = useState<string>(today)
   const [endDate, setEndDate] = useState<string>(today)
+  const [sortMode, setSortMode] = useState<SortMode>('quantity')
 
   const scrollRef = useRef<HTMLDivElement>(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
@@ -26,6 +29,7 @@ const TopSell = () => {
   const { topSellingProducts, isLoading } = useTopSellingProducts('topSellingProducts', {
     start_date: startDate,
     end_date: endDate,
+    sort_by: sortMode,
   })
 
   const hasPermissionToSeeData = useHasPermission('can_view_dashboard_reports')
@@ -52,6 +56,23 @@ const TopSell = () => {
         <div className='flex items-center gap-2'>
           <IconTrophy size={18} className='text-green-1' />
           <span className='font-semibold text-sm'>Top Productos</span>
+          {/* Sort toggle */}
+          <div className='flex items-center rounded-md border border-border overflow-hidden text-xs ml-1'>
+            <button
+              onClick={() => setSortMode('quantity')}
+              className={`flex items-center gap-1 px-2 py-1 transition-colors ${sortMode === 'quantity' ? 'bg-green-1 text-white' : 'text-muted-foreground hover:bg-muted'}`}
+            >
+              <IconHash size={12} />
+              Cantidad
+            </button>
+            <button
+              onClick={() => setSortMode('price')}
+              className={`flex items-center gap-1 px-2 py-1 transition-colors ${sortMode === 'price' ? 'bg-green-1 text-white' : 'text-muted-foreground hover:bg-muted'}`}
+            >
+              <IconCurrencyDollar size={12} />
+              Precio
+            </button>
+          </div>
         </div>
         {hasPermissionToSeeData && (
           <DateRangePicker
@@ -128,9 +149,15 @@ const TopSell = () => {
                       <p className='m-0 text-xs font-semibold truncate' title={item.name}>
                         {item.name}
                       </p>
-                      <span className='text-xs text-green-1 font-bold'>
-                        {item.sum_top_ten_items} vendidos
-                      </span>
+                      {sortMode === 'quantity' ? (
+                        <span className='text-xs text-green-1 font-bold'>
+                          {item.sum_top_ten_items} vendidos
+                        </span>
+                      ) : (
+                        <span className='text-xs text-green-1 font-bold'>
+                          ${item.total_revenue?.toLocaleString()}
+                        </span>
+                      )}
                     </div>
                   </article>
                 )

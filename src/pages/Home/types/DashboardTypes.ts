@@ -16,6 +16,7 @@ export interface ITopSellingProps {
   name: string
   photo: string
   sum_top_ten_items: number
+  total_revenue: number
 }
 export interface ISaleByShopProps {
   amount_total: number
@@ -29,6 +30,7 @@ export interface IPurchaseSummaryProps {
   gift_count: number
   selling_price_gifts: number
   price_dolar: number
+  total_tips: number
 }
 
 export interface ISummaryByHour {

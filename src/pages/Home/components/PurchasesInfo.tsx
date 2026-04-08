@@ -10,6 +10,9 @@ import {
   IconCurrencyDollar,
   IconPackage,
   IconTrendingUp,
+  IconCoin,
+  IconEye,
+  IconEyeOff,
 } from '@tabler/icons-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
@@ -18,6 +21,8 @@ const PurchasesInfo = () => {
   const today = moment().format('YYYY-MM-DD')
   const [startDate, setStartDate] = useState<string>(today)
   const [endDate, setEndDate] = useState<string>(today)
+
+  const [showTips, setShowTips] = useState(false)
 
   const canViewPurchases = useFeatureFlag('can_view_purchases')
   const { purchaseSummary, isLoading } = usePurchaseSummary(
@@ -58,14 +63,36 @@ const PurchasesInfo = () => {
             <Skeleton className='h-3 w-32' />
           </div>
         ) : (
-          <div className='flex flex-col gap-1'>
-            <span className='text-xs text-muted-foreground uppercase tracking-wider font-medium'>
-              Total Ventas (COP)
-            </span>
-            <p className='m-0 font-bold text-3xl text-green-1 truncate'>
-              {formatNumberToColombianPesos(purchaseSummary?.selling_price ?? 0, showCurrency)}
-            </p>
-            <span className='text-xs text-muted-foreground'>{dateLabel}</span>
+          <div className='flex items-start justify-between gap-2'>
+            <div className='flex flex-col gap-1 min-w-0'>
+              <span className='text-xs text-muted-foreground uppercase tracking-wider font-medium'>
+                Total Ventas (COP)
+              </span>
+              <p className='m-0 font-bold text-3xl text-green-1 truncate'>
+                {formatNumberToColombianPesos(purchaseSummary?.selling_price ?? 0, showCurrency)}
+              </p>
+              <span className='text-xs text-muted-foreground'>{dateLabel}</span>
+            </div>
+
+            {(purchaseSummary?.total_tips ?? 0) > 0 && (
+              <div className='flex flex-col items-end gap-1 shrink-0'>
+                <button
+                  onClick={() => setShowTips(v => !v)}
+                  className='flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors'
+                >
+                  {showTips ? <IconEyeOff size={14} /> : <IconEye size={14} />}
+                  Propinas
+                </button>
+                {showTips && (
+                  <div className='flex items-center gap-1.5'>
+                    <IconCoin size={14} className='text-green-1 shrink-0' />
+                    <span className='font-bold text-sm text-green-1'>
+                      {formatNumberToColombianPesos(purchaseSummary?.total_tips ?? 0, showCurrency)}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -137,6 +164,7 @@ const PurchasesInfo = () => {
           </>
         )}
       </div>
+
     </div>
   )
 }
