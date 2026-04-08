@@ -1,6 +1,7 @@
 import { axiosRequest } from '@/api/api'
 import { DataPropsForm, IQueryParams } from '@/types/GlobalTypes'
 import {
+  summaryURL,
   summaryByHour,
   summaryByKeyframe,
   salesByUser,
@@ -13,6 +14,17 @@ import {
   ISummaryByHour,
   ITopSellingProps,
 } from '../types/DashboardTypes'
+
+export const getSummaryGeneral = async () => {
+  const response = await axiosRequest<{ [key: string]: number }>({
+    url: summaryURL,
+    hasAuth: true,
+    showError: true,
+  })
+  if (response) {
+    return response.data
+  }
+}
 
 export const getSummaryByHour = async () => {
   const finalURL = new URL(summaryByHour)

@@ -1,48 +1,26 @@
-import { useEffect, useState } from 'react'
-import { axiosRequest } from '@/api/api'
-import { summaryURL } from '@/utils/network'
+import { useQuery } from '@tanstack/react-query'
 import { dataSummary } from '../data/dataSummary'
 import { ISummaryDataProps } from '../types/DashboardTypes'
+import { getSummaryGeneral } from '../helpers/services'
 import SummaryDataItem from './SummaryDataItem'
 
 const SummaryData = () => {
-  const [summaryData, setsummaryData] = useState<ISummaryDataProps>(dataSummary)
-  const [loading, setLoading] = useState(false)
+  const { data, isLoading } = useQuery({
+    queryKey: ['summaryGeneral'],
+    queryFn: getSummaryGeneral,
+  })
 
-  const getSummaryData = async () => {
-    try {
-      setLoading(true)
-      const response = await axiosRequest({
-        url: summaryURL,
-        hasAuth: true,
-      })
-      if (response) {
-        const result = response.data as { [key: string]: number }
-        const tempData: ISummaryDataProps = Object.fromEntries(
-          Object.entries(summaryData).map(([k, v]) => [k, { ...v }]),
-        ) as ISummaryDataProps
+  const summaryData: ISummaryDataProps = Object.fromEntries(
+    Object.entries(dataSummary).map(([k, v]) => [
+      k,
+      { ...v, value: data?.[k] ?? v.value },
+    ]),
+  ) as ISummaryDataProps
 
-        Object.keys(result).forEach((key) => {
-          const count = result[key]
-          if (tempData[key]) tempData[key].value = count || 0
-        })
-
-        setsummaryData(tempData)
-      }
-    } catch (e) {
-      console.log(e)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    getSummaryData()
-  }, [])
   return (
     <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3'>
       {Object.values(summaryData).map((item, index) => (
-        <SummaryDataItem key={index} props={item} loading={loading} />
+        <SummaryDataItem key={index} props={item} loading={isLoading} />
       ))}
     </div>
   )
