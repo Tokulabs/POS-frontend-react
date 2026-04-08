@@ -16,6 +16,7 @@ import {
 } from '@tabler/icons-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { DateRangePicker } from '@/components/ui/date-range-picker'
+import AnimatedNumber from './AnimatedNumber'
 
 const PurchasesInfo = () => {
   const today = moment().format('YYYY-MM-DD')
@@ -68,9 +69,11 @@ const PurchasesInfo = () => {
               <span className='text-xs text-muted-foreground uppercase tracking-wider font-medium'>
                 Total Ventas (COP)
               </span>
-              <p className='m-0 font-bold text-3xl text-green-1 truncate'>
-                {formatNumberToColombianPesos(purchaseSummary?.selling_price ?? 0, showCurrency)}
-              </p>
+              <AnimatedNumber
+                value={purchaseSummary?.selling_price ?? 0}
+                format={(n) => formatNumberToColombianPesos(n, showCurrency)}
+                className='font-bold text-3xl text-green-1 truncate'
+              />
               <span className='text-xs text-muted-foreground'>{dateLabel}</span>
             </div>
 
@@ -118,7 +121,7 @@ const PurchasesInfo = () => {
                 <IconPackage size={16} className='text-green-1' />
               </div>
               <div className='flex flex-col min-w-0'>
-                <p className='m-0 font-bold text-lg truncate'>{purchaseSummary?.count ?? 0}</p>
+                <AnimatedNumber value={purchaseSummary?.count ?? 0} className='font-bold text-lg truncate' />
                 <span className='text-xs text-muted-foreground'>Productos vendidos</span>
               </div>
             </div>
@@ -128,12 +131,11 @@ const PurchasesInfo = () => {
                 <IconGift size={16} className='text-green-1' />
               </div>
               <div className='flex flex-col min-w-0'>
-                <p className='m-0 font-bold text-lg truncate'>
-                  {formatNumberToColombianPesos(
-                    purchaseSummary?.selling_price_gifts ?? 0,
-                    showCurrency,
-                  )}
-                </p>
+                <AnimatedNumber
+                  value={purchaseSummary?.selling_price_gifts ?? 0}
+                  format={(n) => formatNumberToColombianPesos(n, showCurrency)}
+                  className='font-bold text-lg truncate'
+                />
                 <span className='text-xs text-muted-foreground'>Valor regalos</span>
               </div>
             </div>
@@ -143,9 +145,7 @@ const PurchasesInfo = () => {
                 <IconShoppingCart size={16} className='text-green-1' />
               </div>
               <div className='flex flex-col min-w-0'>
-                <p className='m-0 font-bold text-lg truncate'>
-                  {purchaseSummary?.gift_count ?? 0}
-                </p>
+                <AnimatedNumber value={purchaseSummary?.gift_count ?? 0} className='font-bold text-lg truncate' />
                 <span className='text-xs text-muted-foreground'>Cantidad regalos</span>
               </div>
             </div>
@@ -155,9 +155,11 @@ const PurchasesInfo = () => {
                 <IconCurrencyDollar size={16} className='text-green-1' />
               </div>
               <div className='flex flex-col min-w-0'>
-                <p className='m-0 font-bold text-lg truncate'>
-                  {formatToUsd(purchaseSummary?.price_dolar ?? 0, showCurrency)}
-                </p>
+                <AnimatedNumber
+                  value={purchaseSummary?.price_dolar ?? 0}
+                  format={(n) => formatToUsd(n, showCurrency)}
+                  className='font-bold text-lg truncate'
+                />
                 <span className='text-xs text-muted-foreground'>Venta USD</span>
               </div>
             </div>

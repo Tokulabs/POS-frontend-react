@@ -20,20 +20,19 @@ export const getInventoriesNew = async (queryParams: IQueryParams) => {
       hasAuth: true,
       showError: false,
     })
-    if (response) {
-      const data = response.data.results.map((item) => ({
-        ...item,
-        key: item.id,
-        groupInfo: `${item.group?.belongs_to?.name ? `${item.group?.belongs_to?.name} /` : ''} ${
-          item.group?.name
-        }`,
-        providerInfo: item.provider?.legal_name || 'N/A',
-        photoInfo: item.photo,
-      }))
-      return { ...response.data, results: data }
-    }
+    if (!response) throw new Error('No response from server')
+    const data = response.data.results.map((item) => ({
+      ...item,
+      key: item.id,
+      groupInfo: `${item.group?.belongs_to?.name ? `${item.group?.belongs_to?.name} /` : ''} ${
+        item.group?.name
+      }`,
+      providerInfo: item.provider?.legal_name || 'N/A',
+      photoInfo: item.photo,
+    }))
+    return { ...response.data, results: data }
   } catch (e: unknown) {
-    throw new Error(e as string)
+    throw e instanceof Error ? e : new Error(String(e))
   }
 }
 
