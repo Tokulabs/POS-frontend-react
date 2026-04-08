@@ -12,6 +12,7 @@ import { useHasPermission } from '@/hooks/useHasPermission'
 import { DianExpiryAlert } from './components/DianExpiryAlert'
 import { SubscriptionExpiryAlert } from './components/SubscriptionExpiryAlert'
 import { useFeatureFlag } from '@/hooks/useSubscription'
+import { useDashboardWebSocket } from '@/hooks/useDashboardWebSocket'
 
 const Home: FC = () => {
   const [dataType, setDataType] = useState('daily')
@@ -47,6 +48,8 @@ const Home: FC = () => {
       queryClient.invalidateQueries({ queryKey: ['summaryByHour'] })
     }
   }, [dataType])
+
+  useDashboardWebSocket()
 
   const hasPermissionDashboard = useHasPermission('can_view_dashboard_reports')
   const canManageGoals = useFeatureFlag('can_manage_goals')
