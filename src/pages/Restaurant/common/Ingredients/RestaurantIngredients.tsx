@@ -194,10 +194,10 @@ const RestaurantIngredients: FC = () => {
                   <TableCell
                     className={`text-right font-mono text-sm ${isLowStock(ingredient) ? 'text-destructive font-semibold' : ''}`}
                   >
-                    {ingredient.stock_quantity}
+                    {Number(ingredient.stock_quantity).toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </TableCell>
                   <TableCell className='text-right font-mono text-sm text-muted-foreground'>
-                    {ingredient.min_stock}
+                    {Number(ingredient.min_stock).toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </TableCell>
                   <TableCell className='text-right text-sm'>
                     {formatNumberToColombianPesos(Number(ingredient.cost_per_unit), true)}

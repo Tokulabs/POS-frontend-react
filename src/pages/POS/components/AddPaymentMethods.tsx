@@ -28,6 +28,7 @@ export const AddPaymentMethods: FC<{
   paymentTerminalIDProp?: number | null
   isDollarProp?: boolean
   isElectornicInvoicedProp?: boolean
+  hideTip?: boolean
 }> = ({
   TotalUSDProp,
   totalCOPProp,
@@ -35,6 +36,7 @@ export const AddPaymentMethods: FC<{
   paymentTerminalIDProp,
   isDollarProp,
   isElectornicInvoicedProp,
+  hideTip = false,
 }) => {
     const { totalCOP: totalCOPState, totalUSD: totalUSDState } = useCart()
     const totalCOP = totalCOPProp || totalCOPState
@@ -299,7 +301,7 @@ export const AddPaymentMethods: FC<{
         </section>
 
         {/* Tip section */}
-        {!isDollar && isRestaurant && (
+        {!isDollar && isRestaurant && !hideTip && (
           <div className='flex items-center gap-3 p-3 rounded-md border border-solid border-green-1 bg-card'>
             <span className='font-semibold text-sm shrink-0'>Propina</span>
             <Radio.Group
