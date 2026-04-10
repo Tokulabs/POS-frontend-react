@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input'
 import { DialogContainer } from '@/components/DialogContainer/DialogContainer'
 import { OptionSelect, SearchInputSelect } from '@/components/FormComponents/SearchInputSelect'
 import { IGroupsProps } from '@/pages/Groups/types/GroupTypes'
-import { IProvider } from '@/pages/Providers/types/ProviderTypes'
+import { ISupplier } from '@/pages/Suppliers/types/SupplierTypes'
 import { ICostCenter } from '@/pages/Profile/types/CostCenterTypes'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -25,7 +25,7 @@ interface AddProductsFormProps {
   triggerComponent?: React.ReactNode
   initialData: IInventoryProps
   groups: IGroupsProps[]
-  providers: IProvider[]
+  suppliers: ISupplier[]
   costCenters: ICostCenter[]
 }
 
@@ -38,8 +38,8 @@ const AddProductsFormSchema = z.object({
   selling_price: z.coerce.number().gte(0, 'No puede ser negativo'),
   usd_price: z.coerce.number().gte(0, 'No puede ser negativo'),
   group_id: z.coerce.number().gte(0, 'Campo requerido'),
-  provider_id: z.coerce.number().gte(0, 'Campo requerido'),
-  cost_center: z.string().nonempty('Campo requerido'),
+  supplier_id: z.coerce.number().optional().transform((v) => (v === 0 ? undefined : v)),
+  cost_center: z.string().optional(),
   tax_id: z.coerce.number().min(1, 'Selecciona un impuesto'),
   photo: z.preprocess((val) => {
     if (val instanceof FileList) return undefined
@@ -53,7 +53,7 @@ export type AddProductsFormValues = z.infer<typeof AddProductsFormSchema>
 const AddProductsForm: FC<AddProductsFormProps> = ({
   initialData,
   groups,
-  providers,
+  suppliers,
   costCenters,
   triggerComponent,
 }) => {
@@ -67,7 +67,7 @@ const AddProductsForm: FC<AddProductsFormProps> = ({
   const initialValues = {
     ...initialData,
     group_id: initialData.group?.id ?? 0,
-    provider_id: initialData.provider?.id ?? 0,
+    supplier_id: initialData.supplier?.id ?? 0,
   }
   const form = useForm<z.infer<typeof AddProductsFormSchema>>({
     resolver: zodResolver(AddProductsFormSchema),
@@ -80,7 +80,7 @@ const AddProductsForm: FC<AddProductsFormProps> = ({
       selling_price: initialValues.selling_price || 0,
       usd_price: initialValues.usd_price || 0,
       group_id: initialValues.group_id || 0,
-      provider_id: initialValues.provider_id || 0,
+      supplier_id: initialValues.supplier_id || 0,
       cost_center: initialValues.cost_center || '',
       tax_id: initialValues.tax?.id ?? 0,
       photo: initialValues.photo || '',
@@ -143,7 +143,7 @@ const AddProductsForm: FC<AddProductsFormProps> = ({
         selling_price: initialData.selling_price || 0,
         usd_price: initialData.usd_price || 0,
         group_id: initialData.group?.id || 0,
-        provider_id: initialData.provider?.id || 0,
+        supplier_id: initialData.supplier?.id || 0,
         cost_center: initialData.cost_center || '',
         tax_id: initialData.tax?.id ?? taxRates.find((t) => t.is_default)?.id ?? 0,
         photo: initialData.photo || '',
@@ -348,12 +348,13 @@ const AddProductsForm: FC<AddProductsFormProps> = ({
           <div className='flex w-full gap-4'>
             <FormField
               control={form.control}
-              name='provider_id'
+              name='supplier_id'
               render={({ field }) => (
-                <SearchInputSelect<z.infer<typeof AddProductsFormSchema>, 'provider_id'>
+                <SearchInputSelect<z.infer<typeof AddProductsFormSchema>, 'supplier_id'>
                   label='Proveedor'
+                  optional
                   className='w-1/2'
-                  options={providers.map((item) => {
+                  options={suppliers.map((item) => {
                     const option: OptionSelect = {
                       label: item.name,
                       value: item.id,
@@ -370,6 +371,7 @@ const AddProductsForm: FC<AddProductsFormProps> = ({
               render={({ field }) => (
                 <SearchInputSelect<z.infer<typeof AddProductsFormSchema>, 'cost_center'>
                   label='Centro de Costo'
+                  optional
                   className='w-1/2'
                   options={costCenters.map((cc) => ({ value: cc.name, label: cc.name }))}
                   field={field}

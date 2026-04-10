@@ -10,7 +10,7 @@ type IngredientPayload = {
   stock_quantity: number
   min_stock: number
   cost_per_unit: number
-  provider_id?: number | null
+  supplier_id?: number | null
   active?: boolean
 }
 
@@ -18,7 +18,7 @@ type MovementPayload = {
   movement_type: IngredientMovementType
   quantity: string   // signed decimal string
   cost_per_unit?: string | null
-  provider?: number | null
+  supplier?: number | null
   notes?: string
 }
 

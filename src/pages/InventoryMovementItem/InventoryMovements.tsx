@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { getMovementById } from '../Purchase/helpers/services'
 import { MovementItem } from './components/MovementItem'
 import { Accordion } from '@/components/ui/accordion'
-import { MovementEventType, Provider, stateType } from '../Purchase/types/PurchaseTypes'
+import { MovementEventType, Supplier, stateType } from '../Purchase/types/PurchaseTypes'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { postInventoryMovementState } from './helpers/services'
@@ -69,7 +69,7 @@ const InventoryMovementItem: FC = () => {
 
   const [movementNotes, setMovementNotes] = useState(movementIdData?.delivery_notes)
 
-  const provider = movementIdData?.provider ?? ({} as Provider)
+  const provider = movementIdData?.supplier ?? ({} as Supplier)
 
   const calcEventTypeName = useMemo(() => {
     const eventType = movementIdData?.event_type

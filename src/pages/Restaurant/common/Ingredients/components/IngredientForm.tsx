@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { IIngredient, IUnitOfMeasure } from '@/pages/Restaurant/types/RestaurantTypes'
-import { IProvider } from '@/pages/Providers/types/ProviderTypes'
+import { ISupplier } from '@/pages/Suppliers/types/SupplierTypes'
 import { UnitSelector } from '@/pages/Restaurant/components/UnitSelector'
 
 const ingredientFormSchema = z.object({
@@ -17,13 +17,13 @@ const ingredientFormSchema = z.object({
   stock_quantity: z.coerce.number().min(0, 'Debe ser mayor o igual a 0'),
   min_stock: z.coerce.number().min(0, 'Debe ser mayor o igual a 0'),
   cost_per_unit: z.coerce.number().min(0, 'Debe ser mayor o igual a 0'),
-  provider_id: z.coerce.number().optional().nullable(),
+  supplier_id: z.coerce.number().optional().nullable(),
 })
 
 const ingredientSubmitSchema = ingredientFormSchema.transform((data) => ({
   ...data,
   unit: Number(data.unit),
-  provider_id: data.provider_id || null,
+  supplier_id: data.supplier_id || null,
 }))
 
 export type IngredientFormValues = z.infer<typeof ingredientSubmitSchema>
@@ -32,7 +32,7 @@ interface IngredientFormProps {
   open: boolean
   editingIngredient: IIngredient | null
   units: IUnitOfMeasure[]
-  providers: IProvider[]
+  providers: ISupplier[]
   onSubmit: (values: IngredientFormValues) => void
   onCancel: () => void
   isPending: boolean
@@ -55,7 +55,7 @@ const IngredientForm: FC<IngredientFormProps> = ({
       stock_quantity: 0,
       min_stock: 0,
       cost_per_unit: 0,
-      provider_id: null,
+      supplier_id: null,
     },
   })
 
@@ -69,9 +69,9 @@ const IngredientForm: FC<IngredientFormProps> = ({
               stock_quantity: Number(editingIngredient.stock_quantity),
               min_stock: Number(editingIngredient.min_stock),
               cost_per_unit: Number(editingIngredient.cost_per_unit),
-              provider_id: editingIngredient.provider?.id ?? null,
+              supplier_id: editingIngredient.supplier?.id ?? null,
             }
-          : { name: '', unit: '', stock_quantity: 0, min_stock: 0, cost_per_unit: 0, provider_id: null },
+          : { name: '', unit: '', stock_quantity: 0, min_stock: 0, cost_per_unit: 0, supplier_id: null },
       )
     }
   }, [open, editingIngredient])
@@ -120,7 +120,7 @@ const IngredientForm: FC<IngredientFormProps> = ({
 
               <FormField
                 control={form.control}
-                name='provider_id'
+                name='supplier_id'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>

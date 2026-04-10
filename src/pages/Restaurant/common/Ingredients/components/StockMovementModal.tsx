@@ -6,21 +6,21 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { IIngredient } from '@/pages/Restaurant/types/RestaurantTypes'
-import { IProvider } from '@/pages/Providers/types/ProviderTypes'
+import { ISupplier } from '@/pages/Suppliers/types/SupplierTypes'
 
 type MovementType = 'purchase' | 'adjustment' | 'waste'
 
 interface StockMovementModalProps {
   open: boolean
   ingredient: IIngredient | null
-  providers: IProvider[]
+  providers: ISupplier[]
   isPending: boolean
   onSubmit: (data: {
     ingredientId: number
     movement_type: MovementType
     quantity: string
     cost_per_unit?: string | null
-    provider?: number | null
+    supplier?: number | null
     notes?: string
   }) => void
   onCancel: () => void
@@ -53,7 +53,7 @@ const StockMovementModal: FC<StockMovementModalProps> = ({
       setQtyIn('')
       setQtyOut('')
       setCostPerUnit('')
-      setProviderId(ingredient?.provider ? String(ingredient.provider.id) : '')
+      setProviderId(ingredient?.supplier ? String(ingredient.supplier.id) : '')
       setNotes('')
     }
   }, [open, ingredient])
@@ -80,7 +80,7 @@ const StockMovementModal: FC<StockMovementModalProps> = ({
       movement_type: movementType,
       quantity: String(signedQty),
       cost_per_unit: movementType === 'purchase' && costPerUnit ? costPerUnit : null,
-      provider: movementType === 'purchase' && providerId ? Number(providerId) : null,
+      supplier: movementType === 'purchase' && providerId ? Number(providerId) : null,
       notes,
     })
   }

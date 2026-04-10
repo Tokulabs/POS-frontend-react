@@ -151,7 +151,7 @@ const PrintInventoryMovement: React.FC<PrintInventoryMovementProps> = ({ id, onA
       </div>
 
       {/* Proveedor */}
-      {movementTypeText === 'Orden de Compra' && movement.provider && (
+      {movementTypeText === 'Orden de Compra' && movement.supplier && (
         <div className='mb-8 w-[50%]'>
           <div className='mb-2 text-2xl font-bold' style={{ lineHeight: 1 }}>
             Proveedor
@@ -160,25 +160,25 @@ const PrintInventoryMovement: React.FC<PrintInventoryMovementProps> = ({ id, onA
           <div className='flex flex-col gap-1 text-base'>
             <div className='flex'>
               <strong className='w-[170px]'>Nombre:</strong>
-              <span>{safeValue(movement.provider.name)}</span>
+              <span>{safeValue(movement.supplier.name)}</span>
             </div>
             <div className='flex'>
               <strong className='w-[170px]'>Razón Social:</strong>
-              <span>{safeValue(movement.provider.legal_name || movement.provider.name)}</span>
+              <span>{safeValue(movement.supplier.legal_name || movement.supplier.name)}</span>
             </div>
             <div className='flex'>
               <strong className='w-[170px]'>NIT:</strong>
-              <span>{safeValue(movement.provider.nit)}</span>
+              <span>{safeValue(movement.supplier.nit)}</span>
             </div>
             <div className='flex'>
               <strong className='w-[170px]'>Correo electrónico:</strong>
-              <a href={`mailto:${movement.provider.email}`} className='underline text-cyan-600'>
-                {safeValue(movement.provider.email)}
+              <a href={`mailto:${movement.supplier.email}`} className='underline text-cyan-600'>
+                {safeValue(movement.supplier.email)}
               </a>
             </div>
             <div className='flex'>
               <strong className='w-[170px]'>Teléfono:</strong>
-              <span>{safeValue(movement.provider.phone)}</span>
+              <span>{safeValue(movement.supplier.phone)}</span>
             </div>
           </div>
         </div>

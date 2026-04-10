@@ -26,8 +26,10 @@ export default function FileUploadForm({
   templateUrl,
   recommendations = [
     'Solo se aceptan archivos con extensión .csv.',
-    'El peso del archivo no puede exceder 2MB',
-    'Recuerde incluir el código de producto y el precio',
+    'El peso del archivo no puede exceder 2MB.',
+    'Se aceptan archivos separados por coma (,) o punto y coma (;).',
+    'El único campo obligatorio es el código de producto.',
+    'El campo "tax" es opcional — si se omite se aplica IVA 19% por defecto. Valores permitidos: IVA 0%, IVA 5%, IVA 19%, INC 8%.',
   ],
 }: FileUploadFormProps) {
   const handleDownloadTemplate = () => {
@@ -55,25 +57,8 @@ export default function FileUploadForm({
         return
       }
 
-      // Leer primeras líneas para validar delimitador
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        const text = event.target?.result as string
-        const firstLine = text.split('\n')[0]
-
-        // Contamos separadores
-        const commas = (firstLine.match(/,/g) || []).length
-        const semicolons = (firstLine.match(/;/g) || []).length
-
-        if (semicolons > commas) {
-          setFileError('El archivo usa ";" como separador. Por favor expórtelo con comas ",".')
-          onFileChange(null)
-        } else {
-          setFileError(null)
-          onFileChange(selectedFile)
-        }
-      }
-      reader.readAsText(selectedFile)
+      setFileError(null)
+      onFileChange(selectedFile)
     }
   }
 

@@ -1,11 +1,11 @@
 import { axiosRequest } from '@/api/api'
 import { IQueryParams, IPaginationProps, DataPropsForm } from '@/types/GlobalTypes'
-import { providersURL } from '@/utils/network'
-import { IProvider } from '../types/ProviderTypes'
+import { suppliersURL } from '@/utils/network'
+import { ISupplier } from '../types/SupplierTypes'
 
-export const getProviders = async (queryParams: IQueryParams) => {
+export const getSuppliers = async (queryParams: IQueryParams) => {
   try {
-    const finalURL = new URL(providersURL)
+    const finalURL = new URL(suppliersURL)
     const searchParams = new URLSearchParams()
     if (queryParams) {
       Object.entries(queryParams).forEach(([key, value]) => {
@@ -14,7 +14,7 @@ export const getProviders = async (queryParams: IQueryParams) => {
       })
     }
     finalURL.search = searchParams.toString()
-    const response = await axiosRequest<IPaginationProps<IProvider>>({
+    const response = await axiosRequest<IPaginationProps<ISupplier>>({
       url: finalURL,
       hasAuth: true,
       showError: false,
@@ -31,11 +31,11 @@ export const getProviders = async (queryParams: IQueryParams) => {
   }
 }
 
-export const postProviders = async (values: DataPropsForm) => {
+export const postSuppliers = async (values: DataPropsForm) => {
   try {
     await axiosRequest({
       method: 'post',
-      url: providersURL,
+      url: suppliersURL,
       hasAuth: true,
       payload: values,
     })
@@ -44,11 +44,11 @@ export const postProviders = async (values: DataPropsForm) => {
   }
 }
 
-export const putProviders = async (data: { values: DataPropsForm; id: number }) => {
+export const putSuppliers = async (data: { values: DataPropsForm; id: number }) => {
   try {
     await axiosRequest({
       method: 'put',
-      url: `${providersURL}/${data.id}/`,
+      url: `${suppliersURL}/${data.id}/`,
       hasAuth: true,
       payload: data.values,
     })
@@ -57,10 +57,10 @@ export const putProviders = async (data: { values: DataPropsForm; id: number }) 
   }
 }
 
-export const toggleActiveProvider = async (id: number) => {
-  return await axiosRequest<IProvider>({
+export const toggleActiveSupplier = async (id: number) => {
+  return await axiosRequest<ISupplier>({
     method: 'post',
-    url: `${providersURL}/${id}/toggle-active/`,
+    url: `${suppliersURL}/${id}/toggle-active/`,
     hasAuth: true,
   })
 }

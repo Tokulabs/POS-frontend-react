@@ -23,7 +23,7 @@ export interface IIngredient {
   stock_quantity: string
   min_stock: string
   cost_per_unit: string
-  provider: { id: number; name: string } | null
+  supplier: { id: number; name: string } | null
   active: boolean
   created_at: string
 }
@@ -35,8 +35,8 @@ export interface IIngredientMovement {
   movement_type: IngredientMovementType
   quantity: string
   cost_per_unit: string | null
-  provider: number | null
-  provider_name: string | null
+  supplier: number | null
+  supplier_name: string | null
   notes: string
   created_by_name: string | null
   created_at: string

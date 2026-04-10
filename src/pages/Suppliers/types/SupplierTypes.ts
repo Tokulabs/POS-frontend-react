@@ -1,6 +1,6 @@
 import { IModalFormProps } from '../../../types/ModalTypes'
 
-export interface IProvider {
+export interface ISupplier {
   id: number
   name: string
   legal_name: string
@@ -13,6 +13,6 @@ export interface IProvider {
   action?: React.ReactElement
 }
 
-export interface IAddProvider extends IModalFormProps {
-  initialData: IProvider
+export interface IAddSupplier extends IModalFormProps {
+  initialData: ISupplier
 }

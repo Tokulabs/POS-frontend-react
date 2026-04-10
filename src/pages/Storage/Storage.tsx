@@ -10,7 +10,7 @@ import { IconCircleCheck, IconCircleX, IconEdit, IconPower } from '@tabler/icons
 import { toogleInventories } from '../Inventories/helpers/services'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ModalStateEnum } from '@/types/ModalTypes'
-import { useProviders } from '@/hooks/useProviders'
+import { useSuppliers } from '@/hooks/useSuppliers'
 import { getCostCenters } from '@/pages/Profile/helpers/costCenterServices'
 import { toast } from 'sonner'
 import { AddProductsForm } from './components/AddProductsForm'
@@ -44,7 +44,7 @@ const Storage: FC = () => {
     active: showActive ? 'True' : undefined,
   })
   const { groupsData } = useGroups('allGroups', { active: 'True' })
-  const { providersData } = useProviders('allProviders', { active: 'True' })
+  const { suppliersData } = useSuppliers('allProviders', { active: 'True' })
   const { data: costCenters = [] } = useQuery({ queryKey: ['costCenters'], queryFn: getCostCenters })
 
   const queryClient = useQueryClient()
@@ -104,7 +104,7 @@ const Storage: FC = () => {
               }
               initialData={item}
               groups={groupsData?.results ?? []}
-              providers={providersData?.results ?? []}
+              suppliers={suppliersData?.results ?? []}
               costCenters={costCenters}
             />
             <Popconfirm
@@ -124,7 +124,7 @@ const Storage: FC = () => {
         ) : null,
       }))
     }
-  }, [groupsData?.results, providersData?.results, costCenters, confirmtoggle, canEdit])
+  }, [groupsData?.results, suppliersData?.results, costCenters, confirmtoggle, canEdit])
 
   // Memoized formatted data
   const formattedInventories = useMemo(() => {
@@ -143,7 +143,7 @@ const Storage: FC = () => {
                 triggerComponent={<Button type='primary'>Agregar producto</Button>}
                 initialData={{} as IInventoryProps}
                 groups={groupsData?.results ?? []}
-                providers={providersData?.results ?? []}
+                suppliers={suppliersData?.results ?? []}
                 costCenters={costCenters}
               />
             )}
