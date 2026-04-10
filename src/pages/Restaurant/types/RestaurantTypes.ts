@@ -120,6 +120,21 @@ export interface IComboItem {
   quantity: number
 }
 
+export interface IComboOption {
+  id: number
+  product_id: number
+  product_name: string
+  product_price: number
+  extra_price: number
+}
+
+export interface IComboOptionGroup {
+  id: number
+  name: string
+  is_required: boolean
+  options: IComboOption[]
+}
+
 export interface IRestaurantOrderItem {
   id: number
   item: number
@@ -156,5 +171,6 @@ export interface IRestaurantProductDetail {
   prep_notes: string
   recipe: IRecipe | null
   combo_items: IComboItem[]
+  option_groups: IComboOptionGroup[]
   created_at: string
 }

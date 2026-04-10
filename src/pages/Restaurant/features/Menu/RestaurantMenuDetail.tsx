@@ -11,6 +11,7 @@ import { useIngredients } from '@/hooks/restaurant/useIngredients'
 import { MENU_CATEGORY_LABELS, MenuCategory } from '@/pages/Restaurant/types/RestaurantTypes'
 import { RecipeEditor } from './components/RecipeEditor'
 import { ComboEditor } from './components/ComboEditor'
+import { ComboOptionsEditor } from './components/ComboOptionsEditor'
 import { Button } from '@/components/ui/button'
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -193,14 +194,24 @@ const RestaurantMenuDetail: FC = () => {
         <TabsList className='w-fit'>
           <TabsTrigger value='config'>Configuración</TabsTrigger>
           {isCombo ? (
-            <TabsTrigger value='combo' className='flex items-center gap-1.5'>
-              Componentes
-              {menuItem.combo_items?.length > 0 && (
-                <Badge variant='secondary' className='h-4 px-1 text-[10px]'>
-                  {menuItem.combo_items.length}
-                </Badge>
-              )}
-            </TabsTrigger>
+            <>
+              <TabsTrigger value='combo' className='flex items-center gap-1.5'>
+                Componentes
+                {menuItem.combo_items?.length > 0 && (
+                  <Badge variant='secondary' className='h-4 px-1 text-[10px]'>
+                    {menuItem.combo_items.length}
+                  </Badge>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value='options' className='flex items-center gap-1.5'>
+                Opciones
+                {menuItem.option_groups?.length > 0 && (
+                  <Badge variant='secondary' className='h-4 px-1 text-[10px]'>
+                    {menuItem.option_groups.length}
+                  </Badge>
+                )}
+              </TabsTrigger>
+            </>
           ) : (
             <TabsTrigger value='recipe' className='flex items-center gap-1.5'>
               Receta
@@ -327,6 +338,17 @@ const RestaurantMenuDetail: FC = () => {
               .filter((m) => m.id !== menuItemId)
               .map((m) => m.product_detail)}
             isLoadingProducts={isLoading}
+          />
+        </TabsContent>
+
+        {/* Options tab */}
+        <TabsContent value='options' className='flex-1 overflow-y-auto mt-4'>
+          <ComboOptionsEditor
+            menuItemId={menuItemId}
+            optionGroups={menuItem.option_groups ?? []}
+            products={menuItems
+              .filter((m) => m.id !== menuItemId)
+              .map((m) => m.product_detail)}
           />
         </TabsContent>
       </Tabs>

@@ -101,8 +101,10 @@ const AddToMenuModal: FC<AddToMenuModalProps> = ({
 
   const isCombo = form.watch('menu_category') === 'combo'
 
-  const [comboName, setComboName]   = useState('')
-  const [comboPrice, setComboPrice] = useState('')
+  const [comboName, setComboName]       = useState('')
+  const [comboPrice, setComboPrice]     = useState('')
+  const [comboNameError, setComboNameError]   = useState('')
+  const [comboPriceError, setComboPriceError] = useState('')
 
   useEffect(() => {
     if (open) {
@@ -112,6 +114,8 @@ const AddToMenuModal: FC<AddToMenuModalProps> = ({
       setSelectedProductId(null)
       setComboName('')
       setComboPrice('')
+      setComboNameError('')
+      setComboPriceError('')
     }
   }, [open])
 
@@ -135,7 +139,29 @@ const AddToMenuModal: FC<AddToMenuModalProps> = ({
         <Form {...form}>
           <form
             onSubmit={isCombo
-              ? (e) => { e.preventDefault(); onCreateCombo({ name: comboName.trim(), selling_price: Number(comboPrice) || 0 }) }
+              ? (e) => {
+                  e.preventDefault()
+                  let valid = true
+                  const trimmedName = comboName.trim()
+                  if (!trimmedName) {
+                    setComboNameError('El nombre es obligatorio.')
+                    valid = false
+                  } else if (trimmedName.length < 2) {
+                    setComboNameError('Mínimo 2 caracteres.')
+                    valid = false
+                  } else {
+                    setComboNameError('')
+                  }
+                  const price = Number(comboPrice)
+                  if (comboPrice === '' || isNaN(price) || price < 0) {
+                    setComboPriceError('Ingresa un precio válido (≥ 0).')
+                    valid = false
+                  } else {
+                    setComboPriceError('')
+                  }
+                  if (!valid) return
+                  onCreateCombo({ name: trimmedName, selling_price: price })
+                }
               : form.handleSubmit(onSubmit)
             }
             className='space-y-4 py-2'
@@ -204,8 +230,12 @@ const AddToMenuModal: FC<AddToMenuModalProps> = ({
                   <Input
                     placeholder='Ej: Combo Pizza + Bebida'
                     value={comboName}
-                    onChange={(e) => setComboName(e.target.value)}
+                    onChange={(e) => { setComboName(e.target.value); setComboNameError('') }}
+                    className={comboNameError ? 'border-destructive focus-visible:ring-destructive' : ''}
                   />
+                  {comboNameError && (
+                    <p className='text-destructive text-sm'>{comboNameError}</p>
+                  )}
                 </div>
                 <div className='space-y-1.5'>
                   <FormLabel>Precio del combo</FormLabel>
@@ -214,8 +244,12 @@ const AddToMenuModal: FC<AddToMenuModalProps> = ({
                     min={0}
                     placeholder='0'
                     value={comboPrice}
-                    onChange={(e) => setComboPrice(e.target.value)}
+                    onChange={(e) => { setComboPrice(e.target.value); setComboPriceError('') }}
+                    className={comboPriceError ? 'border-destructive focus-visible:ring-destructive' : ''}
                   />
+                  {comboPriceError && (
+                    <p className='text-destructive text-sm'>{comboPriceError}</p>
+                  )}
                 </div>
               </div>
             )}
@@ -324,7 +358,7 @@ const AddToMenuModal: FC<AddToMenuModalProps> = ({
               </Button>
               <Button
                 type='submit'
-                disabled={isPending || (isCombo ? !comboName.trim() : false)}
+                disabled={isPending}
               >
                 {isPending
                   ? (isCombo ? 'Creando combo...' : 'Agregando...')

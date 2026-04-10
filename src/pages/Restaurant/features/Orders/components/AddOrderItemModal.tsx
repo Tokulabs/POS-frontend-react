@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { axiosRequest } from '@/api/api'
 import { restaurantMenuURL } from '@/utils/network'
 import { IRestaurantProductDetail, MENU_CATEGORY_LABELS } from '@/pages/Restaurant/types/RestaurantTypes'
@@ -23,7 +24,7 @@ import { formatNumberToColombianPesos } from '@/utils/helpers'
 interface AddOrderItemModalProps {
   open: boolean
   isPending: boolean
-  onAdd: (item: number, quantity: number, notes: string) => void
+  onAdd: (item: number, quantity: number, notes: string, selectedOptions?: { group_id: number; product_id: number }[]) => void
   onCancel: () => void
 }
 
@@ -35,6 +36,10 @@ const AddOrderItemModal: FC<AddOrderItemModalProps> = ({ open, isPending, onAdd,
   const [selected, setSelected] = useState<IRestaurantProductDetail | null>(null)
   const [quantity, setQuantity] = useState(1)
   const [notes, setNotes] = useState('')
+
+  // groupId → chosen productId
+  const [selectedOptions, setSelectedOptions] = useState<Record<number, number>>({})
+  const [optionErrors, setOptionErrors] = useState<number[]>([])
 
   const fetchMenuItems = async (keyword: string) => {
     if (!keyword.trim()) { setResults([]); return }
@@ -62,6 +67,7 @@ const AddOrderItemModal: FC<AddOrderItemModalProps> = ({ open, isPending, onAdd,
   useEffect(() => {
     if (open) {
       setSearch(''); setResults([]); setSelected(null); setQuantity(1); setNotes('')
+      setSelectedOptions({}); setOptionErrors([])
     }
   }, [open])
 
@@ -69,13 +75,45 @@ const AddOrderItemModal: FC<AddOrderItemModalProps> = ({ open, isPending, onAdd,
     setSelected(item)
     setSearch(item.product_detail.name)
     setResults([])
+    setSelectedOptions({})
+    setOptionErrors([])
   }
 
   const handleSubmit = () => {
     if (!selected) return
-    // Backend add-item expects Inventory ID (selected.product), not the menu record ID
-    onAdd(selected.product, quantity, notes)
+
+    const optionGroups = selected.option_groups ?? []
+
+    // Validate required groups
+    const missing = optionGroups
+      .filter((g) => g.is_required && !(g.id in selectedOptions))
+      .map((g) => g.id)
+
+    if (missing.length > 0) {
+      setOptionErrors(missing)
+      return
+    }
+
+    const opts = Object.entries(selectedOptions).map(([groupId, productId]) => ({
+      group_id: Number(groupId),
+      product_id: productId,
+    }))
+
+    onAdd(selected.product, quantity, notes, opts.length > 0 ? opts : undefined)
   }
+
+  const optionGroups = selected?.option_groups ?? []
+
+  // Extra price from selected options — DecimalField comes as string, coerce to number
+  const extraTotal = optionGroups.reduce((sum, group) => {
+    const chosenId = selectedOptions[group.id]
+    if (!chosenId) return sum
+    const opt = group.options.find((o) => o.product_id === chosenId)
+    return sum + Number(opt?.extra_price ?? 0)
+  }, 0)
+
+  const basePrice = Number(selected?.product_detail?.selling_price ?? 0)
+  const subtotal = (basePrice + extraTotal) * quantity
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onCancel() }}>
@@ -163,6 +201,58 @@ const AddOrderItemModal: FC<AddOrderItemModalProps> = ({ open, isPending, onAdd,
                 </div>
               </div>
 
+              {/* Option group pickers — only for combos with option groups */}
+              {optionGroups.length > 0 && (
+                <div className='space-y-3'>
+                  {optionGroups.map((group) => {
+                    const hasError = optionErrors.includes(group.id)
+                    const chosenId = selectedOptions[group.id]
+                    return (
+                      <div key={group.id} className='space-y-1.5'>
+                        <div className='flex items-center gap-2'>
+                          <span className='text-sm font-medium'>{group.name}</span>
+                          {group.is_required ? (
+                            <Badge variant='outline' className='text-[10px] h-4 px-1 text-orange-600 border-orange-300'>
+                              Obligatorio
+                            </Badge>
+                          ) : (
+                            <span className='text-xs text-muted-foreground'>(opcional)</span>
+                          )}
+                        </div>
+                        <Select
+                          value={chosenId ? String(chosenId) : ''}
+                          onValueChange={(val) => {
+                            setSelectedOptions((p) => ({ ...p, [group.id]: Number(val) }))
+                            setOptionErrors((p) => p.filter((id) => id !== group.id))
+                          }}
+                        >
+                          <SelectTrigger className={hasError ? 'border-destructive' : ''}>
+                            <SelectValue placeholder='Seleccionar...' />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {group.options.map((opt) => (
+                              <SelectItem key={opt.id} value={String(opt.product_id)}>
+                                <span className='flex items-center justify-between gap-3 w-full'>
+                                  <span>{opt.product_name}</span>
+                                  {Number(opt.extra_price) > 0 && (
+                                    <span className='text-xs text-orange-600 ml-2'>
+                                      +{formatNumberToColombianPesos(Number(opt.extra_price), true)}
+                                    </span>
+                                  )}
+                                </span>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {hasError && (
+                          <p className='text-destructive text-xs'>Selecciona una opción.</p>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+
               <div className='space-y-1.5'>
                 <label className='text-sm font-medium'>
                   Notas <span className='text-muted-foreground font-normal'>(opcional)</span>
@@ -178,7 +268,7 @@ const AddOrderItemModal: FC<AddOrderItemModalProps> = ({ open, isPending, onAdd,
               <div className='flex items-center justify-between text-sm text-muted-foreground border-t border-border pt-2'>
                 <span>Subtotal</span>
                 <span className='font-semibold text-foreground'>
-                  {formatNumberToColombianPesos(selected.product_detail.selling_price * quantity, true)}
+                  {formatNumberToColombianPesos(subtotal, true)}
                 </span>
               </div>
             </>
