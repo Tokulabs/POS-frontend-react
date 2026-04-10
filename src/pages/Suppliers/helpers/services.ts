@@ -57,6 +57,15 @@ export const putSuppliers = async (data: { values: DataPropsForm; id: number }) 
   }
 }
 
+export const getSupplierById = async (id: number): Promise<ISupplier> => {
+  const response = await axiosRequest<ISupplier>({
+    url: `${suppliersURL}/${id}/`,
+    hasAuth: true,
+    showError: true,
+  })
+  return response?.data as ISupplier
+}
+
 export const toggleActiveSupplier = async (id: number) => {
   return await axiosRequest<ISupplier>({
     method: 'post',

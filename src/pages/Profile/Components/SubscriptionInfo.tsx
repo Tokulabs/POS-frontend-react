@@ -69,6 +69,7 @@ const SubscriptionInfo: FC = () => {
     can_view_purchases: 'Ver compras',
     can_create_purchase: 'Crear compras',
     can_manage_providers: 'Gestión de proveedores',
+    can_view_supplier_report: 'Reporte de proveedores',
     can_download_daily_report: 'Reporte diario',
     can_download_inventory_report: 'Reporte de inventario',
     can_download_product_sales_report: 'Reporte de ventas por producto',
