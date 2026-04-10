@@ -106,7 +106,7 @@ export const navigationMenu: NavigationMenuItem[] = [
     children: [
       {
         label: 'Proveedores',
-        link: '/providers',
+        link: '/suppliers',
         requiredPermission: 'can_manage_suppliers',
         description: 'Administra y consulta la información de tus proveedores',
         action: '',
