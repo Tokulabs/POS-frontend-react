@@ -11,8 +11,8 @@ export const columnsDataPurchase: TableColumnsType<IPurchaseSimple> = [
   },
   {
     title: 'Proveedor',
-    dataIndex: 'provider_name',
-    key: 'provider_name',
+    dataIndex: 'supplier_name',
+    key: 'supplier_name',
     fixed: 'left',
   },
   {

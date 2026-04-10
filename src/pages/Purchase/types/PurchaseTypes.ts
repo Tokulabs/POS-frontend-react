@@ -22,7 +22,7 @@ export interface InventoryMovementItem {
   created_at: string
 }
 
-export interface Provider {
+export interface Supplier {
   id: number
   name: string
   legal_name: string
@@ -56,7 +56,7 @@ export type MovementEventType = 'shipment' | 'purchase' | 'return'
 
 export interface IPurchase {
   id: number
-  provider: Provider
+  supplier: Supplier
   inventory_movement_items: InventoryMovementItem[]
   event_type: MovementEventType
   created_at: string
@@ -71,7 +71,7 @@ export interface IPurchase {
 export interface IPurchaseSimple {
   id: number
   key?: number
-  provider_name?: string
+  supplier_name?: string
   total: number
   state: string
   created_at: string
@@ -87,5 +87,5 @@ export interface ICreateMovement {
   event_date: string
   origin: string | null
   destination: string
-  provider_id?: number
+  supplier_id?: number
 }

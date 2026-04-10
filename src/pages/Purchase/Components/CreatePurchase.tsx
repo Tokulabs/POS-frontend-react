@@ -1,7 +1,7 @@
 import { Divider, InputNumber, Select } from 'antd'
 import { FC, useEffect, useState } from 'react'
-import { IProvider } from '../../Providers/types/ProviderTypes'
-import { useProviders } from '@/hooks/useProviders'
+import { ISupplier } from '../../Suppliers/types/SupplierTypes'
+import { useProviders } from '@/hooks/useSuppliers'
 import Clock from '@/components/Clock/Clock'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getInventoriesNew } from '../../Inventories/helpers/services'
@@ -27,7 +27,7 @@ interface CreatePurchaseInterface {
 const CreatePurchase: FC<CreatePurchaseInterface> = ({ setCreatePurchase }) => {
   const [providerID, setProviderID] = useState()
   const { providersData } = useProviders('allProviders', { active: 'True' })
-  const [currentProvider, setCurrentProvider] = useState<IProvider>()
+  const [currentProvider, setCurrentProvider] = useState<ISupplier>()
   const [value, setValue] = useState<string>()
   const [isLoadingSearch, setIsLoadingSearch] = useState(false)
   const [data, setData] = useState<IInventoryProps[]>([])
@@ -60,7 +60,7 @@ const CreatePurchase: FC<CreatePurchaseInterface> = ({ setCreatePurchase }) => {
       const data = await queryClient.fetchQuery({
         queryKey: ['inventoriesByProvider'],
         queryFn: async () =>
-          getInventoriesNew({ keyword, active: 'True', page: 1, provider_id: providerId }),
+          getInventoriesNew({ keyword, active: 'True', page: 1, supplier_id: providerId }),
       })
       setData(data?.results || [])
     } catch (error) {
@@ -118,14 +118,14 @@ const CreatePurchase: FC<CreatePurchaseInterface> = ({ setCreatePurchase }) => {
       })),
       event_type: 'purchase',
       event_date: new Date().toISOString(),
-      provider_id: providerID ?? 0,
+      supplier_id: providerID ?? 0,
       origin: null,
       destination: 'warehouse',
     }
     mutatePurchase(dataCreatePurchase as unknown as DataPropsForm)
   }
 
-  const providers: IProvider[] = providersData?.results ?? ([] as IProvider[])
+  const providers: ISupplier[] = providersData?.results ?? ([] as ISupplier[])
   return (
     <section className='w-full bg-card rounded-md p-5 grid h-full grid-rows-[auto_1fr_auto]'>
       <header className='flex flex-col gap-3'>

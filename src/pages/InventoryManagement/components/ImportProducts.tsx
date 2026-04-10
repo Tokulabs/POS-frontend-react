@@ -132,6 +132,13 @@ export default function ImportProducts({ onBack }: ImportProductsProps) {
       onBack={onBack}
       showErrorBanner={showErrorBanner}
       templateUrl='/nuevos_productos.csv'
+      recommendations={[
+        'Solo se aceptan archivos con extensión .csv.',
+        'El peso del archivo no puede exceder 2MB.',
+        'Se aceptan archivos separados por coma (,) o punto y coma (;).',
+        'Los campos group_id, code y name son obligatorios.',
+        'El campo "tax" es opcional — si se omite se aplica IVA 19% por defecto. Valores permitidos: IVA 0%, IVA 5%, IVA 19%, INC 8%.',
+      ]}
     />
   )
 }

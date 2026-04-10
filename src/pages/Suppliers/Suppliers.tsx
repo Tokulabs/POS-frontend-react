@@ -1,14 +1,14 @@
 import { FC, useState } from 'react'
 import ContentLayout from '@/layouts/ContentLayout/ContentLayout'
 import { columns } from './data/columsData'
-import AddProviderForm from './Components/addProviderForm'
-import { useProviders } from '@/hooks/useProviders'
-import { IProvider } from './types/ProviderTypes'
+import AddSupplierForm from './Components/addSupplierForm'
+import { useSuppliers } from '@/hooks/useSuppliers'
+import { ISupplier } from './types/SupplierTypes'
 import { IconCircleCheck, IconCircleX, IconEdit, IconPower } from '@tabler/icons-react'
 import { Button, Popconfirm, Switch } from 'antd'
 import { ModalStateEnum } from '@/types/ModalTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toggleActiveProvider } from './helpers/services'
+import { toggleActiveSupplier } from './helpers/services'
 import { toast } from 'sonner'
 
 const Providers: FC = () => {
@@ -16,9 +16,9 @@ const Providers: FC = () => {
   const [modalState, setModalState] = useState<ModalStateEnum>(ModalStateEnum.off)
   const [showActive, setShowActive] = useState(true)
   const [search, setSearch] = useState('')
-  const [editData, setEditData] = useState<IProvider>({} as IProvider)
+  const [editData, setEditData] = useState<ISupplier>({} as ISupplier)
 
-  const { isLoading, providersData } = useProviders('paginatedProviders', {
+  const { isLoading, suppliersData } = useSuppliers('paginatedProviders', {
     keyword: search,
     page: currentPage,
     active: showActive ? 'True' : undefined,
@@ -26,13 +26,13 @@ const Providers: FC = () => {
 
   const queryClient = useQueryClient()
 
-  const editProviderData = (item: IProvider) => () => {
+  const editSupplierData = (item: ISupplier) => () => {
     setEditData(item)
     setModalState(ModalStateEnum.addItem)
   }
 
   const { mutate, isPending: isLoadingDelete } = useMutation({
-    mutationFn: toggleActiveProvider,
+    mutationFn: toggleActiveSupplier,
     onSuccess: (item) => {
       queryClient.invalidateQueries({ queryKey: ['paginatedProviders'] })
       toast.success(`Proveedor ${item?.data.active ? 'Activado' : 'Desactivado'}`)
@@ -44,8 +44,8 @@ const Providers: FC = () => {
     mutate(id)
   }
 
-  const formatEditAndDelete = (paymentTerminals: IProvider[]) => {
-    return paymentTerminals.map((item) => ({
+  const formatEditAndDelete = (suppliers: ISupplier[]) => {
+    return suppliers.map((item) => ({
       ...item,
       active: item.active ? (
         <IconCircleCheck className='text-green-1' />
@@ -54,7 +54,7 @@ const Providers: FC = () => {
       ),
       action: (
         <div className='flex justify-center items-center gap-2'>
-          <Button type='link' className='p-0' onClick={editProviderData(item)}>
+          <Button type='link' className='p-0' onClick={editSupplierData(item)}>
             <IconEdit />
           </Button>
           <Popconfirm
@@ -91,12 +91,12 @@ const Providers: FC = () => {
           </div>
         }
         setModalState={() => {
-          setEditData({} as IProvider)
+          setEditData({} as ISupplier)
           setModalState(ModalStateEnum.addItem)
         }}
-        dataSource={formatEditAndDelete(providersData?.results || [])}
+        dataSource={formatEditAndDelete(suppliersData?.results || [])}
         columns={columns}
-        totalItems={providersData?.count ?? 0}
+        totalItems={suppliersData?.count ?? 0}
         fetching={isLoading}
         currentPage={currentPage}
         onChangePage={(page) => setCurrentPage(page)}
@@ -106,7 +106,7 @@ const Providers: FC = () => {
         }}
       >
         {modalState === ModalStateEnum.addItem && (
-          <AddProviderForm
+          <AddSupplierForm
             initialData={editData}
             onSuccessCallback={() => setModalState(ModalStateEnum.off)}
             isVisible={modalState === ModalStateEnum.addItem}

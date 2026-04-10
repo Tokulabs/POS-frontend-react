@@ -27,7 +27,7 @@ export const getInventoriesNew = async (queryParams: IQueryParams) => {
       groupInfo: `${item.group?.belongs_to?.name ? `${item.group?.belongs_to?.name} /` : ''} ${
         item.group?.name
       }`,
-      providerInfo: item.provider?.legal_name || 'N/A',
+      supplierInfo: item.supplier?.legal_name || 'N/A',
       photoInfo: item.photo,
     }))
     return { ...response.data, results: data }

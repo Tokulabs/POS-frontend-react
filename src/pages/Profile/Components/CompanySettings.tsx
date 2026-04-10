@@ -12,6 +12,7 @@ import { useAwsS3Upload } from '@/hooks/useAwsS3Upload'
 import { toast } from 'sonner'
 import { OptionSelect, SearchInputSelect } from '@/components/FormComponents/SearchInputSelect'
 import { useCities } from '@/hooks/useCities'
+import { useDebouncedCallback } from '@/hooks/useDebounceCallback'
 import { useMutation } from '@tanstack/react-query'
 import { putCompanyInformation } from '../helpers/services'
 import { ActionTypes } from '@/types/StoreTypes'
@@ -35,7 +36,20 @@ export type CompanyFormValues = z.infer<typeof companySchema>
 
 const Company: FC = () => {
   const { state, dispatch } = useContext(store)
-  const { isLoading, citiesData = [] } = useCities('citiesBySearch')
+  const [cityKeyword, setCityKeyword] = useState('')
+  const debouncedSetKeyword = useDebouncedCallback((value: string) => setCityKeyword(value), 400)
+  const { isLoading, citiesData = [] } = useCities(
+    'citiesBySearch',
+    cityKeyword.length >= 2 ? { keyword: cityKeyword } : undefined,
+    cityKeyword.length >= 2,
+  )
+  const currentCity = state.user?.company?.city
+  const cityOptions: OptionSelect[] = currentCity
+    ? [
+        { label: currentCity.name, value: currentCity.id },
+        ...citiesData.filter((c) => c.id !== currentCity.id).map((c) => ({ label: c.name, value: c.id })),
+      ]
+    : citiesData.map((c) => ({ label: c.name, value: c.id }))
   const [pendingFileUpload, setPendingFileUpload] = useState<File | null>(null)
 
   const form = useForm<CompanyFormValues>({
@@ -218,15 +232,10 @@ const Company: FC = () => {
                 <SearchInputSelect<z.infer<typeof companySchema>, 'city'>
                   label='Ciudad'
                   className='w-1/2'
-                  options={citiesData.map((item) => {
-                    const option: OptionSelect = {
-                      label: item.name,
-                      value: item.id,
-                    }
-                    return option
-                  })}
+                  options={cityOptions}
                   isLoading={isLoading}
                   field={field}
+                  onSearch={debouncedSetKeyword}
                 />
               )}
             />

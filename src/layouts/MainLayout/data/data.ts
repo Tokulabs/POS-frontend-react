@@ -107,7 +107,7 @@ export const navigationMenu: NavigationMenuItem[] = [
       {
         label: 'Proveedores',
         link: '/providers',
-        requiredPermission: 'can_manage_providers',
+        requiredPermission: 'can_manage_suppliers',
         description: 'Administra y consulta la información de tus proveedores',
         action: '',
       },

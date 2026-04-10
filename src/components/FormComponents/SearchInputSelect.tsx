@@ -29,6 +29,7 @@ interface SearchInputSelectProps<T extends FieldValues, K extends Path<T>> {
   onkeydown?: (e: React.KeyboardEvent) => void
   isLoading?: boolean
   onSearch?: (value: string) => void
+  optional?: boolean
 }
 
 export const SearchInputSelect = <T extends FieldValues, K extends Path<T>>({
@@ -40,13 +41,14 @@ export const SearchInputSelect = <T extends FieldValues, K extends Path<T>>({
   onkeydown,
   isLoading,
   onSearch,
+  optional = false,
 }: SearchInputSelectProps<T, K>) => {
   const [open, setOpen] = useState(false)
 
   return (
     <FormItem className={cn('flex flex-col gap-1 pt-1', className)}>
       <FormLabel>
-        {label} <span className='text-red-1'>*</span>
+        {label} {!optional && <span className='text-red-1'>*</span>}
       </FormLabel>
       <FormControl>
         <Popover open={open} onOpenChange={setOpen}>

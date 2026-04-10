@@ -3,11 +3,11 @@ import { useForm } from 'antd/es/form/Form'
 import { FC } from 'react'
 import { DataPropsForm } from '@/types/GlobalTypes'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { postProviders, putProviders } from '../helpers/services'
-import { IAddProvider } from '../types/ProviderTypes'
+import { postSuppliers, putSuppliers } from '../helpers/services'
+import { IAddSupplier } from '../types/SupplierTypes'
 import { toast } from 'sonner'
 
-const AddProviderForm: FC<IAddProvider> = ({
+const AddSupplierForm: FC<IAddSupplier> = ({
   isVisible = false,
   onSuccessCallback,
   onCancelCallback,
@@ -30,14 +30,14 @@ const AddProviderForm: FC<IAddProvider> = ({
   }
 
   const { mutate, isPending: isLoading } = useMutation({
-    mutationFn: postProviders,
+    mutationFn: postSuppliers,
     onSuccess: () => {
       successRegistry('Proveedor creado!')
     },
   })
 
   const { mutate: mutateEdit, isPending: isLoadingEdit } = useMutation({
-    mutationFn: putProviders,
+    mutationFn: putSuppliers,
     onSuccess: () => {
       successRegistry('Proveedor actualizado!')
     },
@@ -149,4 +149,4 @@ const AddProviderForm: FC<IAddProvider> = ({
   )
 }
 
-export default AddProviderForm
+export default AddSupplierForm

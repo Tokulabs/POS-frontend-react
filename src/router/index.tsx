@@ -21,7 +21,7 @@ import { UserActivities } from '@/pages/UserActivities/UserActivities'
 import { Dian } from '@/pages/Dian/Dian'
 import { Storage } from '@/pages/Storage/Storage'
 import { PaymentTerminals } from '@/pages/PaymentTerminals/PaymentTerminals'
-import { Providers } from '@/pages/Providers/Providers'
+import { Providers } from '@/pages/Suppliers/Suppliers'
 import { Purchase } from '@/pages/Purchase/Purchase'
 import { InventoryMovementItem } from '@/pages/InventoryMovementItem/InventoryMovements'
 import { Profile } from '@/pages/Profile/Profile'
@@ -58,7 +58,7 @@ const authRoutes: ISideBarData[] = [
   { path: '/dian-resolution', component: Dian, requiredPermission: 'can_manage_dian' },
   { path: '/storage', component: Storage, requiredPermission: 'can_manage_storage', requiredFeatureFlag: 'can_manage_storage' },
   { path: '/payment-terminals', component: PaymentTerminals, requiredPermission: 'can_manage_company', requiredFeatureFlag: 'can_edit_payment_methods' },
-  { path: '/providers', component: Providers, requiredPermission: 'can_manage_providers' },
+  { path: '/providers', component: Providers, requiredPermission: 'can_manage_suppliers' },
   { path: '/purchases', component: Purchase, requiredAnyPermission: ['can_view_purchases', 'can_create_purchase'], requiredFeatureFlag: 'can_view_purchases' },
   { path: '/inventory-movements', component: InventoryMovement, requiredAnyPermission: ['can_view_inventory_movements', 'can_create_shipment_movement', 'can_create_return_movement'], requiredFeatureFlag: 'can_view_inventory_movements' },
   { path: '/inventory-movement/:id', component: InventoryMovementItem, requiredAnyPermission: ['can_view_inventory_movements', 'can_create_shipment_movement', 'can_create_return_movement'], requiredFeatureFlag: 'can_view_inventory_movements' },

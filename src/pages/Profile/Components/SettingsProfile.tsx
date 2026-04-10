@@ -65,7 +65,7 @@ const SettingsProfile: React.FC = () => {
     mutationFn: putUsers,
     onSuccess: (item) => {
       if (item?.data) {
-        dispatch({ type: ActionTypes.UPDATE_USER_INFO, payload: item?.data })
+        dispatch({ type: ActionTypes.UPDATE_USER_INFO, payload: { ...state.user, ...item.data } })
         toast.success('Información actualizada correctamente')
       }
     },
@@ -77,7 +77,8 @@ const SettingsProfile: React.FC = () => {
       toast.error('Usuario no encontrado')
       return
     }
-    const { documentType, documentId, ...rest } = values
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { documentType, documentId, email: _email, ...rest } = values
     const formattedValues = {
       ...rest,
       document_type: documentType,

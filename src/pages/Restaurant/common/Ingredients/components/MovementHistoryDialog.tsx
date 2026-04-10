@@ -45,8 +45,8 @@ const MovementRow: FC<{ movement: IIngredientMovement; unitSymbol: string }> = (
             {new Date(movement.created_at).toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' })}
           </span>
         </div>
-        {movement.provider_name && (
-          <p className='text-xs text-muted-foreground mt-0.5'>{movement.provider_name}</p>
+        {movement.supplier_name && (
+          <p className='text-xs text-muted-foreground mt-0.5'>{movement.supplier_name}</p>
         )}
         {movement.notes && (
           <p className='text-xs text-muted-foreground mt-0.5 truncate'>{movement.notes}</p>

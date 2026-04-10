@@ -173,6 +173,7 @@ const ChangePaymentMethodsInvoice: FC<{
           paymentTerminalIDProp={invoicesByCodeData.payment_terminal?.id || undefined}
           isDollarProp={invoicesByCodeData.is_dollar}
           isElectornicInvoicedProp={invoicesByCodeData.send_electronic_invoice}
+          hideTip
         />
         <Button
           type='primary'

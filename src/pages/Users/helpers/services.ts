@@ -46,9 +46,13 @@ export const postUsersNew = async (values: DataPropsForm) => {
   })
 }
 
-export const putUsers = async (data: { values: DataPropsForm; id: number | string }) => {
+export const putUsers = async (data: {
+  values: DataPropsForm
+  id: number | string
+  method?: 'put' | 'patch'
+}) => {
   return await axiosRequest<IUser>({
-    method: 'put',
+    method: data.method ?? 'put',
     url: `${usersURL}/${data.id}/`,
     hasAuth: true,
     payload: data.values,

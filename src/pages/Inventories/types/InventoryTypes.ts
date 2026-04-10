@@ -29,7 +29,7 @@ export interface IInventoryProps {
       name: string
     }
   } | null
-  provider: {
+  supplier: {
     name: string
     legal_name: string
     id: number

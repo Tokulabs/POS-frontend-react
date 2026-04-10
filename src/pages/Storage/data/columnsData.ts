@@ -31,8 +31,8 @@ export const columns = [
   },
   {
     title: 'Proveedor',
-    dataIndex: 'providerInfo',
-    key: 'providerInfo',
+    dataIndex: 'supplierInfo',
+    key: 'supplierInfo',
   },
   {
     title: 'Precio de venta',
