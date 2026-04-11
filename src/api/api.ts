@@ -1,16 +1,15 @@
 import axios, { AxiosResponse } from 'axios'
 import { IAuthToken, ICustomAxiosError } from '@/types/AuthTypes'
-import { DataPropsForm } from '@/types/GlobalTypes'
 import { tokenName } from '@/utils/constants'
 import { toast } from 'sonner'
 import { isObject } from 'lodash'
 import { logout } from '@/pages/Auth/helpers'
 
-interface IAxiosRequestProps<P = DataPropsForm | FormData> {
+interface IAxiosRequestProps<P extends object = object> {
   method?: 'get' | 'post' | 'patch' | 'delete' | 'put'
   url: string | URL
   headers?: Record<string, string>
-  payload?: P
+  payload?: P | FormData
   hasAuth?: boolean
   showError?: boolean
   errorObject?: {
@@ -27,7 +26,7 @@ export const getAuthToken = (): IAuthToken | null => {
   return { Authorization: `Bearer ${accessToken}` }
 }
 
-export const axiosRequest = async <T, P = DataPropsForm | FormData>({
+export const axiosRequest = async <T, P extends object = object>({
   method = 'get',
   url,
   payload,
@@ -37,7 +36,7 @@ export const axiosRequest = async <T, P = DataPropsForm | FormData>({
   headers,
   isFile = false,
   returnErrorResponse = false, // << nuevo parámetro
-}: IAxiosRequestProps & { returnErrorResponse?: boolean }): Promise<AxiosResponse<T> | null> => {
+}: IAxiosRequestProps<P> & { returnErrorResponse?: boolean }): Promise<AxiosResponse<T> | null> => {
   const headersNew = hasAuth ? { ...headers, ...getAuthToken() } : { ...headers }
   const urlStr = url instanceof URL ? url.toString() : url
   try {
