@@ -23,6 +23,7 @@ export interface IPosData {
   photo?: string
   tax?: { percentage: number } | null
   skip_stock_check?: boolean
+  extra_cost?: number
 }
 
 export interface ITableRowProps {

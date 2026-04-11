@@ -1,11 +1,12 @@
 import { FC, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { IconCirclePlus, IconToolsKitchen2, IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
+import { IconCirclePlus, IconToolsKitchen2, IconChevronLeft, IconChevronRight, IconList } from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { useRestaurantMenu } from '@/hooks/restaurant/useRestaurantMenu'
 import { MenuCategory, MENU_CATEGORY_LABELS } from '@/pages/Restaurant/types/RestaurantTypes'
 import { MenuProductCard } from './components/MenuProductCard'
 import { AddToMenuModal, AddToMenuFormValues } from './components/AddToMenuModal'
+import { BulkAddToMenuModal, BulkMenuItemPayload } from './components/BulkAddToMenuModal'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -25,6 +26,7 @@ const CATEGORY_TABS: Array<{ value: MenuCategory | 'all'; label: string }> = [
 
 const RestaurantMenu: FC = () => {
   const [modalOpen, setModalOpen] = useState(false)
+  const [bulkModalOpen, setBulkModalOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<MenuCategory | 'all'>('all')
   const navigate = useNavigate()
   const [searchInput, setSearchInput] = useState('')
@@ -32,7 +34,7 @@ const RestaurantMenu: FC = () => {
   const [page, setPage] = useState(1)
 
   const category = activeTab === 'all' ? '' : activeTab
-  const { isLoading, menuItems, totalCount, addToMenu, createCombo, patchMenuItem, removeFromMenu } =
+  const { isLoading, menuItems, totalCount, addToMenu, createCombo, patchMenuItem, removeFromMenu, bulkAddToMenu } =
     useRestaurantMenu({ keyword, page, category })
 
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
@@ -92,6 +94,22 @@ const RestaurantMenu: FC = () => {
     })
   }
 
+  const handleBulkAdd = (items: BulkMenuItemPayload[]) => {
+    bulkAddToMenu.mutate(
+      { items },
+      {
+        onSuccess: (response) => {
+          const { created, skipped, errors } = response?.data ?? { created: 0, skipped: 0, errors: [] }
+          setBulkModalOpen(false)
+          if (created > 0) toast.success(`${created} producto${created !== 1 ? 's' : ''} agregado${created !== 1 ? 's' : ''} al menú`)
+          if (skipped > 0) toast.info(`${skipped} producto${skipped !== 1 ? 's' : ''} ya estaba${skipped !== 1 ? 'n' : ''} en el menú`)
+          if (errors.length > 0) toast.warning(`${errors.length} producto${errors.length !== 1 ? 's' : ''} no se pudo${errors.length !== 1 ? 'n' : ''} agregar`)
+        },
+        onError: () => toast.error('Error al agregar los productos'),
+      },
+    )
+  }
+
   return (
     <div className='bg-card text-card-foreground h-full rounded-lg p-6 flex flex-col gap-5'>
       {/* Header */}
@@ -112,6 +130,10 @@ const RestaurantMenu: FC = () => {
               Buscar
             </Button>
           </form>
+          <Button variant='outline' onClick={() => setBulkModalOpen(true)} className='gap-2'>
+            <IconList size={16} />
+            Agregar varios
+          </Button>
           <Button onClick={() => setModalOpen(true)} className='gap-2'>
             <IconCirclePlus size={16} />
             Agregar al menú
@@ -198,6 +220,14 @@ const RestaurantMenu: FC = () => {
         onCreateCombo={handleCreateCombo}
         onCancel={() => setModalOpen(false)}
         isPending={addToMenu.isPending || createCombo.isPending}
+      />
+
+      <BulkAddToMenuModal
+        open={bulkModalOpen}
+        existingMenuItems={menuItems}
+        onSubmit={handleBulkAdd}
+        onCancel={() => setBulkModalOpen(false)}
+        isPending={bulkAddToMenu.isPending}
       />
     </div>
   )

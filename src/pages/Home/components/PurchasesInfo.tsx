@@ -34,6 +34,7 @@ const PurchasesInfo = () => {
   const showCurrency = false
 
   const hasPermissionToSeeData = useHasPermission('can_view_dashboard_reports')
+  const canChangeDates = useHasPermission('can_change_dashboard_dates')
 
   const dateLabel = startDate === endDate ? startDate : `${startDate} — ${endDate}`
 
@@ -45,7 +46,7 @@ const PurchasesInfo = () => {
           <IconTrendingUp size={18} className='text-white opacity-90' />
           <span className='text-white font-semibold text-sm'>Resumen de Ventas</span>
         </div>
-        {hasPermissionToSeeData && (
+        {hasPermissionToSeeData && canChangeDates && (
           <DateRangePicker
             startDate={startDate}
             endDate={endDate}

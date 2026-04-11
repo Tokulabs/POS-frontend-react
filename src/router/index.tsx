@@ -35,6 +35,7 @@ import { RestaurantMenuDetail } from '@/pages/Restaurant/features/Menu/Restauran
 import { RestaurantTables } from '@/pages/Restaurant/features/Tables/RestaurantTables'
 import { RestaurantOrders } from '@/pages/Restaurant/features/Orders/RestaurantOrders'
 import { RestaurantOrderDetail } from '@/pages/Restaurant/features/Orders/RestaurantOrderDetail'
+import { RestaurantMembershipCards } from '@/pages/Restaurant/features/MembershipCards/RestaurantMembershipCards'
 // import Register from '@/pages/Auth/Register' // Disabled — registrations closed
 
 
@@ -71,6 +72,7 @@ const authRoutes: ISideBarData[] = [
   { path: '/restaurant/tables', component: RestaurantTables, requiredFeatureFlag: 'restaurant_addon', requiredPermission: 'can_manage_restaurant_tables' },
   { path: '/restaurant/orders', component: RestaurantOrders, requiredFeatureFlag: 'restaurant_addon', requiredPermission: 'can_manage_restaurant_orders' },
   { path: '/restaurant/orders/:id', component: RestaurantOrderDetail, requiredFeatureFlag: 'restaurant_addon', requiredPermission: 'can_manage_restaurant_orders' },
+  { path: '/restaurant/membership-cards', component: RestaurantMembershipCards, requiredFeatureFlag: 'restaurant_addon', requiredPermission: 'can_view_membership_cards' },
 ]
 
 // Checks permissions at render time (after AuthRoutes has loaded the user).

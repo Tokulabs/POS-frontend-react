@@ -124,9 +124,14 @@ const RestaurantOrderDetail: FC = () => {
     setSelectedItems((prev) => ({ ...prev, [itemId]: qty }))
   }
 
-  const handleAddItem = (item: number, quantity: number, notes: string) => {
+  const handleAddItem = (
+    item: number,
+    quantity: number,
+    notes: string,
+    selectedOptions?: { group_id: number; product_id: number }[],
+  ) => {
     addItem.mutate(
-      { orderId, item, quantity, notes },
+      { orderId, item, quantity, notes, selected_options: selectedOptions },
       {
         onSuccess: () => { toast.success('Producto agregado'); setAddItemOpen(false) },
         onError: (e: any) => toast.error(e?.response?.data?.error ?? 'Error al agregar producto'),
@@ -152,21 +157,38 @@ const RestaurantOrderDetail: FC = () => {
     convertToInvoice.mutate(orderId, {
       onSuccess: (response: any) => {
         const items: any[] = response?.data?.items ?? []
-        const preloadedItems = items.map((item) => ({
-          id: Number(item.item_id),
-          code: item.item_code,
-          name: item.item_name,
-          selling_price: item.unit_price,
-          usd_price: item.usd_price ?? 0,
-          discount: 0,
-          quantity: item.quantity,
-          total: item.unit_price * item.quantity,
-          usd_total: (item.usd_price ?? 0) * item.quantity,
-          is_gift: false,
-          total_in_shops: item.skip_stock_check ? 9999 : (item.total_in_shops ?? 0),
-          tax: item.tax_percentage != null ? { percentage: item.tax_percentage } : null,
-          skip_stock_check: item.skip_stock_check ?? false,
-        }))
+
+        // Merge items that share the same product code AND same effective price.
+        // Items with the same code but different prices (e.g. two combos where one
+        // had an option surcharge) stay as separate cart lines.
+        const mergedMap = new Map<string, any>()
+        items.forEach((item) => {
+          const key = `${item.item_code}::${item.unit_price}`
+          if (mergedMap.has(key)) {
+            const existing = mergedMap.get(key)
+            existing.quantity += item.quantity
+            existing.total = existing.selling_price * existing.quantity
+            existing.usd_total = existing.usd_price * existing.quantity
+          } else {
+            mergedMap.set(key, {
+              id: Number(item.item_id),
+              code: item.item_code,
+              name: item.item_name,
+              selling_price: item.unit_price,
+              usd_price: item.usd_price ?? 0,
+              discount: 0,
+              quantity: item.quantity,
+              total: item.unit_price * item.quantity,
+              usd_total: (item.usd_price ?? 0) * item.quantity,
+              is_gift: false,
+              total_in_shops: item.skip_stock_check ? 9999 : (item.total_in_shops ?? 0),
+              tax: item.tax_percentage != null ? { percentage: item.tax_percentage } : null,
+              skip_stock_check: item.skip_stock_check ?? false,
+              extra_cost: item.extra_cost ?? 0,
+            })
+          }
+        })
+        const preloadedItems = Array.from(mergedMap.values())
         navigate('/pos', { state: { preloadedItems, restaurantOrderId: orderId } })
       },
       onError: (e: any) => toast.error(e?.response?.data?.error ?? 'Error al facturar la orden'),

@@ -66,7 +66,10 @@ const OrderItemRow: FC<OrderItemRowProps> = ({
             )}
           </div>
           <span className='text-sm text-muted-foreground shrink-0'>
-            {formatNumberToColombianPesos(item.unit_price * item.quantity, true)}
+            {formatNumberToColombianPesos(
+              (item.unit_price + item.combo_children.reduce((s, c) => s + c.unit_price, 0)) * item.quantity,
+              true,
+            )}
           </span>
           {canRemove && (
             <Button

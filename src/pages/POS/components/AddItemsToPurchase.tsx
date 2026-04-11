@@ -126,8 +126,8 @@ export const AddItemsToPurchase = () => {
         <section className='h-full overflow-hidden overflow-y-auto scrollbar-hide'>
           <TableHeader tableColumnsData={TableData} />
           <ul className='p-0 divide-solid divide-y divide-gray-1'>
-            {cartItems.map((product) => (
-              <TableRow key={product.code} product={product} />
+            {cartItems.map((product, index) => (
+              <TableRow key={`${product.code}-${index}`} product={product} />
             ))}
           </ul>
         </section>

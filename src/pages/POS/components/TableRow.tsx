@@ -1,6 +1,7 @@
 import { FC, useState } from 'react'
 import { ITableRowProps } from './types/TableTypes'
-import { IconMinus, IconPlus } from '@tabler/icons-react'
+import { IconMinus, IconPlus, IconCirclePlus } from '@tabler/icons-react'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useCart } from '@/store/useCartStoreZustand'
 import { InputNumber, Image, Checkbox, CheckboxProps } from 'antd'
 import { calcMetaDataProdudct, formatNumberToColombianPesos, formatToUsd } from '@/utils/helpers'
@@ -11,7 +12,6 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
   const {
     addToCart,
     removeFromCart,
-    cartItems,
     addDiscountToItem,
     updateTotalPrice,
     updateQuantity,
@@ -20,10 +20,8 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
 
   const { itemTaxesCOP } = calcMetaDataProdudct(product)
 
-  const actualProduct = cartItems.filter((item) => item.code === product.code)[0]
-
-  const { code, name, selling_price, usd_price, discount, total, usd_total, quantity, is_gift } =
-    actualProduct
+  const { code, name, selling_price, usd_price, discount, total, usd_total, quantity, is_gift, extra_cost } =
+    product
 
   const addDiscountEvent = (event: number | null) => {
     if (!event || event < 0) event = 0
@@ -32,7 +30,7 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
   }
 
   const changeQuantity = (event: number | null) => {
-    if (event === 0) removeFromCart(actualProduct, true)
+    if (event === 0) removeFromCart(product, true)
     updateQuantity(code, event)
     updateTotalPrice()
   }
@@ -53,7 +51,26 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
         onChange={onChangeCheckBox}
       />
       <span className='text-start w-full'>{code}</span>
-      <span className='col-span-2 text-left w-full truncate'>{name}</span>
+      <span className='col-span-2 text-left w-full truncate flex items-center gap-1'>
+        {name}
+        {(extra_cost ?? 0) > 0 && (
+          <Popover>
+            <PopoverTrigger asChild>
+              <button type='button' className='shrink-0 focus:outline-none'>
+                <IconCirclePlus size={13} className='text-orange-500' />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent side='top' className='w-auto px-3 py-2 text-xs space-y-0.5'>
+              <p className='font-semibold text-muted-foreground uppercase tracking-wide text-[10px]'>
+                Costo adicional
+              </p>
+              <p className='font-bold text-orange-600'>
+                +{formatNumberToColombianPesos(extra_cost!)}
+              </p>
+            </PopoverContent>
+          </Popover>
+        )}
+      </span>
       <span
         className={`col-start-5 ${product.photo ? 'text-blue-400 underline cursor-pointer' : 'text-red-1'} truncate`}
         onClick={() => {
@@ -98,7 +115,7 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
             <IconMinus
               className='cursor-pointer h-3 w-3'
               onClick={() => {
-                removeFromCart(actualProduct)
+                removeFromCart(product)
                 updateTotalPrice()
               }}
             />
@@ -107,7 +124,7 @@ export const TableRow: FC<ITableRowProps> = ({ product }) => {
             <IconPlus
               className='cursor-pointer h-3 w-3'
               onClick={() => {
-                addToCart(actualProduct)
+                addToCart(product)
                 updateTotalPrice()
               }}
             />

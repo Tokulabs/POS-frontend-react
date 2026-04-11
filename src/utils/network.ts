@@ -61,8 +61,14 @@ export const restaurantAreasURL = baseURL + 'restaurant/areas/'
 export const restaurantTablesURL = baseURL + 'restaurant/tables/'
 export const restaurantOrdersURL = baseURL + 'restaurant/orders/'
 export const restaurantOrderByInvoiceURL = baseURL + 'restaurant/orders/by-invoice/'
+export const restaurantMembershipCardsURL = baseURL + 'restaurant/membership-cards/'
+export const restaurantMembershipCardsExportURL = baseURL + 'restaurant/membership-cards/export/'
 export const restaurantComboItemsURL = (menuItemId: number) =>
   `${baseURL}restaurant/menu/${menuItemId}/combo-items/`
+export const restaurantComboOptionGroupsURL = (menuItemId: number) =>
+  `${baseURL}restaurant/menu/${menuItemId}/option-groups/`
+export const restaurantComboOptionURL = (menuItemId: number, groupId: number) =>
+  `${baseURL}restaurant/menu/${menuItemId}/option-groups/${groupId}/options/`
 
 // WebSocket — replace http(s):// with ws(s)://
 const wsBaseURL = baseURL.replace(/^https/, 'wss').replace(/^http/, 'ws')

@@ -46,7 +46,16 @@ export const useRestaurantOrders = (
   })
 
   const addItem = useMutation({
-    mutationFn: ({ orderId, ...payload }: { orderId: number; item: number; quantity: number; notes?: string }) =>
+    mutationFn: ({
+      orderId,
+      ...payload
+    }: {
+      orderId: number
+      item: number
+      quantity: number
+      notes?: string
+      selected_options?: { group_id: number; product_id: number }[]
+    }) =>
       axiosRequest<IRestaurantOrderItem>({
         url: `${restaurantOrdersURL}${orderId}/add-item/`,
         method: 'post',
