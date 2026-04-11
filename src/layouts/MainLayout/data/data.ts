@@ -161,6 +161,12 @@ export const navigationMenu: NavigationMenuItem[] = [
         requiredPermission: 'can_manage_restaurant_menu',
         description: 'Gestiona los platos del menú y sus recetas',
       },
+      {
+        label: 'Fidelización',
+        link: '/restaurant/membership-cards',
+        requiredFeatureFlag: 'restaurant_addon',
+        description: 'Gestiona las tarjetas de fidelización de tus clientes',
+      },
     ],
   },
   {

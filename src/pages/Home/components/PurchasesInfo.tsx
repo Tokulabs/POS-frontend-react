@@ -46,15 +46,13 @@ const PurchasesInfo = () => {
           <IconTrendingUp size={18} className='text-white opacity-90' />
           <span className='text-white font-semibold text-sm'>Resumen de Ventas</span>
         </div>
-        {hasPermissionToSeeData && (
-          {canChangeDates && (
-            <DateRangePicker
-              startDate={startDate}
-              endDate={endDate}
-              onChange={(s, e) => { setStartDate(s); setEndDate(e) }}
-              className='bg-white/10 border-white/30 text-white hover:bg-white/20 hover:text-white'
-            />
-          )}
+        {hasPermissionToSeeData && canChangeDates && (
+          <DateRangePicker
+            startDate={startDate}
+            endDate={endDate}
+            onChange={(s, e) => { setStartDate(s); setEndDate(e) }}
+            className='bg-white/10 border-white/30 text-white hover:bg-white/20 hover:text-white'
+          />
         )}
       </div>
 

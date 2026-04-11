@@ -75,14 +75,12 @@ const TopSell = () => {
             </button>
           </div>
         </div>
-        {hasPermissionToSeeData && (
-          {canChangeDates && (
-            <DateRangePicker
-              startDate={startDate}
-              endDate={endDate}
-              onChange={(s, e) => { setStartDate(s); setEndDate(e) }}
-            />
-          )}
+        {hasPermissionToSeeData && canChangeDates && (
+          <DateRangePicker
+            startDate={startDate}
+            endDate={endDate}
+            onChange={(s, e) => { setStartDate(s); setEndDate(e) }}
+          />
         )}
       </div>
 

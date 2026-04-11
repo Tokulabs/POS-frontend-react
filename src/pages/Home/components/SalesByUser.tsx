@@ -50,8 +50,8 @@ const SalesByUser = () => {
           <IconUsers size={18} className='text-green-1' />
           <span className='font-semibold text-sm'>Ventas por usuario</span>
         </div>
-        {hasPermissionToSeeData && (
-          {canChangeDates && <DatePicker date={date} onChange={setDate} />}
+        {hasPermissionToSeeData && canChangeDates && (
+          <DatePicker date={date} onChange={setDate} />
         )}
       </div>
 
