@@ -72,7 +72,7 @@ const authRoutes: ISideBarData[] = [
   { path: '/restaurant/tables', component: RestaurantTables, requiredFeatureFlag: 'restaurant_addon', requiredPermission: 'can_manage_restaurant_tables' },
   { path: '/restaurant/orders', component: RestaurantOrders, requiredFeatureFlag: 'restaurant_addon', requiredPermission: 'can_manage_restaurant_orders' },
   { path: '/restaurant/orders/:id', component: RestaurantOrderDetail, requiredFeatureFlag: 'restaurant_addon', requiredPermission: 'can_manage_restaurant_orders' },
-  { path: '/restaurant/membership-cards', component: RestaurantMembershipCards, requiredFeatureFlag: 'restaurant_addon' },
+  { path: '/restaurant/membership-cards', component: RestaurantMembershipCards, requiredFeatureFlag: 'restaurant_addon', requiredPermission: 'can_view_membership_cards' },
 ]
 
 // Checks permissions at render time (after AuthRoutes has loaded the user).

@@ -5,6 +5,7 @@ import { IMembershipCard } from '@/hooks/restaurant/useMembershipCards'
 
 interface MembershipCardItemProps {
   card: IMembershipCard
+  canEdit?: boolean
   onAddStamp: (id: number) => void
   onReset: (id: number) => void
   onDelete: (id: number) => void
@@ -23,7 +24,7 @@ const formatCardDate = (cardId: string) => {
   })
 }
 
-const MembershipCardItem: FC<MembershipCardItemProps> = ({ card, onAddStamp, onReset, onDelete, onLinkCustomer }) => {
+const MembershipCardItem: FC<MembershipCardItemProps> = ({ card, canEdit = true, onAddStamp, onReset, onDelete, onLinkCustomer }) => {
   const [confirmReset, setConfirmReset] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -67,26 +68,28 @@ const MembershipCardItem: FC<MembershipCardItemProps> = ({ card, onAddStamp, onR
             </span>
           )}
         </div>
-        <div className='flex items-center gap-1 shrink-0'>
-          <Button
-            variant='ghost'
-            size='icon'
-            className='h-7 w-7 text-muted-foreground hover:text-foreground'
-            onClick={() => onLinkCustomer(card)}
-            title={card.customer ? 'Cambiar cliente asociado' : 'Asociar cliente'}
-          >
-            <IconUserPlus size={14} />
-          </Button>
-          <Button
-            variant='ghost'
-            size='icon'
-            className='h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10'
-            onClick={handleDelete}
-            title={confirmDelete ? 'Click de nuevo para confirmar' : 'Eliminar tarjeta'}
-          >
-            <IconTrash size={14} />
-          </Button>
-        </div>
+        {canEdit && (
+          <div className='flex items-center gap-1 shrink-0'>
+            <Button
+              variant='ghost'
+              size='icon'
+              className='h-7 w-7 text-muted-foreground hover:text-foreground'
+              onClick={() => onLinkCustomer(card)}
+              title={card.customer ? 'Cambiar cliente asociado' : 'Asociar cliente'}
+            >
+              <IconUserPlus size={14} />
+            </Button>
+            <Button
+              variant='ghost'
+              size='icon'
+              className='h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10'
+              onClick={handleDelete}
+              title={confirmDelete ? 'Click de nuevo para confirmar' : 'Eliminar tarjeta'}
+            >
+              <IconTrash size={14} />
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Card ID */}
@@ -134,27 +137,29 @@ const MembershipCardItem: FC<MembershipCardItemProps> = ({ card, onAddStamp, onR
       </div>
 
       {/* Actions */}
-      <div className='flex gap-2 pt-1'>
-        <Button
-          className='flex-1 gap-1.5 text-xs h-8'
-          size='sm'
-          disabled={isFull}
-          onClick={() => onAddStamp(card.id)}
-        >
-          <IconRubberStamp size={13} />
-          {isFull ? 'Completa' : 'Agregar sello'}
-        </Button>
-        <Button
-          variant='outline'
-          size='sm'
-          className={`gap-1.5 text-xs h-8 ${confirmReset ? 'border-amber-500 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40' : ''}`}
-          onClick={handleReset}
-          title='Reiniciar sellos'
-        >
-          <IconRefresh size={13} />
-          {confirmReset ? '¿Seguro?' : 'Reiniciar'}
-        </Button>
-      </div>
+      {canEdit && (
+        <div className='flex gap-2 pt-1'>
+          <Button
+            className='flex-1 gap-1.5 text-xs h-8'
+            size='sm'
+            disabled={isFull}
+            onClick={() => onAddStamp(card.id)}
+          >
+            <IconRubberStamp size={13} />
+            {isFull ? 'Completa' : 'Agregar sello'}
+          </Button>
+          <Button
+            variant='outline'
+            size='sm'
+            className={`gap-1.5 text-xs h-8 ${confirmReset ? 'border-amber-500 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40' : ''}`}
+            onClick={handleReset}
+            title='Reiniciar sellos'
+          >
+            <IconRefresh size={13} />
+            {confirmReset ? '¿Seguro?' : 'Reiniciar'}
+          </Button>
+        </div>
+      )}
 
       {confirmDelete && (
         <p className='text-[10px] text-destructive text-center -mt-2'>

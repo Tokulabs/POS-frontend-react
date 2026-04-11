@@ -1,6 +1,7 @@
 import { FC, useState, useEffect } from 'react'
 import { IconCirclePlus, IconCards, IconChevronLeft, IconChevronRight, IconChartBar } from '@tabler/icons-react'
 import { toast } from 'sonner'
+import { useHasPermission } from '@/hooks/useHasPermission'
 import { useMembershipCards, IMembershipCard, CreateMembershipCardPayload } from '@/hooks/restaurant/useMembershipCards'
 import { MembershipCardItem } from './components/MembershipCardItem'
 import { CreateMembershipCardModal } from './components/CreateMembershipCardModal'
@@ -19,6 +20,9 @@ const RestaurantMembershipCards: FC = () => {
   const [searchInput, setSearchInput] = useState('')
   const [keyword, setKeyword] = useState('')
   const [page, setPage] = useState(1)
+
+  const canCreate = useHasPermission('can_create_membership_cards')
+  const canReport = useHasPermission('can_view_membership_cards_report')
 
   useEffect(() => { setPage(1) }, [keyword])
 
@@ -114,14 +118,18 @@ const RestaurantMembershipCards: FC = () => {
               Buscar
             </Button>
           </form>
-          <Button variant='outline' onClick={() => setReportOpen(true)} className='gap-2'>
-            <IconChartBar size={16} />
-            Reporte
-          </Button>
-          <Button onClick={() => setCreateModalOpen(true)} className='gap-2'>
-            <IconCirclePlus size={16} />
-            Nueva tarjeta
-          </Button>
+          {canReport && (
+            <Button variant='outline' onClick={() => setReportOpen(true)} className='gap-2'>
+              <IconChartBar size={16} />
+              Reporte
+            </Button>
+          )}
+          {canCreate && (
+            <Button onClick={() => setCreateModalOpen(true)} className='gap-2'>
+              <IconCirclePlus size={16} />
+              Nueva tarjeta
+            </Button>
+          )}
         </div>
       </div>
 
@@ -148,6 +156,7 @@ const RestaurantMembershipCards: FC = () => {
               <MembershipCardItem
                 key={card.id}
                 card={card}
+                canEdit={canCreate}
                 onAddStamp={handleAddStamp}
                 onReset={handleReset}
                 onDelete={handleDelete}

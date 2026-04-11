@@ -165,6 +165,7 @@ export const navigationMenu: NavigationMenuItem[] = [
         label: 'Fidelización',
         link: '/restaurant/membership-cards',
         requiredFeatureFlag: 'restaurant_addon',
+        requiredPermission: 'can_view_membership_cards',
         description: 'Gestiona las tarjetas de fidelización de tus clientes',
       },
     ],
