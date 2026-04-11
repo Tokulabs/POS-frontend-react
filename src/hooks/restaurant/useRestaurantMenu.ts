@@ -63,6 +63,17 @@ export const useRestaurantMenu = (params?: { keyword?: string; page?: number; ca
     onSuccess: invalidate,
   })
 
+  const bulkAddToMenu = useMutation({
+    mutationFn: (payload: { items: MenuItemPayload[] }) =>
+      axiosRequest<{ created: number; skipped: number; errors: { index: number; product_id: number | null; reason: string }[] }>({
+        url: `${restaurantMenuURL}bulk-add/`,
+        method: 'post',
+        payload,
+        hasAuth: true,
+      }),
+    onSuccess: invalidate,
+  })
+
   return {
     isLoading,
     menuItems: data?.results ?? [],
@@ -72,5 +83,6 @@ export const useRestaurantMenu = (params?: { keyword?: string; page?: number; ca
     updateMenuItem,
     patchMenuItem,
     removeFromMenu,
+    bulkAddToMenu,
   }
 }

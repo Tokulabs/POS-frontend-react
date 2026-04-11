@@ -25,6 +25,7 @@ const SalesByUser = () => {
   })
 
   const hasPermissionToSeeData = useHasPermission('can_view_dashboard_reports')
+  const canChangeDates = useHasPermission('can_change_dashboard_dates')
 
   const updateArrows = () => {
     const el = scrollRef.current
@@ -50,7 +51,7 @@ const SalesByUser = () => {
           <span className='font-semibold text-sm'>Ventas por usuario</span>
         </div>
         {hasPermissionToSeeData && (
-          <DatePicker date={date} onChange={setDate} />
+          {canChangeDates && <DatePicker date={date} onChange={setDate} />}
         )}
       </div>
 

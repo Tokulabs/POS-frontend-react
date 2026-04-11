@@ -33,6 +33,7 @@ const TopSell = () => {
   })
 
   const hasPermissionToSeeData = useHasPermission('can_view_dashboard_reports')
+  const canChangeDates = useHasPermission('can_change_dashboard_dates')
 
   const updateArrows = () => {
     const el = scrollRef.current
@@ -75,11 +76,13 @@ const TopSell = () => {
           </div>
         </div>
         {hasPermissionToSeeData && (
-          <DateRangePicker
-            startDate={startDate}
-            endDate={endDate}
-            onChange={(s, e) => { setStartDate(s); setEndDate(e) }}
-          />
+          {canChangeDates && (
+            <DateRangePicker
+              startDate={startDate}
+              endDate={endDate}
+              onChange={(s, e) => { setStartDate(s); setEndDate(e) }}
+            />
+          )}
         )}
       </div>
 
