@@ -6,6 +6,7 @@ import Company from './Components/CompanySettings'
 import { RolesSettings } from './Components/RolesSettings'
 import { SubscriptionInfo } from './Components/SubscriptionInfo'
 import { CostCentersSettings } from './Components/CostCentersSettings'
+import { OwnersSettings } from './Components/OwnersSettings'
 import { store } from '@/store'
 
 interface ProfileProps {
@@ -47,6 +48,11 @@ const Profile: FC<ProfileProps> = () => {
     },
     ...(isOwner
       ? [
+          {
+            title: 'Propietarios',
+            value: 'owners',
+            content: <OwnersSettings />,
+          },
           {
             title: 'Suscripción',
             value: 'subscription',

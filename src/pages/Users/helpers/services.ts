@@ -66,3 +66,20 @@ export const toggleActiveUser = async (id: number) => {
     hasAuth: true,
   })
 }
+
+export const assignOwnerUser = async (id: number) => {
+  return await axiosRequest({
+    method: 'post',
+    url: `${usersURL}/${id}/assign-owner/`,
+    hasAuth: true,
+  })
+}
+
+export const removeOwnerUser = async (data: { id: number; role_id: number }) => {
+  return await axiosRequest({
+    method: 'post',
+    url: `${usersURL}/${data.id}/remove-owner/`,
+    hasAuth: true,
+    payload: { role_id: data.role_id },
+  })
+}
