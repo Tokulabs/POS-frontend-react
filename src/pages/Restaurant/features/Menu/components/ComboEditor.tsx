@@ -1,8 +1,11 @@
 import { FC, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { IconPlus, IconTrash, IconPackage } from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { useComboItems } from '@/hooks/restaurant/useComboItems'
-import { IMenuProductDetail } from '@/pages/Restaurant/types/RestaurantTypes'
+import { IRestaurantProductDetail } from '@/pages/Restaurant/types/RestaurantTypes'
+import { axiosRequest } from '@/api/api'
+import { restaurantMenuURL } from '@/utils/network'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -10,38 +13,44 @@ import { formatNumberToColombianPesos } from '@/utils/helpers'
 
 interface ComboEditorProps {
   menuItemId: number
-  /** Full inventory list for product search */
-  products: IMenuProductDetail[]
-  isLoadingProducts: boolean
+  isLoadingProducts?: boolean
 }
 
-const ComboEditor: FC<ComboEditorProps> = ({ menuItemId, products, isLoadingProducts }) => {
+const ComboEditor: FC<ComboEditorProps> = ({ menuItemId, isLoadingProducts }) => {
   const { comboItems, isLoading, addItem, removeItem } = useComboItems(menuItemId)
 
-  const [search, setSearch]         = useState('')
-  const [quantity, setQuantity]     = useState('1')
-  const [selectedId, setSelectedId] = useState<number | null>(null)
+  const [search, setSearch]   = useState('')
+  const [quantity, setQuantity] = useState('1')
+  const [selected, setSelected] = useState<{ id: number; name: string; selling_price: number; code: string } | null>(null)
 
-  const filtered = products.filter(
-    (p) =>
-      search.trim().length >= 2 &&
-      (p.name.toLowerCase().includes(search.toLowerCase()) ||
-        p.code.toLowerCase().includes(search.toLowerCase())),
+  const { data: searchResults = [] } = useQuery({
+    queryKey: ['menu-search-combo', search],
+    queryFn: async () => {
+      const url = new URL(restaurantMenuURL)
+      url.searchParams.set('keyword', search)
+      const response = await axiosRequest<{ results: IRestaurantProductDetail[] }>({ url, hasAuth: true })
+      return response?.data?.results ?? []
+    },
+    enabled: search.trim().length >= 2 && !selected,
+    staleTime: 1000 * 30,
+  })
+
+  const alreadyAdded = new Set(comboItems.map((ci) => ci.product_id))
+
+  const filtered = searchResults.filter(
+    (item) => item.id !== menuItemId && !alreadyAdded.has(item.product),
   )
 
-  const selectedProduct = products.find((p) => p.id === selectedId)
-
   const handleAdd = () => {
-    if (!selectedId) return
+    if (!selected) return
     const qty = parseInt(quantity, 10)
     if (!qty || qty < 1) { toast.error('Cantidad inválida'); return }
-
     addItem.mutate(
-      { product_id: selectedId, quantity: qty },
+      { product_id: selected.id, quantity: qty },
       {
         onSuccess: () => {
           setSearch('')
-          setSelectedId(null)
+          setSelected(null)
           setQuantity('1')
           toast.success('Producto agregado al combo')
         },
@@ -95,35 +104,42 @@ const ComboEditor: FC<ComboEditorProps> = ({ menuItemId, products, isLoadingProd
         </div>
       )}
 
-      {/* Add product */}
+      {/* Add product — server-side menu search */}
       <div className='space-y-2'>
         <p className='text-sm font-medium'>Agregar producto</p>
 
-        {/* Search */}
         <Input
           placeholder='Buscar por nombre o código...'
           value={search}
-          onChange={(e) => { setSearch(e.target.value); setSelectedId(null) }}
+          onChange={(e) => { setSearch(e.target.value); setSelected(null) }}
         />
 
         {/* Results dropdown */}
-        {search.trim().length >= 2 && !selectedId && (
+        {search.trim().length >= 2 && !selected && (
           <div className='rounded-lg border border-border bg-card shadow-sm divide-y divide-border max-h-48 overflow-y-auto'>
             {filtered.length === 0 ? (
               <p className='px-4 py-3 text-sm text-muted-foreground'>Sin resultados</p>
             ) : (
-              filtered.map((p) => (
+              filtered.map((item) => (
                 <button
-                  key={p.id}
-                  onClick={() => { setSelectedId(p.id); setSearch(p.name) }}
+                  key={item.id}
+                  onClick={() => {
+                    setSelected({
+                      id: item.product,
+                      name: item.product_detail?.name ?? '',
+                      selling_price: item.product_detail?.selling_price ?? 0,
+                      code: item.product_detail?.code ?? '',
+                    })
+                    setSearch(item.product_detail?.name ?? '')
+                  }}
                   className='w-full flex items-center justify-between px-4 py-2.5 text-left hover:bg-accent transition-colors'
                 >
                   <div className='min-w-0'>
-                    <p className='text-sm font-medium truncate'>{p.name}</p>
-                    <p className='text-xs text-muted-foreground'>{p.code}</p>
+                    <p className='text-sm font-medium truncate'>{item.product_detail?.name}</p>
+                    <p className='text-xs text-muted-foreground'>{item.product_detail?.code}</p>
                   </div>
                   <span className='text-xs text-muted-foreground shrink-0 ml-3'>
-                    {formatNumberToColombianPesos(p.selling_price, true)}
+                    {formatNumberToColombianPesos(item.product_detail?.selling_price ?? 0, true)}
                   </span>
                 </button>
               ))
@@ -132,10 +148,10 @@ const ComboEditor: FC<ComboEditorProps> = ({ menuItemId, products, isLoadingProd
         )}
 
         {/* Selected + quantity + add */}
-        {selectedId && selectedProduct && (
+        {selected && (
           <div className='flex items-center gap-2 p-3 rounded-lg bg-muted/40 border border-border'>
             <div className='flex-1 min-w-0'>
-              <p className='text-sm font-medium truncate'>{selectedProduct.name}</p>
+              <p className='text-sm font-medium truncate'>{selected.name}</p>
             </div>
             <Input
               type='number'

@@ -42,8 +42,7 @@ const RestaurantMenuDetail: FC = () => {
 
   // Fetch the specific item by ID — avoids cache collision with the paginated list
   const { isLoading, menuItem, invalidate: invalidateItem } = useMenuItemById(menuItemId)
-  // Full list (unpaginated) for combo/options product selectors
-  const { isLoading: isLoadingAll, menuItems, updateMenuItem } = useRestaurantMenu()
+  const { updateMenuItem } = useRestaurantMenu()
 
   const { ingredients, isLoading: isLoadingIngredients } = useIngredients()
   const { createRecipe, updateRecipe } = useRecipes()
@@ -110,7 +109,7 @@ const RestaurantMenuDetail: FC = () => {
     )
   }
 
-  if (isLoading || isLoadingAll) {
+  if (isLoading) {
     return (
       <div className='bg-card text-card-foreground h-full rounded-lg p-4 space-y-3'>
         <Skeleton className='h-10 w-full' />
@@ -122,7 +121,7 @@ const RestaurantMenuDetail: FC = () => {
 
   if (!menuItem) {
     return (
-      <div className='bg-card text-card-foreground h-full rounded-lg p-6 flex flex-col items-center justify-center gap-3 text-muted-foreground'>
+      <div className='bg-card h-full rounded-lg p-6 flex flex-col items-center justify-center gap-3 text-muted-foreground'>
         <IconToolsKitchen2 size={40} className='opacity-40' />
         <p>Producto no encontrado en el menú.</p>
         <Button variant='outline' onClick={() => navigate('/restaurant/menu')}>
@@ -337,13 +336,7 @@ const RestaurantMenuDetail: FC = () => {
 
         {/* Combo tab */}
         <TabsContent value='combo' className='flex-1 overflow-y-auto mt-4'>
-          <ComboEditor
-            menuItemId={menuItemId}
-            products={menuItems
-              .filter((m) => m.id !== menuItemId)
-              .map((m) => m.product_detail)}
-            isLoadingProducts={isLoading}
-          />
+          <ComboEditor menuItemId={menuItemId} />
         </TabsContent>
 
         {/* Options tab */}
@@ -351,9 +344,6 @@ const RestaurantMenuDetail: FC = () => {
           <ComboOptionsEditor
             menuItemId={menuItemId}
             optionGroups={menuItem.option_groups ?? []}
-            products={menuItems
-              .filter((m) => m.id !== menuItemId)
-              .map((m) => m.product_detail)}
           />
         </TabsContent>
       </Tabs>
