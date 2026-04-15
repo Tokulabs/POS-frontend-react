@@ -6,6 +6,7 @@ import { useComboItems } from '@/hooks/restaurant/useComboItems'
 import { IRestaurantProductDetail } from '@/pages/Restaurant/types/RestaurantTypes'
 import { axiosRequest } from '@/api/api'
 import { restaurantMenuURL } from '@/utils/network'
+import { useDebouncedCallback } from '@/hooks/useDebounceCallback'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -19,19 +20,22 @@ interface ComboEditorProps {
 const ComboEditor: FC<ComboEditorProps> = ({ menuItemId, isLoadingProducts }) => {
   const { comboItems, isLoading, addItem, removeItem } = useComboItems(menuItemId)
 
-  const [search, setSearch]   = useState('')
-  const [quantity, setQuantity] = useState('1')
-  const [selected, setSelected] = useState<{ id: number; name: string; selling_price: number; code: string } | null>(null)
+  const [search, setSearch]               = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [quantity, setQuantity]           = useState('1')
+  const [selected, setSelected]           = useState<{ id: number; name: string; selling_price: number; code: string } | null>(null)
+
+  const updateDebounced = useDebouncedCallback((val: string) => setDebouncedSearch(val), 300)
 
   const { data: searchResults = [] } = useQuery({
-    queryKey: ['menu-search-combo', search],
+    queryKey: ['menu-search-combo', debouncedSearch],
     queryFn: async () => {
       const url = new URL(restaurantMenuURL)
-      url.searchParams.set('keyword', search)
+      url.searchParams.set('keyword', debouncedSearch)
       const response = await axiosRequest<{ results: IRestaurantProductDetail[] }>({ url, hasAuth: true })
       return response?.data?.results ?? []
     },
-    enabled: search.trim().length >= 2 && !selected,
+    enabled: debouncedSearch.trim().length >= 2 && !selected,
     staleTime: 1000 * 30,
   })
 
@@ -111,11 +115,11 @@ const ComboEditor: FC<ComboEditorProps> = ({ menuItemId, isLoadingProducts }) =>
         <Input
           placeholder='Buscar por nombre o código...'
           value={search}
-          onChange={(e) => { setSearch(e.target.value); setSelected(null) }}
+          onChange={(e) => { setSearch(e.target.value); setSelected(null); updateDebounced(e.target.value) }}
         />
 
         {/* Results dropdown */}
-        {search.trim().length >= 2 && !selected && (
+        {debouncedSearch.trim().length >= 2 && !selected && (
           <div className='rounded-lg border border-border bg-card shadow-sm divide-y divide-border max-h-48 overflow-y-auto'>
             {filtered.length === 0 ? (
               <p className='px-4 py-3 text-sm text-muted-foreground'>Sin resultados</p>
