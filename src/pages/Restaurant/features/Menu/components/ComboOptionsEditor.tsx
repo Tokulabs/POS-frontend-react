@@ -6,6 +6,7 @@ import { useComboOptionGroups } from '@/hooks/restaurant/useComboOptionGroups'
 import { IComboOptionGroup, IRestaurantProductDetail } from '@/pages/Restaurant/types/RestaurantTypes'
 import { axiosRequest } from '@/api/api'
 import { restaurantMenuURL } from '@/utils/network'
+import { useDebouncedCallback } from '@/hooks/useDebounceCallback'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
@@ -25,19 +26,22 @@ const GroupOptionAdder: FC<{
   onAdd: (productId: number, extraPrice: number) => void
   isAdding: boolean
 }> = ({ alreadyInGroup, onAdd, isAdding }) => {
-  const [search, setSearch]       = useState('')
-  const [selected, setSelected]   = useState<SelectedOption | null>(null)
-  const [extraPrice, setExtraPrice] = useState('')
+  const [search, setSearch]                   = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [selected, setSelected]               = useState<SelectedOption | null>(null)
+  const [extraPrice, setExtraPrice]           = useState('')
+
+  const updateDebounced = useDebouncedCallback((val: string) => setDebouncedSearch(val), 300)
 
   const { data: searchResults = [] } = useQuery({
-    queryKey: ['menu-search-option', search],
+    queryKey: ['menu-search-option', debouncedSearch],
     queryFn: async () => {
       const url = new URL(restaurantMenuURL)
-      url.searchParams.set('keyword', search)
+      url.searchParams.set('keyword', debouncedSearch)
       const response = await axiosRequest<{ results: IRestaurantProductDetail[] }>({ url, hasAuth: true })
       return response?.data?.results ?? []
     },
-    enabled: search.trim().length >= 2 && !selected,
+    enabled: debouncedSearch.trim().length >= 2 && !selected,
     staleTime: 1000 * 30,
   })
 
@@ -58,12 +62,12 @@ const GroupOptionAdder: FC<{
       <Input
         placeholder='Buscar por nombre o código...'
         value={search}
-        onChange={(e) => { setSearch(e.target.value); setSelected(null) }}
+        onChange={(e) => { setSearch(e.target.value); setSelected(null); updateDebounced(e.target.value) }}
         className='h-8 text-sm'
       />
 
       {/* Search results dropdown */}
-      {search.trim().length >= 2 && !selected && (
+      {debouncedSearch.trim().length >= 2 && !selected && (
         <div className='rounded-lg border border-border bg-card shadow-sm divide-y divide-border max-h-40 overflow-y-auto'>
           {filtered.length === 0 ? (
             <p className='px-3 py-2.5 text-sm text-muted-foreground'>Sin resultados</p>
