@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { IconArrowLeft, IconToolsKitchen2 } from '@tabler/icons-react'
 import { toast } from 'sonner'
-import { useRestaurantMenu } from '@/hooks/restaurant/useRestaurantMenu'
+import { useRestaurantMenu, useMenuItemById } from '@/hooks/restaurant/useRestaurantMenu'
 import { useRecipes } from '@/hooks/restaurant/useRecipes'
 import { useIngredients } from '@/hooks/restaurant/useIngredients'
 import { MENU_CATEGORY_LABELS, MenuCategory } from '@/pages/Restaurant/types/RestaurantTypes'
@@ -40,8 +40,10 @@ const RestaurantMenuDetail: FC = () => {
   const navigate = useNavigate()
   const menuItemId = Number(id)
 
-  const { isLoading, menuItems, updateMenuItem } = useRestaurantMenu()
-  const menuItem = menuItems.find((m) => m.id === menuItemId)
+  // Fetch the specific item by ID — avoids cache collision with the paginated list
+  const { isLoading, menuItem, invalidate: invalidateItem } = useMenuItemById(menuItemId)
+  // Full list (unpaginated) for combo/options product selectors
+  const { isLoading: isLoadingAll, menuItems, updateMenuItem } = useRestaurantMenu()
 
   const { ingredients, isLoading: isLoadingIngredients } = useIngredients()
   const { createRecipe, updateRecipe } = useRecipes()
@@ -76,7 +78,7 @@ const RestaurantMenuDetail: FC = () => {
     updateMenuItem.mutate(
       { id: menuItemId, product: menuItem.product, ...values },
       {
-        onSuccess: () => toast.success('Cambios guardados'),
+        onSuccess: () => { invalidateItem(); toast.success('Cambios guardados') },
         onError: () => toast.error('Error al guardar los cambios'),
       },
     )
@@ -108,7 +110,7 @@ const RestaurantMenuDetail: FC = () => {
     )
   }
 
-  if (isLoading) {
+  if (isLoading || isLoadingAll) {
     return (
       <div className='bg-card text-card-foreground h-full rounded-lg p-4 space-y-3'>
         <Skeleton className='h-10 w-full' />
@@ -181,7 +183,10 @@ const RestaurantMenuDetail: FC = () => {
               if (!menuItem) return
               updateMenuItem.mutate(
                 { id: menuItemId, product: menuItem.product, ...form.getValues(), is_available: v },
-                { onError: () => toast.error('Error al actualizar disponibilidad') },
+                {
+                  onSuccess: () => invalidateItem(),
+                  onError: () => toast.error('Error al actualizar disponibilidad'),
+                },
               )
             }}
             disabled={updateMenuItem.isPending}
