@@ -7,7 +7,11 @@ export const useComboOptionGroups = (menuItemId: number) => {
   const qc = useQueryClient()
   // Option groups are embedded in the menu item query — no separate query needed.
   // Mutations invalidate the parent menu list so RestaurantMenuDetail stays in sync.
-  const menuKey = ['restaurant-menu']
+  const invalidateAll = () => {
+    qc.invalidateQueries({ queryKey: ['restaurant-menu'] })
+    qc.invalidateQueries({ queryKey: ['restaurant-menu-all'] })
+    qc.invalidateQueries({ queryKey: ['restaurant-menu-item', menuItemId] })
+  }
 
   const createGroup = useMutation({
     mutationFn: (payload: { name: string; is_required: boolean }) =>
@@ -17,7 +21,7 @@ export const useComboOptionGroups = (menuItemId: number) => {
         payload,
         hasAuth: true,
       }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: menuKey }),
+    onSuccess: invalidateAll,
   })
 
   const removeGroup = useMutation({
@@ -27,7 +31,7 @@ export const useComboOptionGroups = (menuItemId: number) => {
         method: 'delete',
         hasAuth: true,
       }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: menuKey }),
+    onSuccess: invalidateAll,
   })
 
   const addOption = useMutation({
@@ -38,7 +42,7 @@ export const useComboOptionGroups = (menuItemId: number) => {
         payload: { product_id, extra_price },
         hasAuth: true,
       }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: menuKey }),
+    onSuccess: invalidateAll,
   })
 
   const removeOption = useMutation({
@@ -48,7 +52,7 @@ export const useComboOptionGroups = (menuItemId: number) => {
         method: 'delete',
         hasAuth: true,
       }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: menuKey }),
+    onSuccess: invalidateAll,
   })
 
   return { createGroup, removeGroup, addOption, removeOption }
