@@ -11,4 +11,6 @@ export interface ICompany {
     id: number
     name: string
   }
+  invoice_subtitle: string | null
+  invoice_footer: string | null
 }

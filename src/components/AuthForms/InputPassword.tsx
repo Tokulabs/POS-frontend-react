@@ -16,6 +16,7 @@ const UpdatePasswordContainer: FC<UpdatePasswordContainerProps> = ({ onValidatio
 
   const passwordOne = watch('passwordOne') || ''
   const passwordTwo = watch('passwordTwo') || ''
+  const oldPassword = watch('oldPassword') || ''
 
   const mustContainData = [
     ['Al menos una letra mayúscula (A-Z)', /[A-Z]/.test(passwordOne)],
@@ -24,6 +25,7 @@ const UpdatePasswordContainer: FC<UpdatePasswordContainerProps> = ({ onValidatio
     ['Al menos un carácter especial', /\W|_/.test(passwordOne)],
     ['Al menos 8 caracteres', passwordOne.length >= 8],
     ['Las contraseñas coinciden', passwordOne === passwordTwo && passwordOne !== ''],
+    ...(oldPassword ? [['Diferente a la contraseña actual', passwordOne !== oldPassword]] : []),
   ]
 
   const isAllValid = mustContainData.every(([, isValid]) => isValid)

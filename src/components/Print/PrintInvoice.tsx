@@ -12,7 +12,6 @@ import { store } from '@/store'
 import usePrintInfo from '@/hooks/usePrintInfo'
 import { useQuery } from '@tanstack/react-query'
 import { getInvoiceByCode } from '@/pages/Invoices/helpers/services'
-import { IPosData } from '@/pages/POS/components/types/TableTypes'
 
 interface PrintInvoiceProps {
   id: string
@@ -97,7 +96,9 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint, autoPrint = true })
       )}
       <h4 className='m-0'>{safeValue(state.user?.company.name)}</h4>
       <h5 className='m-0'>{`NIT. ${safeValue(state.user?.company.nit)}`}</h5>
-      <h5 className='m-0'>COMPLEJO TURISTICO CATEDRAL DE SAL</h5>
+      {state.user?.company.invoice_subtitle && (
+        <h5 className='m-0'>{state.user.company.invoice_subtitle}</h5>
+      )}
 
       <section className='flex flex-col items-center justify-center gap-1'>
         <p className='m-0 text-sm'>Tel. +57 {safeValue(state.user?.company.phone)}</p>
@@ -115,7 +116,9 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint, autoPrint = true })
           Nombre: {safeValue(customerData?.name)} ID: {safeValue(customerData?.document_id)}
         </p>
         <section className='flex items-center justify-between w-full'>
-          <p className='m-0 text-xs text-start'>D. E ./P. O. S GUA-{safeValue(invoiceNumber)}</p>
+          <p className='m-0 text-xs text-start'>
+            D. E ./P. O. S {dianResolution?.prefix ? `${dianResolution.prefix}-` : ''}{safeValue(invoiceNumber)}
+          </p>
           <p className='m-0 text-xs text-start'>
             Fec. {created_at ? formatDateTime(created_at, true, false) : safeValue(undefined)}
           </p>
@@ -148,8 +151,8 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint, autoPrint = true })
             <p className='m-0 text-sm text-right'>Subtotal base</p>
             {hasTaxLines
               ? Object.keys(taxLines).map((name) => (
-                  <p key={name} className='m-0 text-sm text-right'>{name}</p>
-                ))
+                <p key={name} className='m-0 text-sm text-right'>{name}</p>
+              ))
               : <p className='m-0 text-sm text-right'>IVA 19%</p>
             }
             <p className='m-0 text-sm text-right'>Descuento</p>
@@ -161,8 +164,8 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint, autoPrint = true })
             <p className='m-0 text-sm text-right'>{formatNumberToColombianPesos(subtotalCOP)}</p>
             {hasTaxLines
               ? Object.keys(taxLines).map((name) => (
-                  <p key={name} className='m-0 text-sm text-right'>{formatNumberToColombianPesos(taxLines[name])}</p>
-                ))
+                <p key={name} className='m-0 text-sm text-right'>{formatNumberToColombianPesos(taxLines[name])}</p>
+              ))
               : <p className='m-0 text-sm text-right'>{formatNumberToColombianPesos(taxesIVACOP)}</p>
             }
             <p className='m-0 text-sm text-right'>{formatNumberToColombianPesos(discountCOP)}</p>
@@ -203,7 +206,9 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint, autoPrint = true })
       </article>
 
       <h5 className='self-start'>Vendedor: {safeValue(saleBy?.fullname)}</h5>
-      <h4 className='font-bold uppercase'>GRACIAS POR SU COMPRA !!!!</h4>
+      {state.user?.company.invoice_footer && (
+        <h4 className='font-bold uppercase'>{state.user.company.invoice_footer}</h4>
+      )}
     </article>
   )
 }
