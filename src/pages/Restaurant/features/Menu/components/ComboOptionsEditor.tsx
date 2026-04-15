@@ -1,8 +1,11 @@
 import { FC, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { IconPlus, IconTrash, IconChevronDown, IconChevronUp, IconList } from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { useComboOptionGroups } from '@/hooks/restaurant/useComboOptionGroups'
-import { IComboOptionGroup, IMenuProductDetail } from '@/pages/Restaurant/types/RestaurantTypes'
+import { IComboOptionGroup, IRestaurantProductDetail } from '@/pages/Restaurant/types/RestaurantTypes'
+import { axiosRequest } from '@/api/api'
+import { restaurantMenuURL } from '@/utils/network'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
@@ -12,23 +15,120 @@ import { formatNumberToColombianPesos } from '@/utils/helpers'
 interface ComboOptionsEditorProps {
   menuItemId: number
   optionGroups: IComboOptionGroup[]
-  /** All menu items available to pick as options */
-  products: IMenuProductDetail[]
 }
 
-const ComboOptionsEditor: FC<ComboOptionsEditorProps> = ({ menuItemId, optionGroups, products }) => {
+type SelectedOption = { id: number; name: string; selling_price: number }
+
+// Handles search + add for a single option group — server-side menu search
+const GroupOptionAdder: FC<{
+  alreadyInGroup: Set<number>
+  onAdd: (productId: number, extraPrice: number) => void
+  isAdding: boolean
+}> = ({ alreadyInGroup, onAdd, isAdding }) => {
+  const [search, setSearch]       = useState('')
+  const [selected, setSelected]   = useState<SelectedOption | null>(null)
+  const [extraPrice, setExtraPrice] = useState('')
+
+  const { data: searchResults = [] } = useQuery({
+    queryKey: ['menu-search-option', search],
+    queryFn: async () => {
+      const url = new URL(restaurantMenuURL)
+      url.searchParams.set('keyword', search)
+      const response = await axiosRequest<{ results: IRestaurantProductDetail[] }>({ url, hasAuth: true })
+      return response?.data?.results ?? []
+    },
+    enabled: search.trim().length >= 2 && !selected,
+    staleTime: 1000 * 30,
+  })
+
+  const filtered = searchResults.filter((item) => !alreadyInGroup.has(item.product))
+
+  const handleAdd = () => {
+    if (!selected) { toast.error('Selecciona un producto'); return }
+    onAdd(selected.id, parseFloat(extraPrice) || 0)
+    setSearch('')
+    setSelected(null)
+    setExtraPrice('')
+  }
+
+  return (
+    <div className='px-4 py-3 space-y-2'>
+      <p className='text-xs font-medium text-muted-foreground'>Agregar producto al grupo</p>
+
+      <Input
+        placeholder='Buscar por nombre o código...'
+        value={search}
+        onChange={(e) => { setSearch(e.target.value); setSelected(null) }}
+        className='h-8 text-sm'
+      />
+
+      {/* Search results dropdown */}
+      {search.trim().length >= 2 && !selected && (
+        <div className='rounded-lg border border-border bg-card shadow-sm divide-y divide-border max-h-40 overflow-y-auto'>
+          {filtered.length === 0 ? (
+            <p className='px-3 py-2.5 text-sm text-muted-foreground'>Sin resultados</p>
+          ) : (
+            filtered.map((item) => (
+              <button
+                key={item.id}
+                type='button'
+                onClick={() => {
+                  setSelected({
+                    id: item.product,
+                    name: item.product_detail?.name ?? '',
+                    selling_price: item.product_detail?.selling_price ?? 0,
+                  })
+                  setSearch(item.product_detail?.name ?? '')
+                }}
+                className='w-full flex items-center justify-between px-3 py-2 text-left hover:bg-accent transition-colors'
+              >
+                <div className='min-w-0'>
+                  <p className='text-sm font-medium truncate'>{item.product_detail?.name}</p>
+                  <p className='text-xs text-muted-foreground'>{item.product_detail?.code}</p>
+                </div>
+                <span className='text-xs text-muted-foreground shrink-0 ml-2'>
+                  {formatNumberToColombianPesos(item.product_detail?.selling_price ?? 0, true)}
+                </span>
+              </button>
+            ))
+          )}
+        </div>
+      )}
+
+      {/* Selected + extra price + confirm */}
+      {selected && (
+        <div className='flex items-center gap-2 p-2.5 rounded-lg bg-muted/40 border border-border'>
+          <p className='flex-1 text-sm font-medium truncate'>{selected.name}</p>
+          <Input
+            type='number'
+            min={0}
+            placeholder='+ precio'
+            value={extraPrice}
+            onChange={(e) => setExtraPrice(e.target.value)}
+            className='w-24 h-7 text-sm'
+          />
+          <Button
+            size='sm'
+            className='h-7 gap-1 shrink-0'
+            onClick={handleAdd}
+            disabled={isAdding}
+          >
+            <IconPlus size={12} />
+            {isAdding ? '...' : 'Agregar'}
+          </Button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+const ComboOptionsEditor: FC<ComboOptionsEditorProps> = ({ menuItemId, optionGroups }) => {
   const { createGroup, removeGroup, addOption, removeOption } = useComboOptionGroups(menuItemId)
 
-  // New group form state
   const [newGroupName, setNewGroupName]         = useState('')
   const [newGroupRequired, setNewGroupRequired] = useState(false)
   const [groupNameError, setGroupNameError]     = useState('')
-
-  // Per-group expanded + product search state
-  const [expandedGroups, setExpandedGroups]   = useState<Set<number>>(new Set())
-  const [searchText, setSearchText]           = useState<Record<number, string>>({})
-  const [selectedId, setSelectedId]           = useState<Record<number, number | null>>({})
-  const [extraPrice, setExtraPrice]           = useState<Record<number, string>>({})
+  const [expandedGroups, setExpandedGroups]     = useState<Set<number>>(new Set())
 
   const toggleExpand = (groupId: number) =>
     setExpandedGroups((prev) => {
@@ -42,7 +142,6 @@ const ComboOptionsEditor: FC<ComboOptionsEditorProps> = ({ menuItemId, optionGro
     if (!name) { setGroupNameError('El nombre del grupo es obligatorio.'); return }
     if (name.length < 2) { setGroupNameError('Mínimo 2 caracteres.'); return }
     setGroupNameError('')
-
     createGroup.mutate(
       { name, is_required: newGroupRequired },
       {
@@ -51,8 +150,7 @@ const ComboOptionsEditor: FC<ComboOptionsEditorProps> = ({ menuItemId, optionGro
           setNewGroupRequired(false)
           toast.success('Grupo de opciones creado')
         },
-        onError: (e: any) =>
-          toast.error(e?.response?.data?.error ?? 'Error al crear el grupo'),
+        onError: (e: any) => toast.error(e?.response?.data?.error ?? 'Error al crear el grupo'),
       },
     )
   }
@@ -63,22 +161,12 @@ const ComboOptionsEditor: FC<ComboOptionsEditorProps> = ({ menuItemId, optionGro
     })
   }
 
-  const handleAddOption = (groupId: number) => {
-    const productId = selectedId[groupId]
-    if (!productId) { toast.error('Selecciona un producto'); return }
-    const extra = parseFloat(extraPrice[groupId] ?? '0') || 0
-
+  const handleAddOption = (groupId: number, productId: number, extra: number) => {
     addOption.mutate(
       { groupId, product_id: productId, extra_price: extra },
       {
-        onSuccess: () => {
-          setSearchText((p) => ({ ...p, [groupId]: '' }))
-          setSelectedId((p) => ({ ...p, [groupId]: null }))
-          setExtraPrice((p) => ({ ...p, [groupId]: '' }))
-          toast.success('Opción agregada')
-        },
-        onError: (e: any) =>
-          toast.error(e?.response?.data?.error ?? 'Error al agregar la opción'),
+        onSuccess: () => toast.success('Opción agregada'),
+        onError: (e: any) => toast.error(e?.response?.data?.error ?? 'Error al agregar la opción'),
       },
     )
   }
@@ -91,7 +179,6 @@ const ComboOptionsEditor: FC<ComboOptionsEditorProps> = ({ menuItemId, optionGro
 
   return (
     <div className='space-y-4'>
-      {/* Existing groups */}
       {optionGroups.length === 0 ? (
         <div className='flex flex-col items-center justify-center gap-2 py-8 text-muted-foreground border border-dashed border-border rounded-xl'>
           <IconList size={32} className='opacity-30' />
@@ -100,23 +187,13 @@ const ComboOptionsEditor: FC<ComboOptionsEditorProps> = ({ menuItemId, optionGro
       ) : (
         <div className='space-y-2'>
           {optionGroups.map((group) => {
-            const expanded  = expandedGroups.has(group.id)
-            const search    = searchText[group.id] ?? ''
-            const pickedId  = selectedId[group.id] ?? null
-            const pickedProduct = products.find((p) => p.id === pickedId)
+            const expanded       = expandedGroups.has(group.id)
+            // product_id here is the Inventory FK — same as item.product from the menu endpoint
             const alreadyInGroup = new Set(group.options.map((o) => o.product_id))
-
-            const filtered = products.filter(
-              (p) =>
-                !alreadyInGroup.has(p.id) &&
-                search.trim().length >= 2 &&
-                (p.name.toLowerCase().includes(search.toLowerCase()) ||
-                  p.code.toLowerCase().includes(search.toLowerCase())),
-            )
 
             return (
               <div key={group.id} className='rounded-xl border border-border overflow-hidden'>
-                {/* Group header row */}
+                {/* Group header */}
                 <div className='flex items-center gap-3 px-4 py-3 bg-muted/30'>
                   <button
                     type='button'
@@ -144,7 +221,6 @@ const ComboOptionsEditor: FC<ComboOptionsEditorProps> = ({ menuItemId, optionGro
                   </button>
                 </div>
 
-                {/* Options list + add search — visible when expanded */}
                 {expanded && (
                   <div className='divide-y divide-border'>
                     {group.options.length === 0 ? (
@@ -175,75 +251,11 @@ const ComboOptionsEditor: FC<ComboOptionsEditorProps> = ({ menuItemId, optionGro
                       ))
                     )}
 
-                    {/* Add option — product search */}
-                    <div className='px-4 py-3 space-y-2'>
-                      <p className='text-xs font-medium text-muted-foreground'>Agregar producto al grupo</p>
-
-                      <Input
-                        placeholder='Buscar por nombre o código...'
-                        value={search}
-                        onChange={(e) => {
-                          setSearchText((p) => ({ ...p, [group.id]: e.target.value }))
-                          setSelectedId((p) => ({ ...p, [group.id]: null }))
-                        }}
-                        className='h-8 text-sm'
-                      />
-
-                      {/* Search results */}
-                      {search.trim().length >= 2 && !pickedId && (
-                        <div className='rounded-lg border border-border bg-card shadow-sm divide-y divide-border max-h-40 overflow-y-auto'>
-                          {filtered.length === 0 ? (
-                            <p className='px-3 py-2.5 text-sm text-muted-foreground'>Sin resultados</p>
-                          ) : (
-                            filtered.map((p) => (
-                              <button
-                                key={p.id}
-                                type='button'
-                                onClick={() => {
-                                  setSelectedId((prev) => ({ ...prev, [group.id]: p.id }))
-                                  setSearchText((prev) => ({ ...prev, [group.id]: p.name }))
-                                }}
-                                className='w-full flex items-center justify-between px-3 py-2 text-left hover:bg-accent transition-colors'
-                              >
-                                <div className='min-w-0'>
-                                  <p className='text-sm font-medium truncate'>{p.name}</p>
-                                  <p className='text-xs text-muted-foreground'>{p.code}</p>
-                                </div>
-                                <span className='text-xs text-muted-foreground shrink-0 ml-2'>
-                                  {formatNumberToColombianPesos(p.selling_price, true)}
-                                </span>
-                              </button>
-                            ))
-                          )}
-                        </div>
-                      )}
-
-                      {/* Selected product + extra price + add button */}
-                      {pickedId && pickedProduct && (
-                        <div className='flex items-center gap-2 p-2.5 rounded-lg bg-muted/40 border border-border'>
-                          <p className='flex-1 text-sm font-medium truncate'>{pickedProduct.name}</p>
-                          <Input
-                            type='number'
-                            min={0}
-                            placeholder='+ precio'
-                            value={extraPrice[group.id] ?? ''}
-                            onChange={(e) =>
-                              setExtraPrice((p) => ({ ...p, [group.id]: e.target.value }))
-                            }
-                            className='w-24 h-7 text-sm'
-                          />
-                          <Button
-                            size='sm'
-                            className='h-7 gap-1 shrink-0'
-                            onClick={() => handleAddOption(group.id)}
-                            disabled={addOption.isPending}
-                          >
-                            <IconPlus size={12} />
-                            {addOption.isPending ? '...' : 'Agregar'}
-                          </Button>
-                        </div>
-                      )}
-                    </div>
+                    <GroupOptionAdder
+                      alreadyInGroup={alreadyInGroup}
+                      onAdd={(productId, extra) => handleAddOption(group.id, productId, extra)}
+                      isAdding={addOption.isPending}
+                    />
                   </div>
                 )}
               </div>
@@ -252,7 +264,7 @@ const ComboOptionsEditor: FC<ComboOptionsEditorProps> = ({ menuItemId, optionGro
         </div>
       )}
 
-      {/* Create new group form */}
+      {/* Create new group */}
       <div className='rounded-xl border border-dashed border-border p-4 space-y-3'>
         <p className='text-sm font-medium'>Nuevo grupo de opciones</p>
         <div className='space-y-1.5'>
@@ -261,9 +273,7 @@ const ComboOptionsEditor: FC<ComboOptionsEditorProps> = ({ menuItemId, optionGro
             value={newGroupName}
             onChange={(e) => { setNewGroupName(e.target.value); setGroupNameError('') }}
           />
-          {groupNameError && (
-            <p className='text-destructive text-xs'>{groupNameError}</p>
-          )}
+          {groupNameError && <p className='text-destructive text-xs'>{groupNameError}</p>}
         </div>
         <div className='flex items-center justify-between'>
           <div className='flex items-center gap-2'>
