@@ -20,7 +20,6 @@ import { ActionTypes } from '@/types/StoreTypes'
 const companySchema = z.object({
   name: z.string().nonempty('Campo requerido'),
   short_name: z.string(),
-  email: z.string().email('Correo no válido'),
   nit: z.string().nonempty('Campo requerido'),
   address: z.string().nonempty('Campo requerido'),
   city: z.number().gt(0, 'Campo requerido'),
@@ -30,6 +29,8 @@ const companySchema = z.object({
     if (val === null) return ''
     return val
   }, z.string().optional()),
+  invoice_subtitle: z.string().optional(),
+  invoice_footer: z.string().optional(),
 })
 
 export type CompanyFormValues = z.infer<typeof companySchema>
@@ -57,12 +58,13 @@ const Company: FC = () => {
     defaultValues: {
       name: state.user?.company?.name || '',
       short_name: state.user?.company?.short_name || '',
-      email: state.user?.email || '',
       nit: state.user?.company?.nit || '',
       address: state.user?.company?.address || '',
       city: state.user?.company?.city?.id || Number(0),
       phone: state.user?.company?.phone || '',
       logo: state.user?.company?.logo || '',
+      invoice_subtitle: state.user?.company?.invoice_subtitle || '',
+      invoice_footer: state.user?.company?.invoice_footer || '',
     },
   })
 
@@ -259,26 +261,44 @@ const Company: FC = () => {
             />
           </div>
 
-          <FormField
-            control={form.control}
-            name='email'
-            render={({ field }) => (
-              <FormItem className='w-full'>
-                <Label htmlFor='email'>Email</Label>
-                <FormControl>
-                  <Input
-                    id='email'
-                    type='email'
-                    placeholder='Email'
-                    disabled={true} // Always disabled
-                    className='bg-zinc-300'
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className='flex w-full gap-4'>
+            <FormField
+              control={form.control}
+              name='invoice_subtitle'
+              render={({ field }) => (
+                <FormItem className='w-1/2'>
+                  <Label htmlFor='invoice_subtitle'>Subtítulo en factura</Label>
+                  <FormControl>
+                    <Input
+                      id='invoice_subtitle'
+                      placeholder='Ej: COMPLEJO TURISTICO CATEDRAL DE SAL'
+                      disabled={isLoadingCompany || isUploading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='invoice_footer'
+              render={({ field }) => (
+                <FormItem className='w-1/2'>
+                  <Label htmlFor='invoice_footer'>Mensaje de pie de factura</Label>
+                  <FormControl>
+                    <Input
+                      id='invoice_footer'
+                      placeholder='Ej: GRACIAS POR SU COMPRA'
+                      disabled={isLoadingCompany || isUploading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           <Button
             type='submit'

@@ -1,7 +1,6 @@
 import { FC, ReactNode, useContext } from 'react'
 import { SettingsLayout } from '@/layouts/ContentLayout/SettingsLayout'
 import { SettingsProfile } from './Components/SettingsProfile'
-import { UpdatePasswordSettings } from './Components/UpdatePassword'
 import Company from './Components/CompanySettings'
 import { RolesSettings } from './Components/RolesSettings'
 import { SubscriptionInfo } from './Components/SubscriptionInfo'
@@ -22,11 +21,6 @@ const Profile: FC<ProfileProps> = () => {
       title: 'Perfil',
       value: 'profile',
       content: <SettingsProfile />,
-    },
-    {
-      title: 'Contraseña',
-      value: 'password',
-      content: <UpdatePasswordSettings />,
     },
     {
       title: 'Empresa',
