@@ -16,13 +16,17 @@ type MenuItemPayload = {
 export const useRestaurantMenu = (params?: { keyword?: string; page?: number; category?: MenuCategory | '' }) => {
   const queryClient = useQueryClient()
   const { keyword = '', page = 1, category = '' } = params ?? {}
+  const isPaginated = params?.page !== undefined
 
   const { isLoading, data } = useQuery({
-    queryKey: ['restaurant-menu', keyword, page, category],
+    // Use distinct keys for paginated vs full-list fetches to avoid cache collisions
+    queryKey: isPaginated
+      ? ['restaurant-menu', keyword, page, category]
+      : ['restaurant-menu-all', keyword, category],
     queryFn: async () => {
       const url = new URL(restaurantMenuURL)
       if (keyword) url.searchParams.set('keyword', keyword)
-      if (params?.page !== undefined) url.searchParams.set('page', String(page))
+      if (isPaginated) url.searchParams.set('page', String(page))
       if (category) url.searchParams.set('category', category)
       const response = await axiosRequest<IPaginationProps<IRestaurantProductDetail>>({ url, hasAuth: true })
       return response?.data ?? { count: 0, results: [], next: null, previous: null }
@@ -85,4 +89,30 @@ export const useRestaurantMenu = (params?: { keyword?: string; page?: number; ca
     removeFromMenu,
     bulkAddToMenu,
   }
+}
+
+export const useMenuItemById = (id: number) => {
+  const queryClient = useQueryClient()
+
+  const { isLoading, data } = useQuery({
+    queryKey: ['restaurant-menu-item', id],
+    queryFn: async () => {
+      const response = await axiosRequest<IRestaurantProductDetail>({
+        url: `${restaurantMenuURL}${id}/`,
+        hasAuth: true,
+      })
+      return response?.data ?? null
+    },
+    enabled: !!id,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+  })
+
+  const invalidate = () => {
+    queryClient.invalidateQueries({ queryKey: ['restaurant-menu-item', id] })
+    queryClient.invalidateQueries({ queryKey: ['restaurant-menu'] })
+    queryClient.invalidateQueries({ queryKey: ['restaurant-menu-all'] })
+  }
+
+  return { isLoading, menuItem: data ?? null, invalidate }
 }
