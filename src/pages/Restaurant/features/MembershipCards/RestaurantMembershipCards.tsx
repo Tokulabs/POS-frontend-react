@@ -44,12 +44,13 @@ const RestaurantMembershipCards: FC = () => {
     })
   }
 
-  const handleAddStamp = (id: number) => {
+  const handleSetStamps = (id: number, stamps: number) => {
     const card = cards.find((c) => c.id === id)
-    if (!card || card.stamps >= card.max_stamps) return
+    if (!card) return
+    const clamped = Math.max(0, Math.min(stamps, card.max_stamps))
     patchCard.mutate(
-      { id, stamps: card.stamps + 1 },
-      { onError: () => toast.error('Error al agregar el sello') },
+      { id, stamps: clamped },
+      { onError: () => toast.error('Error al actualizar los sellos') },
     )
   }
 
@@ -68,6 +69,16 @@ const RestaurantMembershipCards: FC = () => {
       onSuccess: () => toast.success('Tarjeta eliminada'),
       onError: () => toast.error('Error al eliminar la tarjeta'),
     })
+  }
+
+  const handleEditPhone = (id: number, phone: string) => {
+    patchCard.mutate(
+      { id, phone },
+      {
+        onSuccess: () => toast.success('Teléfono actualizado'),
+        onError: () => toast.error('Error al actualizar el teléfono'),
+      },
+    )
   }
 
   const handleLinkCustomer = (customerId: number) => {
@@ -157,10 +168,11 @@ const RestaurantMembershipCards: FC = () => {
                 key={card.id}
                 card={card}
                 canEdit={canCreate}
-                onAddStamp={handleAddStamp}
+                onSetStamps={handleSetStamps}
                 onReset={handleReset}
                 onDelete={handleDelete}
                 onLinkCustomer={setLinkModalCard}
+                onEditPhone={handleEditPhone}
               />
             ))}
           </div>
