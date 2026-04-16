@@ -41,7 +41,7 @@ const RestaurantMenuDetail: FC = () => {
   const menuItemId = Number(id)
 
   // Fetch the specific item by ID — avoids cache collision with the paginated list
-  const { isLoading, menuItem, invalidate: invalidateItem } = useMenuItemById(menuItemId)
+  const { isLoading, menuItem } = useMenuItemById(menuItemId)
   const { updateMenuItem } = useRestaurantMenu()
 
   const { ingredients, isLoading: isLoadingIngredients } = useIngredients()
@@ -77,7 +77,7 @@ const RestaurantMenuDetail: FC = () => {
     updateMenuItem.mutate(
       { id: menuItemId, product: menuItem.product, ...values },
       {
-        onSuccess: () => { invalidateItem(); toast.success('Cambios guardados') },
+        onSuccess: () => toast.success('Cambios guardados'),
         onError: () => toast.error('Error al guardar los cambios'),
       },
     )
@@ -183,7 +183,6 @@ const RestaurantMenuDetail: FC = () => {
               updateMenuItem.mutate(
                 { id: menuItemId, product: menuItem.product, ...form.getValues(), is_available: v },
                 {
-                  onSuccess: () => invalidateItem(),
                   onError: () => toast.error('Error al actualizar disponibilidad'),
                 },
               )

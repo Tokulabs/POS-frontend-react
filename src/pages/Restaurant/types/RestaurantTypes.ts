@@ -126,6 +126,7 @@ export interface IComboOption {
   product_name: string
   product_price: number
   extra_price: number
+  position: number
 }
 
 export interface IComboOptionGroup {
