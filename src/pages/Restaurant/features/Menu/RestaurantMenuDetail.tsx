@@ -45,7 +45,7 @@ const RestaurantMenuDetail: FC = () => {
   const { updateMenuItem } = useRestaurantMenu()
 
   const { ingredients, isLoading: isLoadingIngredients } = useIngredients()
-  const { createRecipe, updateRecipe } = useRecipes()
+  const { createRecipe, updateRecipe } = useRecipes(undefined, menuItemId)
 
   const form = useForm<DetailFormValues>({
     resolver: zodResolver(detailSchema),

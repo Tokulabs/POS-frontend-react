@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { axiosRequest } from '@/api/api'
 import { restaurantRecipesURL } from '@/utils/network'
-import { IRecipe } from '@/pages/Restaurant/types/RestaurantTypes'
+import { IRecipe, IRestaurantProductDetail } from '@/pages/Restaurant/types/RestaurantTypes'
 
 type RecipeIngredientPayload = {
   ingredient: number
@@ -28,7 +28,7 @@ const getRecipe = async (id: number): Promise<IRecipe> => {
   return response?.data as IRecipe
 }
 
-export const useRecipes = (recipeId?: number) => {
+export const useRecipes = (recipeId?: number, menuItemId?: number) => {
   const queryClient = useQueryClient()
 
   const { isLoading, data: recipe } = useQuery({
@@ -39,21 +39,31 @@ export const useRecipes = (recipeId?: number) => {
     refetchOnWindowFocus: false,
   })
 
+  const setRecipeInCaches = (updatedRecipe: IRecipe) => {
+    // Update standalone recipe cache if it was queried directly
+    queryClient.setQueryData(['restaurant-recipe', updatedRecipe.id], updatedRecipe)
+    // Update recipe embedded in the menu item detail
+    if (menuItemId) {
+      queryClient.setQueryData<IRestaurantProductDetail>(
+        ['restaurant-menu-item', menuItemId],
+        (prev) => prev ? { ...prev, recipe: updatedRecipe } : prev,
+      )
+    }
+  }
+
   const createRecipe = useMutation({
     mutationFn: (payload: RecipePayload) =>
-      axiosRequest({ url: restaurantRecipesURL, method: 'post', payload, hasAuth: true }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['restaurant-menu'] })
-      queryClient.invalidateQueries({ queryKey: ['restaurant-recipe'] })
+      axiosRequest<IRecipe>({ url: restaurantRecipesURL, method: 'post', payload, hasAuth: true }),
+    onSuccess: (response) => {
+      if (response?.data) setRecipeInCaches(response.data)
     },
   })
 
   const updateRecipe = useMutation({
     mutationFn: ({ id, ...payload }: RecipeUpdatePayload & { id: number }) =>
-      axiosRequest({ url: `${restaurantRecipesURL}${id}/`, method: 'put', payload, hasAuth: true }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['restaurant-menu'] })
-      queryClient.invalidateQueries({ queryKey: ['restaurant-recipe'] })
+      axiosRequest<IRecipe>({ url: `${restaurantRecipesURL}${id}/`, method: 'put', payload, hasAuth: true }),
+    onSuccess: (response) => {
+      if (response?.data) setRecipeInCaches(response.data)
     },
   })
 
