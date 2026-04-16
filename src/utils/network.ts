@@ -69,6 +69,8 @@ export const restaurantComboOptionGroupsURL = (menuItemId: number) =>
   `${baseURL}restaurant/menu/${menuItemId}/option-groups/`
 export const restaurantComboOptionURL = (menuItemId: number, groupId: number) =>
   `${baseURL}restaurant/menu/${menuItemId}/option-groups/${groupId}/options/`
+export const restaurantComboOptionReorderURL = (menuItemId: number, groupId: number) =>
+  `${baseURL}restaurant/menu/${menuItemId}/option-groups/${groupId}/reorder-options/`
 
 // WebSocket — replace http(s):// with ws(s)://
 const wsBaseURL = baseURL.replace(/^https/, 'wss').replace(/^http/, 'ws')

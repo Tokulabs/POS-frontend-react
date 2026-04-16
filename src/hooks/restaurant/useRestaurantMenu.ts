@@ -51,14 +51,20 @@ export const useRestaurantMenu = (params?: { keyword?: string; page?: number; ca
 
   const updateMenuItem = useMutation({
     mutationFn: ({ id, ...payload }: Partial<MenuItemPayload> & { id: number }) =>
-      axiosRequest({ url: `${restaurantMenuURL}${id}/`, method: 'put', payload, hasAuth: true }),
-    onSuccess: invalidate,
+      axiosRequest<IRestaurantProductDetail>({ url: `${restaurantMenuURL}${id}/`, method: 'put', payload, hasAuth: true }),
+    onSuccess: (response, variables) => {
+      if (response?.data) queryClient.setQueryData(['restaurant-menu-item', variables.id], response.data)
+      invalidate()
+    },
   })
 
   const patchMenuItem = useMutation({
     mutationFn: ({ id, ...payload }: Partial<MenuItemPayload> & { id: number }) =>
-      axiosRequest({ url: `${restaurantMenuURL}${id}/`, method: 'patch', payload, hasAuth: true }),
-    onSuccess: invalidate,
+      axiosRequest<IRestaurantProductDetail>({ url: `${restaurantMenuURL}${id}/`, method: 'patch', payload, hasAuth: true }),
+    onSuccess: (response, variables) => {
+      if (response?.data) queryClient.setQueryData(['restaurant-menu-item', variables.id], response.data)
+      invalidate()
+    },
   })
 
   const removeFromMenu = useMutation({

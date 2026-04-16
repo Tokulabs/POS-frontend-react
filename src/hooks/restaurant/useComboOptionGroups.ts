@@ -1,16 +1,27 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { axiosRequest } from '@/api/api'
-import { restaurantComboOptionGroupsURL, restaurantComboOptionURL } from '@/utils/network'
-import { IComboOptionGroup, IComboOption } from '@/pages/Restaurant/types/RestaurantTypes'
+import { restaurantComboOptionGroupsURL, restaurantComboOptionURL, restaurantComboOptionReorderURL } from '@/utils/network'
+import { IComboOptionGroup, IComboOption, IRestaurantProductDetail } from '@/pages/Restaurant/types/RestaurantTypes'
 
 export const useComboOptionGroups = (menuItemId: number) => {
   const qc = useQueryClient()
-  // Option groups are embedded in the menu item query — no separate query needed.
-  // Mutations invalidate the parent menu list so RestaurantMenuDetail stays in sync.
+  const detailKey = ['restaurant-menu-item', menuItemId]
+
   const invalidateAll = () => {
     qc.invalidateQueries({ queryKey: ['restaurant-menu'] })
     qc.invalidateQueries({ queryKey: ['restaurant-menu-all'] })
-    qc.invalidateQueries({ queryKey: ['restaurant-menu-item', menuItemId] })
+    qc.invalidateQueries({ queryKey: detailKey })
+  }
+
+  // Patches a single group inside the cached detail — avoids a full refetch
+  const patchGroupInCache = (updatedGroup: IComboOptionGroup) => {
+    qc.setQueryData<IRestaurantProductDetail>(detailKey, (prev) => {
+      if (!prev) return prev
+      return {
+        ...prev,
+        option_groups: prev.option_groups.map((g) => g.id === updatedGroup.id ? updatedGroup : g),
+      }
+    })
   }
 
   const createGroup = useMutation({
@@ -24,6 +35,19 @@ export const useComboOptionGroups = (menuItemId: number) => {
     onSuccess: invalidateAll,
   })
 
+  const updateGroup = useMutation({
+    mutationFn: ({ groupId, name, is_required }: { groupId: number; name: string; is_required?: boolean }) =>
+      axiosRequest<IComboOptionGroup>({
+        url: `${restaurantComboOptionGroupsURL(menuItemId)}${groupId}/`,
+        method: 'patch',
+        payload: { name, ...(is_required !== undefined ? { is_required } : {}) },
+        hasAuth: true,
+      }),
+    onSuccess: (response) => {
+      if (response?.data) patchGroupInCache(response.data)
+    },
+  })
+
   const removeGroup = useMutation({
     mutationFn: (groupId: number) =>
       axiosRequest({
@@ -31,7 +55,12 @@ export const useComboOptionGroups = (menuItemId: number) => {
         method: 'delete',
         hasAuth: true,
       }),
-    onSuccess: invalidateAll,
+    onSuccess: (_, groupId) => {
+      qc.setQueryData<IRestaurantProductDetail>(detailKey, (prev) => {
+        if (!prev) return prev
+        return { ...prev, option_groups: prev.option_groups.filter((g) => g.id !== groupId) }
+      })
+    },
   })
 
   const addOption = useMutation({
@@ -52,8 +81,29 @@ export const useComboOptionGroups = (menuItemId: number) => {
         method: 'delete',
         hasAuth: true,
       }),
-    onSuccess: invalidateAll,
+    onSuccess: (_, { groupId, optionId }) => {
+      qc.setQueryData<IRestaurantProductDetail>(detailKey, (prev) => {
+        if (!prev) return prev
+        return {
+          ...prev,
+          option_groups: prev.option_groups.map((g) =>
+            g.id === groupId ? { ...g, options: g.options.filter((o) => o.id !== optionId) } : g
+          ),
+        }
+      })
+    },
   })
 
-  return { createGroup, removeGroup, addOption, removeOption }
+  const reorderOptions = useMutation({
+    mutationFn: ({ groupId, order }: { groupId: number; order: number[] }) =>
+      axiosRequest<IComboOptionGroup>({
+        url: restaurantComboOptionReorderURL(menuItemId, groupId),
+        method: 'post',
+        payload: { order },
+        hasAuth: true,
+      }),
+    // No invalidation — local state already reflects the new order
+  })
+
+  return { createGroup, updateGroup, removeGroup, addOption, removeOption, reorderOptions }
 }
