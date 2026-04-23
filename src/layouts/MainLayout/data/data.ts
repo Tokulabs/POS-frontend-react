@@ -84,6 +84,14 @@ export const navigationMenu: NavigationMenuItem[] = [
         action: '',
       },
       {
+        label: 'Notas Crédito',
+        link: '/credit-notes',
+        requiredPermission: 'can_view_credit_notes',
+        requiredFeatureFlag: 'can_use_credit_notes',
+        description: 'Crea y envía notas crédito electrónicas a la DIAN',
+        action: '',
+      },
+      {
         label: 'Datáfonos',
         link: '/payment-terminals',
         requiredPermission: 'can_manage_company',

@@ -1,12 +1,14 @@
 import { FC, useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
-import { IconPlus, IconReceipt, IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
+import { IconPlus, IconReceipt, IconChevronLeft, IconChevronRight, IconPrinter } from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { useRestaurantOrders } from '@/hooks/restaurant/useRestaurantOrders'
 import { useRestaurantTables } from '@/hooks/restaurant/useRestaurantTables'
 import { useRestaurantMode } from '@/store/useRestaurantMode'
 import { useRestaurantWebSocket } from '@/hooks/restaurant/useRestaurantWebSocket'
 import { ORDER_STATUS_LABELS, IRestaurantOrder, OrderStatus, OrderItemStatus } from '@/pages/Restaurant/types/RestaurantTypes'
+import PrintPreInvoice from '@/components/Print/PrintPreInvoice'
 import { CreateOrderModal } from './components/CreateOrderModal'
 import { ModeSwitcher } from './components/ModeSwitcher'
 import { KitchenKanban } from './components/KitchenKanban'
@@ -45,6 +47,7 @@ const RestaurantOrders: FC = () => {
   const [historyKeyword, setHistoryKeyword] = useState('')
   const [historyPage, setHistoryPage] = useState(1)
   const [cobrarPendingId, setCobrarPendingId] = useState<number | null>(null)
+  const [preInvoiceOrder, setPreInvoiceOrder] = useState<IRestaurantOrder | null>(null)
 
   const {
     isLoading: isActiveLoading,
@@ -285,9 +288,21 @@ const RestaurantOrders: FC = () => {
                     {order.order_items.filter((i) => i.status !== 'cancelled').length} ítems
                   </p>
                 </div>
-                <span className='font-bold text-sm shrink-0'>
-                  {formatNumberToColombianPesos(getTotal(order), true)}
-                </span>
+                <div className='flex items-center gap-2 shrink-0'>
+                  <span className='font-bold text-sm'>
+                    {formatNumberToColombianPesos(getTotal(order), true)}
+                  </span>
+                  <button
+                    className='p-1.5 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors'
+                    title='Imprimir pre-cuenta'
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setPreInvoiceOrder(order)
+                    }}
+                  >
+                    <IconPrinter size={16} />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -316,6 +331,18 @@ const RestaurantOrders: FC = () => {
         onCreate={handleCreate}
         onCancel={() => setCreateOpen(false)}
       />
+
+      {preInvoiceOrder &&
+        createPortal(
+          <div className='fixed w-0 h-0 overflow-hidden opacity-0 pointer-events-none'>
+            <PrintPreInvoice
+              order={preInvoiceOrder}
+              tipPercent={10}
+              onAfterPrint={() => setPreInvoiceOrder(null)}
+            />
+          </div>,
+          document.body,
+        )}
     </div>
   )
 }

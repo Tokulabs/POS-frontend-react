@@ -147,6 +147,7 @@ export interface IRestaurantOrderItem {
   is_combo_header: boolean
   parent_item: number | null
   combo_children: IRestaurantOrderItem[]
+  created_at: string | null
 }
 
 export interface IRestaurantOrder {

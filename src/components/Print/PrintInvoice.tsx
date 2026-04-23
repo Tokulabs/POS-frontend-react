@@ -6,7 +6,6 @@ import {
   formatNumberToColombianPesos,
   safeValue,
 } from '@/utils/helpers'
-import OverrideImage from '@/assets/logos/images.png'
 import { PaymentMethodsEnum } from '@/pages/POS/components/types/PaymentMethodsTypes'
 import { store } from '@/store'
 import usePrintInfo from '@/hooks/usePrintInfo'
@@ -52,6 +51,7 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint, autoPrint = true })
     dian_resolution: dianResolution,
     invoice_number: invoiceNumber,
     is_override: isOverride,
+    override_reason: overrideReason,
     created_at,
     tip,
   } = invoice
@@ -81,11 +81,31 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint, autoPrint = true })
       className='bg-transparent text-black flex flex-col w-74 justify-center items-center text-center p-2 gap-1 relative'
     >
       {isOverride && (
-        <img
-          className='absolute left-0 top-24 -z-10 opacity-40 w-72 h-96'
-          src={OverrideImage}
-          alt='override_logo'
-        />
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            pointerEvents: 'none',
+            zIndex: 50,
+          }}
+        >
+          <span
+            style={{
+              fontSize: '64px',
+              fontWeight: 900,
+              color: 'rgba(180, 0, 0, 0.22)',
+              transform: 'rotate(-45deg)',
+              whiteSpace: 'nowrap',
+              letterSpacing: '0.15em',
+              userSelect: 'none',
+            }}
+          >
+            ANULADA
+          </span>
+        </div>
       )}
       {state.user?.company.logo && (
         <img
@@ -206,6 +226,12 @@ const PrintOut: FC<PrintInvoiceProps> = ({ id, onAfterPrint, autoPrint = true })
       </article>
 
       <h5 className='self-start'>Vendedor: {safeValue(saleBy?.fullname)}</h5>
+      {isOverride && overrideReason && (
+        <div className='w-full border-0 border-t border-black border-solid pt-1 mt-1 text-left'>
+          <p className='m-0 text-xs font-bold'>Motivo de anulación:</p>
+          <p className='m-0 text-xs'>{overrideReason}</p>
+        </div>
+      )}
       {state.user?.company.invoice_footer && (
         <h4 className='font-bold uppercase'>{state.user.company.invoice_footer}</h4>
       )}

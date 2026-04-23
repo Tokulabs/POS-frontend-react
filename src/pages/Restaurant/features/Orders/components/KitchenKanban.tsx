@@ -31,6 +31,11 @@ function getElapsedColor(createdAt: string, now: number): string {
   return 'text-red-600 dark:text-red-400'
 }
 
+// Falls back to order created_at when item has no timestamp (pre-migration rows)
+function itemTimestamp(item: IRestaurantOrderItem, orderCreatedAt: string): string {
+  return item.created_at ?? orderCreatedAt
+}
+
 // ── Item status stripe ────────────────────────────────────────────────────────
 
 const ITEM_STRIPE: Record<string, string> = {
@@ -74,8 +79,6 @@ const KitchenOrderCard: FC<KitchenOrderCardProps> = ({ order, now, onItemStatus,
 
   const activeItems = kitchenItems
   const nonServed   = activeItems.filter((i) => i.status !== 'served')
-  const elapsed     = formatElapsed(order.created_at, now)
-  const elapsedColor = getElapsedColor(order.created_at, now)
 
   return (
     <div className='rounded-xl border border-border bg-card shadow-sm overflow-hidden flex flex-col'>
@@ -90,10 +93,6 @@ const KitchenOrderCard: FC<KitchenOrderCardProps> = ({ order, now, onItemStatus,
               {order.table_number ? order.order_number : null}
               {order.notes ? ` · ${order.notes}` : null}
             </p>
-          </div>
-          <div className={`flex items-center gap-1.5 font-mono font-bold text-xl shrink-0 tabular-nums ${elapsedColor}`}>
-            <IconClock size={18} />
-            {elapsed}
           </div>
         </div>
       </div>
@@ -112,7 +111,7 @@ const KitchenOrderCard: FC<KitchenOrderCardProps> = ({ order, now, onItemStatus,
                 key={item.id}
                 className={`pl-4 pr-5 py-4 ${ITEM_STRIPE[item.status] ?? ''} ${isServed ? 'bg-muted/40 opacity-50 grayscale' : ''}`}
               >
-                {/* Name + served checkmark */}
+                {/* Name + per-item timer */}
                 <div className='flex items-start justify-between gap-3 mb-3'>
                   <div className='flex-1 min-w-0'>
                     {(item as any)._comboLabel && (
@@ -129,8 +128,13 @@ const KitchenOrderCard: FC<KitchenOrderCardProps> = ({ order, now, onItemStatus,
                       </p>
                     )}
                   </div>
-                  {isServed && (
+                  {isServed ? (
                     <span className='shrink-0 text-emerald-600 dark:text-emerald-400 font-bold text-base'>✓</span>
+                  ) : (
+                    <div className={`flex items-center gap-1 font-mono font-semibold text-sm shrink-0 tabular-nums ${getElapsedColor(itemTimestamp(item, order.created_at), now)}`}>
+                      <IconClock size={13} />
+                      {formatElapsed(itemTimestamp(item, order.created_at), now)}
+                    </div>
                   )}
                 </div>
 

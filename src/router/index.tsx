@@ -28,6 +28,8 @@ import { Profile } from '@/pages/Profile/Profile'
 import { InventoryMovement } from '@/pages/InventoryMovement/InventoryMovement'
 import { InventoryManagement } from '@/pages/InventoryManagement/InventoryMangament'
 import { InvoiceItem } from '@/pages/InvoiceItem/InvoiceItem'
+import { CreditNotes } from '@/pages/CreditNotes/CreditNotes'
+import { CreditNoteItem } from '@/pages/CreditNotes/CreditNoteItem'
 import { RestaurantUnits } from '@/pages/Restaurant/common/Units/RestaurantUnits'
 import { RestaurantIngredients } from '@/pages/Restaurant/common/Ingredients/RestaurantIngredients'
 import { RestaurantMenu } from '@/pages/Restaurant/features/Menu/RestaurantMenu'
@@ -52,6 +54,8 @@ const authRoutes: ISideBarData[] = [
   { path: '/inventories', component: Inventories, requiredPermission: 'can_view_inventory' },
   { path: '/invoices', component: Invoices, requiredPermission: 'can_view_invoices' },
   { path: '/invoice/:id', component: InvoiceItem, requiredPermission: 'can_view_invoices' },
+  { path: '/credit-notes', component: CreditNotes, requiredPermission: 'can_view_credit_notes', requiredFeatureFlag: 'can_use_credit_notes' },
+  { path: '/credit-notes/:id', component: CreditNoteItem, requiredPermission: 'can_view_credit_notes', requiredFeatureFlag: 'can_use_credit_notes' },
   { path: '/pos', component: POS, requiredPermission: 'can_create_invoice' },
   { path: '/inventory-groups', component: InventoryGroups, requiredPermission: 'can_manage_categories' },
   { path: '/users', component: Users, requiredPermission: 'can_manage_users', requiredFeatureFlag: 'can_manage_users' },

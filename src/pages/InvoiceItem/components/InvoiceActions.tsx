@@ -7,7 +7,7 @@ interface InvoiceActionsProps {
   onPrint: () => void
   onDownload?: () => void
   onSendInvoice: () => void
-  onOverride: () => void
+  onOverride: (reason: string) => void
   isElectronicInvoiced: boolean
   isOverride: boolean
   isLoading: boolean
@@ -30,6 +30,7 @@ export const InvoiceActions: FC<InvoiceActionsProps> = ({
 }) => {
   const [openSendDialog, setOpenSendDialog] = useState(false)
   const [openOverrideDialog, setOpenOverrideDialog] = useState(false)
+  const [overrideReason, setOverrideReason] = useState('')
 
   const handleSendInvoice = () => {
     onSendInvoice()
@@ -37,7 +38,8 @@ export const InvoiceActions: FC<InvoiceActionsProps> = ({
   }
 
   const handleOverride = () => {
-    onOverride()
+    onOverride(overrideReason)
+    setOverrideReason('')
     setOpenOverrideDialog(false)
   }
 
@@ -100,11 +102,21 @@ export const InvoiceActions: FC<InvoiceActionsProps> = ({
             <p className='text-muted-foreground'>
               ¿Estás seguro de anular esta factura? Esta acción no se puede deshacer.
             </p>
+            <div className='flex flex-col gap-1.5'>
+              <label className='text-sm font-medium'>Motivo de anulación</label>
+              <textarea
+                className='w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none'
+                rows={3}
+                placeholder='Describe el motivo de la anulación...'
+                value={overrideReason}
+                onChange={(e) => setOverrideReason(e.target.value)}
+              />
+            </div>
             <div className='flex justify-end gap-3'>
-              <Button variant='outline' onClick={() => setOpenOverrideDialog(false)}>
+              <Button variant='outline' onClick={() => { setOpenOverrideDialog(false); setOverrideReason('') }}>
                 Cancelar
               </Button>
-              <Button variant='destructive' onClick={handleOverride} disabled={isLoading}>
+              <Button variant='destructive' onClick={handleOverride} disabled={isLoading || !overrideReason.trim()}>
                 Sí, anular
               </Button>
             </div>
@@ -157,4 +169,3 @@ export const InvoiceActions: FC<InvoiceActionsProps> = ({
     </div>
   )
 }
-

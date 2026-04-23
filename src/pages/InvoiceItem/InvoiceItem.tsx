@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getInvoiceByCode, getDownloadInvoicePdf } from '../Invoices/helpers/services'
@@ -19,18 +19,22 @@ import {
   InvoiceActions,
   InvoicePrintPreview,
 } from './components'
+import { CreateCreditNoteForm } from '@/pages/CreditNotes/Components/CreateCreditNoteForm'
 
 export const InvoiceItem: FC = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [invoiceToPrint, setInvoiceToPrint] = useState<string | null>(null)
+  const [createCreditNoteOpen, setCreateCreditNoteOpen] = useState(false)
+  const handleOpenCreateCreditNote = useCallback(() => setCreateCreditNoteOpen(true), [])
 
   const decodedID = id ? id : ''
 
   // Permission checks
   const canOverride = useHasPermission('can_void_invoice')
   const canSendInvoice = useHasPermission('can_send_electronic_invoice')
+  const canCreateCreditNote = useHasPermission('can_create_credit_note')
 
   const { data: invoiceData, isLoading } = useQuery({
     queryKey: ['invoice', decodedID],
@@ -78,9 +82,9 @@ export const InvoiceItem: FC = () => {
     }
   }
 
-  const handleOverride = () => {
+  const handleOverride = (reason: string) => {
     if (invoiceData?.invoice_number) {
-      mutateOverride(String(invoiceData.invoice_number))
+      mutateOverride({ invoiceNumber: String(invoiceData.invoice_number), reason })
     }
   }
 
@@ -150,12 +154,18 @@ export const InvoiceItem: FC = () => {
             eInvoiceNumber={invoiceData.e_invoice_number}
             dianPrefix={invoiceData.dian_resolution?.prefix}
             restaurantOrder={restaurantOrder}
+            invoiceNumber={invoiceData.invoice_number}
+            isElectronicInvoiced={invoiceData.is_electronic_invoiced}
+            isOverride={invoiceData.is_override}
+            overrideReason={invoiceData.override_reason}
+            creditNotesCount={invoiceData.credit_notes_count ?? 0}
+            canCreateCreditNote={canCreateCreditNote}
+            onCreateCreditNote={handleOpenCreateCreditNote}
             footer={
               <InvoiceActions
                 onPrint={handlePrint}
                 onDownload={() => {
                   if (pdfUrl) {
-                    // Electronic invoice - download PDF directly
                     const link = document.createElement('a')
                     link.href = pdfUrl
                     link.download = `factura-${invoiceData.invoice_number}.pdf`
@@ -163,7 +173,6 @@ export const InvoiceItem: FC = () => {
                     link.click()
                     document.body.removeChild(link)
                   } else {
-                    // Non-electronic invoice - use print dialog to save as PDF
                     handlePrint()
                   }
                 }}
@@ -204,6 +213,16 @@ export const InvoiceItem: FC = () => {
           )}
         </div>
       </div>
+
+      <CreateCreditNoteForm
+        open={createCreditNoteOpen}
+        prefilledInvoiceNumber={String(invoiceData.invoice_number)}
+        onSuccess={() => {
+          setCreateCreditNoteOpen(false)
+          queryClient.invalidateQueries({ queryKey: ['invoice', decodedID] })
+        }}
+        onCancel={() => setCreateCreditNoteOpen(false)}
+      />
 
       {invoiceToPrint &&
         createPortal(

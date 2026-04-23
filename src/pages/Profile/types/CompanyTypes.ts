@@ -13,4 +13,8 @@ export interface ICompany {
   }
   invoice_subtitle: string | null
   invoice_footer: string | null
+  credit_note_prefix: string | null
+  credit_note_from_number: number | null
+  credit_note_to_number: number | null
+  credit_note_current_number: number
 }
