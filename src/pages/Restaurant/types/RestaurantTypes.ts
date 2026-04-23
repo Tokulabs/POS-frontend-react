@@ -93,6 +93,8 @@ export interface IRestaurantTable {
   status: TableStatus
   active: boolean
   active_order_id: number | null
+  pos_x: number | null
+  pos_y: number | null
 }
 
 export type OrderStatus = 'draft' | 'open' | 'in_preparation' | 'ready' | 'billed' | 'cancelled'

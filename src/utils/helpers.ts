@@ -30,7 +30,7 @@ export const roundNumberToDecimals = (number: number, decimals: number): number 
 }
 
 const getTaxRate = (tax?: { percentage: number } | null): number => {
-  if (!tax) return 0.19 // backward-compat default
+  if (!tax) return 0
   return tax.percentage / 100
 }
 
@@ -130,6 +130,7 @@ export const buildPrintDataFromInvoiceProps = (invoice: IInvoiceProps): IPrintDa
       invoice.invoice_items
         .filter((item) => !item.is_gift)
         .map((item) => {
+          const appliedTax = item.taxes_applied?.[0]
           return {
             code: item.item_code,
             name: item.item_name,
@@ -142,6 +143,7 @@ export const buildPrintDataFromInvoiceProps = (invoice: IInvoiceProps): IPrintDa
             total_in_shops: item.original_amount,
             is_gift: item.is_gift,
             id: item.id,
+            tax: appliedTax != null ? { percentage: appliedTax.percentage } : null,
           } as IPosData
         }) ?? ([] as IPosData[]),
     dianResolution: invoice.dian_resolution,

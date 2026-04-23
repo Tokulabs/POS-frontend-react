@@ -8,6 +8,8 @@ type TablePayload = {
   area: number | null
   capacity: number
   status?: TableStatus
+  pos_x?: number | null
+  pos_y?: number | null
 }
 
 export const useRestaurantTables = () => {

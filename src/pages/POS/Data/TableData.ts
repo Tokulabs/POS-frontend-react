@@ -34,7 +34,7 @@ export const TableData: ITableTitles[] = [
     tableStyles: 'col-span-2 col-start-9 w-full',
   },
   {
-    tableTitle: 'IVA',
+    tableTitle: 'Impuesto',
     tableStyles: 'col-start-11 w-full',
   },
   {
