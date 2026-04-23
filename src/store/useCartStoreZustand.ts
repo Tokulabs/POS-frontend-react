@@ -40,8 +40,8 @@ export const useCart = create<ICartStore>((set, get) => ({
       const existing = cartItems[index]
       const newQuantity = existing.quantity + 1
       if (
-        existing.total_in_shops === 0 ||
-        newQuantity > (existing.total_in_shops || 0)
+        !existing.skip_stock_check &&
+        (existing.total_in_shops === 0 || newQuantity > (existing.total_in_shops || 0))
       ) {
         toast.error('Lo sentimos, este producto no cuenta más existencias en tienda')
         return
@@ -58,7 +58,7 @@ export const useCart = create<ICartStore>((set, get) => ({
         addDiscountToItem(product.code, updatedItem.discount)
       }
     } else {
-      if (product.total_in_shops === 0) {
+      if (!product.skip_stock_check && product.total_in_shops === 0) {
         toast.error('Lo sentimos, este producto no cuenta más existencias en tienda')
         return
       }
@@ -138,8 +138,8 @@ export const useCart = create<ICartStore>((set, get) => ({
       const existing = cartItems[index]
       const newQuantity = quantity ?? 0
       if (
-        existing.total_in_shops === 0 ||
-        newQuantity > (existing.total_in_shops || 0)
+        !existing.skip_stock_check &&
+        (existing.total_in_shops === 0 || newQuantity > (existing.total_in_shops || 0))
       ) {
         toast.error('Lo sentimos, este producto no cuenta más existencias en tienda')
         return

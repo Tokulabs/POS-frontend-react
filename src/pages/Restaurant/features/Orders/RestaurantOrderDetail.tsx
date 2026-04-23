@@ -1,6 +1,6 @@
 import { FC, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { IconArrowLeft, IconPlus, IconReceipt, IconArrowsExchange } from '@tabler/icons-react'
+import { IconArrowLeft, IconPencil, IconPlus, IconReceipt, IconArrowsExchange } from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { useQuery } from '@tanstack/react-query'
 import { axiosRequest } from '@/api/api'
@@ -38,6 +38,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { formatNumberToColombianPesos } from '@/utils/helpers'
 
 const ORDER_STATUS_BADGE: Record<string, string> = {
+  draft: 'bg-slate-100 text-slate-700 dark:bg-slate-800/60 dark:text-slate-300',
   open: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300',
   in_preparation: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
   ready: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300',
@@ -75,7 +76,7 @@ const RestaurantOrderDetail: FC = () => {
     refetchOnWindowFocus: false,
   })
 
-  const { addItem, removeItem, updateItemStatus, convertToInvoice, updateOrder, moveItems } =
+  const { addItem, removeItem, updateItem, updateItemStatus, convertToInvoice, updateOrder, moveItems } =
     useRestaurantOrders()
   const { tables } = useRestaurantTables()
 
@@ -83,6 +84,7 @@ const RestaurantOrderDetail: FC = () => {
   const [selectedItems, setSelectedItems] = useState<Record<number, number>>({})
   const [moveTableOpen, setMoveTableOpen] = useState(false)
   const [targetTableId, setTargetTableId] = useState<string>('')
+  const [editingItem, setEditingItem] = useState<{ id: number; name: string; quantity: number; notes: string } | null>(null)
 
   if (isLoading) {
     return (
@@ -228,6 +230,27 @@ const RestaurantOrderDetail: FC = () => {
     )
   }
 
+  const handleConfirmOrder = () => {
+    updateOrder.mutate(
+      { id: orderId, status: 'open' },
+      {
+        onSuccess: () => toast.success('Pedido enviado a cocina'),
+        onError: () => toast.error('Error al confirmar el pedido'),
+      },
+    )
+  }
+
+  const handleEditSave = () => {
+    if (!editingItem) return
+    updateItem.mutate(
+      { orderId, itemId: editingItem.id, quantity: editingItem.quantity, notes: editingItem.notes },
+      {
+        onSuccess: () => { toast.success('Ítem actualizado'); setEditingItem(null) },
+        onError: (e: any) => toast.error(e?.response?.data?.error ?? 'Error al actualizar el ítem'),
+      },
+    )
+  }
+
   const backPath = mode === 'normal' ? '/restaurant/tables' : '/restaurant/orders'
   const moveTargetTables = tables.filter((t) => t.id !== order.table)
 
@@ -252,7 +275,7 @@ const RestaurantOrderDetail: FC = () => {
                 <span className='text-sm text-muted-foreground'>· Mesa {order.table_number}</span>
               )}
             </div>
-            <p className='text-xs text-muted-foreground mt-0.5'>⏱ {getElapsed(order.created_at)} desde el pedido</p>
+            <p className='text-xs text-muted-foreground mt-0.5'>⏱ {getElapsed(order.confirmed_at ?? order.created_at)} desde el pedido</p>
           </div>
           <ModeSwitcher />
         </div>
@@ -378,6 +401,15 @@ const RestaurantOrderDetail: FC = () => {
                   <p className='text-xs text-amber-600 dark:text-amber-400 mt-0.5'>⚠ {item.notes}</p>
                 )}
               </div>
+              {!isBilledOrCancelled && item.status === 'pending' && order.status === 'draft' && (
+                <button
+                  onClick={() => setEditingItem({ id: item.id, name: item.item_name, quantity: item.quantity, notes: item.notes })}
+                  disabled={updateItem.isPending}
+                  className='shrink-0 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40 mt-0.5'
+                >
+                  <IconPencil size={13} />
+                </button>
+              )}
               {!isBilledOrCancelled && item.status === 'pending' && (
                 <button
                   onClick={() => handleRemoveItem(item.id)}
@@ -416,6 +448,15 @@ const RestaurantOrderDetail: FC = () => {
               <p className='text-xs text-amber-600 dark:text-amber-400 mt-0.5'>⚠ {item.notes}</p>
             )}
           </div>
+          {!isBilledOrCancelled && item.status === 'pending' && order.status === 'draft' && (
+            <button
+              onClick={() => setEditingItem({ id: item.id, name: item.item_name, quantity: item.quantity, notes: item.notes })}
+              disabled={updateItem.isPending}
+              className='shrink-0 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40 mt-0.5'
+            >
+              <IconPencil size={13} />
+            </button>
+          )}
           {!isBilledOrCancelled && item.status === 'pending' && (
             <button
               onClick={() => handleRemoveItem(item.id)}
@@ -549,14 +590,24 @@ const RestaurantOrderDetail: FC = () => {
             <span className='text-lg font-bold'>{formatNumberToColombianPesos(total, true)}</span>
           </div>
           {!isBilledOrCancelled && (
-            <Button
-              className={`w-full h-12 text-base font-bold gap-2 ${allReady ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : ''}`}
-              disabled={topLevelActive.length === 0 || convertToInvoice.isPending}
-              onClick={handleConvertToInvoice}
-            >
-              <IconReceipt size={18} />
-              {convertToInvoice.isPending ? 'Procesando...' : `Cobrar ${formatNumberToColombianPesos(total, true)}`}
-            </Button>
+            order.status === 'draft' ? (
+              <Button
+                className='w-full h-12 text-base font-bold gap-2'
+                disabled={topLevelActive.length === 0 || updateOrder.isPending}
+                onClick={handleConfirmOrder}
+              >
+                {updateOrder.isPending ? 'Confirmando...' : 'Confirmar y enviar a cocina'}
+              </Button>
+            ) : (
+              <Button
+                className={`w-full h-12 text-base font-bold gap-2 ${allReady ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : ''}`}
+                disabled={topLevelActive.length === 0 || convertToInvoice.isPending}
+                onClick={handleConvertToInvoice}
+              >
+                <IconReceipt size={18} />
+                {convertToInvoice.isPending ? 'Procesando...' : `Cobrar ${formatNumberToColombianPesos(total, true)}`}
+              </Button>
+            )
           )}
         </div>
 
@@ -566,6 +617,49 @@ const RestaurantOrderDetail: FC = () => {
           onAdd={handleAddItem}
           onCancel={() => setAddItemOpen(false)}
         />
+
+        {/* Edit item dialog — waiter mode */}
+        <Dialog open={!!editingItem} onOpenChange={(open) => { if (!open) setEditingItem(null) }}>
+          <DialogContent className='max-w-sm'>
+            <DialogHeader>
+              <DialogTitle>Editar ítem</DialogTitle>
+            </DialogHeader>
+            {editingItem && (
+              <div className='space-y-4 py-1'>
+                <p className='text-sm font-medium truncate'>{editingItem.name}</p>
+                <div>
+                  <p className='text-xs text-muted-foreground mb-2'>Cantidad</p>
+                  <div className='flex items-center gap-3'>
+                    <button
+                      className='h-8 w-8 rounded border border-border flex items-center justify-center text-lg font-bold hover:bg-accent transition-colors'
+                      onClick={() => setEditingItem((p) => p ? { ...p, quantity: Math.max(1, p.quantity - 1) } : p)}
+                    >−</button>
+                    <span className='w-8 text-center font-bold text-base'>{editingItem.quantity}</span>
+                    <button
+                      className='h-8 w-8 rounded border border-border flex items-center justify-center text-lg font-bold hover:bg-accent transition-colors'
+                      onClick={() => setEditingItem((p) => p ? { ...p, quantity: p.quantity + 1 } : p)}
+                    >+</button>
+                  </div>
+                </div>
+                <div>
+                  <p className='text-xs text-muted-foreground mb-1'>Notas</p>
+                  <input
+                    className='w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring'
+                    placeholder='Ej: sin cebolla...'
+                    value={editingItem.notes}
+                    onChange={(e) => setEditingItem((p) => p ? { ...p, notes: e.target.value } : p)}
+                  />
+                </div>
+              </div>
+            )}
+            <DialogFooter>
+              <Button variant='outline' onClick={() => setEditingItem(null)}>Cancelar</Button>
+              <Button disabled={updateItem.isPending} onClick={handleEditSave}>
+                {updateItem.isPending ? 'Guardando...' : 'Guardar'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     )
   }
@@ -635,6 +729,8 @@ const RestaurantOrderDetail: FC = () => {
                 onStatusChange={handleItemStatus}
                 onRemove={handleRemoveItem}
                 isUpdating={updateItemStatus.isPending || removeItem.isPending}
+                isDraft={order.status === 'draft'}
+                onEdit={(i) => setEditingItem({ id: i.id, name: i.item_name, quantity: i.quantity, notes: i.notes })}
                 selectable={!isBilledOrCancelled && !(activeItems.length === 1 && activeItems[0].quantity === 1)}
                 selected={item.id in selectedItems}
                 moveQuantity={selectedItems[item.id]}
@@ -682,14 +778,24 @@ const RestaurantOrderDetail: FC = () => {
                 </AlertDialogContent>
               </AlertDialog>
 
-              <Button
-                className='flex-1 gap-2'
-                disabled={activeItems.length === 0 || convertToInvoice.isPending}
-                onClick={handleConvertToInvoice}
-              >
-                <IconReceipt size={15} />
-                {convertToInvoice.isPending ? 'Procesando...' : 'Cobrar'}
-              </Button>
+              {order.status === 'draft' ? (
+                <Button
+                  className='flex-1 gap-2'
+                  disabled={activeItems.length === 0 || updateOrder.isPending}
+                  onClick={handleConfirmOrder}
+                >
+                  {updateOrder.isPending ? 'Confirmando...' : 'Confirmar y enviar a cocina'}
+                </Button>
+              ) : (
+                <Button
+                  className='flex-1 gap-2'
+                  disabled={activeItems.length === 0 || convertToInvoice.isPending}
+                  onClick={handleConvertToInvoice}
+                >
+                  <IconReceipt size={15} />
+                  {convertToInvoice.isPending ? 'Procesando...' : 'Cobrar'}
+                </Button>
+              )}
             </div>
           </>
         )}
@@ -701,6 +807,49 @@ const RestaurantOrderDetail: FC = () => {
         onAdd={handleAddItem}
         onCancel={() => setAddItemOpen(false)}
       />
+
+      {/* Edit item dialog — normal mode */}
+      <Dialog open={!!editingItem} onOpenChange={(open) => { if (!open) setEditingItem(null) }}>
+        <DialogContent className='max-w-sm'>
+          <DialogHeader>
+            <DialogTitle>Editar ítem</DialogTitle>
+          </DialogHeader>
+          {editingItem && (
+            <div className='space-y-4 py-1'>
+              <p className='text-sm font-medium truncate'>{editingItem.name}</p>
+              <div>
+                <p className='text-xs text-muted-foreground mb-2'>Cantidad</p>
+                <div className='flex items-center gap-3'>
+                  <button
+                    className='h-8 w-8 rounded border border-border flex items-center justify-center text-lg font-bold hover:bg-accent transition-colors'
+                    onClick={() => setEditingItem((p) => p ? { ...p, quantity: Math.max(1, p.quantity - 1) } : p)}
+                  >−</button>
+                  <span className='w-8 text-center font-bold text-base'>{editingItem.quantity}</span>
+                  <button
+                    className='h-8 w-8 rounded border border-border flex items-center justify-center text-lg font-bold hover:bg-accent transition-colors'
+                    onClick={() => setEditingItem((p) => p ? { ...p, quantity: p.quantity + 1 } : p)}
+                  >+</button>
+                </div>
+              </div>
+              <div>
+                <p className='text-xs text-muted-foreground mb-1'>Notas</p>
+                <input
+                  className='w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring'
+                  placeholder='Ej: sin cebolla...'
+                  value={editingItem.notes}
+                  onChange={(e) => setEditingItem((p) => p ? { ...p, notes: e.target.value } : p)}
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant='outline' onClick={() => setEditingItem(null)}>Cancelar</Button>
+            <Button disabled={updateItem.isPending} onClick={handleEditSave}>
+              {updateItem.isPending ? 'Guardando...' : 'Guardar'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Move items dialog */}
       <Dialog open={moveTableOpen} onOpenChange={(open) => { setMoveTableOpen(open); if (!open) setTargetTableId('') }}>

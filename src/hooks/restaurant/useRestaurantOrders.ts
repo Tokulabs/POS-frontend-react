@@ -71,6 +71,22 @@ export const useRestaurantOrders = (
     onSuccess: invalidate,
   })
 
+  const updateItem = useMutation({
+    mutationFn: ({
+      orderId,
+      itemId,
+      quantity,
+      notes,
+    }: { orderId: number; itemId: number; quantity?: number; notes?: string }) =>
+      axiosRequest<IRestaurantOrderItem>({
+        url: `${restaurantOrdersURL}${orderId}/items/${itemId}/`,
+        method: 'patch',
+        payload: { ...(quantity !== undefined && { quantity }), ...(notes !== undefined && { notes }) },
+        hasAuth: true,
+      }),
+    onSuccess: invalidate,
+  })
+
   const updateItemStatus = useMutation({
     mutationFn: ({ orderId, itemId, status }: { orderId: number; itemId: number; status: OrderItemStatus }) =>
       axiosRequest<IRestaurantOrderItem>({
@@ -121,6 +137,7 @@ export const useRestaurantOrders = (
     updateOrder,
     addItem,
     removeItem,
+    updateItem,
     updateItemStatus,
     convertToInvoice,
     completeBilling,

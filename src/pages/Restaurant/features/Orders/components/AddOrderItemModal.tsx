@@ -222,7 +222,14 @@ const AddOrderItemModal: FC<AddOrderItemModalProps> = ({ open, isPending, onAdd,
                         <Select
                           value={chosenId ? String(chosenId) : ''}
                           onValueChange={(val) => {
-                            setSelectedOptions((p) => ({ ...p, [group.id]: Number(val) }))
+                            if (val === '__none__') {
+                              setSelectedOptions((p) => {
+                                const { [group.id]: _, ...rest } = p
+                                return rest
+                              })
+                            } else {
+                              setSelectedOptions((p) => ({ ...p, [group.id]: Number(val) }))
+                            }
                             setOptionErrors((p) => p.filter((id) => id !== group.id))
                           }}
                         >
@@ -230,6 +237,11 @@ const AddOrderItemModal: FC<AddOrderItemModalProps> = ({ open, isPending, onAdd,
                             <SelectValue placeholder='Seleccionar...' />
                           </SelectTrigger>
                           <SelectContent>
+                            {!group.is_required && (
+                              <SelectItem value='__none__'>
+                                <span className='text-muted-foreground'>— Ninguno —</span>
+                              </SelectItem>
+                            )}
                             {group.options.map((opt) => (
                               <SelectItem key={opt.id} value={String(opt.product_id)}>
                                 <span className='flex items-center justify-between gap-3 w-full'>

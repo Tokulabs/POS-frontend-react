@@ -23,6 +23,7 @@ import { formatNumberToColombianPesos } from '@/utils/helpers'
 const PAGE_SIZE = 10
 
 const ORDER_STATUS_BADGE: Record<string, string> = {
+  draft: 'bg-slate-100 text-slate-700 dark:bg-slate-800/60 dark:text-slate-300',
   open: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300',
   in_preparation: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
   ready: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300',
@@ -30,7 +31,7 @@ const ORDER_STATUS_BADGE: Record<string, string> = {
   cancelled: 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300',
 }
 
-const ACTIVE_STATUSES: OrderStatus[] = ['open', 'in_preparation', 'ready']
+const ACTIVE_STATUSES: OrderStatus[] = ['draft', 'open', 'in_preparation', 'ready']
 
 const getTotal = (order: IRestaurantOrder) => {
   const activeItems = order.order_items.filter((i) => i.status !== 'cancelled')
@@ -155,7 +156,7 @@ const RestaurantOrders: FC = () => {
           </div>
         ) : (
           <KitchenKanban
-            orders={activeOrders}
+            orders={activeOrders.filter((o) => o.status !== 'draft')}
             onItemStatus={handleItemStatus}
             onMarkAll={handleMarkAll}
             isUpdating={updateItemStatus.isPending}
