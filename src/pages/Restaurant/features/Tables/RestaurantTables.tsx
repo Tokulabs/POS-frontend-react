@@ -4,6 +4,7 @@ import { IconPlus, IconSettings, IconLayoutGrid, IconList, IconMap, IconLock, Ic
 import { toast } from 'sonner'
 import { useRestaurantAreas } from '@/hooks/restaurant/useRestaurantAreas'
 import { useRestaurantTables } from '@/hooks/restaurant/useRestaurantTables'
+import { useRestaurantOrders } from '@/hooks/restaurant/useRestaurantOrders'
 import { IRestaurantTable, TableStatus } from '@/pages/Restaurant/types/RestaurantTypes'
 import { TableCard } from './components/TableCard'
 import { TableCanvas } from './components/TableCanvas'
@@ -13,6 +14,14 @@ import { ManageAreasModal } from './components/ManageAreasModal'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from '@/components/ui/dialog'
 
 type ViewMode = 'grid' | 'list' | 'map'
 
@@ -20,11 +29,13 @@ const RestaurantTables: FC = () => {
   const navigate = useNavigate()
   const { isLoading: areasLoading, areas, createArea, updateArea, deleteArea } = useRestaurantAreas()
   const { isLoading: tablesLoading, tables, createTable, updateTable, patchTable, deleteTable } = useRestaurantTables()
+  const { createOrder } = useRestaurantOrders()
 
   const [activeTab, setActiveTab] = useState<string>('all')
   const [tableModalOpen, setTableModalOpen] = useState(false)
   const [areasModalOpen, setAreasModalOpen] = useState(false)
   const [editingTable, setEditingTable] = useState<IRestaurantTable | null>(null)
+  const [pendingOrderTable, setPendingOrderTable] = useState<IRestaurantTable | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>(
     () => (localStorage.getItem('restaurant_tables_view') as ViewMode) ?? 'grid',
   )
@@ -72,7 +83,26 @@ const RestaurantTables: FC = () => {
   const handleTableClick = (table: IRestaurantTable) => {
     if (table.active_order_id) {
       navigate(`/restaurant/orders/${table.active_order_id}`)
+      return
     }
+    if (table.status === 'available') {
+      setPendingOrderTable(table)
+    }
+  }
+
+  const handleConfirmCreateOrder = () => {
+    if (!pendingOrderTable) return
+    createOrder.mutate(
+      { table: pendingOrderTable.id },
+      {
+        onSuccess: (response) => {
+          const newId = response?.data?.id
+          setPendingOrderTable(null)
+          if (newId) navigate(`/restaurant/orders/${newId}`)
+        },
+        onError: () => toast.error('Error al crear la orden'),
+      },
+    )
   }
 
   const handleEdit = (table: IRestaurantTable) => {
@@ -277,6 +307,28 @@ const RestaurantTables: FC = () => {
           )}
         </div>
       )}
+
+      <Dialog
+        open={!!pendingOrderTable}
+        onOpenChange={(open) => { if (!open) setPendingOrderTable(null) }}
+      >
+        <DialogContent className='sm:max-w-xs'>
+          <DialogHeader>
+            <DialogTitle>Nueva orden — Mesa {pendingOrderTable?.number}</DialogTitle>
+            <DialogDescription>
+              ¿Crear una nueva orden para esta mesa?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant='outline' onClick={() => setPendingOrderTable(null)} disabled={createOrder.isPending}>
+              Cancelar
+            </Button>
+            <Button onClick={handleConfirmCreateOrder} disabled={createOrder.isPending}>
+              {createOrder.isPending ? 'Creando...' : 'Crear orden'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <TableFormModal
         open={tableModalOpen}
