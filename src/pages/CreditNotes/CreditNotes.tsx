@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useContext, useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import {
   IconCirclePlus,
@@ -24,6 +24,7 @@ import {
 
 import { useCreditNotes } from '@/hooks/useCreditNotes'
 import { useHasPermission } from '@/hooks/useHasPermission'
+import { store } from '@/store'
 import { formatDateTime } from '@/layouts/helpers/helpers'
 import { CREDIT_NOTE_REASON_LABELS } from './types/CreditNoteTypes'
 import { CreateCreditNoteForm } from './Components/CreateCreditNoteForm'
@@ -39,6 +40,12 @@ const CreditNotes: FC = () => {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const canCreateCreditNote = useHasPermission('can_create_credit_note')
+  const { state } = useContext(store)
+  const company = state.user?.company
+  const isResolutionConfigured =
+    !!company?.credit_note_prefix &&
+    company?.credit_note_from_number != null &&
+    company?.credit_note_to_number != null
 
   const keyword = searchParams.get('search') ?? ''
   const [searchInput, setSearchInput] = useState(keyword)
@@ -106,7 +113,7 @@ const CreditNotes: FC = () => {
               Buscar
             </Button>
           </form>
-          {canCreateCreditNote && (
+          {canCreateCreditNote && isResolutionConfigured && (
             <Button onClick={() => setCreateOpen(true)} className='gap-2'>
               <IconCirclePlus size={16} />
               Crear Nota Crédito

@@ -135,8 +135,7 @@ const CreditNoteResolutionPanel: FC = () => {
           </div>
         ) : (
           <p className='text-xs text-muted-foreground'>
-            Aún no has configurado el prefijo y el rango de numeración manual para tus notas
-            crédito. Configúralos antes de enviar la primera a la DIAN.
+            Configura el prefijo y rango de numeración para habilitar la creación de notas crédito.
           </p>
         )
       ) : (
