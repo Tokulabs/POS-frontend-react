@@ -217,7 +217,7 @@ const TableCanvas: FC<TableCanvasProps> = ({ tables, editMode, onTableClick, onP
         if (!pos) return null
 
         const s = NODE_STATUS[table.status] ?? NODE_STATUS.available
-        const isClickable = !editMode && !!table.active_order_id
+        const isClickable = !editMode && (!!table.active_order_id || table.status === 'available')
 
         // Screen-space position (pixel-snapped to avoid subpixel blur)
         const w  = Math.round(CARD_W * zoom)
