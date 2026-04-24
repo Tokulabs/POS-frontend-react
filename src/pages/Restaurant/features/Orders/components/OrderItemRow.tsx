@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { IconPackage, IconTrash } from '@tabler/icons-react'
+import { IconPackage, IconPencil, IconTrash } from '@tabler/icons-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -25,6 +25,8 @@ interface OrderItemRowProps {
   onStatusChange: (itemId: number, status: OrderItemStatus) => void
   onRemove: (itemId: number) => void
   isUpdating: boolean
+  isDraft?: boolean
+  onEdit?: (item: IRestaurantOrderItem) => void
   selectable?: boolean
   selected?: boolean
   moveQuantity?: number
@@ -38,6 +40,8 @@ const OrderItemRow: FC<OrderItemRowProps> = ({
   onStatusChange,
   onRemove,
   isUpdating,
+  isDraft,
+  onEdit,
   selectable,
   selected,
   moveQuantity,
@@ -46,6 +50,7 @@ const OrderItemRow: FC<OrderItemRowProps> = ({
 }) => {
   const next = NEXT_ITEM_STATUS[item.status]
   const canRemove = item.status === 'pending' && !orderBilled
+  const canEdit = isDraft && item.status === 'pending' && !orderBilled && item.parent_item === null
   const canSelect = selectable && !orderBilled && item.status !== 'cancelled'
 
   // ── Combo header: show name + price + children list, no status badge ────────
@@ -71,6 +76,17 @@ const OrderItemRow: FC<OrderItemRowProps> = ({
               true,
             )}
           </span>
+          {canEdit && (
+            <Button
+              size='icon'
+              variant='ghost'
+              className='h-7 w-7 text-muted-foreground hover:text-foreground'
+              disabled={isUpdating}
+              onClick={() => onEdit?.(item)}
+            >
+              <IconPencil size={13} />
+            </Button>
+          )}
           {canRemove && (
             <Button
               size='icon'
@@ -169,6 +185,17 @@ const OrderItemRow: FC<OrderItemRowProps> = ({
             onClick={() => onStatusChange(item.id, next.status)}
           >
             {next.label}
+          </Button>
+        )}
+        {canEdit && (
+          <Button
+            size='icon'
+            variant='ghost'
+            className='h-7 w-7 text-muted-foreground hover:text-foreground'
+            disabled={isUpdating}
+            onClick={() => onEdit?.(item)}
+          >
+            <IconPencil size={13} />
           </Button>
         )}
         {canRemove && (

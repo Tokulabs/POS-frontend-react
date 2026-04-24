@@ -93,12 +93,15 @@ export interface IRestaurantTable {
   status: TableStatus
   active: boolean
   active_order_id: number | null
+  pos_x: number | null
+  pos_y: number | null
 }
 
-export type OrderStatus = 'open' | 'in_preparation' | 'ready' | 'billed' | 'cancelled'
+export type OrderStatus = 'draft' | 'open' | 'in_preparation' | 'ready' | 'billed' | 'cancelled'
 export type OrderItemStatus = 'pending' | 'preparing' | 'served' | 'cancelled'
 
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
+  draft: 'Borrador',
   open: 'Abierta',
   in_preparation: 'En preparación',
   ready: 'Lista',
@@ -147,6 +150,7 @@ export interface IRestaurantOrderItem {
   is_combo_header: boolean
   parent_item: number | null
   combo_children: IRestaurantOrderItem[]
+  created_at: string | null
 }
 
 export interface IRestaurantOrder {
@@ -157,6 +161,7 @@ export interface IRestaurantOrder {
   status: OrderStatus
   notes: string
   order_items: IRestaurantOrderItem[]
+  confirmed_at: string | null
   created_at: string
   updated_at: string
 }

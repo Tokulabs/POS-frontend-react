@@ -1,12 +1,14 @@
 import { FC, useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
-import { IconPlus, IconReceipt, IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
+import { IconPlus, IconReceipt, IconChevronLeft, IconChevronRight, IconPrinter } from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { useRestaurantOrders } from '@/hooks/restaurant/useRestaurantOrders'
 import { useRestaurantTables } from '@/hooks/restaurant/useRestaurantTables'
 import { useRestaurantMode } from '@/store/useRestaurantMode'
 import { useRestaurantWebSocket } from '@/hooks/restaurant/useRestaurantWebSocket'
 import { ORDER_STATUS_LABELS, IRestaurantOrder, OrderStatus, OrderItemStatus } from '@/pages/Restaurant/types/RestaurantTypes'
+import PrintPreInvoice from '@/components/Print/PrintPreInvoice'
 import { CreateOrderModal } from './components/CreateOrderModal'
 import { ModeSwitcher } from './components/ModeSwitcher'
 import { KitchenKanban } from './components/KitchenKanban'
@@ -21,6 +23,7 @@ import { formatNumberToColombianPesos } from '@/utils/helpers'
 const PAGE_SIZE = 10
 
 const ORDER_STATUS_BADGE: Record<string, string> = {
+  draft: 'bg-slate-100 text-slate-700 dark:bg-slate-800/60 dark:text-slate-300',
   open: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300',
   in_preparation: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
   ready: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300',
@@ -28,7 +31,7 @@ const ORDER_STATUS_BADGE: Record<string, string> = {
   cancelled: 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300',
 }
 
-const ACTIVE_STATUSES: OrderStatus[] = ['open', 'in_preparation', 'ready']
+const ACTIVE_STATUSES: OrderStatus[] = ['draft', 'open', 'in_preparation', 'ready']
 
 const getTotal = (order: IRestaurantOrder) => {
   const activeItems = order.order_items.filter((i) => i.status !== 'cancelled')
@@ -45,6 +48,7 @@ const RestaurantOrders: FC = () => {
   const [historyKeyword, setHistoryKeyword] = useState('')
   const [historyPage, setHistoryPage] = useState(1)
   const [cobrarPendingId, setCobrarPendingId] = useState<number | null>(null)
+  const [preInvoiceOrder, setPreInvoiceOrder] = useState<IRestaurantOrder | null>(null)
 
   const {
     isLoading: isActiveLoading,
@@ -152,7 +156,7 @@ const RestaurantOrders: FC = () => {
           </div>
         ) : (
           <KitchenKanban
-            orders={activeOrders}
+            orders={activeOrders.filter((o) => o.status !== 'draft')}
             onItemStatus={handleItemStatus}
             onMarkAll={handleMarkAll}
             isUpdating={updateItemStatus.isPending}
@@ -285,9 +289,21 @@ const RestaurantOrders: FC = () => {
                     {order.order_items.filter((i) => i.status !== 'cancelled').length} ítems
                   </p>
                 </div>
-                <span className='font-bold text-sm shrink-0'>
-                  {formatNumberToColombianPesos(getTotal(order), true)}
-                </span>
+                <div className='flex items-center gap-2 shrink-0'>
+                  <span className='font-bold text-sm'>
+                    {formatNumberToColombianPesos(getTotal(order), true)}
+                  </span>
+                  <button
+                    className='p-1.5 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors'
+                    title='Imprimir pre-cuenta'
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setPreInvoiceOrder(order)
+                    }}
+                  >
+                    <IconPrinter size={16} />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -316,6 +332,18 @@ const RestaurantOrders: FC = () => {
         onCreate={handleCreate}
         onCancel={() => setCreateOpen(false)}
       />
+
+      {preInvoiceOrder &&
+        createPortal(
+          <div className='fixed w-0 h-0 overflow-hidden opacity-0 pointer-events-none'>
+            <PrintPreInvoice
+              order={preInvoiceOrder}
+              tipPercent={10}
+              onAfterPrint={() => setPreInvoiceOrder(null)}
+            />
+          </div>,
+          document.body,
+        )}
     </div>
   )
 }

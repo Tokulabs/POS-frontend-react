@@ -1,16 +1,20 @@
 import { FC, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { IconPlus, IconSettings, IconLayoutGrid } from '@tabler/icons-react'
+import { IconPlus, IconSettings, IconLayoutGrid, IconList, IconMap, IconLock, IconLockOpen } from '@tabler/icons-react'
 import { toast } from 'sonner'
 import { useRestaurantAreas } from '@/hooks/restaurant/useRestaurantAreas'
 import { useRestaurantTables } from '@/hooks/restaurant/useRestaurantTables'
 import { IRestaurantTable, TableStatus } from '@/pages/Restaurant/types/RestaurantTypes'
 import { TableCard } from './components/TableCard'
+import { TableCanvas } from './components/TableCanvas'
+import { TableList } from './components/TableList'
 import { TableFormModal, TableFormValues } from './components/TableFormModal'
 import { ManageAreasModal } from './components/ManageAreasModal'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+
+type ViewMode = 'grid' | 'list' | 'map'
 
 const RestaurantTables: FC = () => {
   const navigate = useNavigate()
@@ -21,6 +25,10 @@ const RestaurantTables: FC = () => {
   const [tableModalOpen, setTableModalOpen] = useState(false)
   const [areasModalOpen, setAreasModalOpen] = useState(false)
   const [editingTable, setEditingTable] = useState<IRestaurantTable | null>(null)
+  const [viewMode, setViewMode] = useState<ViewMode>(
+    () => (localStorage.getItem('restaurant_tables_view') as ViewMode) ?? 'grid',
+  )
+  const [editLayout, setEditLayout] = useState(false)
 
   const isLoading = areasLoading || tablesLoading
 
@@ -62,7 +70,7 @@ const RestaurantTables: FC = () => {
   }
 
   const handleTableClick = (table: IRestaurantTable) => {
-    if (table.status === 'occupied' && table.active_order_id) {
+    if (table.active_order_id) {
       navigate(`/restaurant/orders/${table.active_order_id}`)
     }
   }
@@ -86,12 +94,60 @@ const RestaurantTables: FC = () => {
     )
   }
 
+  const handlePositionChange = (id: number, x: number, y: number) => {
+    patchTable.mutate({ id, pos_x: x, pos_y: y })
+  }
+
+  const handleViewModeChange = (mode: ViewMode) => {
+    setViewMode(mode)
+    localStorage.setItem('restaurant_tables_view', mode)
+    if (mode === 'grid') setEditLayout(false)
+  }
+
   return (
     <div className='bg-card text-card-foreground h-full rounded-lg p-6 flex flex-col gap-5'>
       {/* Header */}
       <div className='flex justify-between items-center'>
         <h1 className='text-2xl font-semibold text-foreground'>Mesas</h1>
         <div className='flex items-center gap-2'>
+          {/* View toggle */}
+          <div className='flex items-center border border-border rounded-md overflow-hidden'>
+            <button
+              className={`px-2.5 py-1.5 transition-colors ${viewMode === 'grid' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
+              onClick={() => handleViewModeChange('grid')}
+              title='Vista cuadrícula'
+            >
+              <IconLayoutGrid size={15} />
+            </button>
+            <button
+              className={`px-2.5 py-1.5 transition-colors ${viewMode === 'list' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
+              onClick={() => handleViewModeChange('list')}
+              title='Vista lista'
+            >
+              <IconList size={15} />
+            </button>
+            <button
+              className={`px-2.5 py-1.5 transition-colors ${viewMode === 'map' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
+              onClick={() => handleViewModeChange('map')}
+              title='Vista mapa'
+            >
+              <IconMap size={15} />
+            </button>
+          </div>
+
+          {/* Edit layout button (map mode only) */}
+          {viewMode === 'map' && (
+            <Button
+              variant={editLayout ? 'default' : 'outline'}
+              size='sm'
+              onClick={() => setEditLayout((v) => !v)}
+              className='gap-2'
+            >
+              {editLayout ? <IconLockOpen size={14} /> : <IconLock size={14} />}
+              {editLayout ? 'Bloquear mapa' : 'Editar mapa'}
+            </Button>
+          )}
+
           <Button
             variant='outline'
             size='sm'
@@ -138,14 +194,38 @@ const RestaurantTables: FC = () => {
         </TabsList>
       </Tabs>
 
-      {/* Table grid */}
-      <div className='flex-1 overflow-y-auto'>
+      {/* Table content */}
+      <div className={`flex-1 min-h-0 ${viewMode === 'map' ? 'overflow-hidden' : 'overflow-y-auto'}`}>
         {isLoading ? (
           <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3'>
             {Array.from({ length: 10 }).map((_, i) => (
               <Skeleton key={i} className='h-36 rounded-lg' />
             ))}
           </div>
+        ) : viewMode === 'map' ? (
+          <TableCanvas
+            tables={filteredTables}
+            editMode={editLayout}
+            onTableClick={handleTableClick}
+            onPositionChange={handlePositionChange}
+          />
+        ) : viewMode === 'list' ? (
+          filteredTables.length === 0 ? (
+            <div className='flex flex-col items-center justify-center gap-3 h-48 text-muted-foreground'>
+              <IconList size={36} className='opacity-40' />
+              <p className='text-sm'>
+                {tables.length === 0 ? 'No tienes mesas creadas.' : 'No hay mesas en esta área.'}
+              </p>
+            </div>
+          ) : (
+            <TableList
+              tables={filteredTables}
+              onTableClick={handleTableClick}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onStatusChange={handleStatusChange}
+            />
+          )
         ) : filteredTables.length === 0 ? (
           <div className='flex flex-col items-center justify-center gap-3 h-48 text-muted-foreground'>
             <IconLayoutGrid size={36} className='opacity-40' />
@@ -190,6 +270,11 @@ const RestaurantTables: FC = () => {
             <span className='w-2.5 h-2.5 rounded-full bg-blue-500' />
             En limpieza
           </span>
+          {viewMode === 'map' && (
+            <span className='ml-auto text-muted-foreground italic'>
+              {editLayout ? 'Arrastra las mesas para reorganizar el mapa' : 'Activa "Editar mapa" para mover las mesas'}
+            </span>
+          )}
         </div>
       )}
 

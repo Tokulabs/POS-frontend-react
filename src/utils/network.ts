@@ -48,6 +48,9 @@ export const uploadImageAWSURL = baseURL + 'app/upload-photo/'
 export const citiesURL = baseURL + 'user/city'
 export const eInvoiceDianURL = baseURL + 'dian/send_invoice/'
 export const downloadInvoiceURL = baseURL + 'dian/download_invoice'
+// Credit Notes
+export const creditNoteURL = baseURL + 'app/credit-note'
+export const sendCreditNoteDianURL = baseURL + 'dian/send_credit_note/'
 export const companyRolesURL = baseURL + 'user/company-roles'
 export const permissionsURL = baseURL + 'user/permissions'
 // Taxes

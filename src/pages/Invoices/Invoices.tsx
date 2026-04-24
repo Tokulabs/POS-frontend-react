@@ -92,9 +92,9 @@ const Invoices: FC = () => {
     setCurrentPage(1)
   }, [invoiceStatus])
 
-  const confirmOverride = (id: string) => {
+  const confirmOverride = (id: string, reason = '') => {
     if (isLoadingOverride) return
-    mutateOverride(id)
+    mutateOverride({ invoiceNumber: id, reason })
   }
 
   const sendElectronicInvoice = (id: number) => {

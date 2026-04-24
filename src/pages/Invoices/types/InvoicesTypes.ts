@@ -24,10 +24,12 @@ export interface IInvoiceProps {
   invoice_number: number
   dian_resolution: IDianResolutionProps
   is_override: boolean
+  override_reason?: string | null
   send_electronic_invoice: boolean
   is_electronic_invoiced: boolean
   cufe?: string | null
   e_invoice_number?: string | null
+  credit_notes_count?: number
   tip?: number
   key?: number
 }
@@ -48,6 +50,8 @@ export interface IInvoiceMinimalProps {
   sale_by: { fullname: string }
   total_sum: number
   total_sum_usd: number
+  e_invoice_number?: string | null
+  dian_resolution_prefix?: string | null
 }
 
 export interface IItemInvoice {
@@ -55,6 +59,7 @@ export interface IItemInvoice {
   amount: number
   discount: number
   item: {
+    id: number
     selling_price: number
     usd_price: number
   }

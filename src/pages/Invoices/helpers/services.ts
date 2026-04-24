@@ -61,11 +61,12 @@ export const postInvoicesNew = async (values: DataPropsForm) => {
   })
 }
 
-export const patchOverrideInvoice = async (invoiceNumber: string) => {
+export const patchOverrideInvoice = async ({ invoiceNumber, reason }: { invoiceNumber: string; reason: string }) => {
   return await axiosRequest({
     method: 'patch',
     url: `${overrideInvoiceURL}/${invoiceNumber}/`,
     hasAuth: true,
+    payload: { override_reason: reason },
   })
 }
 
