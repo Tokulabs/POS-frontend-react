@@ -3,8 +3,8 @@ import { IconUsers, IconZoomIn, IconZoomOut, IconFocus2 } from '@tabler/icons-re
 import { Button } from '@/components/ui/button'
 import { IRestaurantTable, TableStatus, TABLE_STATUS_LABELS } from '@/pages/Restaurant/types/RestaurantTypes'
 
-const CARD_W = 100
-const CARD_H = 82
+const CARD_W = 130
+const CARD_H = 108
 const GRID_SIZE = 32
 const MIN_ZOOM = 0.15
 const MAX_ZOOM = 3
@@ -28,8 +28,8 @@ function computeAutoPositions(tables: IRestaurantTable[]): Record<number, Positi
   const result: Record<number, Position> = {}
   unpositioned.forEach((t, i) => {
     result[t.id] = {
-      x: 150 + (i % cols) * 180,
-      y: 150 + Math.floor(i / cols) * 160,
+      x: 150 + (i % cols) * 210,
+      y: 150 + Math.floor(i / cols) * 190,
     }
   })
   return result
