@@ -61,11 +61,10 @@ export const useRestaurantWebSocket = () => {
     }
 
     const handleEvent = (event: WsEvent) => {
-      // All restaurant order events → refetch active orders + specific order detail
       if (['order_created', 'order_updated', 'order_item_status', 'order_billed'].includes(event)) {
         queryClient.invalidateQueries({ queryKey: ['restaurant-orders'] })
-        // Also invalidate any open order detail query
         queryClient.invalidateQueries({ queryKey: ['restaurant-order'] })
+        queryClient.invalidateQueries({ queryKey: ['restaurant-tables'] })
       }
     }
 

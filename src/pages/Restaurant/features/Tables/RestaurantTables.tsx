@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { useRestaurantAreas } from '@/hooks/restaurant/useRestaurantAreas'
 import { useRestaurantTables } from '@/hooks/restaurant/useRestaurantTables'
 import { useRestaurantOrders } from '@/hooks/restaurant/useRestaurantOrders'
+import { useRestaurantWebSocket } from '@/hooks/restaurant/useRestaurantWebSocket'
 import { IRestaurantTable, TableStatus } from '@/pages/Restaurant/types/RestaurantTypes'
 import { TableCard } from './components/TableCard'
 import { TableCanvas } from './components/TableCanvas'
@@ -30,6 +31,7 @@ const RestaurantTables: FC = () => {
   const { isLoading: areasLoading, areas, createArea, updateArea, deleteArea } = useRestaurantAreas()
   const { isLoading: tablesLoading, tables, createTable, updateTable, patchTable, deleteTable } = useRestaurantTables()
   const { createOrder } = useRestaurantOrders()
+  useRestaurantWebSocket()
 
   const [activeTab, setActiveTab] = useState<string>('all')
   const [tableModalOpen, setTableModalOpen] = useState(false)
