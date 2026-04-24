@@ -18,7 +18,7 @@ const PrintPreInvoice: FC<PrintPreInvoiceProps> = ({ order, tipPercent = 10, onA
     triggerPrint()
   }, [triggerPrint])
 
-  const activeItems = order.order_items.filter((i) => i.status !== 'cancelled')
+  const activeItems = order.order_items.filter((i) => i.status !== 'cancelled' && i.parent_item === null)
   const subtotal = activeItems.reduce((sum, i) => sum + i.unit_price * i.quantity, 0)
   const tipAmount = Math.round(subtotal * (tipPercent / 100))
   const total = subtotal + tipAmount
