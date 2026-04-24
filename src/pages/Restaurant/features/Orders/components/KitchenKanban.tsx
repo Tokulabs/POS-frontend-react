@@ -64,21 +64,75 @@ interface KitchenOrderCardProps {
 const STATUS_SORT: Record<string, number> = { pending: 0, preparing: 1, served: 2 }
 
 const KitchenOrderCard: FC<KitchenOrderCardProps> = ({ order, now, onItemStatus, onMarkAll, isUpdating }) => {
-  // Combo headers are billing placeholders — kitchen works on the children.
-  // Build a flat list: regular items + combo children (with parent name for context).
-  const kitchenItems = [...order.order_items]
-    .filter((i) => i.status !== 'cancelled' && !i.is_combo_header)
-    .map((i) => {
-      if (i.parent_item !== null) {
-        const parent = order.order_items.find((p) => p.id === i.parent_item)
-        return { ...i, _comboLabel: parent?.item_name ?? null }
-      }
-      return { ...i, _comboLabel: null }
-    })
-    .sort((a, b) => (STATUS_SORT[a.status] ?? 0) - (STATUS_SORT[b.status] ?? 0))
+  type ComboGroup  = { type: 'combo';   header: IRestaurantOrderItem; children: IRestaurantOrderItem[] }
+  type RegularGroup = { type: 'regular'; item: IRestaurantOrderItem }
+  type RenderGroup = ComboGroup | RegularGroup
 
-  const activeItems = kitchenItems
-  const nonServed   = activeItems.filter((i) => i.status !== 'served')
+  const renderGroups: RenderGroup[] = []
+  for (const item of order.order_items) {
+    if (item.status === 'cancelled') continue
+    if (item.parent_item !== null) continue // handled under its combo header
+    if (item.is_combo_header) {
+      const children = order.order_items.filter(
+        (c) => c.parent_item === item.id && c.status !== 'cancelled',
+      )
+      if (children.length > 0) renderGroups.push({ type: 'combo', header: item, children })
+    } else {
+      renderGroups.push({ type: 'regular', item })
+    }
+  }
+
+  const groupMinStatus = (g: RenderGroup) =>
+    g.type === 'regular'
+      ? (STATUS_SORT[g.item.status] ?? 0)
+      : Math.min(...g.children.map((c) => STATUS_SORT[c.status] ?? 0))
+  renderGroups.sort((a, b) => groupMinStatus(a) - groupMinStatus(b))
+
+  const nonServedCount = renderGroups.reduce((acc, g) => {
+    if (g.type === 'regular') return acc + (g.item.status !== 'served' ? 1 : 0)
+    return acc + g.children.filter((c) => c.status !== 'served').length
+  }, 0)
+
+  const renderItem = (item: IRestaurantOrderItem) => {
+    const next     = ITEM_NEXT[item.status]
+    const isServed = item.status === 'served'
+    return (
+      <div
+        key={item.id}
+        className={`pl-4 pr-5 py-4 ${ITEM_STRIPE[item.status] ?? ''} ${isServed ? 'bg-muted/40 opacity-50 grayscale' : ''}`}
+      >
+        <div className='flex items-start justify-between gap-3 mb-3'>
+          <div className='flex-1 min-w-0'>
+            <p className='text-base font-bold uppercase leading-tight'>
+              {item.quantity} {item.item_name}
+            </p>
+            {item.notes && (
+              <p className='w-full text-base font-black text-amber-600 dark:text-amber-400 mt-2 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700 rounded-lg px-3 py-2 uppercase tracking-wide'>
+                ⚠ {item.notes}
+              </p>
+            )}
+          </div>
+          {isServed ? (
+            <span className='shrink-0 text-emerald-600 dark:text-emerald-400 font-bold text-base'>✓</span>
+          ) : (
+            <div className={`flex items-center gap-1 font-mono font-semibold text-sm shrink-0 tabular-nums ${getElapsedColor(itemTimestamp(item, order.created_at), now)}`}>
+              <IconClock size={13} />
+              {formatElapsed(itemTimestamp(item, order.created_at), now)}
+            </div>
+          )}
+        </div>
+        {next && (
+          <button
+            className={`w-full py-2.5 rounded-lg text-sm font-bold uppercase tracking-wide transition-colors disabled:opacity-50 ${next.style}`}
+            disabled={isUpdating}
+            onClick={() => onItemStatus(order.id, item.id, next.status)}
+          >
+            {next.label}
+          </button>
+        )}
+      </div>
+    )
+  }
 
   return (
     <div className='rounded-xl border border-border bg-card shadow-sm overflow-hidden flex flex-col'>
@@ -99,55 +153,26 @@ const KitchenOrderCard: FC<KitchenOrderCardProps> = ({ order, now, onItemStatus,
 
       {/* ── Items ── */}
       <div className='flex-1 divide-y divide-border'>
-        {activeItems.length === 0 ? (
+        {renderGroups.length === 0 ? (
           <div className='px-5 py-6 text-center text-sm text-muted-foreground'>Sin ítems activos</div>
         ) : (
-          activeItems.map((item: IRestaurantOrderItem) => {
-            const next     = ITEM_NEXT[item.status]
-            const isServed = item.status === 'served'
+          renderGroups.map((group) => {
+            if (group.type === 'regular') return renderItem(group.item)
 
+            const allServed = group.children.every((c) => c.status === 'served')
             return (
               <div
-                key={item.id}
-                className={`pl-4 pr-5 py-4 ${ITEM_STRIPE[item.status] ?? ''} ${isServed ? 'bg-muted/40 opacity-50 grayscale' : ''}`}
+                key={group.header.id}
+                className={`border-l-4 border-l-violet-400 ${allServed ? 'opacity-50 grayscale' : ''}`}
               >
-                {/* Name + per-item timer */}
-                <div className='flex items-start justify-between gap-3 mb-3'>
-                  <div className='flex-1 min-w-0'>
-                    {(item as any)._comboLabel && (
-                      <p className='text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-0.5'>
-                        Combo: {(item as any)._comboLabel}
-                      </p>
-                    )}
-                    <p className='text-base font-bold uppercase leading-tight'>
-                      {item.quantity} {item.item_name}
-                    </p>
-                    {item.notes && (
-                      <p className='w-full text-base font-black text-amber-600 dark:text-amber-400 mt-2 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700 rounded-lg px-3 py-2 uppercase tracking-wide'>
-                        ⚠ {item.notes}
-                      </p>
-                    )}
-                  </div>
-                  {isServed ? (
-                    <span className='shrink-0 text-emerald-600 dark:text-emerald-400 font-bold text-base'>✓</span>
-                  ) : (
-                    <div className={`flex items-center gap-1 font-mono font-semibold text-sm shrink-0 tabular-nums ${getElapsedColor(itemTimestamp(item, order.created_at), now)}`}>
-                      <IconClock size={13} />
-                      {formatElapsed(itemTimestamp(item, order.created_at), now)}
-                    </div>
-                  )}
+                <div className='px-4 pt-3 pb-1 bg-violet-50 dark:bg-violet-950/20'>
+                  <p className='text-xs font-black uppercase tracking-widest text-violet-600 dark:text-violet-400'>
+                    {group.header.quantity}× {group.header.item_name}
+                  </p>
                 </div>
-
-                {/* Per-item action button */}
-                {next && (
-                  <button
-                    className={`w-full py-2.5 rounded-lg text-sm font-bold uppercase tracking-wide transition-colors disabled:opacity-50 ${next.style}`}
-                    disabled={isUpdating}
-                    onClick={() => onItemStatus(order.id, item.id, next.status)}
-                  >
-                    {next.label}
-                  </button>
-                )}
+                <div className='divide-y divide-border/60'>
+                  {group.children.map((child) => renderItem(child))}
+                </div>
               </div>
             )
           })
@@ -155,7 +180,7 @@ const KitchenOrderCard: FC<KitchenOrderCardProps> = ({ order, now, onItemStatus,
       </div>
 
       {/* ── Batch footer: Finalizar todos ── */}
-      {nonServed.length > 0 && (
+      {nonServedCount > 0 && (
         <div className='px-5 py-4 border-t border-border bg-muted/10'>
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -163,14 +188,14 @@ const KitchenOrderCard: FC<KitchenOrderCardProps> = ({ order, now, onItemStatus,
                 className='w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-sm font-black uppercase tracking-widest transition-colors disabled:opacity-50'
                 disabled={isUpdating}
               >
-                ✓ FINALIZAR TODOS ({nonServed.length})
+                ✓ FINALIZAR TODOS ({nonServedCount})
               </button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>¿Finalizar todos los ítems?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Se marcarán {nonServed.length} ítem{nonServed.length !== 1 ? 's' : ''} como
+                  Se marcarán {nonServedCount} ítem{nonServedCount !== 1 ? 's' : ''} como
                   listos en la orden{order.table_number ? ` de la mesa ${order.table_number}` : ` ${order.order_number}`}.
                   Esta acción no se puede deshacer.
                 </AlertDialogDescription>
